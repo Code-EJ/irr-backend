@@ -13,7 +13,7 @@ import java.util.Date;
 public abstract class TimeStampedEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "criadorId", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "criador_id", referencedColumnName = "id", nullable = false)
     private User createdBy;
 
     @Column(name = "criado_em", nullable = false, updatable = false)
