@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Entity
-@Table( name = "Documento")
+@Table( name = "documento")
 @Getter
 @Setter
 @NoArgsConstructor
