@@ -23,15 +23,16 @@ public class Document extends TimeStampedEntity {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
     @Column(name = "nome")
     private String nome;
 
-    @Column(name = "dataDocumento")
+    @Column(name = "data_documento")
     private Date dataDocumento;
 
-    @Column(name = "dataInsercao")
+    @Column(name = "data_insercao")
     private Date dataInsercao;
 
     @ManyToOne(fetch = FetchType.LAZY)
