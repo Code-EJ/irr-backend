@@ -5,7 +5,7 @@ EXTENSION IF NOT EXISTS "pgcrypto";
 CREATE TABLE tipologia
 (
     id         SERIAL PRIMARY KEY,
-    criador_id INT             NOT NULL,
+    criador_id UUID             NOT NULL,
     nome       VARCHAR(191)    NOT NULL,
     valor      DECIMAL(65, 30) NOT NULL,
     ativo      BOOLEAN         NOT NULL DEFAULT true,
@@ -18,7 +18,7 @@ CREATE TABLE tipologia
 CREATE TABLE subtipologia
 (
     id           SERIAL PRIMARY KEY,
-    criador_id   INT             NOT NULL,
+    criador_id   UUID             NOT NULL,
     nome         VARCHAR(191)    NOT NULL,
     valor        DECIMAL(65, 30) NOT NULL,
     ativo        BOOLEAN         NOT NULL DEFAULT true,

@@ -5,8 +5,8 @@ EXTENSION IF NOT EXISTS "pgcrypto";
 CREATE TABLE triagem
 (
     id              SERIAL PRIMARY KEY,
-    criador_id      INT             NOT NULL,
-    data            DATETIME(3) NOT NULL,
+    criador_id      UUID             NOT NULL,
+    data            TIMESTAMP(3) NOT NULL,
     tipo            VARCHAR(30)     NOT NULL,
     volume_total    DECIMAL(65, 30) NOT NULL,
     volume_rejeito  DECIMAL(65, 30) NOT NULL,
@@ -20,15 +20,15 @@ CREATE TABLE triagem
     CONSTRAINT triagem_criador_id_fk FOREIGN KEY (criador_id)
         REFERENCES usuario (id) ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT triagem_subtipologia_id_fk FOREIGN KEY (subtipologia_id)
-        REFERENCES subtiplogia (id) ON DELETE RESTRICT ON UPDATE CASCADE
+        REFERENCES subtipologia (id) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- 12. Create Prensagem table
 CREATE TABLE prensagem
 (
     id              SERIAL PRIMARY KEY,
-    criador_id      INT             NOT NULL,
-    data            DATETIME(3) NOT NULL,
+    criador_id      UUID             NOT NULL,
+    data            TIMESTAMP(3) NOT NULL,
     volume_total    DECIMAL(65, 30) NOT NULL,
     tipo_origem     VARCHAR(30)     NOT NULL,
     tipo_destino    VARCHAR(30)     NOT NULL,
