@@ -2,7 +2,7 @@ CREATE
 EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- 10. Create Doacao table
-CREATE TABLE doacao
+CREATE TABLE IF NOT EXISTS doacao
 (
     id              SERIAL PRIMARY KEY,
     pesagem         DECIMAL(65, 30) NOT NULL,

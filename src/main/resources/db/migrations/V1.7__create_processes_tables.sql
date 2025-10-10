@@ -2,7 +2,7 @@ CREATE
 EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- 11. Create Triagem table
-CREATE TABLE triagem
+CREATE TABLE IF NOT EXISTS triagem
 (
     id              SERIAL PRIMARY KEY,
     criador_id      UUID             NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE triagem
 );
 
 -- 12. Create Prensagem table
-CREATE TABLE prensagem
+CREATE TABLE IF NOT EXISTS prensagem
 (
     id              SERIAL PRIMARY KEY,
     criador_id      UUID             NOT NULL,

@@ -2,7 +2,7 @@ CREATE
 EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- 8. Create tipologia table
-CREATE TABLE tipologia
+CREATE TABLE IF NOT EXISTS tipologia
 (
     id         SERIAL PRIMARY KEY,
     criador_id UUID             NOT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE tipologia
 );
 
 -- 9. Create subtipologia table
-CREATE TABLE subtipologia
+CREATE TABLE IF NOT EXISTS subtipologia
 (
     id           SERIAL PRIMARY KEY,
     criador_id   UUID             NOT NULL,

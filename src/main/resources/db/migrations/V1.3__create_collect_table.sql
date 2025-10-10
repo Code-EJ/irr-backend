@@ -2,7 +2,7 @@ CREATE
 EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- 6. Create Coleta table
-CREATE TABLE coleta
+CREATE TABLE IF NOT EXISTS coleta
 (
     id                   SERIAL PRIMARY KEY,
     data_realizacao      TIMESTAMP(3) NOT NULL,

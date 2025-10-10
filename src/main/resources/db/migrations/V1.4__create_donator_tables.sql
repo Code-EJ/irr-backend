@@ -2,7 +2,7 @@ CREATE
 EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- 7. Create Doador table
-CREATE TABLE doador
+CREATE TABLE IF NOT EXISTS doador
 (
     id                SERIAL PRIMARY KEY,
     nome              VARCHAR(191) NOT NULL,

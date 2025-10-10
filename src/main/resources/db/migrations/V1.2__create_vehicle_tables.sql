@@ -2,7 +2,7 @@ CREATE
 EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- 4. Create Veiculo table
-CREATE TABLE veiculo
+CREATE TABLE IF NOT EXISTS veiculo
 (
     id         SERIAL PRIMARY KEY,
     placa      VARCHAR(191) NOT NULL UNIQUE,
@@ -15,7 +15,7 @@ CREATE TABLE veiculo
 );
 
 -- 5. Create Motorista table
-CREATE TABLE motorista
+CREATE TABLE IF NOT EXISTS motorista
 (
     id         SERIAL PRIMARY KEY,
     nome       VARCHAR(191) NOT NULL,

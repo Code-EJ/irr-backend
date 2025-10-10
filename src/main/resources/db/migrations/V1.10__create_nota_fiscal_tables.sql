@@ -1,5 +1,5 @@
 -- Tabela nota_fiscal
-CREATE TABLE nota_fiscal
+CREATE TABLE IF NOT EXISTS nota_fiscal
 (
     id           UUID PRIMARY KEY        DEFAULT gen_random_uuid(),
     numero       VARCHAR(50)    NOT NULL,
@@ -24,19 +24,35 @@ CREATE TABLE nota_fiscal
             ON UPDATE CASCADE
 );
 
--- AddForeignKey
-ALTER TABLE venda
-    ADD CONSTRAINT venda_nota_fiscal_id_fk FOREIGN KEY (nota_fiscal_id)
-        REFERENCES nota_fiscal (id)
-        ON DELETE RESTRICT
-        ON UPDATE CASCADE;
+DO $$
+    BEGIN
+        IF NOT EXISTS (
+            SELECT 1
+            FROM information_schema.table_constraints
+            WHERE constraint_name = 'venda_nota_fiscal_id_fk'
+              AND table_name = 'venda'
+        ) THEN
+            ALTER TABLE venda
+                ADD CONSTRAINT venda_nota_fiscal_id_fk FOREIGN KEY (nota_fiscal_id)
+                    REFERENCES nota_fiscal (id)
+                    ON DELETE RESTRICT
+                    ON UPDATE CASCADE;
+        END IF;
+END$$;
 
--- AddForeignKey
-ALTER TABLE material_saida
-    ADD CONSTRAINT material_saida_nota_fiscal_id_fk FOREIGN KEY (nota_fiscal_id)
-        REFERENCES nota_fiscal (id)
-        ON DELETE RESTRICT
-        ON UPDATE CASCADE;
-
-
-);
+DO $$
+    BEGIN
+        IF NOT EXISTS (
+            SELECT 1
+            FROM information_schema.table_constraints
+            WHERE constraint_name = 'material_saida_nota_fiscal_id_fk'
+              AND table_name = 'material_saida'
+        ) THEN
+            ALTER TABLE material_saida
+                ADD CONSTRAINT material_saida_nota_fiscal_id_fk FOREIGN KEY (nota_fiscal_id)
+                    REFERENCES nota_fiscal (id)
+                    ON DELETE RESTRICT
+                    ON UPDATE CASCADE;
+        END IF;
+END$$
+;

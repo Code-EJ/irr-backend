@@ -2,7 +2,7 @@ CREATE
 EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- 13. Create Material_Entrada table
-CREATE TABLE material_entrada
+CREATE TABLE IF NOT EXISTS material_entrada
 (
     id              SERIAL PRIMARY KEY,
     criador_id      UUID             NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE material_entrada
 );
 
 -- 14. Create Material_Saida table
-CREATE TABLE material_saida
+CREATE TABLE IF NOT EXISTS material_saida
 (
     id              SERIAL PRIMARY KEY,
     criador_id      UUID             NOT NULL,
@@ -34,8 +34,4 @@ CREATE TABLE material_saida
     CONSTRAINT material_saida_subtipologia_id_fk FOREIGN KEY (subtipologia_id)
         REFERENCES subtipologia (id)
         ON DELETE RESTRICT ON UPDATE CASCADE
--- ,
---        AQUI: Colocar corretamente a nota fiscal, ela ainda nao existe
---     CONSTRAINT material_saida_nota_fiscal_id_fk FOREIGN KEY (nota_fiscal_id)
---         REFERENCES nota_fiscal (id)
 );

@@ -2,11 +2,11 @@ CREATE
 EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- 3. Create Documento table
-CREATE TABLE documento
+CREATE TABLE IF NOT EXISTS documento
 (
     id             UUID PRIMARY KEY      DEFAULT gen_random_uuid(),
     nome           VARCHAR(191),
-    data_documento DATE,
+    data_documento TIMESTAMP,
     data_insercao  TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     criado_em      TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     tipo           VARCHAR(30)  NOT NULL,
