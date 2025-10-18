@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS venda
     mtr_destinador_id    UUID            NOT NULL
 );
 
--- AddForeignKey
+-- AddForeignKey venda_criador_id_fk
 
 DO $$
     BEGIN
@@ -34,7 +34,7 @@ DO $$
         END IF;
 END$$;
 
--- AddForeignKey
+-- AddForeignKey venda_mtr_gerador_id_fk
 DO $$
     BEGIN
         IF NOT EXISTS (
@@ -70,7 +70,7 @@ DO $$
         END IF;
 END $$;
 
--- AddForeignKey
+-- AddForeignKey venda_mtr_destinador_id_fk
 DO $$
     BEGIN
         IF NOT EXISTS(

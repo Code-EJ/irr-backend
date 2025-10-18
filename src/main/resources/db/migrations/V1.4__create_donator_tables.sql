@@ -1,7 +1,7 @@
 CREATE
 EXTENSION IF NOT EXISTS "pgcrypto";
 
--- 7. Create Doador table
+-- 7. Create doador table
 CREATE TABLE IF NOT EXISTS doador
 (
     id                SERIAL PRIMARY KEY,
@@ -10,5 +10,5 @@ CREATE TABLE IF NOT EXISTS doador
     tipo              VARCHAR(30)  NOT NULL,
     cadastro_nacional VARCHAR(191) NOT NULL UNIQUE,
 
-    CONSTRAINT documento_tipo_check CHECK ( tipo IN ('PESSOA_FISICA', 'PESSOA_JURIDICA') )
+    CONSTRAINT doador_tipo_check CHECK ( tipo IN ('PESSOA_FISICA', 'PESSOA_JURIDICA') )
 );

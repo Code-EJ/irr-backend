@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS usuario
     CONSTRAINT usuario_tipo_check CHECK (
         tipo IN ('ADMINISTRADOR', 'PREFEITURA', 'ORGANIZACAO', 'REPRESENTANTE')
         ),
-    CONSTRAINT usuario_criador_id_fkey
+    CONSTRAINT usuario_criador_id_fk
         FOREIGN KEY (criador_id)
         REFERENCES usuario (id)
             ON DELETE RESTRICT

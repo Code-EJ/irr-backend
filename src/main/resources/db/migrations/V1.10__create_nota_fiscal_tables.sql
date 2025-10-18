@@ -24,6 +24,8 @@ CREATE TABLE IF NOT EXISTS nota_fiscal
             ON UPDATE CASCADE
 );
 
+-- AddForeignKey venda_nota_fiscal_id_fk at Table Venda
+
 DO $$
     BEGIN
         IF NOT EXISTS (
@@ -40,6 +42,8 @@ DO $$
                     ON UPDATE CASCADE;
         END IF;
 END$$;
+
+-- AddForeignKey material_saida_nota_fiscal_id_fk at Table material_saida
 
 DO $$
     BEGIN

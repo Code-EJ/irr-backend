@@ -17,12 +17,12 @@ CREATE TABLE IF NOT EXISTS documento
     CONSTRAINT documento_tipo_check CHECK (
         tipo IN ('NOTA_FISCAL', 'MTR_GERADOR', 'MTR_TRANSPORTADOR', 'MTR_DESTINADOR', 'DIARIO_COLETA')
         ),
-    CONSTRAINT documento_media_id_fkey
+    CONSTRAINT documento_media_id_fk
         FOREIGN KEY (media_id)
         REFERENCES media (id)
             ON DELETE SET NULL
             ON UPDATE CASCADE,
-    CONSTRAINT documento_criador_id_fkey
+    CONSTRAINT documento_criador_id_fk
         FOREIGN KEY (criador_id)
         REFERENCES usuario (id)
             ON DELETE RESTRICT

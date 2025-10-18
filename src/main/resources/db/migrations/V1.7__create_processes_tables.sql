@@ -18,9 +18,14 @@ CREATE TABLE IF NOT EXISTS triagem
     CONSTRAINT triagem_tipo_oritem_check CHECK ( tipo IN ('DOACAO', 'COLETA') ),
     CONSTRAINT triagem_tipo_destino_check CHECK ( tipo IN ('DOACAO', 'COLETA') ),
     CONSTRAINT triagem_criador_id_fk FOREIGN KEY (criador_id)
-        REFERENCES usuario (id) ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT triagem_subtipologia_id_fk FOREIGN KEY (subtipologia_id)
-        REFERENCES subtipologia (id) ON DELETE RESTRICT ON UPDATE CASCADE
+        REFERENCES usuario (id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE,
+    CONSTRAINT triagem_subtipologia_id_fk
+        FOREIGN KEY (subtipologia_id)
+        REFERENCES subtipologia (id)
+            ON DELETE RESTRICT
+            ON UPDATE CASCADE
 );
 
 -- 12. Create Prensagem table
