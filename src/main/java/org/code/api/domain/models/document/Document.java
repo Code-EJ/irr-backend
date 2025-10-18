@@ -39,6 +39,12 @@ public class Document {
     @Column(name = "data_insercao", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "data_remocao", nullable = false, updatable = false)
+    private LocalDateTime deletedAt;
+
+    @Column(name = "deletado", nullable = false)
+    private boolean deletado = false;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo", nullable = false, length = 30)
     private DocumentType tipo;
@@ -51,10 +57,6 @@ public class Document {
             )
     )
     private Media mediaId;
-
-    @Column(name = "data_atualizacao", nullable = false, updatable = false)
-
-    private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(

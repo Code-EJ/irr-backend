@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS documento
     media_id       INT UNIQUE,
     criador_id     UUID         NOT NULL,
     data_insercao      TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    data_atualizacao  TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    data_remocao      TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    deletado       BOOLEAN      NOT NULL    DEFAULT true
 
     CONSTRAINT documento_tipo_check CHECK (
         tipo IN ('NOTA_FISCAL', 'MTR_GERADOR', 'MTR_TRANSPORTADOR', 'MTR_DESTINADOR', 'DIARIO_COLETA')
