@@ -1,4 +1,4 @@
-package org.code.api.domain.document;
+package org.code.api.dto.document;
 
 import java.util.Date;
 import java.util.UUID;

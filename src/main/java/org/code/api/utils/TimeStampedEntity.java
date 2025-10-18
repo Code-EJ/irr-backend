@@ -2,11 +2,10 @@ package org.code.api.utils;
 
 
 import jakarta.persistence.*;
-import org.code.api.domain.user.User;
+import org.code.api.domain.models.User;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)

@@ -1,11 +1,10 @@
-package org.code.api.domain.document;
+package org.code.api.domain.models;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.code.api.domain.media.Media;
 import org.code.api.utils.TimeStampedEntity;
 import org.hibernate.annotations.GenericGenerator;
 

@@ -1,4 +1,6 @@
-package org.code.api.domain.document;
+package org.code.api.dto.document;
+
+import org.code.api.domain.models.Document;
 
 import java.util.Date;
 import java.util.UUID;

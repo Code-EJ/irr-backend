@@ -1,17 +1,18 @@
-package org.code.api.domain.media;
+package org.code.api.domain.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
-@Table(name = "Media")
+@Table(
+        name = "media"
+)
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@ToString
+@Builder
 public class Media {
 
     @Id
