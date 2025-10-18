@@ -1,4 +1,4 @@
-package org.code.api.domain.models;
+package org.code.api.domain.models.document;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,6 +17,7 @@ public class Media {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
     private Integer id;
 
     @Column(name = "dados", nullable = false)
