@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.code.api.domain.common.TimeStampedEntity;
 import org.code.api.domain.enums.DocumentType;
+import org.code.api.domain.models.user.User;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -22,7 +23,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Document extends TimeStampedEntity {
+public class Document {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -34,6 +35,9 @@ public class Document extends TimeStampedEntity {
 
     @Column(name = "data_documento")
     private LocalDateTime dataDocumento;
+
+    @Column(name = "data_insercao", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo", nullable = false, length = 30)
@@ -47,4 +51,19 @@ public class Document extends TimeStampedEntity {
             )
     )
     private Media mediaId;
+
+    @Column(name = "data_atualizacao", nullable = false, updatable = false)
+
+    private LocalDateTime updatedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "criador_id",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(
+                    name = "criador_id_fk",
+                    foreignKeyDefinition = "FOREIGN KEY (criador_id) REFERENCES usuario (id) ON DELETE RESTRICT ON UPDATE CASCADE"
+            ),
+            nullable = false)
+    private User createdBy;
 }

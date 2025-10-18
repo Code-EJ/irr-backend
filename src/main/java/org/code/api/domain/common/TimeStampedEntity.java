@@ -24,7 +24,7 @@ public abstract class TimeStampedEntity {
             name = "criador_id",
             referencedColumnName = "id",
             foreignKey = @ForeignKey(
-                    name = "usuario_criador_id_fk",
+                    name = "criador_id_fk",
                     foreignKeyDefinition = "FOREIGN KEY (criador_id) REFERENCES usuario (id) ON DELETE RESTRICT ON UPDATE CASCADE"
             ),
             nullable = false)

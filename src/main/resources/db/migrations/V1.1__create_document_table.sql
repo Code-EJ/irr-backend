@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS documento
     tipo           VARCHAR(30)  NOT NULL,
     media_id       INT UNIQUE,
     criador_id     UUID         NOT NULL,
-    data_criacao      TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    data_insercao      TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     data_atualizacao  TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     CONSTRAINT documento_tipo_check CHECK (
