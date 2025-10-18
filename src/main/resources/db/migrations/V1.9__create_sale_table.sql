@@ -5,14 +5,16 @@ CREATE
 CREATE TABLE IF NOT EXISTS venda
 (
     id                   SERIAL PRIMARY KEY,
-    criador_id           UUID            NOT NULL,
     comprador            VARCHAR(191)   NOT NULL,
     data                 TIMESTAMP(3)   NOT NULL,
     valor                DECIMAL(18, 2) NOT NULL,
     nota_fiscal_id       UUID            NOT NULL,
     mtr_gerador_id       UUID            NOT NULL,
     mtr_transportador_id UUID            NOT NULL,
-    mtr_destinador_id    UUID            NOT NULL
+    mtr_destinador_id    UUID            NOT NULL,
+    criador_id           UUID            NOT NULL,
+    data_criacao      TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    data_atualizacao  TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)
 );
 
 -- AddForeignKey venda_criador_id_fk

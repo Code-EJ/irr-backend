@@ -5,10 +5,12 @@ EXTENSION IF NOT EXISTS "pgcrypto";
 CREATE TABLE IF NOT EXISTS tipologia
 (
     id         SERIAL PRIMARY KEY,
-    criador_id UUID             NOT NULL,
     nome       VARCHAR(191)    NOT NULL,
     valor      DECIMAL(65, 30) NOT NULL,
     ativo      BOOLEAN         NOT NULL DEFAULT true,
+    criador_id UUID             NOT NULL,
+    data_criacao      TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    data_atualizacao  TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     CONSTRAINT tipologia_criador_id_fk FOREIGN KEY (criador_id)
         REFERENCES usuario (id) ON DELETE RESTRICT ON UPDATE CASCADE
@@ -18,11 +20,13 @@ CREATE TABLE IF NOT EXISTS tipologia
 CREATE TABLE IF NOT EXISTS subtipologia
 (
     id           SERIAL PRIMARY KEY,
-    criador_id   UUID             NOT NULL,
     nome         VARCHAR(191)    NOT NULL,
     valor        DECIMAL(65, 30) NOT NULL,
     ativo        BOOLEAN         NOT NULL DEFAULT true,
     tipologia_id INT             NOT NULL,
+    criador_id   UUID             NOT NULL,
+    data_criacao      TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    data_atualizacao  TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     CONSTRAINT subtipologia_criador_id_fk
         FOREIGN KEY (criador_id)

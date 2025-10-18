@@ -2,6 +2,7 @@ package org.code.api.domain.models.donation;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.code.api.domain.common.TimeStampedEntity;
 import org.code.api.domain.enums.DonatorType;
 
 @Entity
@@ -16,7 +17,7 @@ import org.code.api.domain.enums.DonatorType;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Donator {
+public class Donator extends TimeStampedEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

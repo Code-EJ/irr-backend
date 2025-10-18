@@ -7,7 +7,9 @@ CREATE TABLE IF NOT EXISTS nota_fiscal
     valor_total  DECIMAL(18, 2) NOT NULL,
     descricao    TEXT           NULL,
     coleta_id    INT            NOT NULL,
-    emissor_id   UUID            NOT NULL,
+    criador_id   UUID            NOT NULL,
+    data_criacao      TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    data_atualizacao  TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     ativo        BOOLEAN        NOT NULL DEFAULT true,
 
     -- Foreign keys
@@ -17,8 +19,8 @@ CREATE TABLE IF NOT EXISTS nota_fiscal
             ON DELETE RESTRICT
             ON UPDATE CASCADE,
 
-    CONSTRAINT nota_fiscal_emissor_id_fk
-        FOREIGN KEY (emissor_id)
+    CONSTRAINT nota_fiscal_criador_id_fk
+        FOREIGN KEY (criador_id)
             REFERENCES usuario (id)
             ON DELETE RESTRICT
             ON UPDATE CASCADE

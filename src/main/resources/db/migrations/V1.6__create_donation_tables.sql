@@ -10,6 +10,8 @@ CREATE TABLE IF NOT EXISTS doacao
     subtipologia_id INT             NOT NULL,
     doador_id       INT             NOT NULL,
     criador_id      UUID             NOT NULL,
+    data_criacao      TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    data_atualizacao  TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     CONSTRAINT doacao_tipologia_id_fk
         FOREIGN KEY (tipologia_id)

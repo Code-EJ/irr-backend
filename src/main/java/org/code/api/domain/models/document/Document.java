@@ -35,9 +35,6 @@ public class Document extends TimeStampedEntity {
     @Column(name = "data_documento")
     private LocalDateTime dataDocumento;
 
-    @Column(name = "data_insercao")
-    private LocalDateTime dataInsercao;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo", nullable = false, length = 30)
     private DocumentType tipo;
