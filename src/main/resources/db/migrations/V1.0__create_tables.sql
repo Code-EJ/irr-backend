@@ -16,8 +16,11 @@ CREATE TABLE IF NOT EXISTS usuario
     CONSTRAINT usuario_tipo_check CHECK (
         tipo IN ('ADMINISTRADOR', 'PREFEITURA', 'ORGANIZACAO', 'REPRESENTANTE')
         ),
-    CONSTRAINT usuario_criador_id_fkey FOREIGN KEY (criador_id)
-        REFERENCES usuario (id) ON DELETE SET NULL ON UPDATE CASCADE
+    CONSTRAINT usuario_criador_id_fkey
+        FOREIGN KEY (criador_id)
+        REFERENCES usuario (id)
+            ON DELETE RESTRICT
+            ON UPDATE CASCADE
 );
 
 -- 2. Create Media table

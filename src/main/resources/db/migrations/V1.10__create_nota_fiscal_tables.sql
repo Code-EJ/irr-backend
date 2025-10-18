@@ -33,7 +33,8 @@ DO $$
               AND table_name = 'venda'
         ) THEN
             ALTER TABLE venda
-                ADD CONSTRAINT venda_nota_fiscal_id_fk FOREIGN KEY (nota_fiscal_id)
+                ADD CONSTRAINT venda_nota_fiscal_id_fk
+                    FOREIGN KEY (nota_fiscal_id)
                     REFERENCES nota_fiscal (id)
                     ON DELETE RESTRICT
                     ON UPDATE CASCADE;
@@ -49,7 +50,8 @@ DO $$
               AND table_name = 'material_saida'
         ) THEN
             ALTER TABLE material_saida
-                ADD CONSTRAINT material_saida_nota_fiscal_id_fk FOREIGN KEY (nota_fiscal_id)
+                ADD CONSTRAINT material_saida_nota_fiscal_id_fk
+                    FOREIGN KEY (nota_fiscal_id)
                     REFERENCES nota_fiscal (id)
                     ON DELETE RESTRICT
                     ON UPDATE CASCADE;

@@ -34,27 +34,6 @@ DO $$
         END IF;
 END$$;
 
-/*
-AddForeignKey venda_nota_fiscal_id_fk
-
-DO $$
-    BEGIN
-        IF NOT EXISTS (
-            SELECT 1
-            FROM information_schema.table_constraints
-            WHERE constraint_name = 'venda_nota_fiscal_id_fk'
-              AND table_name = 'venda'
-        ) THEN
-            ALTER TABLE venda
-                ADD CONSTRAINT venda_nota_fiscal_id_fk FOREIGN KEY (nota_fiscal_id)
-                    REFERENCES nota_fiscal (id)
-                    ON DELETE RESTRICT
-                    ON UPDATE CASCADE;
-        END IF;
-END$$;
-
- */
-
 -- AddForeignKey
 DO $$
     BEGIN

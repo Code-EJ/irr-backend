@@ -22,8 +22,11 @@ CREATE TABLE IF NOT EXISTS motorista
     cpf        VARCHAR(191) NOT NULL UNIQUE,
     criador_id UUID          NOT NULL,
 
-    CONSTRAINT motorista_criador_id_fkey FOREIGN KEY (criador_id)
-        REFERENCES usuario (id) ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT motorista_criador_id_fkey
+        FOREIGN KEY (criador_id)
+        REFERENCES usuario (id)
+            ON DELETE RESTRICT
+            ON UPDATE CASCADE
 );
 
 

@@ -26,12 +26,15 @@ CREATE TABLE IF NOT EXISTS material_saida
     nota_fiscal_id  UUID             NOT NULL,
     subtipologia_id INT             NOT NULL,
 
-    CONSTRAINT material_saida_criador_id_fk FOREIGN KEY (criador_id)
+    CONSTRAINT material_saida_criador_id_fk
+        FOREIGN KEY (criador_id)
         REFERENCES usuario (id)
         ON DELETE RESTRICT
         ON UPDATE CASCADE,
 
-    CONSTRAINT material_saida_subtipologia_id_fk FOREIGN KEY (subtipologia_id)
+    CONSTRAINT material_saida_subtipologia_id_fk
+        FOREIGN KEY (subtipologia_id)
         REFERENCES subtipologia (id)
-        ON DELETE RESTRICT ON UPDATE CASCADE
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
 );

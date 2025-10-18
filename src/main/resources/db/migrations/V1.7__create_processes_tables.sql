@@ -34,10 +34,16 @@ CREATE TABLE IF NOT EXISTS prensagem
     tipo_destino    VARCHAR(30)     NOT NULL,
     subtipologia_id INT             NOT NULL,
 
-    CONSTRAINT prensagem_criador_id_fk FOREIGN KEY (criador_id)
-        REFERENCES usuario (id) ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT prensagem_subtipologia_id_fk FOREIGN KEY (subtipologia_id)
-        REFERENCES subtipologia (id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT prensagem_criador_id_fk
+        FOREIGN KEY (criador_id)
+        REFERENCES usuario (id)
+            ON DELETE RESTRICT
+            ON UPDATE CASCADE,
+    CONSTRAINT prensagem_subtipologia_id_fk
+        FOREIGN KEY (subtipologia_id)
+        REFERENCES subtipologia (id)
+            ON DELETE RESTRICT
+            ON UPDATE CASCADE,
     CONSTRAINT prensagem_tipo_origem_check CHECK ( tipo_origem IN ('DOACAO', 'COLETA')),
     CONSTRAINT prensagem_tipo_destino_check CHECK ( tipo_destino IN ('DOACAO', 'COLETA'))
 );

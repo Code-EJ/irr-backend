@@ -24,8 +24,14 @@ CREATE TABLE IF NOT EXISTS subtipologia
     ativo        BOOLEAN         NOT NULL DEFAULT true,
     tipologia_id INT             NOT NULL,
 
-    CONSTRAINT subtipologia_criador_id_fk FOREIGN KEY (criador_id)
-        REFERENCES usuario (id) ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT subtipologia_tipologia_id_fk FOREIGN KEY (tipologia_id)
-        REFERENCES tipologia (id) ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT subtipologia_criador_id_fk
+        FOREIGN KEY (criador_id)
+        REFERENCES usuario (id)
+            ON DELETE RESTRICT
+            ON UPDATE CASCADE,
+    CONSTRAINT subtipologia_tipologia_id_fk
+        FOREIGN KEY (tipologia_id)
+        REFERENCES tipologia (id)
+            ON DELETE RESTRICT
+            ON UPDATE CASCADE
 );
