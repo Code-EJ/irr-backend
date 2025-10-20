@@ -1,8 +1,8 @@
 package org.code.api.controllers;
 
-import org.code.api.domain.document.Document;
-import org.code.api.domain.document.DocumentResponseDTO;
-import org.code.api.repositories.DocumentRepository;
+import org.code.api.domain.models.document.Document;
+import org.code.api.dto.document.DocumentResponseDTO;
+import org.code.api.infrastructure.repositories.DocumentRepository;
 import org.code.api.services.DocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

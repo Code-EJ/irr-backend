@@ -1,6 +1,6 @@
-package org.code.api.repositories;
+package org.code.api.infrastructure.repositories;
 
-import org.code.api.domain.document.Document;
+import org.code.api.domain.models.document.Document;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
