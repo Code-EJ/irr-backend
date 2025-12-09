@@ -8,13 +8,12 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerA
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.core.env.Environment;
 
-@SpringBootApplication(
-  exclude = {
+@SpringBootApplication
+/*exclude = {
     DataSourceAutoConfiguration.class,
     HibernateJpaAutoConfiguration.class,
     DataSourceTransactionManagerAutoConfiguration.class,
-  }
-)
+    }*/
 public class IrrApplication {
 
   public static void main(String[] args) {
