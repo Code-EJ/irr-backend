@@ -1,6 +1,6 @@
 package org.code.api.domain.ports;
 
-import jakarta.websocket.Session;
+import org.code.api.domain.models.user.Session;
 
 public interface AuthPort {
   public String authenticate(String email, String senha);
