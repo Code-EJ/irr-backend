@@ -1,8 +1,12 @@
 package org.code.api.infrastructure;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.code.api.domain.models.user.Session;
 import org.code.api.domain.ports.TokenPort;
+import org.springframework.stereotype.Component;
 
+@Component
 public class JWTTokenProvider implements TokenPort {
 
   @Override
