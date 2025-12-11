@@ -5,13 +5,14 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class IrrApplicationException {
+public class IrrApplicationException extends Error {
 
   private String service;
   private String message;
   private Throwable throwable;
 
   public IrrApplicationException(String service, String message) {
+    super(String.format("%s - %s", service, message));
     this.service = service;
     this.message = message;
   }

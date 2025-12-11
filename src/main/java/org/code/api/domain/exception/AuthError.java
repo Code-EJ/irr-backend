@@ -14,6 +14,26 @@ public class AuthError extends IrrApplicationException {
   }
 
   /**
+   * Este erro é lançado quando a senha fornecida para cadastro do usuário
+   * excede o limite de 72 bytes imposto pela implementação do bcrypt do Spring SEcurity
+   */
+  @Getter
+  @Setter
+  public static class PasswordTooLong extends AuthError {
+    public final int passwordLength;
+
+    public PasswordTooLong(int passwordLength, Throwable throwable) {
+      super(String.format("Password's size is %s, which is more than 72 bytes", passwordLength), throwable);
+      this.passwordLength = passwordLength;
+    }
+
+    public PasswordTooLong(int passwordLength) {
+      super(String.format("Password's size is %s, which is more than 72 bytes", passwordLength));
+      this.passwordLength = passwordLength;
+    }
+  }
+
+  /**
    * Esse error é lançado caso o email fornecido para cadastro do usuário já houver sido registrado.
    */
   @Getter
