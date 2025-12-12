@@ -1,20 +1,37 @@
 package org.code.api.infrastructure;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import java.time.Instant;
+
 import org.code.api.domain.models.user.Session;
 import org.code.api.domain.ports.TokenPort;
+import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Component;
 
+import lombok.AllArgsConstructor;
+
 @Component
+@AllArgsConstructor
 public class JWTTokenProvider implements TokenPort {
+  private long tokenExpirationSeconds;
+  private JwtEncoder jwtEncoder;
 
   @Override
   public String createToken(Session session) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException(
-      "Unimplemented method 'createToken'"
-    );
+    Instant now = Instant.now();
+
+    JwtClaimsSet claims = JwtClaimsSet.builder()
+      .issuer("self")
+      .issuedAt(now)
+      .expiresAt(now.plusSeconds(tokenExpirationSeconds))
+      .subject(session.getEmail())
+      .claim("session", session)
+      .build();
+    
+    String token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+
+    return token;
   }
 
   @Override
