@@ -1,6 +1,8 @@
 package org.code.api.infrastructure;
 
 import java.time.Instant;
+import java.util.Map;
+import java.util.UUID;
 
 import org.code.api.domain.exception.AuthError;
 import org.code.api.domain.models.user.Session;
@@ -52,9 +54,15 @@ public class JWTTokenProvider implements TokenPort {
   public Session decodeToken(String token) {
     try {
       Jwt jwt = jwtDecoder.decode(token);
-      Session session = jwt.getClaim("session");
+      Map<String, Object> session = jwt.getClaim("session");
 
-      return session;
+      log.debug("Decoded JWT session claim: {}", session);
+      return Session.builder()
+        .id(UUID.fromString((String) session.get("id")))
+        .email((String) session.get("email"))
+        .issuedAt(((Number) session.get("issuedAt")).longValue())
+        .expiresAt(((Number) session.get("expiresAt")).longValue())
+        .build();
     } catch (JwtException jwtException) {
       log.error("Invalid JWT token: {}", jwtException.getMessage());
       throw new AuthError.InvalidToken(token, jwtException);
