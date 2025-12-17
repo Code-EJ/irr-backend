@@ -22,10 +22,6 @@ public class JWTTokenProvider implements TokenPort {
   public String createToken(Session session) {
     Instant now = Instant.now();
 
-    JwsHeader header = JwsHeader.with(MacAlgorithm.HS256)
-      .keyId("irr-hmac-key")
-      .build();
-
     JwtClaimsSet claims = JwtClaimsSet.builder()
       .issuer("self")
       .issuedAt(now)
@@ -34,7 +30,7 @@ public class JWTTokenProvider implements TokenPort {
       .claim("session", session)
       .build();
 
-    String token = jwtEncoder.encode(JwtEncoderParameters.from(header, claims)).getTokenValue();
+    String token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 
     return token;
   }
