@@ -4,6 +4,8 @@ import java.time.Instant;
 
 import org.code.api.domain.models.user.Session;
 import org.code.api.domain.ports.TokenPort;
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
+import org.springframework.security.oauth2.jwt.JwsHeader;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
@@ -14,22 +16,25 @@ import lombok.AllArgsConstructor;
 @Component
 @AllArgsConstructor
 public class JWTTokenProvider implements TokenPort {
-  private long tokenExpirationSeconds;
   private JwtEncoder jwtEncoder;
 
   @Override
   public String createToken(Session session) {
     Instant now = Instant.now();
 
+    JwsHeader header = JwsHeader.with(MacAlgorithm.HS256)
+      .keyId("irr-hmac-key")
+      .build();
+
     JwtClaimsSet claims = JwtClaimsSet.builder()
       .issuer("self")
       .issuedAt(now)
-      .expiresAt(now.plusSeconds(tokenExpirationSeconds))
+      .expiresAt(now.plusSeconds(60*60*72))
       .subject(session.getEmail())
       .claim("session", session)
       .build();
-    
-    String token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+
+    String token = jwtEncoder.encode(JwtEncoderParameters.from(header, claims)).getTokenValue();
 
     return token;
   }
