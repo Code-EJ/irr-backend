@@ -2,8 +2,17 @@ package org.code.api.services;
 
 import org.code.api.domain.models.user.Session;
 import org.code.api.domain.ports.AuthPort;
+import org.code.api.domain.ports.EncryptionPort;
+import org.code.api.domain.ports.TokenPort;
+import org.springframework.stereotype.Service;
 
+import lombok.AllArgsConstructor;
+
+@Service
+@AllArgsConstructor
 public class AuthService implements AuthPort {
+  private TokenPort tokenPort;
+  private EncryptionPort encryptionPort;
 
   @Override
   public String authenticate(String email, String senha) {
