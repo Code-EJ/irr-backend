@@ -2,6 +2,7 @@ package org.code.api.infrastructure;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.security.interfaces.RSAPrivateKey;
@@ -9,6 +10,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.time.Instant;
 import java.util.UUID;
 
+import org.code.api.domain.exception.AuthError;
 import org.code.api.domain.models.user.Session;
 import org.code.api.domain.ports.TokenPort;
 import org.code.api.util.RSAKeysUtil;
@@ -25,7 +27,8 @@ public class TokenPortTests {
     SecurityConfig securityConfig = new SecurityConfig(new RSAConfigProps(publicKey, privateKey));
 
     this.tokenPort = new JWTTokenProvider(
-      securityConfig.jwtEncoder()
+      securityConfig.jwtEncoder(),
+      securityConfig.jwtDecoder()
     );
   }
 
@@ -128,5 +131,57 @@ public class TokenPortTests {
 
     assertNotNull(decodedRenewedSession);
     assertEquals(email, decodedRenewedSession.getEmail());
+  }
+
+  @Test
+  @DisplayName("Should throw InvalidToken exception when decoding invalid JWT format")
+  public void shouldThrowInvalidTokenExceptionWhenDecodingInvalidFormat() {
+    String invalidToken = "invalid.jwt.token";
+
+    assertThrows(AuthError.InvalidToken.class, () -> {
+      tokenPort.decodeToken(invalidToken);
+    });
+  }
+
+  @Test
+  @DisplayName("Should throw InvalidToken exception when decoding malformed token")
+  public void shouldThrowInvalidTokenExceptionWhenDecodingMalformedToken() {
+    String malformedToken = "not-a-valid-token";
+
+    assertThrows(AuthError.InvalidToken.class, () -> {
+      tokenPort.decodeToken(malformedToken);
+    });
+  }
+
+  @Test
+  @DisplayName("Should throw InvalidToken exception when decoding empty token")
+  public void shouldThrowInvalidTokenExceptionWhenDecodingEmptyToken() {
+    String emptyToken = "";
+
+    assertThrows(AuthError.InvalidToken.class, () -> {
+      tokenPort.decodeToken(emptyToken);
+    });
+  }
+
+  @Test
+  @DisplayName("Should throw InvalidToken exception when decoding token with invalid signature")
+  public void shouldThrowInvalidTokenExceptionWhenDecodingTokenWithInvalidSignature() {
+    Instant now = Instant.now();
+    
+    Session session = Session.builder()
+      .id(UUID.randomUUID())
+      .email("test@test.com")
+      .issuedAt(now.getEpochSecond())
+      .expiresAt(now.plusSeconds(3600).getEpochSecond())
+      .build();
+
+    String validToken = tokenPort.createToken(session);
+    // Tamper with the token signature
+    String[] parts = validToken.split("\\.");
+    String tamperedToken = parts[0] + "." + parts[1] + ".invalid-signature";
+
+    assertThrows(AuthError.InvalidToken.class, () -> {
+      tokenPort.decodeToken(tamperedToken);
+    });
   }
 }

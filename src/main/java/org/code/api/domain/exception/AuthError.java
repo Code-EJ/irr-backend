@@ -81,7 +81,6 @@ public class AuthError extends IrrApplicationException {
   @Getter
   @Setter
   public static class InvalidToken extends AuthError {
-
     private String token;
 
     public InvalidToken(String token, Throwable throwable) {
@@ -92,6 +91,23 @@ public class AuthError extends IrrApplicationException {
     public InvalidToken(String token) {
       super("Invalid token");
       this.token = token;
+    }
+  }
+
+
+  /**
+   * Este erro é lançado quando há um problema durante a criação do token JWT.
+   * No geral, esse erro é crítico e é lançado pelo Nimbus, eu só faço o encapsulamento dele
+   * em uma exceção da aplicação, pra manter o padrão e o desacoplamento da lógica (a gente considera que esse erro faz parte
+   * de um comportamento esperado do token port).
+   */
+  public static class TokenCreationError extends AuthError {
+    public TokenCreationError(String message, Throwable throwable) {
+      super(message, throwable);
+    }
+
+    public TokenCreationError(Throwable throwable) {
+      super(throwable.getMessage());
     }
   }
 
