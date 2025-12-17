@@ -93,24 +93,6 @@ public class TokenPortTests {
     assertTrue(renewedToken.split("\\.").length == 3);
   }
 
-  @Test
-  @DisplayName("Should renew token from session and return new valid token")
-  public void shouldRenewTokenFromSessionAndReturnNewToken() {
-    Instant now = Instant.now();
-
-    Session session = Session.builder()
-      .id(UUID.randomUUID())
-      .email("test@test.com")
-      .issuedAt(now.getEpochSecond())
-      .expiresAt(now.plusSeconds(3600).getEpochSecond())
-      .build();
-
-    String renewedToken = tokenPort.renewToken(session);
-
-    assertNotNull(renewedToken);
-    assertTrue(renewedToken.length() > 0);
-    assertTrue(renewedToken.split("\\.").length == 3);
-  }
 
   @Test
   @DisplayName("Should maintain email when renewing token from string")

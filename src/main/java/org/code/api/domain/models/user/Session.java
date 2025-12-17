@@ -18,4 +18,15 @@ public class Session {
   public boolean isExpired() {
     return Instant.now().toEpochMilli() > this.expiresAt;
   }
+
+  public boolean isOnRenewalGrace() {
+    if (isExpired()) {
+      long now = Instant.now().toEpochMilli();
+      long renewalWindowEnd = this.expiresAt + 24 * 60 * 60 * 1000; // 24 hours after expiration
+    
+      return now <= renewalWindowEnd;
+    }
+
+    return true;
+  }
 }

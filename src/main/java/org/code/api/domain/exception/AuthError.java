@@ -1,5 +1,7 @@
 package org.code.api.domain.exception;
 
+import org.code.api.domain.models.user.Session;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -121,25 +123,25 @@ public class AuthError extends IrrApplicationException {
   @Setter
   public static class ExpiredToken extends AuthError {
 
-    private String token;
+    private Session session;
     private long expiresAt;
     private long issuedAt;
 
-    public ExpiredToken(String token, long expiresAt, long issuedAt) {
+    public ExpiredToken(Session session, long expiresAt, long issuedAt) {
       super("Expired token");
-      this.token = token;
+      this.session = session;
       this.expiresAt = expiresAt;
       this.issuedAt = issuedAt;
     }
 
     public ExpiredToken(
-      String token,
+      Session session,
       long expiresAt,
       long issuedAt,
       Throwable throwable
     ) {
       super("Expired token", throwable);
-      this.token = token;
+      this.session = session;
       this.expiresAt = expiresAt;
       this.issuedAt = issuedAt;
     }
