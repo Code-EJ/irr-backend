@@ -1,32 +1,31 @@
-name: 🚀 Task
-description: Nova funcionalidade do sistema
+name: 🧩 Task
+description: Tarefa técnica ou operacional
 title: "[TASK]: "
-labels: ["task"]
+labels:
+  - task
 body:
   - type: textarea
-    id: description
     attributes:
       label: Descrição
-      description: Explique o que será desenvolvido e por quê.
-      placeholder: Ex: Implementar módulo de entrada de resíduos...
+      description: O que precisa ser feito?
+      placeholder: Descreva a tarefa de forma objetiva.
     validations:
       required: true
 
   - type: textarea
-    id: acceptance
     attributes:
-      label: Critérios de Aceitação
-      description: Defina claramente quando a task pode ser considerada concluída.
+      label: Critérios de Conclusão
+      description: Como saber que essa task está pronta?
       placeholder: |
-        - [ ] Funcionalidade implementada
-        - [ ] Validações aplicadas
-        - [ ] Testes realizados
+        - [ ] Implementação concluída
+        - [ ] Testado
+        - [ ] Revisado
     validations:
       required: true
 
   - type: textarea
-    id: dependencies
     attributes:
-      label: Dependências
-      description: Outras issues que bloqueiam essa task.
-      placeholder: "#12, #18"
+      label: Observações
+      description: Contexto adicional, links ou dependências.
+    validations:
+      required: false
