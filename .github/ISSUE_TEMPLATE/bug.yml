@@ -1,0 +1,32 @@
+name: 🐛 Bug
+description: Reportar erro no sistema
+title: "[BUG]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: current
+    attributes:
+      label: Comportamento atual
+      description: O que está acontecendo de errado?
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportamento esperado
+      description: O que deveria acontecer?
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Como reproduzir
+      description: Passo a passo para reproduzir o erro.
+      placeholder: |
+        1. Vá para...
+        2. Clique em...
+        3. Erro acontece
+    validations:
+      required: true

@@ -1,0 +1,32 @@
+name: 🚀 Task
+description: Nova funcionalidade do sistema
+title: "[TASK]: "
+labels: ["task"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Descrição
+      description: Explique o que será desenvolvido e por quê.
+      placeholder: Ex: Implementar módulo de entrada de resíduos...
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Critérios de Aceitação
+      description: Defina claramente quando a task pode ser considerada concluída.
+      placeholder: |
+        - [ ] Funcionalidade implementada
+        - [ ] Validações aplicadas
+        - [ ] Testes realizados
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependências
+      description: Outras issues que bloqueiam essa task.
+      placeholder: "#12, #18"
