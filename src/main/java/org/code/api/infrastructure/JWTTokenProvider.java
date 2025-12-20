@@ -33,8 +33,8 @@ public class JWTTokenProvider implements TokenPort {
 
       JwtClaimsSet claims = JwtClaimsSet.builder()
         .issuer("self")
-        .issuedAt(now)
-        .expiresAt(now.plusSeconds(60*60*72*1000))
+        .issuedAt(session.getIssuedAt() > 0 ? Instant.ofEpochMilli(session.getIssuedAt()) : now)
+        .expiresAt(session.getExpiresAt() > 0 ? Instant.ofEpochMilli(session.getExpiresAt()) : now.plusSeconds(60*60*72*1000))
         .subject(session.getEmail())
         .claim("session", session)
         .build();

@@ -199,5 +199,11 @@ public class MockedUserRepository implements UserRepository{
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'findByEmail'");
   }
+
+  @Override
+  public boolean existsByEmail(String email) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'existsByEmail'");
+  }
   
 }
