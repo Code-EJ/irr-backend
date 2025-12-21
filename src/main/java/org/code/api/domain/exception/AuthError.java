@@ -16,6 +16,28 @@ public class AuthError extends IrrApplicationException {
   }
 
   /**
+   * Esse erro é lançado quando o usuário criador (createdBy) fornecido
+   * para o cadastro de um novo usuário é inválido (não existe no banco de dados ou id é mal formatado).
+   */
+  @Getter
+  @Setter
+  public static class CreatorUserInvalid extends AuthError {
+    private String creatorUserId;
+    private boolean invalidUUID;
+
+    public CreatorUserInvalid(String creatorUserId, boolean invalidUUID, Throwable throwable) {
+      super("Creator user is invalid", throwable);
+      this.creatorUserId = creatorUserId;
+      this.invalidUUID = invalidUUID;
+    }
+
+    public CreatorUserInvalid(String creatorUserId) {
+      super("Creator user is invalid");
+      this.creatorUserId = creatorUserId;
+    }
+  }
+
+  /**
    * Este erro é lançado quando a senha fornecida para cadastro do usuário
    * excede o limite de 72 bytes imposto pela implementação do bcrypt do Spring SEcurity
    */

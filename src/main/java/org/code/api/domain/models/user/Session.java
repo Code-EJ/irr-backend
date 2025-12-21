@@ -2,6 +2,9 @@ package org.code.api.domain.models.user;
 
 import java.time.Instant;
 import java.util.UUID;
+
+import org.code.api.domain.enums.UserType;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,6 +15,7 @@ import lombok.Setter;
 public class Session {
   private UUID id;
   private String email;
+  private UserType tipo;
   private long issuedAt;
   private long expiresAt;
 

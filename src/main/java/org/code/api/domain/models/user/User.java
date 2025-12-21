@@ -3,6 +3,8 @@ package org.code.api.domain.models.user;
 import jakarta.persistence.*;
 import java.util.UUID;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
+
 import org.code.api.domain.common.TimeStampedEntity;
 import org.code.api.domain.enums.UserType;
 
@@ -13,12 +15,12 @@ import org.code.api.domain.enums.UserType;
     @Index(name = "idx_usuario_email", columnList = "email", unique = true),
   }
 )
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
 @ToString
-@Builder
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User extends TimeStampedEntity {
 
   @Id
