@@ -110,10 +110,24 @@ public class AuthService implements AuthPort {
     throw new UnsupportedOperationException("Unimplemented method 'renew'");
   }
 
+  /*
+    Validação de sessão
+    - Caso não exista o id dentro do payload no banco - lança InvalidToken
+    - Caso o token esteja inválido (seja por algoritmo errado, estrutura...) - lança InvalidToken
+    - Caso tudo esteja ok, retorna os dados da sessão
+  */
   @Override
   public Session getSessionDetails(String token) {
-    throw new UnsupportedOperationException(
-      "Unimplemented method 'getSessionDetails'"
-    );
+    Session session = tokenPort.decodeToken(token);
+    Optional<User> userOptional = userRepository.findById(session.getId());
+
+    return userOptional.map(user -> Session.builder()
+        .id(user.getId())
+        .email(user.getEmail())
+        .tipo(user.getTipo())
+        .issuedAt(session.getIssuedAt())
+        .expiresAt(session.getExpiresAt())
+        .build()
+      ).orElseThrow(() -> new AuthError.InvalidToken(token));
   }
 }

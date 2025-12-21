@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.code.api.domain.exception.AuthError;
 import org.code.api.domain.ports.EncryptionPort;
+import org.code.api.infrastructure.security.BCryptEncryptionProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

@@ -1,6 +1,6 @@
 package org.code.api;
 
-import org.code.api.infrastructure.RSAConfigProps;
+import org.code.api.infrastructure.security.RSAConfigProps;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

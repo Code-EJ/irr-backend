@@ -195,7 +195,7 @@ public class MockedUserRepository implements UserRepository{
   }
 
   @Override
-  public User findByEmail(String email) {
+  public Optional<User> findByEmail(String email) {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'findByEmail'");
   }

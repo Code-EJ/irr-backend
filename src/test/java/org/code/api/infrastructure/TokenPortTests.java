@@ -13,6 +13,9 @@ import java.util.UUID;
 import org.code.api.domain.exception.AuthError;
 import org.code.api.domain.models.user.Session;
 import org.code.api.domain.ports.TokenPort;
+import org.code.api.infrastructure.security.JWTTokenProvider;
+import org.code.api.infrastructure.security.RSAConfigProps;
+import org.code.api.infrastructure.security.SecurityBeansConfig;
 import org.code.api.util.RSAKeysUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,11 +27,11 @@ public class TokenPortTests {
     RSAPrivateKey privateKey = RSAKeysUtil.getPrivateKey();
     RSAPublicKey publicKey = RSAKeysUtil.getPublicKey();
 
-    SecurityConfig securityConfig = new SecurityConfig(new RSAConfigProps(publicKey, privateKey));
+    SecurityBeansConfig securityBeans = new SecurityBeansConfig(new RSAConfigProps(publicKey, privateKey));
 
     this.tokenPort = new JWTTokenProvider(
-      securityConfig.jwtEncoder(),
-      securityConfig.jwtDecoder()
+      securityBeans.jwtEncoder(),
+      securityBeans.jwtDecoder()
     );
   }
 
@@ -61,8 +64,6 @@ public class TokenPortTests {
     Session originalSession = Session.builder()
       .id(sessionId)
       .email(email)
-      .issuedAt(now.getEpochSecond())
-      .expiresAt(now.plusSeconds(3600).getEpochSecond())
       .build();
 
     String token = tokenPort.createToken(originalSession);
@@ -81,8 +82,8 @@ public class TokenPortTests {
     Session originalSession = Session.builder()
       .id(UUID.randomUUID())
       .email("test@test.com")
-      .issuedAt(now.getEpochSecond())
-      .expiresAt(now.plusSeconds(3600).getEpochSecond())
+      // .issuedAt(now.getEpochSecond())
+      // .expiresAt(now.plusSeconds(3600).getEpochSecond())
       .build();
 
     String originalToken = tokenPort.createToken(originalSession);
@@ -103,8 +104,6 @@ public class TokenPortTests {
     Session originalSession = Session.builder()
       .id(UUID.randomUUID())
       .email(email)
-      .issuedAt(now.getEpochSecond())
-      .expiresAt(now.plusSeconds(3600).getEpochSecond())
       .build();
 
     String originalToken = tokenPort.createToken(originalSession);

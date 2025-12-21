@@ -1,4 +1,4 @@
-package org.code.api.infrastructure;
+package org.code.api.infrastructure.security;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
