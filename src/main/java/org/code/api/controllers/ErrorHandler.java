@@ -105,4 +105,17 @@ public class ErrorHandler {
                 "email", exception.getEmail()
             ));
     }
+
+    @ExceptionHandler(AuthError.PasswordTooLong.class)
+    public ResponseEntity<?> handlePasswordTooLong(AuthError.PasswordTooLong exception) {
+        log.debug("Attempt to register with a password exceeding 72 bytes: {} bytes", exception.getPasswordLength());
+
+        return ResponseEntity
+            .badRequest()
+            .body(Map.of(
+                "error", "password_too_long",
+                "message", "The provided password exceeds the maximum allowed length of 72 bytes.",
+                "password_length", exception.getPasswordLength()
+            ));
+    }
 }
