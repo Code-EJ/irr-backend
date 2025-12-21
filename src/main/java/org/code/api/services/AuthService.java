@@ -27,10 +27,32 @@ public class AuthService implements AuthPort {
   private EncryptionPort encryptionPort;
 
   @Override
+  @Transactional(readOnly = true)
   public String authenticate(String email, String senha) {
-    throw new UnsupportedOperationException(
-      "Unimplemented method 'authenticate'"
-    );
+    try {
+      Optional<User> userOptional = userRepository.findByEmail(email);
+
+      if (userOptional.isEmpty()) {
+        throw new AuthError.WrongCredentials(email, false);
+      }
+
+      User user = userOptional.get();
+
+      if (!encryptionPort.compare(user.getSenha(), senha)) {
+        throw new AuthError.WrongCredentials(email, true);
+      }
+
+      String token = tokenPort.createToken(Session.builder()
+        .id(user.getId())
+        .email(user.getEmail())
+        .tipo(user.getTipo())
+        .build()
+      );
+
+      return token;
+    } catch (Exception exception) {
+      throw exception;
+    }
   }
 
   @Override

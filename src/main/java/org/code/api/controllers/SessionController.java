@@ -1,6 +1,8 @@
 package org.code.api.controllers;
 
+import org.code.api.dto.session.request.LoginRequestDTO;
 import org.code.api.dto.session.request.RegisterRequestDTO;
+import org.code.api.dto.session.response.LoginResponseDTO;
 import org.code.api.dto.session.response.RegisterResponseDTO;
 import org.code.api.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +23,8 @@ public class SessionController {
   @Autowired
   private AuthService authService;
 
-  @PostMapping("/authenticate")
-  public ResponseEntity<Object> authenticate() {
-    return ResponseEntity.status(HttpStatus.OK).body("hello world dude");
-  }
-
   @PostMapping("/register")
-  public ResponseEntity<Object> register(
+  public ResponseEntity<?> register(
     @Valid
     @RequestBody(required = true)
     RegisterRequestDTO data
@@ -35,5 +32,16 @@ public class SessionController {
     String token = authService.register(data.nome(), data.email(), data.senha());
 
     return ResponseEntity.status(HttpStatus.CREATED).body(new RegisterResponseDTO(token));
+  }
+
+  @PostMapping("/authenticate")
+  public ResponseEntity<?> authenticate(
+    @Valid
+    @RequestBody(required = true)
+    LoginRequestDTO data
+  ) {
+    String token = authService.authenticate(data.email(), data.senha());
+
+    return ResponseEntity.status(HttpStatus.OK).body(new LoginResponseDTO(token));
   }
 }
