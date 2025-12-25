@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/api/motorista")
 public class DriverController {
 
-  @PostConstruct
-  public void init() {
-    System.out.println("Inicializando http controller de motoristas.");
-  }
+    @PostConstruct
+    public void init() {
+        System.out.println("Inicializando http controller de motoristas.");
+    }
 
-  @GetMapping("/ok")
-  public ResponseEntity<Object> ok() {
-    return ResponseEntity.status(HttpStatus.OK).body(Map.of("ok", true));
-  }
+    @GetMapping("/ok")
+    public ResponseEntity<Object> ok() {
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("ok", true));
+    }
 }
