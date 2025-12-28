@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Instant;
-import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
 import org.code.api.domain.exception.AuthError.ExpiredToken;
 import org.code.api.domain.exception.AuthError.InvalidToken;
@@ -32,6 +31,7 @@ public class BearerFilter implements Filter {
         ServletResponse servletResponse,
         FilterChain filterChain
     ) throws IOException, ServletException {
+        log.debug("Bearer Filter executando");
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 

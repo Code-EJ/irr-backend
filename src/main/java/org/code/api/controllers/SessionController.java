@@ -1,5 +1,7 @@
 package org.code.api.controllers;
 
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.code.api.dto.session.request.LoginRequestDTO;
 import org.code.api.dto.session.request.RegisterRequestDTO;
 import org.code.api.dto.session.response.LoginResponseDTO;
@@ -12,36 +14,39 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @Controller
 @RequestMapping("/api/session")
 public class SessionController {
-  @Autowired
-  private AuthService authService;
 
-  @PostMapping("/register")
-  public ResponseEntity<?> register(
-    @Valid
-    @RequestBody(required = true)
-    RegisterRequestDTO data
-  ) {
-    String token = authService.register(data.nome(), data.email(), data.senha());
+    @Autowired
+    private AuthService authService;
 
-    return ResponseEntity.status(HttpStatus.CREATED).body(new RegisterResponseDTO(token));
-  }
+    @PostMapping("/register")
+    public ResponseEntity<?> register(
+        @Valid @RequestBody(required = true) RegisterRequestDTO data
+    ) {
+        String token = authService.register(
+            data.nome(),
+            data.email(),
+            data.senha()
+        );
 
-  @PostMapping("/authenticate")
-  public ResponseEntity<?> authenticate(
-    @Valid
-    @RequestBody(required = true)
-    LoginRequestDTO data
-  ) {
-    String token = authService.authenticate(data.email(), data.senha());
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+            new RegisterResponseDTO(token)
+        );
+    }
 
-    return ResponseEntity.status(HttpStatus.OK).body(new LoginResponseDTO(token));
-  }
+    @PostMapping("/authenticate")
+    public ResponseEntity<?> authenticate(
+        @Valid @RequestBody(required = true) LoginRequestDTO data
+    ) {
+        String token = authService.authenticate(data.email(), data.senha());
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+            new LoginResponseDTO(token)
+        );
+    }
 }
