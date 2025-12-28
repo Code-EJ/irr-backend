@@ -2,35 +2,35 @@ package org.code.api.domain.models.user;
 
 import java.time.Instant;
 import java.util.UUID;
-
-import org.code.api.domain.enums.UserType;
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.code.api.domain.enums.UserType;
 
 @Builder
 @Getter
 @Setter
 public class Session {
-  private UUID id;
-  private String email;
-  private UserType tipo;
-  private long issuedAt;
-  private long expiresAt;
 
-  public boolean isExpired() {
-    return Instant.now().toEpochMilli() > this.expiresAt;
-  }
+    private UUID id;
+    private String email;
+    private UserType tipo;
+    private Instant issuedAt;
+    private Instant expiresAt;
 
-  public boolean isOnRenewalGrace() {
-    if (isExpired()) {
-      long now = Instant.now().toEpochMilli();
-      long renewalWindowEnd = this.expiresAt + 24 * 60 * 60 * 1000; // 24 hours after expiration
-    
-      return now <= renewalWindowEnd;
+    public boolean isExpired() {
+        return Instant.now().isAfter(expiresAt);
     }
 
-    return true;
-  }
+    public boolean isOnRenewalGrace() {
+        if (isExpired()) {
+            Instant now = Instant.now();
+            Instant renewalWindowEnd = this.expiresAt.plusSeconds(24 * 60 * 60); // 24 hours after expiration
+
+            return now.isBefore(renewalWindowEnd);
+        }
+
+        return true;
+    }
 }

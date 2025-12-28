@@ -8,6 +8,7 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
 import org.code.api.domain.exception.AuthError.ExpiredToken;
@@ -67,7 +68,12 @@ public class BearerFilter implements Filter {
             String token = authorizationHeader.substring(7);
             Session session = authService.getSessionDetails(token);
 
+            log.debug(
+                "Session expiration status (Bearer Filter): {}",
+                session.isExpired()
+            );
             if (!session.isExpired()) {
+                log.debug("Approved request from {}", session.getEmail());
                 request.setAttribute("session", session);
                 filterChain.doFilter(request, response);
 
@@ -87,25 +93,23 @@ public class BearerFilter implements Filter {
                 return;
             }
 
-            sendRefusedResponse(
+            sendExpiredTokenResponse(
                 response,
-                "expired_token",
-                "The provided token has expired.",
-                HttpStatus.UNAUTHORIZED
+                session.getExpiresAt(),
+                session.getIssuedAt()
             );
             return;
         } catch (ExpiredToken exception) {
             log.debug(
                 "Refused request {} due to expired token used, issued at: {}, expires at: {}",
                 request.getRemoteAddr(),
-                new Date(exception.getIssuedAt()),
-                new Date(exception.getExpiresAt())
+                exception.getIssuedAt(),
+                exception.getExpiresAt()
             );
-            sendRefusedResponse(
+            sendExpiredTokenResponse(
                 response,
-                "expired_token",
-                "The provided token has expired.",
-                HttpStatus.UNAUTHORIZED
+                exception.getExpiresAt(),
+                exception.getIssuedAt()
             );
         } catch (InvalidToken invalidToken) {
             log.debug(
@@ -128,6 +132,24 @@ public class BearerFilter implements Filter {
             );
             return;
         }
+    }
+
+    private void sendExpiredTokenResponse(
+        HttpServletResponse response,
+        Instant expiresAt,
+        Instant issuedAt
+    ) throws IOException {
+        response.setStatus(HttpStatus.FORBIDDEN.value());
+        response.setContentType("application/json");
+        response
+            .getWriter()
+            .write(
+                String.format(
+                    "{\"error\": \"expired_token\", \"message\": \"The provided token has expired.\", \"expires_at\": %d, \"issued_at\": %d}",
+                    expiresAt,
+                    issuedAt
+                )
+            );
     }
 
     private void sendRefusedResponse(
