@@ -1,16 +1,13 @@
 services:
-  postgres:
+  database:
+    container_name: irr_database
     image: postgres:16
-    container_name: irr_postgres
     restart: always
+
     environment:
       POSTGRES_USER: irr_admin
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-SuperSecurePass123}
-      POSTGRES_DB: irr_database
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: irr
+
     ports:
       - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-volumes:
-  postgres_data:
