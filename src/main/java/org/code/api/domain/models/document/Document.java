@@ -1,23 +1,19 @@
 package org.code.api.domain.models.document;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.code.api.domain.common.TimeStampedEntity;
 import org.code.api.domain.enums.DocumentType;
 import org.code.api.domain.models.user.User;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
 @Entity
 @Table(
-        name = "documento",
-        indexes = {
-                @Index(name = "idx_documento_nome", columnList = "nome")
-        }
+    name = "documento",
+    indexes = { @Index(name = "idx_documento_nome", columnList = "nome") }
 )
 @Getter
 @Setter
@@ -50,22 +46,25 @@ public class Document {
     private DocumentType tipo;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "media_id", referencedColumnName = "id",
-            foreignKey = @ForeignKey(
-                    name = "documento_media_id_fk",
-                    foreignKeyDefinition = "FOREIGN KEY (media_id) REFERENCES media (id) ON DELETE SET NULL ON UPDATE CASCADE"
-            )
+    @JoinColumn(
+        name = "media_id",
+        referencedColumnName = "id",
+        foreignKey = @ForeignKey(
+            name = "documento_media_id_fk",
+            foreignKeyDefinition = "FOREIGN KEY (media_id) REFERENCES media (id) ON DELETE SET NULL ON UPDATE CASCADE"
+        )
     )
     private Media mediaId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
-            name = "criador_id",
-            referencedColumnName = "id",
-            foreignKey = @ForeignKey(
-                    name = "criador_id_fk",
-                    foreignKeyDefinition = "FOREIGN KEY (criador_id) REFERENCES usuario (id) ON DELETE RESTRICT ON UPDATE CASCADE"
-            ),
-            nullable = false)
+        name = "criador_id",
+        referencedColumnName = "id",
+        foreignKey = @ForeignKey(
+            name = "criador_id_fk",
+            foreignKeyDefinition = "FOREIGN KEY (criador_id) REFERENCES usuario (id) ON DELETE RESTRICT ON UPDATE CASCADE"
+        ),
+        nullable = false
+    )
     private User createdBy;
 }

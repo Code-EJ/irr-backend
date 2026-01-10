@@ -180,8 +180,8 @@ public class AuthError extends IrrApplicationException {
 
         public ExpiredToken(
             Session session,
-            long expiresAt,
-            long issuedAt,
+            Instant expiresAt,
+            Instant issuedAt,
             Throwable throwable
         ) {
             super("Expired token", throwable);

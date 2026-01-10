@@ -2,10 +2,14 @@ package org.code.api.controllers;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.code.api.domain.enums.UserType;
+import org.code.api.domain.models.user.Session;
+import org.code.api.domain.ports.TokenPort;
 import org.code.api.dto.session.request.LoginRequestDTO;
 import org.code.api.dto.session.request.RegisterRequestDTO;
 import org.code.api.dto.session.response.LoginResponseDTO;
 import org.code.api.dto.session.response.RegisterResponseDTO;
+import org.code.api.infrastructure.security.JWTTokenProvider;
 import org.code.api.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,7 +18,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+
+import java.util.UUID;
 
 @Slf4j
 @Controller

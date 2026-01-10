@@ -69,9 +69,10 @@ public class AuthService implements AuthPort {
                 throw new AuthError.EmailOccupied(email);
             }
 
-            Optional<User> creatorUser = createdBy != null
-                ? userRepository.findById(UUID.fromString(createdBy))
-                : Optional.empty();
+            Optional<User> creatorUser =
+                createdBy != null
+                    ? userRepository.findById(UUID.fromString(createdBy))
+                    : Optional.empty();
 
             if (createdBy != null && creatorUser.isEmpty()) {
                 throw new AuthError.CreatorUserInvalid(createdBy);
