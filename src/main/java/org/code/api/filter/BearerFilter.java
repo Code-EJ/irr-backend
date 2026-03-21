@@ -76,40 +76,10 @@ public class BearerFilter implements Filter {
             return;
         }
 
+        Session session;
+
         try {
-            Session session = authService.getSessionDetails(token);
-
-            log.debug(
-                "Session expiration status (Bearer Filter): {}",
-                session.isExpired()
-            );
-            if (!session.isExpired()) {
-                log.debug("Approved request from {}", session.getEmail());
-                request.setAttribute("session", session);
-                filterChain.doFilter(request, response);
-
-                return;
-            }
-
-            if (session.isOnRenewalGrace()) {
-                response.setHeader("X-Token-Renewal", "true");
-                request.setAttribute("session", session);
-
-                sendRefusedResponse(
-                    response,
-                    "token_on_renewal_grace",
-                    "The provided token is on renewal grace period.",
-                    HttpStatus.UNAUTHORIZED
-                );
-                return;
-            }
-
-            sendExpiredTokenResponse(
-                response,
-                session.getExpiresAt(),
-                session.getIssuedAt()
-            );
-            return;
+            session = authService.getSessionDetails(token);
         } catch (ExpiredToken exception) {
             log.debug(
                 "Refused request {} due to expired token used, issued at: {}, expires at: {}",
@@ -122,6 +92,7 @@ public class BearerFilter implements Filter {
                 exception.getExpiresAt(),
                 exception.getIssuedAt()
             );
+            return;
         } catch (InvalidToken invalidToken) {
             log.debug(
                 "Refused request from {} due to invalid token ",
@@ -134,15 +105,47 @@ public class BearerFilter implements Filter {
                 "The provided token is invalid.",
                 HttpStatus.UNAUTHORIZED
             );
+            return;
         } catch (Exception exception) {
             sendRefusedResponse(
                 response,
                 "invalid_token",
-                "The provided token is invalid",
+                "The provided token is invalid.",
                 HttpStatus.UNAUTHORIZED
             );
             return;
         }
+
+        log.debug(
+            "Session expiration status (Bearer Filter): {}",
+            session.isExpired()
+        );
+
+        if (!session.isExpired()) {
+            log.debug("Approved request from {}", session.getEmail());
+            request.setAttribute("session", session);
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        if (session.isOnRenewalGrace()) {
+            response.setHeader("X-Token-Renewal", "true");
+            request.setAttribute("session", session);
+
+            sendRefusedResponse(
+                response,
+                "token_on_renewal_grace",
+                "The provided token is on renewal grace period.",
+                HttpStatus.UNAUTHORIZED
+            );
+            return;
+        }
+
+        sendExpiredTokenResponse(
+            response,
+            session.getExpiresAt(),
+            session.getIssuedAt()
+        );
     }
 
     private void sendExpiredTokenResponse(

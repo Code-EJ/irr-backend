@@ -2,6 +2,7 @@ package org.code.api.domain.models.logistic;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.code.api.domain.common.TimeStampedEntity;
 
 @AllArgsConstructor
@@ -9,7 +10,7 @@ import org.code.api.domain.common.TimeStampedEntity;
 @Getter
 @Setter
 @ToString
-@Builder
+@SuperBuilder
 @Entity
 @Table(
         name = "veiculo",
@@ -31,5 +32,6 @@ public class Vehicle extends TimeStampedEntity {
     private String modelo;
 
     @Column(name = "ativo", nullable = false)
+        @Builder.Default
     private Boolean ativo = true;
 }
