@@ -1,7 +1,5 @@
 package org.code.api.infrastructure.security;
 
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
 import org.code.api.filter.BearerFilter;
 import org.code.api.filter.LoggingFilter;
 import org.springframework.beans.factory.annotation.Autowired;

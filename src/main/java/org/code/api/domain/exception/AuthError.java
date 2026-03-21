@@ -186,8 +186,8 @@ public class AuthError extends IrrApplicationException {
         ) {
             super("Expired token", throwable);
             this.session = session;
-            this.expiresAt = expiresAt;
-            this.issuedAt = issuedAt;
+            this.expiresAt = Instant.ofEpochSecond(expiresAt);
+            this.issuedAt = Instant.ofEpochSecond(issuedAt);
         }
     }
 }

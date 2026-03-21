@@ -10,6 +10,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.time.Instant;
 import java.util.UUID;
 
+import org.code.api.domain.enums.UserType;
 import org.code.api.domain.exception.AuthError;
 import org.code.api.domain.models.user.Session;
 import org.code.api.domain.ports.TokenPort;
@@ -44,8 +45,9 @@ public class TokenPortTests {
     String token = tokenPort.createToken(Session.builder()
       .id(UUID.randomUUID())
       .email("test@test.com")
-      .issuedAt(now.getEpochSecond())
-      .expiresAt(now.plusSeconds(3600).getEpochSecond())
+      .tipo(UserType.ADMINISTRADOR)
+      .issuedAt(now)
+      .expiresAt(now.plusSeconds(3600))
       .build()
     );
 
@@ -57,13 +59,13 @@ public class TokenPortTests {
   @Test
   @DisplayName("Should decode token and return valid session")
   public void shouldDecodeTokenAndReturnValidSession() {
-    Instant now = Instant.now();
     UUID sessionId = UUID.randomUUID();
     String email = "test@test.com";
 
     Session originalSession = Session.builder()
       .id(sessionId)
       .email(email)
+      .tipo(UserType.ADMINISTRADOR)
       .build();
 
     String token = tokenPort.createToken(originalSession);
@@ -77,13 +79,10 @@ public class TokenPortTests {
   @Test
   @DisplayName("Should renew token from string and return new valid token")
   public void shouldRenewTokenFromStringAndReturnNewToken() {
-    Instant now = Instant.now();
-
     Session originalSession = Session.builder()
       .id(UUID.randomUUID())
       .email("test@test.com")
-      // .issuedAt(now.getEpochSecond())
-      // .expiresAt(now.plusSeconds(3600).getEpochSecond())
+      .tipo(UserType.ADMINISTRADOR)
       .build();
 
     String originalToken = tokenPort.createToken(originalSession);
@@ -98,12 +97,12 @@ public class TokenPortTests {
   @Test
   @DisplayName("Should maintain email when renewing token from string")
   public void shouldMaintainEmailWhenRenewingTokenFromString() {
-    Instant now = Instant.now();
     String email = "test@test.com";
 
     Session originalSession = Session.builder()
       .id(UUID.randomUUID())
       .email(email)
+      .tipo(UserType.ADMINISTRADOR)
       .build();
 
     String originalToken = tokenPort.createToken(originalSession);
@@ -152,8 +151,9 @@ public class TokenPortTests {
     Session session = Session.builder()
       .id(UUID.randomUUID())
       .email("test@test.com")
-      .issuedAt(now.getEpochSecond())
-      .expiresAt(now.plusSeconds(3600).getEpochSecond())
+      .tipo(UserType.ADMINISTRADOR)
+      .issuedAt(now)
+      .expiresAt(now.plusSeconds(3600))
       .build();
 
     String validToken = tokenPort.createToken(session);

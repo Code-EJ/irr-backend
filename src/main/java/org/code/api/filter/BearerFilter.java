@@ -54,7 +54,7 @@ public class BearerFilter implements Filter {
             return;
         }
 
-        if (!authorizationHeader.startsWith("Bearer")) {
+        if (!authorizationHeader.startsWith("Bearer ")) {
             sendRefusedResponse(
                 response,
                 "invalid_authorization_header_format",
@@ -64,8 +64,19 @@ public class BearerFilter implements Filter {
             return;
         }
 
+        String token = authorizationHeader.substring(7).trim();
+
+        if (token.isBlank()) {
+            sendRefusedResponse(
+                response,
+                "invalid_token",
+                "The provided token is invalid.",
+                HttpStatus.UNAUTHORIZED
+            );
+            return;
+        }
+
         try {
-            String token = authorizationHeader.substring(7);
             Session session = authService.getSessionDetails(token);
 
             log.debug(
@@ -146,8 +157,8 @@ public class BearerFilter implements Filter {
             .write(
                 String.format(
                     "{\"error\": \"expired_token\", \"message\": \"The provided token has expired.\", \"expires_at\": %d, \"issued_at\": %d}",
-                    expiresAt,
-                    issuedAt
+                    expiresAt.getEpochSecond(),
+                    issuedAt.getEpochSecond()
                 )
             );
     }

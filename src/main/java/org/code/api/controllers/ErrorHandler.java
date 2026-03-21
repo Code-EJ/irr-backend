@@ -1,6 +1,5 @@
 package org.code.api.controllers;
 
-import java.util.Date;
 import java.util.Map;
 
 import org.code.api.domain.exception.AuthError;
@@ -75,9 +74,10 @@ public class ErrorHandler {
 
     @ExceptionHandler(AuthError.ExpiredToken.class)
     public ResponseEntity<?> handleExpiredToken(AuthError.ExpiredToken exception) {
-        log.debug("Expired token used, issued at: {}, expires at: {}", 
-            new Date(exception.getIssuedAt()), 
-            new Date(exception.getExpiresAt())
+        log.debug(
+            "Expired token used, issued at: {}, expires at: {}",
+            exception.getIssuedAt(),
+            exception.getExpiresAt()
         );
 
         return ResponseEntity
@@ -85,8 +85,8 @@ public class ErrorHandler {
             .body(Map.of(
                 "error", "expired_token",
                 "message", "The provided token has expired.",
-                "expiration_time", exception.getExpiresAt(),
-                "issued_at", exception.getIssuedAt()
+                "expiration_time", exception.getExpiresAt().getEpochSecond(),
+                "issued_at", exception.getIssuedAt().getEpochSecond()
             ));
     }
 
