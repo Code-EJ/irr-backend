@@ -17,7 +17,7 @@ request() {
   local auth="${3:-}"
   local data="${4:-}"
 
-  local args=(-s -o "$TMP_BODY" -w "%{http_code}" -X "$method" "$url")
+  local args=( -o "$TMP_BODY" -w "%{http_code}" -X "$method" "$url")
 
   if [[ -n "$auth" ]]; then
     args+=(-H "Authorization: Bearer $auth")

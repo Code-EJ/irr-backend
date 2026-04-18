@@ -3,8 +3,8 @@ set -euo pipefail
 
 BASE_URL="${BASE_URL:-http://localhost:8081}"
 TOKEN="${TOKEN:-}"
-PLACA="${PLACA:-ABC1D23}"
-MODELO="${MODELO:-Fiorino}"
+PLACA="${PLACA:-ZYXW1}"
+MODELO="${MODELO:-PALIO1}"
 
 if [[ -z "${TOKEN}" ]]; then
   echo "Defina TOKEN para criar veículo."
@@ -12,7 +12,7 @@ if [[ -z "${TOKEN}" ]]; then
   exit 1
 fi
 
-curl -s -i -X POST "${BASE_URL}/api/veiculo" \
+curl -i -X POST "${BASE_URL}/api/veiculos" \
   -H 'Content-Type: application/json' \
   -H "Authorization: Bearer ${TOKEN}" \
   -d "{\"placa\":\"${PLACA}\",\"modelo\":\"${MODELO}\"}"

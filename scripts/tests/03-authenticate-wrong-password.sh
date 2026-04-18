@@ -11,7 +11,7 @@ if [[ -z "${EMAIL}" ]]; then
   exit 1
 fi
 
-curl -s -i -X POST "${BASE_URL}/api/session/authenticate" \
+curl -i -X POST "${BASE_URL}/api/session/authenticate" \
   -H 'Content-Type: application/json' \
   -d "{\"email\":\"${EMAIL}\",\"senha\":\"${WRONG_PASSWORD}\"}"
 
