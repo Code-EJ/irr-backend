@@ -3,6 +3,7 @@ package org.code.api.controllers;
 import java.util.Map;
 
 import org.code.api.domain.exception.AuthError;
+import org.code.api.domain.exception.VehicleError;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -117,5 +118,63 @@ public class ErrorHandler {
                 "message", "The provided password exceeds the maximum allowed length of 72 bytes.",
                 "password_length", exception.getPasswordLength()
             ));
+    }
+
+    @ExceptionHandler(VehicleError.NotFound.class)
+    public ResponseEntity<?> handleVehicleNotFound(VehicleError.NotFound exception) {
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(
+                Map.of(
+                    "error", "vehicle_not_found",
+                    "message", "Vehicle not found",
+                    "vehicle_id", exception.getVehicleId()
+                )
+            );
+    }
+
+    @ExceptionHandler(VehicleError.PlateAlreadyExists.class)
+    public ResponseEntity<?> handleVehiclePlateAlreadyExists(
+        VehicleError.PlateAlreadyExists exception
+    ) {
+        return ResponseEntity
+            .status(HttpStatus.CONFLICT)
+            .body(
+                Map.of(
+                    "error", "vehicle_plate_occupied",
+                    "message", "Vehicle plate is already in use",
+                    "placa", exception.getPlaca()
+                )
+            );
+    }
+
+    @ExceptionHandler(VehicleError.SessionUserNotFound.class)
+    public ResponseEntity<?> handleVehicleSessionUserNotFound(
+        VehicleError.SessionUserNotFound exception
+    ) {
+        return ResponseEntity
+            .status(HttpStatus.UNAUTHORIZED)
+            .body(
+                Map.of(
+                    "error", "invalid_session_user",
+                    "message", "Authenticated user not found",
+                    "user_id", exception.getUserId()
+                )
+            );
+    }
+
+    @ExceptionHandler(VehicleError.AccessDenied.class)
+    public ResponseEntity<?> handleVehicleAccessDenied(
+        VehicleError.AccessDenied exception
+    ) {
+        return ResponseEntity
+            .status(HttpStatus.FORBIDDEN)
+            .body(
+                Map.of(
+                    "error", "vehicle_access_denied",
+                    "message", "Only administrators can deactivate vehicles",
+                    "user_type", exception.getUserType().name()
+                )
+            );
     }
 }
