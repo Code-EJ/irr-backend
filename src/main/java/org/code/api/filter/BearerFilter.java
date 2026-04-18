@@ -9,6 +9,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Instant;
+import java.util.List;
+
 import lombok.extern.slf4j.Slf4j;
 import org.code.api.domain.exception.AuthError.ExpiredToken;
 import org.code.api.domain.exception.AuthError.InvalidToken;
@@ -16,8 +18,28 @@ import org.code.api.domain.models.user.Session;
 import org.code.api.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 
+/**
+ * Filtro de segurança customizado responsável pela interceptação de requisições HTTP,
+ * validação de tokens JWT (Bearer) e injeção do usuário no contexto de segurança global.
+ *
+ * <p>O fluxo de trabalho principal consiste em:
+ * <ol>
+ * <li>Ignorar rotas de bypass (como autenticação inicial).</li>
+ * <li>Extrair e formatar o cabeçalho {@code Authorization}.</li>
+ * <li>Validar a criptografia, expiração e integridade do token via {@link AuthService}.</li>
+ * <li>Traduzir a {@code Session} decodificada para um {@link UsernamePasswordAuthenticationToken}
+ * do Spring Security, populando as roles (autoridades) para viabilizar o uso do {@code @PreAuthorize}.</li>
+ * </ol>
+ *
+ * @implNote Implementa uma regra de "Renewal Grace Period" que avisa o frontend
+ * (via header {@code X-Token-Renewal}) sobre a necessidade de renovação do token.
+ */
 @Slf4j
 @Component
 public class BearerFilter implements Filter {
@@ -123,7 +145,22 @@ public class BearerFilter implements Filter {
 
         if (!session.isExpired()) {
             log.debug("Approved request from {}", session.getEmail());
+
+            String rolename = "ROLE_" + session.getTipo().name();
+            List<SimpleGrantedAuthority> authorityList = List.of(new SimpleGrantedAuthority(rolename));
+
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                    session.getId(),
+                    null,
+                    authorityList
+            );
+
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
             request.setAttribute("session", session);
+
             filterChain.doFilter(request, response);
             return;
         }

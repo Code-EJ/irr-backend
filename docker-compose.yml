@@ -10,4 +10,4 @@ services:
       POSTGRES_DB: irr
 
     ports:
-      - "5432:5432"
+      - "5435:5435"

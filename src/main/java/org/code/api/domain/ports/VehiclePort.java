@@ -1,23 +1,22 @@
 package org.code.api.domain.ports;
 
-import java.util.List;
-import org.code.api.domain.models.user.Session;
 import org.code.api.dto.logistic.vehicle.request.VehicleCreateRequestDTO;
 import org.code.api.dto.logistic.vehicle.request.VehicleUpdateRequestDTO;
 import org.code.api.dto.logistic.vehicle.response.VehicleResponseDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface VehiclePort {
-    VehicleResponseDTO create(VehicleCreateRequestDTO data, Session session);
+    VehicleResponseDTO create(VehicleCreateRequestDTO data);
 
-    List<VehicleResponseDTO> list(Session session);
+    Page<VehicleResponseDTO> list(Pageable pageable);
 
-    VehicleResponseDTO getById(Integer id, Session session);
+    VehicleResponseDTO getById(Integer id);
 
     VehicleResponseDTO update(
         Integer id,
-        VehicleUpdateRequestDTO data,
-        Session session
+        VehicleUpdateRequestDTO data
     );
 
-    void deactivate(Integer id, Session session);
+    void deactivate(Integer id);
 }

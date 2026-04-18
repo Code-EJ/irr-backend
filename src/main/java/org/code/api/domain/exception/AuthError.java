@@ -15,6 +15,19 @@ public class AuthError extends IrrApplicationException {
         super("Auth", message);
     }
 
+
+    public static class Unauthorized extends AuthError {
+        public Unauthorized(String message) {
+            super(message);
+        }
+    }
+
+    public static class InternalServerError extends AuthError {
+        public InternalServerError(String message) {
+            super(message);
+        }
+    }
+
     /**
      * Esse erro é lançado quando o usuário criador (createdBy) fornecido
      * para o cadastro de um novo usuário é inválido (não existe no banco de dados ou id é mal formatado).

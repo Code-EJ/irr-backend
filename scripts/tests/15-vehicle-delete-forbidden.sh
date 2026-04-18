@@ -11,7 +11,7 @@ if [[ -z "${NON_ADMIN_TOKEN}" ]]; then
   exit 1
 fi
 
-STATUS=$(curl -s -o /tmp/vehicle_delete_forbidden_body.json -w "%{http_code}" \
+STATUS=$(curl -o /tmp/vehicle_delete_forbidden_body.json -w "%{http_code}" \
   -X DELETE "${BASE_URL}/api/veiculo/${ID}" \
   -H "Authorization: Bearer ${NON_ADMIN_TOKEN}")
 

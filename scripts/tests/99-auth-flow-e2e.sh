@@ -7,14 +7,14 @@ PASSWORD="${PASSWORD:-SenhaForte123}"
 NAME="${NAME:-Curl E2E}"
 
 echo "=== REGISTER ==="
-REGISTER_RESPONSE=$(curl -s -X POST "${BASE_URL}/api/session/register" \
+REGISTER_RESPONSE=$(curl -X POST "${BASE_URL}/api/session/register" \
   -H 'Content-Type: application/json' \
   -d "{\"nome\":\"${NAME}\",\"email\":\"${EMAIL}\",\"senha\":\"${PASSWORD}\"}")
 
 echo "${REGISTER_RESPONSE}"
 
 echo "=== AUTHENTICATE ==="
-AUTH_RESPONSE=$(curl -s -X POST "${BASE_URL}/api/session/authenticate" \
+AUTH_RESPONSE=$(curl -X POST "${BASE_URL}/api/session/authenticate" \
   -H 'Content-Type: application/json' \
   -d "{\"email\":\"${EMAIL}\",\"senha\":\"${PASSWORD}\"}")
 

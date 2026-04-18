@@ -3,9 +3,9 @@ set -euo pipefail
 
 BASE_URL="${BASE_URL:-http://localhost:8081}"
 TOKEN="${TOKEN:-}"
-ID="${ID:-1}"
-PLACA="${PLACA:-ABC1D23}"
-MODELO="${MODELO:-Fiorino Atualizada}"
+ID="${ID:-2}"
+PLACA="${PLACA:-000000}"
+MODELO="${MODELO:-Fiorino}"
 ATIVO="${ATIVO:-true}"
 
 if [[ -z "${TOKEN}" ]]; then
@@ -14,7 +14,7 @@ if [[ -z "${TOKEN}" ]]; then
   exit 1
 fi
 
-curl -s -i -X PUT "${BASE_URL}/api/veiculo/${ID}" \
+curl -i -X PUT "${BASE_URL}/api/veiculos/${ID}" \
   -H 'Content-Type: application/json' \
   -H "Authorization: Bearer ${TOKEN}" \
   -d "{\"placa\":\"${PLACA}\",\"modelo\":\"${MODELO}\",\"ativo\":${ATIVO}}"

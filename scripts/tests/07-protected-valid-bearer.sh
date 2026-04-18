@@ -10,7 +10,7 @@ if [[ -z "${TOKEN}" ]]; then
   exit 1
 fi
 
-curl -s -i -X GET "${BASE_URL}/api/motorista/ok" \
+curl -i -X GET "${BASE_URL}/api/motorista/ok" \
   -H "Authorization: Bearer ${TOKEN}"
 
 echo

@@ -11,7 +11,7 @@ if [[ -z "${TOKEN}" ]]; then
   exit 1
 fi
 
-curl -s -i -X DELETE "${BASE_URL}/api/veiculo/${ID}" \
+curl -i -X DELETE "${BASE_URL}/api/veiculos/${ID}" \
   -H "Authorization: Bearer ${TOKEN}"
 
 echo
