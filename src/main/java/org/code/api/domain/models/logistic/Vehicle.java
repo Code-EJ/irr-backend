@@ -5,6 +5,19 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.code.api.domain.common.TimeStampedEntity;
 
+/**
+ * Entidade central do domínio de Logística que representa um Veículo físico da frota.
+ *
+ * <p>Esta classe implementa o padrão de <b>Rich Domain Model (DDD)</b>, o que significa que
+ * ela não expõe setters públicos de forma anêmica. Toda alteração de estado (como inativação
+ * ou alteração de placa) é feita através de métodos de negócio que protegem as invariantes
+ * da classe.
+ *
+ * @see org.code.api.domain.common.TimeStampedEntity
+ * @implNote O campo {@code ativo} é implementado como um tipo primitivo {@code boolean} para
+ * mitigar riscos de {@link NullPointerException} no motor da JVM, visto que a coluna
+ * de banco de dados associada não aceita valores nulos.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
