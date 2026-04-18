@@ -34,4 +34,22 @@ public class Vehicle extends TimeStampedEntity {
     @Column(name = "ativo", nullable = false)
         @Builder.Default
     private Boolean ativo = true;
+
+    public void deactivate() {
+        this.ativo = false;
+    }
+
+    public void activate() {
+        this.ativo = true;
+    }
+
+    public void update(String novaPlaca, String novoModelo, boolean novoAtivo) {
+        this.placa = novaPlaca;
+        this.modelo = novoModelo;
+        this.ativo = novoAtivo;
+    }
+
+    public boolean isActive() {
+        return ativo;
+    }
 }

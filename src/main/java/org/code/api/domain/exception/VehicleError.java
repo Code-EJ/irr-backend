@@ -9,6 +9,13 @@ public class VehicleError extends RuntimeException {
         super(message);
     }
 
+
+    public static class InactiveVehicle extends VehicleError {
+        public InactiveVehicle(Integer id) {
+            super(String.format("O veículo de ID %d está inativo e não pode ser modificado.", id));
+        }
+    }
+
     @Getter
     public static class PlateAlreadyExists extends VehicleError {
 

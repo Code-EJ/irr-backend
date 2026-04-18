@@ -22,24 +22,6 @@ public class SpringSecurityUserProvider implements AuthenticatedUserProvider {
 
     @Override
     public UUID getCurrentUserId() {
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-
-        if (requestAttributes instanceof ServletRequestAttributes) {
-            HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
-            Object sessionObj = request.getAttribute("session");
-
-            if  (sessionObj instanceof Session) {
-                Session session = (Session) sessionObj;
-
-                Object idObj = session.getId();
-
-                if (idObj instanceof UUID) {
-                    return (UUID) idObj;
-                } else if (idObj instanceof String) {
-                    return UUID.fromString((String) idObj);
-                }
-            }
-        }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 

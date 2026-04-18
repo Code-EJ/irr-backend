@@ -9,6 +9,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Instant;
+import java.util.List;
+
 import lombok.extern.slf4j.Slf4j;
 import org.code.api.domain.exception.AuthError.ExpiredToken;
 import org.code.api.domain.exception.AuthError.InvalidToken;
@@ -16,6 +18,10 @@ import org.code.api.domain.models.user.Session;
 import org.code.api.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -123,7 +129,22 @@ public class BearerFilter implements Filter {
 
         if (!session.isExpired()) {
             log.debug("Approved request from {}", session.getEmail());
+
+            String rolename = "ROLE_" + session.getTipo().name();
+            List<SimpleGrantedAuthority> authorityList = List.of(new SimpleGrantedAuthority(rolename));
+
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                    session.getId(),
+                    null,
+                    authorityList
+            );
+
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
             request.setAttribute("session", session);
+
             filterChain.doFilter(request, response);
             return;
         }
