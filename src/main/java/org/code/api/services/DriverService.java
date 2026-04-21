@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.code.api.domain.models.logistic.Driver;
+import org.code.api.domain.ports.DriverPort;
 import org.code.api.dto.driver.DriverRequestDTO;
 import org.code.api.dto.driver.DriverResponseDTO;
 import org.code.api.exceptions.DuplicateResourceException;
@@ -16,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class DriverService {
+public class DriverService implements DriverPort {
 
     private final DriverRepository driverRepository;
 

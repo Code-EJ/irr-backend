@@ -5,6 +5,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.code.api.domain.models.user.User;
+import org.code.api.domain.ports.UserPort;
 import org.code.api.dto.user.UserRequestDTO;
 import org.code.api.dto.user.UserResponseDTO;
 import org.code.api.exceptions.DuplicateResourceException;
@@ -19,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserPort {
     private final UserRepository userRepository;
     
     @Transactional
