@@ -90,7 +90,7 @@ public class AuthService implements AuthPort {
                     .senha(encryptedPassword)
                     .email(email)
                     .createdBy(creatorUser.orElse(null))
-                    .tipo(UserType.ADMINISTRADOR)
+                    .tipo(UserType.REPRESENTANTE)
                     .updatedAt(now)
                     .createdAt(now)
                     .build()
@@ -100,7 +100,7 @@ public class AuthService implements AuthPort {
                 Session.builder()
                     .id(user.getId())
                     .email(user.getEmail())
-                    .tipo(UserType.ADMINISTRADOR)
+                    .tipo(UserType.REPRESENTANTE)
                     .build()
             );
 

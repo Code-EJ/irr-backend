@@ -45,11 +45,11 @@ assert_status() {
 }
 
 echo "== 1) Proteção sem Authorization =="
-code=$(request GET "${BASE_URL}/api/motorista/ok")
+code=$(request GET "${BASE_URL}/api/motoristas/ok")
 assert_status "$code" "401" "protected without auth"
 
 echo "== 2) Proteção com Bearer inválido =="
-code=$(request GET "${BASE_URL}/api/motorista/ok" "token-invalido")
+code=$(request GET "${BASE_URL}/api/motoristas/ok" "token-invalido")
 assert_status "$code" "401" "protected with invalid bearer"
 
 echo "== 3) Register usuário =="
@@ -67,36 +67,36 @@ assert_status "$code" "200" "authenticate"
 TOKEN=$(python3 -c 'import sys,json; print(json.load(sys.stdin)["token"])' < "$TMP_BODY")
 
 echo "== 5) Proteção com token válido =="
-code=$(request GET "${BASE_URL}/api/motorista/ok" "$TOKEN")
+code=$(request GET "${BASE_URL}/api/motoristas/ok" "$TOKEN")
 assert_status "$code" "200" "protected with valid token"
 
 echo "== 6) Criar veículo =="
 vehicle_create="{\"placa\":\"${PLACA}\",\"modelo\":\"${MODELO}\"}"
-code=$(request POST "${BASE_URL}/api/veiculo" "$TOKEN" "$vehicle_create")
+code=$(request POST "${BASE_URL}/api/veiculos" "$TOKEN" "$vehicle_create")
 assert_status "$code" "201" "vehicle create"
 
 VEHICLE_ID=$(python3 -c 'import sys,json; print(json.load(sys.stdin)["id"])' < "$TMP_BODY")
 
 echo "== 7) Criar veículo duplicado (espera 409) =="
-code=$(request POST "${BASE_URL}/api/veiculo" "$TOKEN" "$vehicle_create")
+code=$(request POST "${BASE_URL}/api/veiculos" "$TOKEN" "$vehicle_create")
 assert_status "$code" "409" "vehicle duplicate plate"
 
 echo "== 8) Listar veículos =="
-code=$(request GET "${BASE_URL}/api/veiculo" "$TOKEN")
+code=$(request GET "${BASE_URL}/api/veiculos" "$TOKEN")
 assert_status "$code" "200" "vehicle list"
 
 echo "== 9) Buscar veículo por id =="
-code=$(request GET "${BASE_URL}/api/veiculo/${VEHICLE_ID}" "$TOKEN")
+code=$(request GET "${BASE_URL}/api/veiculos/${VEHICLE_ID}" "$TOKEN")
 assert_status "$code" "200" "vehicle get by id"
 
 echo "== 10) Atualizar veículo =="
 vehicle_update="{\"placa\":\"${PLACA}\",\"modelo\":\"${MODELO} Atualizado\",\"ativo\":true}"
-code=$(request PUT "${BASE_URL}/api/veiculo/${VEHICLE_ID}" "$TOKEN" "$vehicle_update")
+code=$(request PUT "${BASE_URL}/api/veiculos/${VEHICLE_ID}" "$TOKEN" "$vehicle_update")
 assert_status "$code" "200" "vehicle update"
 
 if [[ -n "$NON_ADMIN_TOKEN" ]]; then
   echo "== 11) Desativar veículo com não-admin (espera 403) =="
-  code=$(request DELETE "${BASE_URL}/api/veiculo/${VEHICLE_ID}" "$NON_ADMIN_TOKEN")
+  code=$(request DELETE "${BASE_URL}/api/veiculos/${VEHICLE_ID}" "$NON_ADMIN_TOKEN")
   assert_status "$code" "403" "vehicle delete forbidden for non-admin"
 else
   echo "== 11) Desativar veículo com não-admin =="
@@ -104,11 +104,11 @@ else
 fi
 
 echo "== 12) Desativar veículo com admin =="
-code=$(request DELETE "${BASE_URL}/api/veiculo/${VEHICLE_ID}" "$TOKEN")
+code=$(request DELETE "${BASE_URL}/api/veiculos/${VEHICLE_ID}" "$TOKEN")
 assert_status "$code" "204" "vehicle soft delete"
 
 echo "== 13) Confirmar veículo desativado =="
-code=$(request GET "${BASE_URL}/api/veiculo/${VEHICLE_ID}" "$TOKEN")
+code=$(request GET "${BASE_URL}/api/veiculos/${VEHICLE_ID}" "$TOKEN")
 assert_status "$code" "200" "vehicle fetch after delete"
 
 ATIVO=$(python3 -c 'import sys,json; print(str(json.load(sys.stdin)["ativo"]).lower())' < "$TMP_BODY")

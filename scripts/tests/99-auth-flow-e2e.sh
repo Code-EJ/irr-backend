@@ -22,8 +22,8 @@ echo "${AUTH_RESPONSE}"
 
 TOKEN=$(python3 -c 'import sys,json; print(json.loads(sys.stdin.read())["token"])' <<< "${AUTH_RESPONSE}")
 
-echo "=== PROTECTED /api/motorista/ok ==="
-curl -s -i -X GET "${BASE_URL}/api/motorista/ok" \
+echo "=== PROTECTED /api/motoristas/ok ==="
+curl -s -i -X GET "${BASE_URL}/api/motoristas/ok" \
   -H "Authorization: Bearer ${TOKEN}"
 
 echo
