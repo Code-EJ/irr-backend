@@ -1,6 +1,6 @@
 package org.code.api.services;
 
-import org.code.api.interfaces.ReportPort;
+import org.code.api.domain.ports.ReportPort;
 import org.springframework.stereotype.Service;
 
 @Service

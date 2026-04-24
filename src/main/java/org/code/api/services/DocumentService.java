@@ -3,5 +3,4 @@ package org.code.api.services;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DocumentService {
-}
+public class DocumentService {}

@@ -1,0 +1,13 @@
+services:
+  database:
+    container_name: irr_database
+    image: postgres:16
+    restart: always
+
+    environment:
+      POSTGRES_USER: irr_admin
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: irr
+
+    ports:
+      - "5435:5435"
