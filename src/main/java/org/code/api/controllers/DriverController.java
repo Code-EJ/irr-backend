@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Controller
 @Slf4j
-@RequestMapping("/api/motorista")
+@RequestMapping("/api/motoristas")
 public class DriverController {
 
     @PostConstruct

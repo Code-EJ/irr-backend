@@ -3,7 +3,7 @@ set -euo pipefail
 
 BASE_URL="${BASE_URL:-http://localhost:8081}"
 TOKEN="${TOKEN:-}"
-ID="${ID:-1}"
+ID="${ID:-2}"
 
 if [[ -z "${TOKEN}" ]]; then
   echo "Defina TOKEN para desativar veículo."

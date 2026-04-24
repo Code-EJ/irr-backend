@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/documento")
+@RequestMapping("/api/documentos")
 public class DocumentController {
 
   // @Autowired

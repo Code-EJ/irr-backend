@@ -44,4 +44,4 @@ Exemplo:
 ### Observação sobre `100-full-app-flow.sh`
 
 - Sem `NON_ADMIN_TOKEN`, o script executa todo o fluxo e **pula** a validação de `403` para não-admin.
-- Com `NON_ADMIN_TOKEN`, o script também valida o cenário de autorização no `DELETE /api/veiculo/{id}`.
+- Com `NON_ADMIN_TOKEN`, o script também valida o cenário de autorização no `DELETE /api/veiculos/{id}`.

@@ -3,7 +3,7 @@ set -euo pipefail
 
 BASE_URL="${BASE_URL:-http://localhost:8081}"
 NON_ADMIN_TOKEN="${NON_ADMIN_TOKEN:-}"
-ID="${ID:-1}"
+ID="${ID:-2}"
 
 if [[ -z "${NON_ADMIN_TOKEN}" ]]; then
   echo "Defina NON_ADMIN_TOKEN para validar acesso negado no delete de veículo."
@@ -12,7 +12,7 @@ if [[ -z "${NON_ADMIN_TOKEN}" ]]; then
 fi
 
 STATUS=$(curl -o /tmp/vehicle_delete_forbidden_body.json -w "%{http_code}" \
-  -X DELETE "${BASE_URL}/api/veiculo/${ID}" \
+  -X DELETE "${BASE_URL}/api/veiculos/${ID}" \
   -H "Authorization: Bearer ${NON_ADMIN_TOKEN}")
 
 cat /tmp/vehicle_delete_forbidden_body.json
