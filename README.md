@@ -47,13 +47,13 @@ A arquitetura pode ser vista com mais detalhes na pasta [`docs/architecture/read
 ```text
 src/main/java/org/code/api/
 │
-├── controllers/        # 
+├── controllers/        # Controladores REST e endpoints da API
 ├── domain/             # Entidades e regras de domínio
 ├── dto/                # Data Transfer Objects
 ├── repositories/       # Repositórios
 ├── services/           # Serviços
-├── interfaces/         # 
-└── utils/              # 
+├── interfaces/         # Contratos e abstrações entre camadas
+└── utils/              # Utilitários e funções auxiliares compartilhadas
 ```
 
 ## 🚀 Como Executar o Projeto
