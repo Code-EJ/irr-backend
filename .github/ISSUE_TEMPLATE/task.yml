@@ -1,0 +1,31 @@
+name: 🧩 Task
+description: Tarefa técnica ou operacional
+title: "[TASK]: "
+labels:
+  - task
+body:
+  - type: textarea
+    attributes:
+      label: Descrição
+      description: O que precisa ser feito?
+      placeholder: Descreva a tarefa de forma objetiva.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Critérios de Conclusão
+      description: Como saber que essa task está pronta?
+      placeholder: |
+        - [ ] Implementação concluída
+        - [ ] Testado
+        - [ ] Revisado
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Observações
+      description: Contexto adicional, links ou dependências.
+    validations:
+      required: false
