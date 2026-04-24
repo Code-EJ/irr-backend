@@ -1,189 +1,132 @@
-# Backend — Projeto IRR
+# 📦 Backend — Projeto IRR
 
-## Visão Geral
+<p align="center">
+    <img src="https://img.shields.io/badge/Java-21+-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java 21+"/>
+    <img src="https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring&logoColor=white" alt="Spring Boot"/>
+    <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL"/>
+    <img src="https://img.shields.io/badge/Maven-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white" alt="Maven"/>
+</p>
 
-O backend do Projeto IRR é responsável pela implementação da lógica de negócio, gerenciamento de dados e exposição de uma API REST utilizada pelo frontend da aplicação.
+## 📖 Visão Geral
 
-A aplicação foi desenvolvida utilizando Spring Boot e tem como objetivo fornecer uma estrutura organizada e escalável para o controle de entradas e saídas de materiais, bem como o gerenciamento das entidades do sistema.
+O backend do **Projeto IRR** é responsável pela lógica de negócio, persistência de dados e exposição de uma API REST para consumo pelo frontend.
 
----
+A aplicação foi desenvolvida com **Java 21+** e **Spring Boot**, seguindo princípios de **Clean Architecture** para manter baixo acoplamento, alta coesão e facilidade de evolução.
 
-## Objetivo
+## 🎯 Objetivos
 
-O backend tem como principais objetivos:
+- **Integridade de dados:** persistência segura e consistente em banco relacional.
+- **Regras de negócio:** validações e fluxos de entrada/saída de materiais e usuários.
+- **Integração:** endpoints REST padronizados para a camada de apresentação.
+- **Escalabilidade:** estrutura modular para suportar crescimento contínuo.
 
-- Implementar as regras de negócio do sistema
-- Gerenciar e persistir os dados no banco de dados
-- Expor endpoints REST para consumo pelo frontend
-- Garantir organização, consistência e escalabilidade da aplicação
+## 🛠️ Tecnologias Utilizadas
 
----
+**Core**
+- Java 21+
+- Spring Boot (Web, Validation, Security)
+- Spring Data JPA / Hibernate
 
-## Tecnologias Utilizadas
+**Infraestrutura e Dados:**
+- PostgreSQL (SGDB)
+- Apache Maven (Build Tool)
 
-- Java
-- Spring Boot
-- Spring Web
-- Spring Data JPA
-- Hibernate
-- Banco de dados relacional (PostgreSQL, MySQL ou similar)
-- Maven ou Gradle
+## 🏗️ Arquitetura (Clean Architecture)
 
----
+A arquitetura pode ser vista com mais detalhes na pasta [`docs/architecture/readme.md`](docs/architecture/readme.md).
 
-## Arquitetura da Aplicação
+### Camadas
 
-O backend segue uma arquitetura em camadas, organizada da seguinte forma:
+- **Entities (Domain):** regras de negócio centrais e independentes de frameworks.
+- **Use Cases (Application):** orquestração dos fluxos da aplicação.
+- **Interface Adapters:** controllers, DTOs e mapeamentos de entrada/saída.
+- **Infrastructure:** implementações técnicas (JPA, banco, integrações externas).
 
-```
-Controller  →  Service  →  Repository  →  Banco de Dados
-```
+## 📂 Estrutura do Projeto
 
-- **Controller**: responsável por receber requisições HTTP
-- **Service**: responsável pela lógica de negócio
-- **Repository**: responsável pela comunicação com o banco de dados
-- **Database**: responsável pela persistência dos dados
-
-Essa separação facilita a manutenção, testes e evolução do sistema.
-
----
-
-## Estrutura do Projeto
-
-Exemplo de organização:
-
-```
-src/main/java/
+```text
+src/main/java/org/code/api/
 │
-├── controller/      # Endpoints da API
-├── service/         # Regras de negócio
-├── repository/      # Acesso ao banco de dados
-├── model/           # Entidades do sistema
-├── dto/             # Objetos de transferência de dados (se houver)
-└── config/          # Configurações da aplicação
+├── controllers/        # 
+├── domain/             # Entidades e regras de domínio
+├── dto/                # Data Transfer Objects
+├── repositories/       # Repositórios
+├── services/           # Serviços
+├── interfaces/         # 
+└── utils/              # 
 ```
 
----
-
-## Como Executar o Projeto
+## 🚀 Como Executar o Projeto
 
 ### Pré-requisitos
 
-- Java (versão 17 ou superior recomendada)
-- Maven ou Gradle
-- Banco de dados configurado
+- Java 21 ou superior instalado e configurado no `PATH`
+- Maven instalado
+- PostgreSQL rodando localmente (ou via Docker)
 
----
+### 1. Configuração do Banco de Dados
 
-### Configuração
-
-Configurar o arquivo `application.properties` ou `application.yml` com as informações do banco de dados:
+Configure suas credenciais locais em `src/main/resources/application.properties`:
 
 ```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/seu_banco
-spring.datasource.username=usuario
-spring.datasource.password=senha
+spring.application.name=irr
+
+spring.datasource.url=jdbc:mysql://localhost:3306/your_database_name
+spring.datasource.username=your_username
+spring.datasource.password=your_password   
+
 ```
 
----
+> Dica: usando Docker, você pode subir o banco rapidamente:
+>
+> ```bash
+> docker run --name irr-postgres -e POSTGRES_PASSWORD=sua_senha -p 5432:5432 -d postgres
+> ```
 
-### Execução
+### 2. Compilação e Execução
 
-Com Maven:
+No terminal, na raiz do projeto:
 
 ```bash
+# Baixar dependências e compilar
+mvn clean install
+
+# Subir a aplicação
 mvn spring-boot:run
 ```
 
-Ou executar diretamente a classe principal da aplicação no IDE.
+<!-- A API estará disponível em: `http://localhost:8081`
 
-O backend será iniciado normalmente em:
+## 🔌 Documentação da API (Endpoints)
 
-```
-http://localhost:8080
-```
+Recomendado: acesse o Swagger UI para testar as rotas interativamente em:
 
----
+`http://localhost:8081/swagger-ui.html`
 
-## API REST
+Principais recursos expostos:
 
-O backend expõe endpoints REST para manipulação dos dados do sistema.
+| Recurso  | Rota Base                 | Descrição                                 |
+|----------|---------------------------|-------------------------------------------|
+| Usuários | `/api/usuarios`           | Gestão de acesso e perfis.                |
+| Doações  | `/api/doacoes`            | Registro e acompanhamento de doações.     |
+| Entradas | `/api/materiais/entrada`  | Registro de inbound de materiais.         |
+| Saídas   | `/api/materiais/saida`    | Registro de outbound de materiais.        | -->
 
-Exemplos de rotas:
+<!-- ## 🧬 Principais Entidades do Domínio
 
-```
-GET /usuarios
-POST /usuarios
+- **Usuário:** atores que interagem com o sistema.
+- **Documento:** registros fiscais ou de controle.
+- **Doação:** entidade que conecta materiais a doadores/receptores.
+- **Tipologia / Subtipologia:** categorização em árvore dos materiais. -->
 
-GET /doacoes
-POST /doacoes
+## 🤝 Como Contribuir
 
-GET /materialEntrada
-GET /materialSaida
-```
-
-As rotas completas devem ser documentadas no arquivo de rotas da API.
-
----
-
-## Entidades do Sistema
-
-O sistema é baseado em entidades que representam os principais dados do domínio, como:
-
-- Usuário
-- Documento
-- Doação
-- Material de Entrada
-- Material de Saída
-- Tipologia
-- Subtipologia
-
-Essas entidades são mapeadas utilizando JPA e persistidas no banco de dados.
-
----
-
-## Integração com o Frontend
-
-O backend se comunica com o frontend através de requisições HTTP.
-
-O frontend consome os endpoints expostos pela API para:
-
-- recuperar dados
-- enviar novos registros
-- atualizar informações
-- excluir registros
-
----
-
-## Boas Práticas
-
-- Separar responsabilidades entre camadas (Controller, Service, Repository)
-- Evitar lógica de negócio em Controllers
-- Utilizar DTOs para comunicação externa quando necessário
-- Manter nomes de entidades e campos consistentes
-- Escrever código limpo e organizado
-
----
-
-## Observações
-
-> Este projeto está em desenvolvimento e pode sofrer alterações na estrutura e nas funcionalidades.
-
-> A modelagem do banco de dados e as rotas da API podem evoluir ao longo do projeto.
-
----
-
-## Contribuição
-
-Para contribuir com o projeto:
-
-1. Criar uma branch para a funcionalidade ou correção
-2. Desenvolver a alteração proposta
-3. Realizar commits claros e organizados
-4. Abrir um Pull Request para revisão
-
----
-
-## Projeto IRR
-
-Este backend faz parte do Projeto IRR, desenvolvido pela Code JR, com foco em aprendizado, organização e evolução contínua dos membros da equipe.
+1. Faça o fork ou clone do projeto.
+2. Crie uma branch para sua feature ou correção:  
+    `git checkout -b feature/minha-feature`
+3. Desenvolva e teste suas alterações.
+4. Faça commits descritivos seguindo Conventional Commits  
+    (ex.: `feat: adiciona endpoint de doação`).
+5. Faça push para sua branch:  
+    `git push origin feature/minha-feature`
+6. Abra um Pull Request.
