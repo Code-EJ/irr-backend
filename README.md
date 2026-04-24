@@ -71,9 +71,9 @@ Configure suas credenciais locais em `src/main/resources/application.properties`
 ```properties
 spring.application.name=irr
 
-spring.datasource.url=jdbc:mysql://localhost:3306/your_database_name
+spring.datasource.url=jdbc:postgresql://localhost:5432/your_database_name
 spring.datasource.username=your_username
-spring.datasource.password=your_password   
+spring.datasource.password=your_password
 
 ```
 
