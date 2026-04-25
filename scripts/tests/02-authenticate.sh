@@ -3,7 +3,7 @@ set -euo pipefail
 
 BASE_URL="${BASE_URL:-http://localhost:8081}"
 EMAIL="${EMAIL:-}"
-PASSWORD="${PASSWORD:-SenhaForte123}"
+PASSWORD="${PASSWORD:-SenhaForte!123}"
 
 if [[ -z "${EMAIL}" ]]; then
   echo "Defina EMAIL para autenticar."

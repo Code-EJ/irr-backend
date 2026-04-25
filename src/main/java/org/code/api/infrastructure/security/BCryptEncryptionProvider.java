@@ -1,7 +1,7 @@
 package org.code.api.infrastructure.security;
 
 import org.code.api.domain.exception.AuthError;
-import org.code.api.domain.ports.EncryptionPort;
+import org.code.api.domain.ports.HashingPort;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 
 @Component
 @AllArgsConstructor
-public class BCryptEncryptionProvider implements EncryptionPort {
+public class BCryptEncryptionProvider implements HashingPort {
   @Autowired
   private PasswordEncoder passwordEncoder;
 
