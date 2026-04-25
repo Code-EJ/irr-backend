@@ -3,18 +3,30 @@ set -euo pipefail
 
 BASE_URL="${BASE_URL:-http://localhost:8081}"
 TOKEN="${TOKEN:-}"
-PLACA="${PLACA:-ZYXW1}"
-MODELO="${MODELO:-PALIO1}"
+PLACA="${PLACA:-ABC1D23}"
+MODELO="${MODELO:-Fiat Palio}"
 
 if [[ -z "${TOKEN}" ]]; then
   echo "Defina TOKEN para criar veículo."
-  echo "Exemplo: TOKEN=<jwt> ./scripts/tests/10-vehicle-create.sh"
   exit 1
 fi
 
-curl -i -X POST "${BASE_URL}/api/veiculos" \
+echo "Criando veículo: $MODELO - $PLACA..."
+
+RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "${BASE_URL}/api/v1/veiculos" \
   -H 'Content-Type: application/json' \
   -H "Authorization: Bearer ${TOKEN}" \
-  -d "{\"placa\":\"${PLACA}\",\"modelo\":\"${MODELO}\"}"
+  -d "{\"placa\":\"${PLACA}\",\"modelo\":\"${MODELO}\"}")
 
-echo
+HTTP_BODY=$(echo "$RESPONSE" | sed '$d')
+HTTP_STATUS=$(echo "$RESPONSE" | tail -n 1)
+
+if [[ "$HTTP_STATUS" == "201" ]]; then
+  echo "[OK] Veículo criado com sucesso! (Status 201)"
+  VEHICLE_ID=$(echo "$HTTP_BODY" | python3 -c 'import sys,json; print(json.load(sys.stdin).get("id", ""))' 2>/dev/null)
+  echo "ID DO VEÍCULO CRIADO: $VEHICLE_ID"
+else
+  echo "[FALHA] Status esperado: 201, recebido: $HTTP_STATUS"
+  echo "Erro: $HTTP_BODY"
+  exit 1
+fi

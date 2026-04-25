@@ -3,20 +3,32 @@ set -euo pipefail
 
 BASE_URL="${BASE_URL:-http://localhost:8081}"
 TOKEN="${TOKEN:-}"
-ID="${ID:-2}"
-PLACA="${PLACA:-000000}"
-MODELO="${MODELO:-Fiorino}"
+ID="${ID:-7}"
+PLACA="${PLACA:-XYZ9E87}"
+MODELO="${MODELO:-Fiat Fiorino}"
 ATIVO="${ATIVO:-true}"
 
 if [[ -z "${TOKEN}" ]]; then
   echo "Defina TOKEN para atualizar veículo."
-  echo "Exemplo: TOKEN=<jwt> ID=1 ./scripts/tests/13-vehicle-update.sh"
   exit 1
 fi
 
-curl -i -X PUT "${BASE_URL}/api/veiculos/${ID}" \
+echo "Atualizando veículo ID $ID para placa $PLACA..."
+
+RESPONSE=$(curl -s -w "\n%{http_code}" -X PUT "${BASE_URL}/api/v1/veiculos/${ID}" \
   -H 'Content-Type: application/json' \
   -H "Authorization: Bearer ${TOKEN}" \
-  -d "{\"placa\":\"${PLACA}\",\"modelo\":\"${MODELO}\",\"ativo\":${ATIVO}}"
+  -d "{\"placa\":\"${PLACA}\",\"modelo\":\"${MODELO}\",\"ativo\":${ATIVO}}")
 
-echo
+HTTP_BODY=$(echo "$RESPONSE" | sed '$d')
+HTTP_STATUS=$(echo "$RESPONSE" | tail -n 1)
+
+if [[ "$HTTP_STATUS" == "200" ]]; then
+  echo "[OK] Veículo atualizado! (Status 200)"
+  echo "Resposta:"
+  echo $HTTP_BODY
+else
+  echo "[FALHA] Status esperado: 200, recebido: $HTTP_STATUS"
+  echo "Erro: $HTTP_BODY"
+  exit 1
+fi

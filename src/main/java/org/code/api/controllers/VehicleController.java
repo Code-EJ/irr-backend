@@ -8,9 +8,11 @@ import org.code.api.domain.ports.VehiclePort;
 import org.code.api.dto.logistic.vehicle.request.VehicleCreateRequestDTO;
 import org.code.api.dto.logistic.vehicle.request.VehicleUpdateRequestDTO;
 import org.code.api.dto.logistic.vehicle.response.VehicleResponseDTO;
+import org.springframework.boot.actuate.health.HttpCodeStatusMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,10 +38,16 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/veiculos")
+@RequestMapping("/api/v1/veiculos")
 public class VehicleController {
 
     private final VehiclePort vehiclePort;
+
+
+    @GetMapping("/health")
+    public ResponseEntity<Void> health() {
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 
     @PostMapping
     public ResponseEntity<VehicleResponseDTO> create(

@@ -12,7 +12,7 @@ import org.code.api.domain.exception.AuthError;
 import org.code.api.domain.models.user.Session;
 import org.code.api.domain.models.user.User;
 import org.code.api.domain.ports.AuthPort;
-import org.code.api.domain.ports.EncryptionPort;
+import org.code.api.domain.ports.HashingPort;
 import org.code.api.domain.ports.TokenPort;
 import org.code.api.infrastructure.repositories.UserRepository;
 import org.springframework.stereotype.Service;
@@ -25,36 +25,25 @@ public class AuthService implements AuthPort {
 
     private TokenPort tokenPort;
     private UserRepository userRepository;
-    private EncryptionPort encryptionPort;
+    private HashingPort hashingPort;
 
     @Override
     @Transactional(readOnly = true)
     public String authenticate(String email, String senha) {
-        try {
-            Optional<User> userOptional = userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AuthError.WrongCredentials(email, false));
 
-            if (userOptional.isEmpty()) {
-                throw new AuthError.WrongCredentials(email, false);
-            }
-
-            User user = userOptional.get();
-
-            if (!encryptionPort.compare(user.getSenha(), senha)) {
-                throw new AuthError.WrongCredentials(email, true);
-            }
-
-            String token = tokenPort.createToken(
-                Session.builder()
-                    .id(user.getId())
-                    .email(user.getEmail())
-                    .tipo(user.getTipo())
-                    .build()
-            );
-
-            return token;
-        } catch (Exception exception) {
-            throw exception;
+        if (!hashingPort.compare(user.getSenha(), senha)) {
+            throw new AuthError.WrongCredentials(email, true);
         }
+
+        return tokenPort.createToken(
+            Session.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .tipo(user.getTipo())
+                .build()
+        );
     }
 
     @Override
@@ -77,7 +66,7 @@ public class AuthService implements AuthPort {
                 throw new AuthError.CreatorUserInvalid(createdBy);
             }
 
-            String encryptedPassword = encryptionPort.encrypt(senha);
+            String encryptedPassword = hashingPort.encrypt(senha);
 
             LocalDateTime now = LocalDateTime.ofInstant(
                 Instant.now(),
@@ -96,23 +85,19 @@ public class AuthService implements AuthPort {
                     .build()
             );
 
-            String token = tokenPort.createToken(
+            return tokenPort.createToken(
                 Session.builder()
                     .id(user.getId())
                     .email(user.getEmail())
                     .tipo(UserType.REPRESENTANTE)
                     .build()
             );
-
-            return token;
         } catch (IllegalArgumentException illegalArgumentException) {
             throw new AuthError.CreatorUserInvalid(
                 createdBy,
                 true,
                 illegalArgumentException
             );
-        } catch (Exception exception) {
-            throw exception;
         }
     }
 
@@ -126,12 +111,18 @@ public class AuthService implements AuthPort {
         throw new UnsupportedOperationException("Unimplemented method 'renew'");
     }
 
-    /*
-    Validação de sessão
-    - Caso não exista o id dentro do payload no banco - lança InvalidToken
-    - Caso o token esteja inválido (seja por algoritmo errado, estrutura...) - lança InvalidToken
-    - Caso tudo esteja ok, retorna os dados da sessão
-  */
+    /**
+     * Validação de sessão.
+     *
+     * Decodifica o token JWT e valida que o usuário existe no banco de dados.
+     * - Se o token for inválido (algoritmo, formato, assinatura, expiração), lança {@link AuthError.InvalidToken}.
+     * - Se o payload decodificado não corresponder a um usuário existente (id não encontrado), lança {@link AuthError.InvalidToken}.
+     * - Se válido, retorna os dados da sessão (id, email, tipo, issuedAt, expiresAt).
+     *
+     * @param token token JWT a ser validado
+     * @return objeto {@link Session} com os dados validados da sessão
+     * @throws AuthError.InvalidToken quando o token for inválido ou o usuário não existir
+     */
     @Override
     public Session getSessionDetails(String token) {
         Session session = tokenPort.decodeToken(token);

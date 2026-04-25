@@ -35,7 +35,7 @@ public class VehicleService implements VehiclePort {
     private final AuthenticatedUserProvider userProvider;
 
     /**
-     * Cria um novo registro de veículo no sistema.
+     * Cria registro de veículo no sistema.
      *
      * <p>O método normaliza os dados de entrada e verifica proativamente a existência prévia da placa.
      * O usuário criador é extraído automaticamente do contexto de segurança da requisição atual.
