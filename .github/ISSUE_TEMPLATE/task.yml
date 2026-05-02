@@ -1,31 +1,38 @@
-name: 🧩 Task
-description: Tarefa técnica ou operacional
+name: ✅ Task
+description: Nova Task
+labels: ["task"]
 title: "[TASK]: "
-labels:
-  - task
 body:
+  - type: input
+    id: user-story
+    attributes:
+      label: User Story relacionada
+      placeholder: ex. #42
+    validations:
+      required: true
+
   - type: textarea
+    id: descricao
     attributes:
       label: Descrição
       description: O que precisa ser feito?
-      placeholder: Descreva a tarefa de forma objetiva.
+      placeholder: ex. Implementar endpoint POST /auth/sso
     validations:
       required: true
 
   - type: textarea
+    id: observacoes
     attributes:
-      label: Critérios de Conclusão
-      description: Como saber que essa task está pronta?
-      placeholder: |
-        - [ ] Implementação concluída
-        - [ ] Testado
-        - [ ] Revisado
-    validations:
-      required: true
+      label: Observações Técnicas
+      description: Contexto, restrições ou referências relevantes. Deixe em branco se não houver.
 
-  - type: textarea
+  - type: checkboxes
+    id: dod
     attributes:
-      label: Observações
-      description: Contexto adicional, links ou dependências.
-    validations:
-      required: false
+      label: Definition of Done
+      options:
+        - label: Código commitado na branch correta, seguindo a convenção de nomenclatura
+        - label: Commit message segue o padrão (Conventional Commits)
+        - label: Code review feito por ao menos 1 desenvolvedor ou Tech Lead
+        - label: Build passando, sem erros de compilação
+        - label: Card atualizado com comentário resumindo o que foi feito
