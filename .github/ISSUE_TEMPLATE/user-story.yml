@@ -3,6 +3,22 @@ description: Nova User Story
 labels: ["user-story"]
 body:
   - type: input
+    id: id
+    attributes:
+      label: ID
+      placeholder: ex. US-001
+    validations:
+      required: true
+
+  - type: input
+    id: criado-por
+    attributes:
+      label: Criado por
+      placeholder: ex. Jhonathan Pimenta
+    validations:
+      required: true
+
+  - type: input
     id: story-points
     attributes:
       label: Story Points
@@ -31,7 +47,22 @@ body:
       required: true
 
   - type: textarea
+    id: dependencias
+    attributes:
+      label: Dependências
+      placeholder: |
+        - Técnicas: ...
+        - Externas: ...
+
+  - type: textarea
+    id: recursos
+    attributes:
+      label: Recursos e Referências
+      placeholder: |
+        - [Nome do documento ou link](url)
+
+  - type: textarea
     id: observacoes
     attributes:
-      label: Dependências e Observações
-      description: Dependências, riscos, links ou contexto técnico relevante. Deixe em branco se não houver.
+      label: Observações Técnicas
+      description: Preenchido pelo Tech Lead ou Dev Team quando necessário.
