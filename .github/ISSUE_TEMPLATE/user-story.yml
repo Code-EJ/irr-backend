@@ -1,0 +1,37 @@
+name: 📖 User Story
+description: Nova User Story
+labels: ["user-story"]
+body:
+  - type: input
+    id: story-points
+    attributes:
+      label: Story Points
+      placeholder: ex. 3
+    validations:
+      required: true
+
+  - type: textarea
+    id: historia
+    attributes:
+      label: História
+      placeholder: |
+        Como [quem],
+        Quero [o quê],
+        Para que [por quê].
+    validations:
+      required: true
+
+  - type: textarea
+    id: criterios-aceite
+    attributes:
+      label: Critérios de Aceite
+      placeholder: |
+        - Dado [contexto], Quando [ação], Então [resultado].
+    validations:
+      required: true
+
+  - type: textarea
+    id: observacoes
+    attributes:
+      label: Dependências e Observações
+      description: Dependências, riscos, links ou contexto técnico relevante. Deixe em branco se não houver.
