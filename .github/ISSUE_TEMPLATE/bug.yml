@@ -30,3 +30,9 @@ body:
         3. Erro acontece
     validations:
       required: true
+
+  - type: textarea
+    id: observacoes
+    attributes:
+      label: Contexto e Evidências
+      description: Logs, prints, ambiente (dev/staging/prod), user story relacionada, etc.
