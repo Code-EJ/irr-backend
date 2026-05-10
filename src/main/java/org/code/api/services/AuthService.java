@@ -1,13 +1,10 @@
 package org.code.api.services;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.code.api.domain.enums.UserType;
+import org.code.api.domain.enums.UserRole;
 import org.code.api.domain.exception.AuthError;
 import org.code.api.domain.models.user.Session;
 import org.code.api.domain.models.user.User;
@@ -29,96 +26,53 @@ public class AuthService implements AuthPort {
 
     @Override
     @Transactional(readOnly = true)
-    public String authenticate(String email, String senha) {
-        try {
-            Optional<User> userOptional = userRepository.findByEmail(email);
+    public String authenticate(String email, String password) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
 
-            if (userOptional.isEmpty()) {
-                throw new AuthError.WrongCredentials(email, false);
-            }
-
-            User user = userOptional.get();
-
-            if (!encryptionPort.compare(user.getSenha(), senha)) {
-                throw new AuthError.WrongCredentials(email, true);
-            }
-
-            String token = tokenPort.createToken(
-                Session.builder()
-                    .id(user.getId())
-                    .email(user.getEmail())
-                    .tipo(user.getTipo())
-                    .build()
-            );
-
-            return token;
-        } catch (Exception exception) {
-            throw exception;
+        if (userOptional.isEmpty()) {
+            throw new AuthError.WrongCredentials(email, false);
         }
+
+        User user = userOptional.get();
+
+        if (!encryptionPort.compare(user.getPasswordHash(), password)) {
+            throw new AuthError.WrongCredentials(email, true);
+        }
+
+        return tokenPort.createToken(
+            Session.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .userRole(user.getUserRole())
+                .build()
+        );
     }
 
     @Override
-    public String register(
-        String nome,
-        String email,
-        String senha,
-        String createdBy
-    ) {
-        try {
-            if (userRepository.existsByEmail(email)) {
-                throw new AuthError.EmailOccupied(email);
-            }
-
-            Optional<User> creatorUser = createdBy != null
-                ? userRepository.findById(UUID.fromString(createdBy))
-                : Optional.empty();
-
-            if (createdBy != null && creatorUser.isEmpty()) {
-                throw new AuthError.CreatorUserInvalid(createdBy);
-            }
-
-            String encryptedPassword = encryptionPort.encrypt(senha);
-
-            LocalDateTime now = LocalDateTime.ofInstant(
-                Instant.now(),
-                ZoneId.systemDefault()
-            );
-
-            User user = userRepository.save(
-                User.builder()
-                    .nome(nome)
-                    .senha(encryptedPassword)
-                    .email(email)
-                    .createdBy(creatorUser.orElse(null))
-                    .tipo(UserType.REPRESENTANTE)
-                    .updatedAt(now)
-                    .createdAt(now)
-                    .build()
-            );
-
-            String token = tokenPort.createToken(
-                Session.builder()
-                    .id(user.getId())
-                    .email(user.getEmail())
-                    .tipo(UserType.REPRESENTANTE)
-                    .build()
-            );
-
-            return token;
-        } catch (IllegalArgumentException illegalArgumentException) {
-            throw new AuthError.CreatorUserInvalid(
-                createdBy,
-                true,
-                illegalArgumentException
-            );
-        } catch (Exception exception) {
-            throw exception;
+    @Transactional
+    public String register(String fullName, String email, String password) {
+        if (userRepository.existsByEmail(email)) {
+            throw new AuthError.EmailOccupied(email);
         }
-    }
 
-    @Override
-    public String register(String nome, String email, String senha) {
-        return register(nome, email, senha, null);
+        String encryptedPassword = encryptionPort.encrypt(password);
+
+        User user = userRepository.save(
+            User.builder()
+                .fullName(fullName)
+                .passwordHash(encryptedPassword)
+                .email(email)
+                .userRole(UserRole.REPRESENTATIVE)
+                .build()
+        );
+
+        return tokenPort.createToken(
+            Session.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .userRole(UserRole.REPRESENTATIVE)
+                .build()
+        );
     }
 
     @Override
@@ -133,13 +87,14 @@ public class AuthService implements AuthPort {
     - Caso tudo esteja ok, retorna os dados da sessão
   */
     @Override
+    @Transactional(readOnly = true)
     public Session getSessionDetails(String token) {
         Session session = tokenPort.decodeToken(token);
         Optional<User> userOptional = userRepository.findById(session.getId());
 
         log.debug(
             "Decoded session token:\nUser email: {}\nExpiresAt: {}, IssuedAt: {}",
-            userOptional.get().getEmail(),
+            userOptional.map(User::getEmail).orElse("UNKNOWN"),
             session.getExpiresAt(),
             session.getIssuedAt()
         );
@@ -149,7 +104,7 @@ public class AuthService implements AuthPort {
                 Session.builder()
                     .id(user.getId())
                     .email(user.getEmail())
-                    .tipo(user.getTipo())
+                    .userRole(user.getUserRole())
                     .issuedAt(session.getIssuedAt())
                     .expiresAt(session.getExpiresAt())
                     .build()

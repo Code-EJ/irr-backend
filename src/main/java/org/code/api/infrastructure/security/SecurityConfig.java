@@ -31,7 +31,14 @@ public class SecurityConfig {
             )
             .addFilterAfter(new LoggingFilter(), BearerFilter.class)
             .csrf(csrf -> csrf.disable())
-            .cors(cors -> cors.disable());
+            .cors(cors -> cors.configurationSource(request -> {
+                var configuration = new org.springframework.web.cors.CorsConfiguration();
+                configuration.setAllowedOriginPatterns(java.util.List.of("*"));
+                configuration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+                configuration.setAllowedHeaders(java.util.List.of("*"));
+                configuration.setAllowCredentials(true);
+                return configuration;
+            }));
         return http.build();
     }
 }

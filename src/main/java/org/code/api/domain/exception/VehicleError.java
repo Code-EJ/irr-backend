@@ -1,16 +1,14 @@
 package org.code.api.domain.exception;
 
-import org.code.api.domain.enums.UserType;
 import lombok.Getter;
 
+import java.util.UUID;
+
 /**
- * Namespace centralizador das regras de negócio violadas no contexto de Veículos.
+ * Namespace centralizador das exceções de negócio do contexto de Veículos.
  *
- * <p>O agrupamento de exceções estáticas dentro desta classe abstrata garante alta coesão e
- * facilita o rastreamento das falhas do domínio logístico. Todas as classes aqui devem ser
- * interceptadas pelo {@code GlobalExceptionHandler} para tradução em códigos HTTP adequados.
- *
- * @see org.code.api.domain.exception.IrrApplicationException
+ * <p>Todas as classes internas devem ser interceptadas pelo {@code ErrorHandler}
+ * para tradução em códigos HTTP adequados.</p>
  */
 public class VehicleError extends RuntimeException {
 
@@ -18,63 +16,59 @@ public class VehicleError extends RuntimeException {
         super(message);
     }
 
-
     /**
      * Lançada quando o sistema detecta uma tentativa de modificação em um veículo inativo.
-     * Deve ser mapeada preferencialmente para HTTP 422 (Unprocessable Entity) ou 403 (Forbidden).
+     * Mapeada para HTTP 422 (Unprocessable Entity).
      */
     public static class InactiveVehicle extends VehicleError {
-        public InactiveVehicle(Integer id) {
-            super(String.format("O veículo de ID %d está inativo e não pode ser modificado.", id));
+        public InactiveVehicle(UUID id) {
+            super(String.format("Vehicle with ID %s is inactive and cannot be modified.", id));
         }
     }
 
     /**
-     * Lançada de forma proativa (Fail-fast) ou reativa (DataIntegrityViolationException) quando
-     * ocorre violação da Unique Constraint da coluna "placa".
+     * Lançada de forma proativa (fail-fast) ou reativa (DataIntegrityViolationException)
+     * quando ocorre violação da unique constraint da coluna {@code license_plate}.
      * Mapeada para HTTP 409 (Conflict).
      */
     @Getter
     public static class PlateAlreadyExists extends VehicleError {
 
-        private final String placa;
+        private final String licensePlate;
 
-        public PlateAlreadyExists(String placa) {
+        public PlateAlreadyExists(String licensePlate) {
             super("Vehicle plate already exists");
-            this.placa = placa;
+            this.licensePlate = licensePlate;
         }
     }
 
+    /**
+     * Lançada quando nenhum veículo é encontrado com o ID informado.
+     * Mapeada para HTTP 404 (Not Found).
+     */
     @Getter
     public static class NotFound extends VehicleError {
 
-        private final Integer vehicleId;
+        private final UUID vehicleId;
 
-        public NotFound(Integer vehicleId) {
+        public NotFound(UUID vehicleId) {
             super("Vehicle not found");
             this.vehicleId = vehicleId;
         }
     }
 
+    /**
+     * Lançada quando um não-administrador tenta excluir um veículo que possui coletas vinculadas.
+     * Mapeada para HTTP 409 (Conflict).
+     */
     @Getter
-    public static class SessionUserNotFound extends VehicleError {
+    public static class HasCollectionBinding extends VehicleError {
 
-        private final String userId;
+        private final UUID vehicleId;
 
-        public SessionUserNotFound(String userId) {
-            super("Session user not found");
-            this.userId = userId;
-        }
-    }
-
-    @Getter
-    public static class AccessDenied extends VehicleError {
-
-        private final UserType userType;
-
-        public AccessDenied(UserType userType) {
-            super("Vehicle operation access denied");
-            this.userType = userType;
+        public HasCollectionBinding(UUID vehicleId) {
+            super("Permissão negada. Este veículo possui coletas vinculadas. Necessário requisitar ao instituto para prosseguir.");
+            this.vehicleId = vehicleId;
         }
     }
 }

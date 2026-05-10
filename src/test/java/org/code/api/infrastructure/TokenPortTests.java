@@ -10,7 +10,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.time.Instant;
 import java.util.UUID;
 
-import org.code.api.domain.enums.UserType;
+import org.code.api.domain.enums.UserRole;
 import org.code.api.domain.exception.AuthError;
 import org.code.api.domain.models.user.Session;
 import org.code.api.domain.ports.TokenPort;
@@ -45,7 +45,7 @@ public class TokenPortTests {
     String token = tokenPort.createToken(Session.builder()
       .id(UUID.randomUUID())
       .email("test@test.com")
-      .tipo(UserType.ADMINISTRADOR)
+      .userRole(UserRole.ADMINISTRATOR)
       .issuedAt(now)
       .expiresAt(now.plusSeconds(3600))
       .build()
@@ -65,7 +65,7 @@ public class TokenPortTests {
     Session originalSession = Session.builder()
       .id(sessionId)
       .email(email)
-      .tipo(UserType.ADMINISTRADOR)
+      .userRole(UserRole.ADMINISTRATOR)
       .build();
 
     String token = tokenPort.createToken(originalSession);
@@ -82,7 +82,7 @@ public class TokenPortTests {
     Session originalSession = Session.builder()
       .id(UUID.randomUUID())
       .email("test@test.com")
-      .tipo(UserType.ADMINISTRADOR)
+      .userRole(UserRole.ADMINISTRATOR)
       .build();
 
     String originalToken = tokenPort.createToken(originalSession);
@@ -102,7 +102,7 @@ public class TokenPortTests {
     Session originalSession = Session.builder()
       .id(UUID.randomUUID())
       .email(email)
-      .tipo(UserType.ADMINISTRADOR)
+      .userRole(UserRole.ADMINISTRATOR)
       .build();
 
     String originalToken = tokenPort.createToken(originalSession);
@@ -151,7 +151,7 @@ public class TokenPortTests {
     Session session = Session.builder()
       .id(UUID.randomUUID())
       .email("test@test.com")
-      .tipo(UserType.ADMINISTRADOR)
+      .userRole(UserRole.ADMINISTRATOR)
       .issuedAt(now)
       .expiresAt(now.plusSeconds(3600))
       .build();

@@ -5,26 +5,14 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 /**
- * Data Transfer Object (DTO) que encapsula o payload para atualização de um Veículo.
- *
- * <p>Implementado como um {@code record} para garantir imutabilidade e thread-safety
- * desde a desserialização do JSON até a camada de serviço. As validações estruturais
- * (Jakarta Bean Validation) devem ser processadas nesta camada antes de atingirem o domínio.
- *
- * @param placa A nova placa do veículo (deve respeitar a máscara e não pode existir no banco).
- * @param modelo A descrição ou nome do modelo do veículo atualizado.
- * @param ativo O status de disponibilidade do veículo na frota.
- *
- * @implNote Este DTO não carrega o ID do veículo, pois o identificador do recurso deve ser
- * sempre extraído da URI (Path Variable) em obediência às boas práticas REST.
+ * DTO de atualização de Veículo.
  */
 public record VehicleUpdateRequestDTO(
-    @NotBlank(message = "Placa é um campo obrigatório")
-    @Size(max = 191, message = "Placa deve ter no máximo 191 caracteres")
-    String placa,
-    @NotBlank(message = "Modelo é um campo obrigatório")
-    @Size(max = 191, message = "Modelo deve ter no máximo 191 caracteres")
-    String modelo,
-    @NotNull(message = "Ativo é um campo obrigatório")
-    Boolean ativo
+    @NotBlank(message = "License plate is required")
+    @Size(max = 20, message = "License plate must be at most 20 characters")
+    String licensePlate,
+    @Size(max = 100, message = "Model must be at most 100 characters")
+    String model,
+    @NotNull(message = "Active status is required")
+    Boolean isActive
 ) {}

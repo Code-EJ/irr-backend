@@ -146,7 +146,7 @@ public class BearerFilter implements Filter {
         if (!session.isExpired()) {
             log.debug("Approved request from {}", session.getEmail());
 
-            String rolename = "ROLE_" + session.getTipo().name();
+            String rolename = "ROLE_" + session.getUserRole().name();
             List<SimpleGrantedAuthority> authorityList = List.of(new SimpleGrantedAuthority(rolename));
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(

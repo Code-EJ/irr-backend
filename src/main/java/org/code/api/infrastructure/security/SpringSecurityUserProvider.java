@@ -1,6 +1,6 @@
 package org.code.api.infrastructure.security;
 
-import org.code.api.domain.enums.UserType;
+import org.code.api.domain.enums.UserRole;
 import org.code.api.domain.exception.AuthError;
 import org.code.api.domain.ports.AuthenticatedUserProvider;
 import org.springframework.security.core.Authentication;
@@ -56,7 +56,7 @@ public class SpringSecurityUserProvider implements AuthenticatedUserProvider {
     }
 
     @Override
-    public List<UserType> getCurrentUserTypes() {
+    public List<UserRole> getCurrentUserRoles() {
         return List.of();
     }
 }

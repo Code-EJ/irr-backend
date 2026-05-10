@@ -5,7 +5,7 @@ import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.code.api.domain.enums.UserType;
+import org.code.api.domain.enums.UserRole;
 
 @Builder
 @Getter
@@ -14,7 +14,7 @@ public class Session {
 
     private UUID id;
     private String email;
-    private UserType tipo;
+    private UserRole userRole;
     private Instant issuedAt;
     private Instant expiresAt;
 

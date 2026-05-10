@@ -3,18 +3,28 @@ package org.code.api.controllers;
 import java.util.Map;
 
 import org.code.api.domain.exception.AuthError;
+import org.code.api.domain.exception.MaterialError;
 import org.code.api.domain.exception.VehicleError;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Handler global de exceções. Traduz exceções de domínio em respostas HTTP padronizadas.
+ */
 @Slf4j
 @RestControllerAdvice
 public class ErrorHandler {
+
+    // ────────────────────────────────────────────────────────────────────────────
+    // Validação de payload (Jakarta Validation)
+    // ────────────────────────────────────────────────────────────────────────────
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleRequestBodyValidationError(MethodArgumentNotValidException exception) {
         var missingFields = exception.getFieldErrors().stream()
@@ -28,6 +38,25 @@ public class ErrorHandler {
                 "message", "Missing or invalid fields: " + String.join(", ", missingFields)
             ));
     }
+
+    // ────────────────────────────────────────────────────────────────────────────
+    // Spring Security — @PreAuthorize denial
+    // ────────────────────────────────────────────────────────────────────────────
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<?> handleAccessDenied(AccessDeniedException exception) {
+        log.debug("Access denied: {}", exception.getMessage());
+        return ResponseEntity
+            .status(HttpStatus.FORBIDDEN)
+            .body(Map.of(
+                "error", "access_denied",
+                "message", "You do not have permission to perform this action."
+            ));
+    }
+
+    // ────────────────────────────────────────────────────────────────────────────
+    // Auth Errors
+    // ────────────────────────────────────────────────────────────────────────────
 
     @ExceptionHandler(AuthError.CreatorUserInvalid.class)
     public ResponseEntity<?> handleCreatorUserInvalid(AuthError.CreatorUserInvalid exception) {
@@ -120,17 +149,19 @@ public class ErrorHandler {
             ));
     }
 
+    // ────────────────────────────────────────────────────────────────────────────
+    // Vehicle Errors
+    // ────────────────────────────────────────────────────────────────────────────
+
     @ExceptionHandler(VehicleError.NotFound.class)
     public ResponseEntity<?> handleVehicleNotFound(VehicleError.NotFound exception) {
         return ResponseEntity
             .status(HttpStatus.NOT_FOUND)
-            .body(
-                Map.of(
-                    "error", "vehicle_not_found",
-                    "message", "Vehicle not found",
-                    "vehicle_id", exception.getVehicleId()
-                )
-            );
+            .body(Map.of(
+                "error", "vehicle_not_found",
+                "message", "Vehicle not found",
+                "vehicle_id", exception.getVehicleId().toString()
+            ));
     }
 
     @ExceptionHandler(VehicleError.PlateAlreadyExists.class)
@@ -139,42 +170,108 @@ public class ErrorHandler {
     ) {
         return ResponseEntity
             .status(HttpStatus.CONFLICT)
-            .body(
-                Map.of(
-                    "error", "vehicle_plate_occupied",
-                    "message", "Vehicle plate is already in use",
-                    "placa", exception.getPlaca()
-                )
-            );
+            .body(Map.of(
+                "error", "vehicle_plate_occupied",
+                "message", "Vehicle plate is already in use",
+                "license_plate", exception.getLicensePlate()
+            ));
     }
 
-    @ExceptionHandler(VehicleError.SessionUserNotFound.class)
-    public ResponseEntity<?> handleVehicleSessionUserNotFound(
-        VehicleError.SessionUserNotFound exception
-    ) {
+    @ExceptionHandler(VehicleError.InactiveVehicle.class)
+    public ResponseEntity<?> handleInactiveVehicle(VehicleError.InactiveVehicle exception) {
         return ResponseEntity
-            .status(HttpStatus.UNAUTHORIZED)
-            .body(
-                Map.of(
-                    "error", "invalid_session_user",
-                    "message", "Authenticated user not found",
-                    "user_id", exception.getUserId()
-                )
-            );
+            .unprocessableEntity()
+            .body(Map.of(
+                "error", "inactive_vehicle",
+                "message", exception.getMessage()
+            ));
     }
 
-    @ExceptionHandler(VehicleError.AccessDenied.class)
-    public ResponseEntity<?> handleVehicleAccessDenied(
-        VehicleError.AccessDenied exception
+    @ExceptionHandler(VehicleError.HasCollectionBinding.class)
+    public ResponseEntity<?> handleVehicleHasCollectionBinding(
+        VehicleError.HasCollectionBinding exception
     ) {
         return ResponseEntity
-            .status(HttpStatus.FORBIDDEN)
-            .body(
-                Map.of(
-                    "error", "vehicle_access_denied",
-                    "message", "Only administrators can deactivate vehicles",
-                    "user_type", exception.getUserType().name()
-                )
-            );
+            .status(HttpStatus.CONFLICT)
+            .body(Map.of(
+                "error", "vehicle_has_collection_binding",
+                "message", exception.getMessage(),
+                "vehicle_id", exception.getVehicleId().toString()
+            ));
+    }
+
+    // ────────────────────────────────────────────────────────────────────────────
+    // Material Errors
+    // ────────────────────────────────────────────────────────────────────────────
+
+    @ExceptionHandler(MaterialError.NotFound.class)
+    public ResponseEntity<?> handleMaterialNotFound(MaterialError.NotFound exception) {
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(Map.of(
+                "error", "material_not_found",
+                "message", exception.getMessage(),
+                "material_id", exception.getMaterialId().toString(),
+                "level", exception.getLevel()
+            ));
+    }
+
+    @ExceptionHandler(MaterialError.ParentNotFound.class)
+    public ResponseEntity<?> handleMaterialParentNotFound(MaterialError.ParentNotFound exception) {
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(Map.of(
+                "error", "material_parent_not_found",
+                "message", exception.getMessage(),
+                "parent_id", exception.getParentId().toString(),
+                "parent_level", exception.getParentLevel()
+            ));
+    }
+
+    @ExceptionHandler(MaterialError.NameAlreadyExists.class)
+    public ResponseEntity<?> handleMaterialNameConflict(MaterialError.NameAlreadyExists exception) {
+        return ResponseEntity
+            .status(HttpStatus.CONFLICT)
+            .body(Map.of(
+                "error", "material_name_occupied",
+                "message", exception.getMessage(),
+                "name", exception.getName(),
+                "level", exception.getLevel()
+            ));
+    }
+
+    @ExceptionHandler(MaterialError.HasInventoryBinding.class)
+    public ResponseEntity<?> handleMaterialInventoryBinding(MaterialError.HasInventoryBinding exception) {
+        return ResponseEntity
+            .status(HttpStatus.CONFLICT)
+            .body(Map.of(
+                "error", "material_has_inventory_binding",
+                "message", exception.getMessage(),
+                "material_id", exception.getMaterialId().toString(),
+                "level", exception.getLevel()
+            ));
+    }
+
+    @ExceptionHandler(MaterialError.InactiveMaterial.class)
+    public ResponseEntity<?> handleInactiveMaterial(MaterialError.InactiveMaterial exception) {
+        return ResponseEntity
+            .unprocessableEntity()
+            .body(Map.of(
+                "error", "inactive_material",
+                "message", exception.getMessage(),
+                "material_id", exception.getMaterialId().toString(),
+                "level", exception.getLevel()
+            ));
+    }
+
+    @ExceptionHandler(MaterialError.ConcurrentModification.class)
+    public ResponseEntity<?> handleConcurrentModification(MaterialError.ConcurrentModification exception) {
+        return ResponseEntity
+            .status(HttpStatus.CONFLICT)
+            .body(Map.of(
+                "error", "concurrent_modification",
+                "message", exception.getMessage(),
+                "material_id", exception.getMaterialId().toString()
+            ));
     }
 }

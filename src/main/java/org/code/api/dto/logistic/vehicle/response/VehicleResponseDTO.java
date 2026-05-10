@@ -1,13 +1,14 @@
 package org.code.api.dto.logistic.vehicle.response;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.util.UUID;
 
 public record VehicleResponseDTO(
-    Integer id,
-    String placa,
-    String modelo,
-    Boolean ativo,
-    LocalDateTime createdAt,
-    LocalDateTime updatedAt,
-    String createdById
+    UUID id,
+    String licensePlate,
+    String model,
+    Boolean isActive,
+    OffsetDateTime createdAt,
+    OffsetDateTime updatedAt,
+    String creatorId
 ) {}

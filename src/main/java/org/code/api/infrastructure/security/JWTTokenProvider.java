@@ -4,7 +4,7 @@ import java.time.Instant;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.code.api.domain.enums.UserType;
+import org.code.api.domain.enums.UserRole;
 import org.code.api.domain.exception.AuthError;
 import org.code.api.domain.models.user.Session;
 import org.code.api.domain.ports.TokenPort;
@@ -45,7 +45,7 @@ public class JWTTokenProvider implements TokenPort {
                 .subject(session.getEmail())
                 .claim("email", session.getEmail())
                 .claim("id", session.getId().toString())
-                .claim("tipo", session.getTipo())
+                .claim("userRole", session.getUserRole())
                 .build();
 
             String token = jwtEncoder
@@ -72,7 +72,7 @@ public class JWTTokenProvider implements TokenPort {
             return Session.builder()
                 .id(UUID.fromString(jwt.getClaimAsString("id")))
                 .email(jwt.getClaimAsString("email"))
-                .tipo(UserType.valueOf(jwt.getClaimAsString("tipo")))
+                .userRole(UserRole.valueOf(jwt.getClaimAsString("userRole")))
                 .issuedAt(jwt.getIssuedAt())
                 .expiresAt(jwt.getExpiresAt())
                 .build();
