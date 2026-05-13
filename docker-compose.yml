@@ -11,3 +11,26 @@ services:
 
     ports:
       - "5435:5432"
+
+  backend:
+    container_name: irr_backend
+    image: eclipse-temurin:21-jdk
+    working_dir: /app
+    volumes:
+      - .:/app
+      - backend_maven_cache:/root/.m2
+    ports:
+      - "8081:8081"
+      - "5005:5005"
+    depends_on:
+      - database
+    environment:
+      - DB_HOST=database
+      - DB_PORT=5432
+      - DB_NAME=irr
+      - DB_USER=irr_admin
+      - DB_PASSWORD=root
+    command: ./mvnw spring-boot:run -Dspring-boot.run.jvmArguments="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+
+volumes:
+  backend_maven_cache:
