@@ -57,7 +57,8 @@ INSERT INTO users (id, email, password_hash, full_name, user_role, is_active, cr
 VALUES (gen_random_uuid(), 'admin@irr.com', '$2a$10$wMx4v6kD6YgqyQZeIXbCg.mozjTEA4ZWTHs5Ekluh8Ez.6fATOXWq', 'Administrador Root', 'ADMINISTRATOR', true, NOW(), NOW())
 ON CONFLICT (email) DO NOTHING;
 '@
-Set-Content -Path $adminSqlPath -Value $adminSqlContent -Encoding UTF8
+$Utf8NoBomEncoding = New-Object System.Text.UTF8Encoding $False
+[System.IO.File]::WriteAllText((Resolve-Path $adminSqlPath).Path, $adminSqlContent, $Utf8NoBomEncoding)
 
 # Checa via COUNT(*) se o admin já existe (robusto: não falha se a tabela não existir ainda)
 $SKIP_MOCK = $false
@@ -76,24 +77,38 @@ if (-not $SKIP_MOCK) {
     Write-Host "Criando as tabelas necessárias com base nos arquivos de migração (V1 e V2)..."
 
     Write-Host "Inicializando o projeto Java via container para o Flyway versionar as tabelas..."
-    docker rm -f irr_flyway_init 2>$null
-    docker compose run --rm -d --name irr_flyway_init backend ./mvnw spring-boot:run "-Dspring-boot.run.jvmArguments=-Dspring.main.web-application-type=none"
+    try {
+        docker rm -f irr_flyway_init 2>&1 | Out-Null
+    } catch {
+        # Ignora erro se o container não existir
+    }
+    # Removido --rm para evitar que o conteiner seja deletado antes de lermos os logs
+    docker compose run -d --name irr_flyway_init backend ./mvnw spring-boot:run "-Dspring-boot.run.jvmArguments=-Dspring.main.web-application-type=none"
 
     Write-Host "Aguardando as tabelas serem versionadas pelo Flyway..."
     $flywayDone = $false
     while (-not $flywayDone) {
-        $logs = docker logs irr_flyway_init 2>&1
-        if ($logs -match "Successfully applied|Started IrrApplication|Tomcat started on port") {
-            $flywayDone = $true
-        } else {
-            $running = docker ps -q -f "name=irr_flyway_init"
-            if (-not $running) { break }
+        try {
+            $logs = docker logs irr_flyway_init 2>&1
+            if ($logs -match "Successfully applied|Started IrrApplication|Tomcat started on port") {
+                $flywayDone = $true
+            } else {
+                $running = docker ps -q -f "name=irr_flyway_init"
+                if (-not $running) { break }
+                Start-Sleep -Seconds 2
+            }
+        } catch {
             Start-Sleep -Seconds 2
         }
     }
 
     Write-Host "Encerrando o container do projeto Java..."
-    docker stop irr_flyway_init 2>$null | Out-Null
+    try {
+        docker stop irr_flyway_init 2>&1 | Out-Null
+        docker rm -f irr_flyway_init 2>&1 | Out-Null
+    } catch {
+        # Ignora erro
+    }
 
     Write-Host "Populando o banco de dados e inserindo o usuário Admin..."
     & ".\scripts\getReadyDevelop\populate_db.ps1"
