@@ -2,8 +2,10 @@ package org.code.api.controllers;
 
 import java.util.UUID;
 
-import org.code.api.domain.models.documents.DocumentoComprobatorio;
-import org.code.api.services.DocumentoService;
+import org.code.api.domain.models.base.Attachment;
+import org.code.api.domain.models.user.Session;
+import org.code.api.domain.models.user.User;
+import org.code.api.services.DocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 
 
 
@@ -26,13 +30,18 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api/documents")
 public class DocumentController {
     @Autowired
-    private DocumentoService documentoService;
+    private DocumentService documentService;
 	
-	@Transactional
+
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> uploadDocumento(@RequestParam("documento") MultipartFile arquivo) {
+    public ResponseEntity<?> uploadDocumento(@RequestParam("documento") MultipartFile arquivo, HttpServletRequest request) {
+        
         try {
-            DocumentoComprobatorio docSalvo = documentoService.registrarDocumento(arquivo);
+            Session session = (Session) request.getAttribute("session");
+            UUID creatorId = session.getId(); // ID do usuário
+
+         // Chama o service, passando o arquivo e o creatorId
+            Attachment docSalvo = documentService.registerDocument(arquivo, creatorId);
             return ResponseEntity.status(HttpStatus.CREATED).body(docSalvo);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -44,12 +53,12 @@ public class DocumentController {
 @GetMapping("/{id}/download")
 public ResponseEntity<byte[]> downloadDocumento(@PathVariable UUID id) {
     try {
-        DocumentoComprobatorio doc = documentoService.buscarPorId(id);
-        byte[] arquivoBytes = documentoService.buscarArquivoFisico(id);
+        Attachment doc = documentService.findById(id);
+        byte[] arquivoBytes = documentService.findLocalArchives(id);
         
         return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(doc.getTipoConteudo())) // Define dinamicamente se é JPEG, PNG ou PDF
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + doc.getName() + "\"")
+                .contentType(MediaType.parseMediaType(doc.getFileType())) // Define dinamicamente se é JPEG, PNG ou PDF
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + doc.getFileName() + "\"")
                 .body(arquivoBytes);
     } catch (Exception e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -60,7 +69,7 @@ public ResponseEntity<byte[]> downloadDocumento(@PathVariable UUID id) {
 @DeleteMapping("/{id}")
 public ResponseEntity<String> deletarDocumento(@PathVariable UUID id) {
     try {
-        documentoService.deletarDocumento(id);
+        documentService.deleteDocument(id);
         return ResponseEntity.ok("Documento e arquivo físico removidos com sucesso.");
     } catch (Exception e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
