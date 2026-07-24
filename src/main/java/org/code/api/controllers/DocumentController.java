@@ -31,6 +31,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public class DocumentController {
     @Autowired
     private DocumentService documentService;
+    
 	
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -38,6 +39,7 @@ public class DocumentController {
         
         try {
             Session session = (Session) request.getAttribute("session");
+        
             UUID creatorId = session.getId(); // ID do usuário
 
          // Chama o service, passando o arquivo e o creatorId

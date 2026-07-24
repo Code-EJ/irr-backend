@@ -4,6 +4,7 @@ import org.code.api.domain.models.base.Attachment;
 import org.code.api.domain.models.user.Session;
 import org.code.api.domain.models.user.User;
 import org.code.api.infrastructure.repositories.AttachmentRepository;
+import org.code.api.infrastructure.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -20,6 +22,9 @@ public class DocumentService {
 
     @Autowired
     private AttachmentRepository repository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private StorageService storageService; // Injeta a abstração local automaticamente
@@ -38,9 +43,14 @@ public class DocumentService {
         doc.setStorageUrl(path);
         doc.setIsActive(true);
 
+
         // Associa o creator (se for relacionamento com User)
-        User creator = User.builder().id(creatorID).build();
-        doc.setCreator(creator);
+        Optional<User> OptionalCreator = userRepository.findById(creatorID);
+        if (OptionalCreator.isPresent()) {
+            User creator = OptionalCreator.get();
+            doc.setCreator(creator);
+        }
+        
 
 
         return repository.save(doc);
