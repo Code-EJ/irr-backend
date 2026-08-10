@@ -274,4 +274,53 @@ public class ErrorHandler {
                 "material_id", exception.getMaterialId().toString()
             ));
     }
+
+    // ────────────────────────────────────────────────────────────────────────────
+    // Sorting & Pressing Errors
+    // ────────────────────────────────────────────────────────────────────────────
+
+    @ExceptionHandler(org.code.api.domain.exception.SortingError.NotFound.class)
+    public ResponseEntity<?> handleSortingNotFound(org.code.api.domain.exception.SortingError.NotFound exception) {
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(Map.of(
+                "error", "sorting_not_found",
+                "message", exception.getMessage(),
+                "sorting_id", exception.getSortingId().toString()
+            ));
+    }
+
+    @ExceptionHandler(org.code.api.domain.exception.SortingError.InputItemNotFound.class)
+    public ResponseEntity<?> handleInputItemNotFound(org.code.api.domain.exception.SortingError.InputItemNotFound exception) {
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(Map.of(
+                "error", "input_item_not_found",
+                "message", exception.getMessage(),
+                "input_item_id", exception.getInputItemId().toString()
+            ));
+    }
+
+    @ExceptionHandler(org.code.api.domain.exception.PressingError.NotFound.class)
+    public ResponseEntity<?> handlePressingNotFound(org.code.api.domain.exception.PressingError.NotFound exception) {
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(Map.of(
+                "error", "pressing_not_found",
+                "message", exception.getMessage(),
+                "pressing_id", exception.getPressingId().toString()
+            ));
+    }
+
+    @ExceptionHandler(org.code.api.domain.exception.PressingError.SortedItemNotFound.class)
+    public ResponseEntity<?> handleSortedItemNotFound(org.code.api.domain.exception.PressingError.SortedItemNotFound exception) {
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(Map.of(
+                "error", "sorted_item_not_found",
+                "message", exception.getMessage(),
+                "sorted_item_id", exception.getSortedItemId().toString()
+            ));
+    }
 }
+
