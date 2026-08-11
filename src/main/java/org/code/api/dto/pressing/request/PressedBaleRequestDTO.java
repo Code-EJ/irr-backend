@@ -2,6 +2,7 @@ package org.code.api.dto.pressing.request;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import org.code.api.domain.enums.DestinationType;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -21,5 +22,7 @@ public record PressedBaleRequestDTO(
     BigDecimal initialVolumeM3,
     @NotNull(message = "Final volume is required")
     @Positive(message = "Final volume must be positive")
-    BigDecimal finalVolumeM3
+    BigDecimal finalVolumeM3,
+    DestinationType destinationType,
+    UUID destinationId
 ) {}

@@ -2,6 +2,7 @@ package org.code.api.services;
 
 import org.code.api.domain.enums.OperationType;
 import org.code.api.domain.enums.SortingType;
+import org.code.api.domain.enums.DestinationType;
 import org.code.api.domain.exception.MaterialError;
 import org.code.api.domain.exception.SortingError;
 import org.code.api.domain.models.inventory.InventoryBalance;
@@ -116,7 +117,9 @@ class SortingServiceTest {
                                 new BigDecimal("150.00"),
                                 new BigDecimal("2.50"),
                                 new BigDecimal("10.00"),
-                                new BigDecimal("0.20"));
+                                new BigDecimal("0.20"),
+                                DestinationType.STOCK,
+                                null);
 
                 SortingCreateRequestDTO request = new SortingCreateRequestDTO(
                                 OffsetDateTime.now(),
@@ -168,7 +171,9 @@ class SortingServiceTest {
                                 new BigDecimal("100.00"),
                                 new BigDecimal("2.00"),
                                 BigDecimal.ZERO,
-                                BigDecimal.ZERO);
+                                BigDecimal.ZERO,
+                                DestinationType.STOCK,
+                                null);
 
                 SortingCreateRequestDTO request = new SortingCreateRequestDTO(
                                 OffsetDateTime.now(),

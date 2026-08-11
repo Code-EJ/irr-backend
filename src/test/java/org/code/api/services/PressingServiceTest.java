@@ -1,5 +1,6 @@
 package org.code.api.services;
 
+import org.code.api.domain.enums.DestinationType;
 import org.code.api.domain.enums.OperationType;
 import org.code.api.domain.exception.MaterialError;
 import org.code.api.domain.exception.PressingError;
@@ -112,7 +113,9 @@ class PressingServiceTest {
             subtypeId,
             new BigDecimal("200.00"),
             new BigDecimal("5.00"),
-            new BigDecimal("1.00")
+            new BigDecimal("1.00"),
+            DestinationType.STOCK,
+            null
         );
 
         PressingCreateRequestDTO request = new PressingCreateRequestDTO(
@@ -159,7 +162,9 @@ class PressingServiceTest {
             subtypeId,
             new BigDecimal("100.00"),
             new BigDecimal("3.00"),
-            new BigDecimal("0.80")
+            new BigDecimal("0.80"),
+            DestinationType.STOCK,
+            null
         );
 
         PressingCreateRequestDTO request = new PressingCreateRequestDTO(

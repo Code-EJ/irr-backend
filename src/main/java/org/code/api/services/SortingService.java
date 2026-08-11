@@ -99,6 +99,8 @@ public class SortingService implements SortingPort {
                     .volumeM3(itemDto.volumeM3())
                     .rejectWeightKg(rejectWeight)
                     .rejectVolumeM3(rejectVolume)
+                    .destinationType(itemDto.destinationType())
+                    .destinationId(itemDto.destinationId())
                     .isActive(true)
                     .build();
 
@@ -174,7 +176,9 @@ public class SortingService implements SortingPort {
                 item.getRejectVolumeM3(),
                 item.getIsActive(),
                 item.getCreatedAt(),
-                item.getUpdatedAt()
+                item.getUpdatedAt(),
+                item.getDestinationType(),
+                item.getDestinationId()
             )).toList();
 
         return new SortingResponseDTO(

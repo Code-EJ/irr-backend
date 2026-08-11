@@ -92,6 +92,8 @@ public class PressingService implements PressingPort {
                     .weightKg(baleDto.weightKg())
                     .initialVolumeM3(baleDto.initialVolumeM3())
                     .finalVolumeM3(baleDto.finalVolumeM3())
+                    .destinationType(baleDto.destinationType())
+                    .destinationId(baleDto.destinationId())
                     .isActive(true)
                     .build();
 
@@ -166,7 +168,9 @@ public class PressingService implements PressingPort {
                 bale.getFinalVolumeM3(),
                 bale.getIsActive(),
                 bale.getCreatedAt(),
-                bale.getUpdatedAt()
+                bale.getUpdatedAt(),
+                bale.getDestinationType(),
+                bale.getDestinationId()
             )).toList();
 
         return new PressingResponseDTO(

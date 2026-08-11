@@ -3,6 +3,7 @@ package org.code.api.dto.sorting.request;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
+import org.code.api.domain.enums.DestinationType;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -23,5 +24,7 @@ public record SortedItemRequestDTO(
     @PositiveOrZero(message = "Reject weight must be zero or positive")
     BigDecimal rejectWeightKg,
     @PositiveOrZero(message = "Reject volume must be zero or positive")
-    BigDecimal rejectVolumeM3
+    BigDecimal rejectVolumeM3,
+    DestinationType destinationType,
+    UUID destinationId
 ) {}
