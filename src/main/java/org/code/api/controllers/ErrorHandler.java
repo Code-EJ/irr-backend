@@ -5,6 +5,7 @@ import java.util.Map;
 import org.code.api.domain.exception.AuthError;
 import org.code.api.domain.exception.MaterialError;
 import org.code.api.domain.exception.VehicleError;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -328,6 +329,17 @@ public class ErrorHandler {
                 "message", exception.getMessage(),
                 "initial_volume_m3", exception.getInitialVolumeM3().toString(),
                 "final_volume_m3", exception.getFinalVolumeM3().toString()
+            ));
+    }
+
+    @ExceptionHandler(OptimisticLockingFailureException.class)
+    public ResponseEntity<?> handleOptimisticLock(OptimisticLockingFailureException exception) {
+        log.warn("Optimistic lock conflict: {}", exception.getMessage());
+        return ResponseEntity
+            .status(HttpStatus.CONFLICT)
+            .body(Map.of(
+                "error", "concurrent_modification",
+                "message", "The record was modified by another transaction. Please retry."
             ));
     }
 }
