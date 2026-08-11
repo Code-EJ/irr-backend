@@ -178,6 +178,44 @@ class PressingServiceTest {
     }
 
     @Test
+    @DisplayName("Should throw PressingError.InvalidCompaction when finalVolumeM3 is not less than initialVolumeM3")
+    void create_ShouldThrowInvalidCompaction_WhenFinalVolumeNotLessThanInitial() {
+        when(userProvider.getCurrentUserId()).thenReturn(userId);
+        when(userRepository.getReferenceById(userId)).thenReturn(user);
+
+        Pressing savedPressing = Pressing.builder()
+            .id(UUID.randomUUID())
+            .pressingDate(OffsetDateTime.now())
+            .creator(user)
+            .isActive(true)
+            .build();
+
+        when(pressingRepository.save(any(Pressing.class))).thenReturn(savedPressing);
+
+        // finalVolumeM3 (6) >= initialVolumeM3 (5) — prensagem não compacta
+        PressedBaleRequestDTO baleRequest = new PressedBaleRequestDTO(
+            null,
+            subtypeId,
+            new BigDecimal("200.00"),
+            new BigDecimal("5.00"),
+            new BigDecimal("6.00"),
+            DestinationType.STOCK,
+            null
+        );
+
+        PressingCreateRequestDTO request = new PressingCreateRequestDTO(
+            OffsetDateTime.now(),
+            List.of(baleRequest)
+        );
+
+        assertThrows(PressingError.InvalidCompaction.class, () -> pressingService.create(request));
+        verify(subtypeRepository, never()).findById(any());
+        verify(pressedBaleRepository, never()).save(any());
+        verify(inventoryBalanceRepository, never()).save(any());
+        verify(inventoryLogRepository, never()).save(any());
+    }
+
+    @Test
     @DisplayName("Should get pressing record by ID when found and owned by user")
     void getById_ShouldReturnPressing_WhenRecordExists() {
         UUID pressingId = UUID.randomUUID();

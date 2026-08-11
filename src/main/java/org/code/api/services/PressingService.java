@@ -75,6 +75,10 @@ public class PressingService implements PressingPort {
 
         if (data.pressedBales() != null) {
             for (PressedBaleRequestDTO baleDto : data.pressedBales()) {
+                if (baleDto.finalVolumeM3().compareTo(baleDto.initialVolumeM3()) >= 0) {
+                    throw new PressingError.InvalidCompaction(baleDto.initialVolumeM3(), baleDto.finalVolumeM3());
+                }
+
                 MaterialSubtype subtype = subtypeRepository.findById(baleDto.materialSubtypeId())
                     .filter(MaterialSubtype::getIsActive)
                     .orElseThrow(() -> new MaterialError.NotFound(baleDto.materialSubtypeId(), "SUBTYPE"));

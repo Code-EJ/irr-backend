@@ -322,5 +322,17 @@ public class ErrorHandler {
                 "sorted_item_id", exception.getSortedItemId().toString()
             ));
     }
+
+    @ExceptionHandler(org.code.api.domain.exception.PressingError.InvalidCompaction.class)
+    public ResponseEntity<?> handleInvalidCompaction(org.code.api.domain.exception.PressingError.InvalidCompaction exception) {
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(Map.of(
+                "error", "invalid_compaction",
+                "message", exception.getMessage(),
+                "initial_volume_m3", exception.getInitialVolumeM3().toString(),
+                "final_volume_m3", exception.getFinalVolumeM3().toString()
+            ));
+    }
 }
 

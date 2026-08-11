@@ -2,6 +2,7 @@ package org.code.api.domain.exception;
 
 import lombok.Getter;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 /**
@@ -38,6 +39,23 @@ public class PressingError extends RuntimeException {
         public SortedItemNotFound(UUID sortedItemId) {
             super(String.format("Sorted item not found with ID: %s", sortedItemId));
             this.sortedItemId = sortedItemId;
+        }
+    }
+
+    /**
+     * Lançada quando a prensagem não compacta o volume (finalVolumeM3 >= initialVolumeM3).
+     * Mapeada para HTTP 400.
+     */
+    @Getter
+    public static class InvalidCompaction extends PressingError {
+        private final BigDecimal initialVolumeM3;
+        private final BigDecimal finalVolumeM3;
+
+        public InvalidCompaction(BigDecimal initialVolumeM3, BigDecimal finalVolumeM3) {
+            super("Pressing must compact volume: finalVolumeM3 must be less than initialVolumeM3. " +
+                  "Got initial=" + initialVolumeM3 + ", final=" + finalVolumeM3);
+            this.initialVolumeM3 = initialVolumeM3;
+            this.finalVolumeM3 = finalVolumeM3;
         }
     }
 }
