@@ -42,10 +42,6 @@ public class PressingError extends RuntimeException {
         }
     }
 
-    /**
-     * Lançada quando a prensagem não compacta o volume (finalVolumeM3 >= initialVolumeM3).
-     * Mapeada para HTTP 400.
-     */
     @Getter
     public static class InvalidCompaction extends PressingError {
         private final BigDecimal initialVolumeM3;

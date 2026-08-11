@@ -107,11 +107,9 @@ public class SortingService implements SortingPort {
                 sortedItem = sortedItemRepository.save(sortedItem);
                 savedItems.add(sortedItem);
 
-                // Massa líquida = Massa Bruta - Rejeito
                 BigDecimal netWeight = itemDto.weightKg().subtract(rejectWeight);
                 BigDecimal netVolume = itemDto.volumeM3().subtract(rejectVolume);
 
-                // 1. Atualizar saldo real de estoque (InventoryBalance) com a massa LÍQUIDA
                 InventoryBalance balance = inventoryBalanceRepository.findByMaterialSubtypeId(subtype.getId())
                     .orElseGet(() -> InventoryBalance.builder()
                         .materialSubtype(subtype)
@@ -123,7 +121,6 @@ public class SortingService implements SortingPort {
                 balance.setCurrentVolumeM3(balance.getCurrentVolumeM3().add(netVolume));
                 inventoryBalanceRepository.save(balance);
 
-                // 2. Registrar log do material aproveitado (entrada no saldo)
                 inventoryLogRepository.save(InventoryLog.builder()
                     .materialSubtype(subtype)
                     .quantityKg(netWeight)
@@ -132,7 +129,6 @@ public class SortingService implements SortingPort {
                     .isActive(true)
                     .build());
 
-                // 3. Registrar log do rejeito (saída/descarte) — apenas se houver rejeito
                 if (rejectWeight.signum() > 0 || rejectVolume.signum() > 0) {
                     inventoryLogRepository.save(InventoryLog.builder()
                         .materialSubtype(subtype)

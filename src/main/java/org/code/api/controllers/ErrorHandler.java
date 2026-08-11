@@ -275,10 +275,6 @@ public class ErrorHandler {
             ));
     }
 
-    // ────────────────────────────────────────────────────────────────────────────
-    // Sorting & Pressing Errors
-    // ────────────────────────────────────────────────────────────────────────────
-
     @ExceptionHandler(org.code.api.domain.exception.SortingError.NotFound.class)
     public ResponseEntity<?> handleSortingNotFound(org.code.api.domain.exception.SortingError.NotFound exception) {
         return ResponseEntity
