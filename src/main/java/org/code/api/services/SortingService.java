@@ -107,7 +107,11 @@ public class SortingService implements SortingPort {
                 sortedItem = sortedItemRepository.save(sortedItem);
                 savedItems.add(sortedItem);
 
-                // 1. Atualizar saldo real de estoque (InventoryBalance)
+                // Massa líquida = Massa Bruta - Rejeito
+                BigDecimal netWeight = itemDto.weightKg().subtract(rejectWeight);
+                BigDecimal netVolume = itemDto.volumeM3().subtract(rejectVolume);
+
+                // 1. Atualizar saldo real de estoque (InventoryBalance) com a massa LÍQUIDA
                 InventoryBalance balance = inventoryBalanceRepository.findByMaterialSubtypeId(subtype.getId())
                     .orElseGet(() -> InventoryBalance.builder()
                         .materialSubtype(subtype)
@@ -115,20 +119,29 @@ public class SortingService implements SortingPort {
                         .currentVolumeM3(BigDecimal.ZERO)
                         .build());
 
-                balance.setCurrentWeightKg(balance.getCurrentWeightKg().add(itemDto.weightKg()));
-                balance.setCurrentVolumeM3(balance.getCurrentVolumeM3().add(itemDto.volumeM3()));
+                balance.setCurrentWeightKg(balance.getCurrentWeightKg().add(netWeight));
+                balance.setCurrentVolumeM3(balance.getCurrentVolumeM3().add(netVolume));
                 inventoryBalanceRepository.save(balance);
 
-                // 2. Registrar log de movimentação no livro razão de inventário
-                InventoryLog inventoryLog = InventoryLog.builder()
+                // 2. Registrar log do material aproveitado (entrada no saldo)
+                inventoryLogRepository.save(InventoryLog.builder()
                     .materialSubtype(subtype)
-                    .quantityKg(itemDto.weightKg())
-                    .quantityM3(itemDto.volumeM3())
+                    .quantityKg(netWeight)
+                    .quantityM3(netVolume)
                     .operationType(OperationType.SORTING_OUTPUT)
                     .isActive(true)
-                    .build();
+                    .build());
 
-                inventoryLogRepository.save(inventoryLog);
+                // 3. Registrar log do rejeito (saída/descarte) — apenas se houver rejeito
+                if (rejectWeight.signum() > 0 || rejectVolume.signum() > 0) {
+                    inventoryLogRepository.save(InventoryLog.builder()
+                        .materialSubtype(subtype)
+                        .quantityKg(rejectWeight.negate())
+                        .quantityM3(rejectVolume.negate())
+                        .operationType(OperationType.MANUAL_ADJUSTMENT)
+                        .isActive(true)
+                        .build());
+                }
             }
         }
 

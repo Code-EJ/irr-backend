@@ -134,18 +134,30 @@ class SortingServiceTest {
                 assertEquals(new BigDecimal("150.00"), response.sortedItems().get(0).weightKg());
                 assertEquals(new BigDecimal("10.00"), response.sortedItems().get(0).rejectWeightKg());
 
-                // Verify Inventory Balance update
+                // Verify Inventory Balance update uses NET weight/volume (gross - reject)
                 ArgumentCaptor<InventoryBalance> balanceCaptor = ArgumentCaptor.forClass(InventoryBalance.class);
                 verify(inventoryBalanceRepository).save(balanceCaptor.capture());
-                assertEquals(new BigDecimal("200.00"), balanceCaptor.getValue().getCurrentWeightKg());
-                assertEquals(new BigDecimal("3.50"), balanceCaptor.getValue().getCurrentVolumeM3());
+                assertEquals(new BigDecimal("190.00"), balanceCaptor.getValue().getCurrentWeightKg());
+                assertEquals(new BigDecimal("3.30"), balanceCaptor.getValue().getCurrentVolumeM3());
 
-                // Verify Inventory Log entry
+                // Verify two Inventory Log entries: SORTING_OUTPUT (net) + MANUAL_ADJUSTMENT (reject)
                 ArgumentCaptor<InventoryLog> logCaptor = ArgumentCaptor.forClass(InventoryLog.class);
-                verify(inventoryLogRepository).save(logCaptor.capture());
-                assertEquals(OperationType.SORTING_OUTPUT, logCaptor.getValue().getOperationType());
-                assertEquals(new BigDecimal("150.00"), logCaptor.getValue().getQuantityKg());
-                assertEquals(new BigDecimal("2.50"), logCaptor.getValue().getQuantityM3());
+                verify(inventoryLogRepository, times(2)).save(logCaptor.capture());
+                List<InventoryLog> savedLogs = logCaptor.getAllValues();
+
+                InventoryLog sortingOutputLog = savedLogs.stream()
+                                .filter(l -> l.getOperationType() == OperationType.SORTING_OUTPUT)
+                                .findFirst()
+                                .orElseThrow(() -> new AssertionError("SORTING_OUTPUT log not found"));
+                assertEquals(new BigDecimal("140.00"), sortingOutputLog.getQuantityKg());
+                assertEquals(new BigDecimal("2.30"), sortingOutputLog.getQuantityM3());
+
+                InventoryLog rejectLog = savedLogs.stream()
+                                .filter(l -> l.getOperationType() == OperationType.MANUAL_ADJUSTMENT)
+                                .findFirst()
+                                .orElseThrow(() -> new AssertionError("MANUAL_ADJUSTMENT reject log not found"));
+                assertEquals(new BigDecimal("-10.00"), rejectLog.getQuantityKg());
+                assertEquals(new BigDecimal("-0.20"), rejectLog.getQuantityM3());
         }
 
         @Test
@@ -183,6 +195,82 @@ class SortingServiceTest {
                 assertThrows(MaterialError.NotFound.class, () -> sortingService.create(request));
                 verify(inventoryBalanceRepository, never()).save(any());
                 verify(inventoryLogRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("Should compute net inventory balance (gross - reject) and log reject disposal")
+        void should_compute_net_inventory_balance_after_subtracting_reject() {
+                when(userProvider.getCurrentUserId()).thenReturn(userId);
+                when(userRepository.getReferenceById(userId)).thenReturn(user);
+
+                Sorting savedSorting = Sorting.builder()
+                                .id(UUID.randomUUID())
+                                .sortingDate(OffsetDateTime.now())
+                                .sortingType(SortingType.GROSS)
+                                .creator(user)
+                                .isActive(true)
+                                .build();
+
+                when(sortingRepository.save(any(Sorting.class))).thenReturn(savedSorting);
+                when(subtypeRepository.findById(subtypeId)).thenReturn(Optional.of(subtype));
+
+                SortedItem savedSortedItem = SortedItem.builder()
+                                .id(UUID.randomUUID())
+                                .sorting(savedSorting)
+                                .materialSubtype(subtype)
+                                .weightKg(new BigDecimal("100.00"))
+                                .volumeM3(new BigDecimal("10.00"))
+                                .rejectWeightKg(new BigDecimal("20.00"))
+                                .rejectVolumeM3(new BigDecimal("2.00"))
+                                .isActive(true)
+                                .build();
+
+                when(sortedItemRepository.save(any(SortedItem.class))).thenReturn(savedSortedItem);
+
+                when(inventoryBalanceRepository.findByMaterialSubtypeId(subtypeId))
+                                .thenReturn(Optional.empty());
+
+                SortedItemRequestDTO itemRequest = new SortedItemRequestDTO(
+                                null,
+                                subtypeId,
+                                new BigDecimal("100.00"),
+                                new BigDecimal("10.00"),
+                                new BigDecimal("20.00"),
+                                new BigDecimal("2.00"),
+                                DestinationType.STOCK,
+                                null);
+
+                SortingCreateRequestDTO request = new SortingCreateRequestDTO(
+                                OffsetDateTime.now(),
+                                SortingType.GROSS,
+                                List.of(itemRequest));
+
+                SortingResponseDTO response = sortingService.create(request);
+
+                assertNotNull(response);
+
+                ArgumentCaptor<InventoryBalance> balanceCaptor = ArgumentCaptor.forClass(InventoryBalance.class);
+                verify(inventoryBalanceRepository).save(balanceCaptor.capture());
+                assertEquals(new BigDecimal("80.00"), balanceCaptor.getValue().getCurrentWeightKg());
+                assertEquals(new BigDecimal("8.00"), balanceCaptor.getValue().getCurrentVolumeM3());
+
+                ArgumentCaptor<InventoryLog> logCaptor = ArgumentCaptor.forClass(InventoryLog.class);
+                verify(inventoryLogRepository, times(2)).save(logCaptor.capture());
+                List<InventoryLog> savedLogs = logCaptor.getAllValues();
+
+                InventoryLog sortingOutputLog = savedLogs.stream()
+                                .filter(l -> l.getOperationType() == OperationType.SORTING_OUTPUT)
+                                .findFirst()
+                                .orElseThrow(() -> new AssertionError("SORTING_OUTPUT log not found"));
+                assertEquals(new BigDecimal("80.00"), sortingOutputLog.getQuantityKg());
+                assertEquals(new BigDecimal("8.00"), sortingOutputLog.getQuantityM3());
+
+                InventoryLog rejectLog = savedLogs.stream()
+                                .filter(l -> l.getOperationType() == OperationType.MANUAL_ADJUSTMENT)
+                                .findFirst()
+                                .orElseThrow(() -> new AssertionError("MANUAL_ADJUSTMENT reject log not found"));
+                assertEquals(new BigDecimal("-20.00"), rejectLog.getQuantityKg());
+                assertEquals(new BigDecimal("-2.00"), rejectLog.getQuantityM3());
         }
 
         @Test
