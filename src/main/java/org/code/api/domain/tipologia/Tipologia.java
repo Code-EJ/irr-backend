@@ -1,4 +1,4 @@
-package org.code.api.domain.user;
+package org.code.api.domain.tipologia;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,15 +8,16 @@ import lombok.Setter;
 import org.code.api.utils.TimeStampedEntity;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
+@Table(name = "tipologia")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "Usuario")
-public class User extends TimeStampedEntity {
+public class Tipologia extends TimeStampedEntity {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -24,12 +25,12 @@ public class User extends TimeStampedEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    @Column(name = "email")
-    private String email;
-
-    @Column(name = "senha")
-    private String senha;
-
-    @Column(name = "nome")
+    @Column(name = "nome", nullable = false)
     private String nome;
+
+    @Column(name = "valor", precision = 65, scale = 30)
+    private BigDecimal valor;
+
+    @Column(name = "ativo", nullable = false)
+    private Boolean ativo = true;
 }
