@@ -1,25 +1,27 @@
 package org.code.api.utils;
 
-
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.code.api.domain.user.User;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
+@Getter
+@Setter
 public abstract class TimeStampedEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "criadorId", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "criadorId", referencedColumnName = "id", nullable = true)
     private User createdBy;
 
     @Column(name = "criado_em", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "atualizado_em", nullable = false, updatable = false)
+    @Column(name = "atualizado_em")
     private LocalDateTime updatedAt;
 
     @PrePersist
