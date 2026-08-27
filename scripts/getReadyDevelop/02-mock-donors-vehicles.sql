@@ -17,8 +17,8 @@ BEGIN
 
     -- Doadores
     INSERT INTO donor (id, name, document, donor_type, is_active, creator_id) VALUES 
-    (gen_random_uuid(), 'Supermercado Central', '12345678000199', 'LEGAL', true, v_admin_id),
-    (gen_random_uuid(), 'João da Silva', '12345678901', 'PHYSICAL', true, v_admin_id);
+    (gen_random_uuid(), 'Supermercado Central', '12345678000199', 'PJ', true, v_admin_id),
+    (gen_random_uuid(), 'João da Silva', '12345678901', 'PF', true, v_admin_id);
 
     -- Equipe (Team Members)
     INSERT INTO team_member (id, name, role, is_active, creator_id) VALUES 
