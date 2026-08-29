@@ -28,7 +28,7 @@ public class Attachment extends TimeStampedEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    @Column(name = "file_name", nullable = false, length = 255)
+    @Column(name = "file_name", nullable = false, length = 900)
     private String fileName;
 
     @Column(name = "file_type", nullable = false, length = 50)
