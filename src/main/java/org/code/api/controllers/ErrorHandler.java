@@ -11,6 +11,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.code.api.domain.exception.DonorError;
+import org.code.api.domain.exception.DonationError;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -198,6 +200,88 @@ public class ErrorHandler {
                 "message", exception.getMessage(),
                 "vehicle_id", exception.getVehicleId().toString()
             ));
+    }
+
+    // ────────────────────────────────────────────────────────────────────────────
+    // Donor Errors
+    // ────────────────────────────────────────────────────────────────────────────
+
+    @ExceptionHandler(DonorError.NotFound.class)
+    public ResponseEntity<?> handleDonorNotFound(DonorError.NotFound exception) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(Map.of(
+                        "error", "donor_not_found",
+                        "message", "Donor not found",
+                        "donor_id", exception.getDonorId().toString()
+                ));
+    }
+
+    @ExceptionHandler(DonorError.DocumentAlreadyExists.class)
+    public ResponseEntity<?> handleDonorDocumentAlreadyExists(DonorError.DocumentAlreadyExists exception) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(Map.of(
+                        "error", "donor_document_occupied",
+                        "message", "Donor document is already in use",
+                        "document", exception.getDocument()
+                ));
+    }
+
+    @ExceptionHandler(DonorError.InactiveDonor.class)
+    public ResponseEntity<?> handleInactiveDonor(DonorError.InactiveDonor exception) {
+        return ResponseEntity
+                .unprocessableEntity()
+                .body(Map.of(
+                        "error", "inactive_donor",
+                        "message", exception.getMessage()
+                ));
+    }
+
+    // ────────────────────────────────────────────────────────────────────────────
+    // Donation Errors
+    // ────────────────────────────────────────────────────────────────────────────
+
+    @ExceptionHandler(DonationError.NotFound.class)
+    public ResponseEntity<?> handleDonationNotFound(DonationError.NotFound exception) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(Map.of(
+                        "error", "donation_not_found",
+                        "message", "Donation not found",
+                        "donation_id", exception.getDonationId().toString()
+                ));
+    }
+
+    @ExceptionHandler(DonationError.InactiveDonation.class)
+    public ResponseEntity<?> handleInactiveDonation(DonationError.InactiveDonation exception) {
+        return ResponseEntity
+                .unprocessableEntity()
+                .body(Map.of(
+                        "error", "inactive_donation",
+                        "message", exception.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(DonationError.EmptyInputItems.class)
+    public ResponseEntity<?> handleEmptyInputItems(DonationError.EmptyInputItems exception) {
+        return ResponseEntity
+                .badRequest()
+                .body(Map.of(
+                        "error", "empty_input_items",
+                        "message", exception.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(DonationError.AttachmentNotFound.class)
+    public ResponseEntity<?> handleAttachmentNotFound(DonationError.AttachmentNotFound exception) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(Map.of(
+                        "error", "attachment_not_found",
+                        "message", "Proof attachment not found",
+                        "attachment_id", exception.getAttachmentId().toString()
+                ));
     }
 
     // ────────────────────────────────────────────────────────────────────────────
