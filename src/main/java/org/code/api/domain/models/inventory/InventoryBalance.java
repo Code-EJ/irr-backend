@@ -45,4 +45,9 @@ public class InventoryBalance {
     @UpdateTimestamp
     @Column(name = "last_updated_at")
     private OffsetDateTime lastUpdatedAt;
+
+    @Version
+    @Column(name = "version", nullable = false)
+    @Builder.Default
+    private Long version = 0L;
 }

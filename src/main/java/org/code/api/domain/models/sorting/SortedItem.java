@@ -2,6 +2,7 @@ package org.code.api.domain.models.sorting;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.code.api.domain.enums.DestinationType;
 import org.code.api.domain.models.collection.InputItem;
 import org.code.api.domain.models.material.MaterialSubtype;
 import org.hibernate.annotations.CreationTimestamp;
@@ -72,4 +73,11 @@ public class SortedItem {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private OffsetDateTime updatedAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "destination_type", length = 50)
+    private DestinationType destinationType;
+
+    @Column(name = "destination_id")
+    private UUID destinationId;
 }

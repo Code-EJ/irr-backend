@@ -8,7 +8,9 @@ services:
       POSTGRES_USER: irr_admin
       POSTGRES_PASSWORD: root
       POSTGRES_DB: irr
-
+    volumes:
+      # O SEGREDO ESTÁ AQUI: Salva os dados na sua máquina real
+      - banco_dados_volume:/var/lib/postgresql/data
     ports:
       - "5435:5432"
 
@@ -34,3 +36,4 @@ services:
 
 volumes:
   backend_maven_cache:
+  banco_dados_volume: 

@@ -5,6 +5,7 @@ import java.util.Map;
 import org.code.api.domain.exception.AuthError;
 import org.code.api.domain.exception.MaterialError;
 import org.code.api.domain.exception.VehicleError;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -358,4 +359,72 @@ public class ErrorHandler {
                 "material_id", exception.getMaterialId().toString()
             ));
     }
+
+    @ExceptionHandler(org.code.api.domain.exception.SortingError.NotFound.class)
+    public ResponseEntity<?> handleSortingNotFound(org.code.api.domain.exception.SortingError.NotFound exception) {
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(Map.of(
+                "error", "sorting_not_found",
+                "message", exception.getMessage(),
+                "sorting_id", exception.getSortingId().toString()
+            ));
+    }
+
+    @ExceptionHandler(org.code.api.domain.exception.SortingError.InputItemNotFound.class)
+    public ResponseEntity<?> handleInputItemNotFound(org.code.api.domain.exception.SortingError.InputItemNotFound exception) {
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(Map.of(
+                "error", "input_item_not_found",
+                "message", exception.getMessage(),
+                "input_item_id", exception.getInputItemId().toString()
+            ));
+    }
+
+    @ExceptionHandler(org.code.api.domain.exception.PressingError.NotFound.class)
+    public ResponseEntity<?> handlePressingNotFound(org.code.api.domain.exception.PressingError.NotFound exception) {
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(Map.of(
+                "error", "pressing_not_found",
+                "message", exception.getMessage(),
+                "pressing_id", exception.getPressingId().toString()
+            ));
+    }
+
+    @ExceptionHandler(org.code.api.domain.exception.PressingError.SortedItemNotFound.class)
+    public ResponseEntity<?> handleSortedItemNotFound(org.code.api.domain.exception.PressingError.SortedItemNotFound exception) {
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(Map.of(
+                "error", "sorted_item_not_found",
+                "message", exception.getMessage(),
+                "sorted_item_id", exception.getSortedItemId().toString()
+            ));
+    }
+
+    @ExceptionHandler(org.code.api.domain.exception.PressingError.InvalidCompaction.class)
+    public ResponseEntity<?> handleInvalidCompaction(org.code.api.domain.exception.PressingError.InvalidCompaction exception) {
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(Map.of(
+                "error", "invalid_compaction",
+                "message", exception.getMessage(),
+                "initial_volume_m3", exception.getInitialVolumeM3().toString(),
+                "final_volume_m3", exception.getFinalVolumeM3().toString()
+            ));
+    }
+
+    @ExceptionHandler(OptimisticLockingFailureException.class)
+    public ResponseEntity<?> handleOptimisticLock(OptimisticLockingFailureException exception) {
+        log.warn("Optimistic lock conflict: {}", exception.getMessage());
+        return ResponseEntity
+            .status(HttpStatus.CONFLICT)
+            .body(Map.of(
+                "error", "concurrent_modification",
+                "message", "The record was modified by another transaction. Please retry."
+            ));
+    }
 }
+

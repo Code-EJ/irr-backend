@@ -1,5 +1,7 @@
 package org.code.api.dto.sorting.response;
 
+import org.code.api.domain.enums.DestinationType;
+
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -15,5 +17,7 @@ public record SortedItemResponseDTO(
     BigDecimal rejectVolumeM3,
     Boolean isActive,
     OffsetDateTime createdAt,
-    OffsetDateTime updatedAt
+    OffsetDateTime updatedAt,
+    DestinationType destinationType,
+    UUID destinationId
 ) {}

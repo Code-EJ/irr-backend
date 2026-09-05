@@ -2,6 +2,7 @@ package org.code.api.domain.models.pressing;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.code.api.domain.enums.DestinationType;
 import org.code.api.domain.models.material.MaterialSubtype;
 import org.code.api.domain.models.sorting.SortedItem;
 import org.hibernate.annotations.CreationTimestamp;
@@ -67,4 +68,11 @@ public class PressedBale {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private OffsetDateTime updatedAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "destination_type", length = 50)
+    private DestinationType destinationType;
+
+    @Column(name = "destination_id")
+    private UUID destinationId;
 }
