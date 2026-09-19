@@ -5,8 +5,13 @@ import java.util.UUID;
 import org.code.api.domain.models.base.Attachment;
 import org.code.api.domain.models.user.Session;
 import org.code.api.domain.models.user.User;
+import org.code.api.dto.attachment.response.AttachmentResponseDTO;
 import org.code.api.services.DocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -65,6 +70,13 @@ public ResponseEntity<byte[]> downloadDocumento(@PathVariable UUID id) {
     } catch (Exception e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
+}
+@GetMapping
+public ResponseEntity<Page<AttachmentResponseDTO>> getAll(
+        @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC)
+        Pageable pageable
+) {
+    return ResponseEntity.ok(documentService.getAll(pageable));
 }
 
 // Endpoint para Deleção (DELETE)

@@ -3,9 +3,12 @@ package org.code.api.services;
 import org.code.api.domain.models.base.Attachment;
 import org.code.api.domain.models.user.Session;
 import org.code.api.domain.models.user.User;
+import org.code.api.dto.attachment.response.AttachmentResponseDTO;
 import org.code.api.infrastructure.repositories.AttachmentRepository;
 import org.code.api.infrastructure.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,6 +58,12 @@ public class DocumentService {
 
         return repository.save(doc);
     }
+    @Transactional(readOnly = true)
+    public Page<AttachmentResponseDTO> getAll(Pageable pageable) {
+    return repository
+            .findAll(pageable)
+            .map(attachment -> new AttachmentResponseDTO(attachment));
+}
 
     @Transactional(readOnly = true)
     public byte[] findLocalArchives(UUID id) throws IOException {
