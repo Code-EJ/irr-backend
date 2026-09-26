@@ -1,46 +1,47 @@
 package org.code.api.services;
 
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.UUID;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * Stores attachment bytes under generated names in a configured persistent directory.
+ *
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
+ */
 @Service
 public class LocalStorageServiceImpl implements StorageService {
-
-    // Define uma pasta temporária no sistema para simular o servidor de arquivos
-    private final String DIRETORIO_SERVIDOR_MOCK = System.getProperty("user.home") + File.separator + "servidor_externo_mock";
-
-    @Override
-    public String armazenar(MultipartFile arquivo) throws IOException {
-        Path pastaDestino = Paths.get(DIRETORIO_SERVIDOR_MOCK);
-        
-        // Cria a pasta caso ela não exista
-        if (!Files.exists(pastaDestino)) {
-            Files.createDirectories(pastaDestino);
-        }
-
-        // Garante que arquivos com o mesmo nome não se sobresscrevam no servidor externo
-        String nomeUnico = UUID.randomUUID().toString() + "_" + arquivo.getOriginalFilename();
-        Path caminhoCompleto = pastaDestino.resolve(nomeUnico);
-
-        // Copia os bytes do arquivo recebido para o diretório do "servidor"
-        Files.copy(arquivo.getInputStream(), caminhoCompleto);
-
-        // Retorna o caminho absoluto String que representa a localização no servidor
-        return caminhoCompleto.toAbsolutePath().toString();
+    private final Path directory;
+    /**
+     * Configures the persistent storage root.
+     * @param directory filesystem directory for uploaded bytes
+     */
+    public LocalStorageServiceImpl(@Value("${irr.storage.directory}") String directory) {
+        this.directory = Path.of(directory).toAbsolutePath().normalize();
     }
-
+    /** {@inheritDoc} */
     @Override
-    public void deletar(String caminhoArquivo) {
-        try {
-            Files.deleteIfExists(Paths.get(caminhoArquivo));
-        } catch (IOException e) {
-            throw new RuntimeException("Erro ao remover arquivo físico do servidor mock", e);
+    public String store(MultipartFile file) throws IOException {
+        Files.createDirectories(directory);
+        Path destination = directory.resolve(UUID.randomUUID().toString());
+        try (InputStream input = file.getInputStream()) {
+            Files.copy(input, destination);
         }
+        return destination.toString();
+    }
+    /** {@inheritDoc} */
+    @Override
+    public void delete(String storedPath) {
+        Path target = Path.of(storedPath).toAbsolutePath().normalize();
+        if (!directory.equals(target.getParent())) {
+            throw new IllegalArgumentException("Storage path is outside the configured directory");
+        }
+        try { Files.deleteIfExists(target); }
+        catch (IOException exception) { throw new IllegalStateException("Cannot delete stored attachment", exception); }
     }
 }

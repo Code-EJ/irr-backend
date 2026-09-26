@@ -1,12 +1,10 @@
 package org.code.api.services;
 
 import org.code.api.domain.models.base.Attachment;
-import org.code.api.domain.models.user.Session;
 import org.code.api.domain.models.user.User;
 import org.code.api.infrastructure.repositories.AttachmentRepository;
 import org.code.api.infrastructure.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +15,12 @@ import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Legacy attachment orchestration. Metadata authorization, response DTOs and
+ * transactional file lifecycle are scheduled for the identity/attachment slice.
+ *
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
+ */
 @Service
 public class DocumentService {
 
@@ -27,27 +31,28 @@ public class DocumentService {
     private UserRepository userRepository;
 
     @Autowired
-    private StorageService storageService; // Injeta a abstração local automaticamente
+    private StorageService storageService;
 
 
 
+    /**
+     * Stores uploaded bytes and persists their legacy metadata record.
+     * @param file uploaded content
+     * @param creatorId existing creator identity
+     * @return persisted attachment metadata
+     * @throws IOException if byte storage fails
+     */
     @Transactional
-    public Attachment registerDocument(MultipartFile arquivo, UUID creatorID) throws IOException {
-        // 1. Envia para o servidor e extrai a String do caminho
-        String path = storageService.armazenar(arquivo);
-
-        // 2. Salva as informações textuais no PostgreSQL
+    public Attachment registerDocument(MultipartFile file, UUID creatorId) throws IOException {
+        String path = storageService.store(file);
         Attachment doc = new Attachment();
-        doc.setFileName(arquivo.getOriginalFilename());
-        doc.setFileType(arquivo.getContentType());
+        doc.setFileName(file.getOriginalFilename());
+        doc.setFileType(file.getContentType());
         doc.setStorageUrl(path);
         doc.setIsActive(true);
-
-
-        // Associa o creator (se for relacionamento com User)
-        Optional<User> OptionalCreator = userRepository.findById(creatorID);
-        if (OptionalCreator.isPresent()) {
-            User creator = OptionalCreator.get();
+        Optional<User> optionalCreator = userRepository.findById(creatorId);
+        if (optionalCreator.isPresent()) {
+            User creator = optionalCreator.get();
             doc.setCreator(creator);
         }
         
@@ -56,35 +61,44 @@ public class DocumentService {
         return repository.save(doc);
     }
 
+    /**
+     * Reads bytes for an attachment using the legacy metadata path.
+     * @param id attachment identifier
+     * @return stored bytes
+     * @throws IOException if the file cannot be read
+     */
     @Transactional(readOnly = true)
     public byte[] findLocalArchives(UUID id) throws IOException {
         Attachment doc = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Documento não encontrado com o ID fornecido"));
-
-        // Lê os bytes diretamente do arquivo armazenado no caminho salvo
+                .orElseThrow(() -> new RuntimeException("No attachment exists for the supplied ID"));
         return Files.readAllBytes(Paths.get(doc.getStorageUrl()));
     }
 
+    /**
+     * Finds the current attachment entity; callers must not expose it as a new API contract.
+     * @param id attachment identifier
+     * @return attachment entity
+     */
     public Attachment findById(UUID id) {
         Attachment doc = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Documento não encontrado com o ID fornecido"));
+                .orElseThrow(() -> new RuntimeException("No attachment exists for the supplied ID"));
         return doc;
     }
-
-    // Método para deletar o registro do banco e o arquivo físico do servidor mock
+    /**
+     * Deletes bytes and metadata through the legacy flow.
+     * <p>This method still needs the planned durable deletion lifecycle before release.</p>
+     * @param id attachment identifier
+     */
     @Transactional
     public void deleteDocument(UUID id) {
         Attachment doc = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Documento não encontrado com o ID fornecido"));
+                .orElseThrow(() -> new RuntimeException("No attachment exists for the supplied ID"));
 
         try {
-            // 1. Apaga o arquivo físico da pasta simulada
             Files.deleteIfExists(Paths.get(doc.getStorageUrl()));
         } catch (IOException e) {
-            throw new RuntimeException("Falha ao apagar o arquivo físico do servidor mock", e);
+            throw new RuntimeException("Falha ao apagar o file físico do servidor mock", e);
         }
-
-        // 2. Apaga o registro textual correspondente no PostgreSQL
         repository.delete(doc);
     }
 }
