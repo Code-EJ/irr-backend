@@ -31,16 +31,30 @@ public class LocalStorageServiceImpl implements StorageService {
         Path destination = directory.resolve(UUID.randomUUID().toString());
         try (InputStream input = file.getInputStream()) {
             Files.copy(input, destination);
+        } catch (IOException exception) {
+            try { Files.deleteIfExists(destination); } catch (IOException cleanup) { exception.addSuppressed(cleanup); }
+            throw exception;
         }
         return destination.toString();
     }
     /** {@inheritDoc} */
     @Override
-    public void delete(String storedPath) {
+    public byte[] read(String storedPath) throws IOException {
+        Path target = resolve(storedPath);
+        if (Files.size(target) > 10 * 1024 * 1024) throw new IOException("Stored attachment exceeds the read limit");
+        return Files.readAllBytes(target);
+    }
+    private Path resolve(String storedPath) {
         Path target = Path.of(storedPath).toAbsolutePath().normalize();
-        if (!directory.equals(target.getParent())) {
+        if (!directory.equals(target.getParent()) || Files.isSymbolicLink(target)) {
             throw new IllegalArgumentException("Storage path is outside the configured directory");
         }
+        return target;
+    }
+    /** {@inheritDoc} */
+    @Override
+    public void delete(String storedPath) {
+        Path target = resolve(storedPath);
         try { Files.deleteIfExists(target); }
         catch (IOException exception) { throw new IllegalStateException("Cannot delete stored attachment", exception); }
     }

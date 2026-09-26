@@ -26,6 +26,7 @@ public abstract class PostgresIntegrationTest {
      */
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
+        registry.add("irr.attachments.cleanup-enabled", () -> "false");
         registry.add("spring.datasource.url", DATABASE::getJdbcUrl);
         registry.add("spring.datasource.username", DATABASE::getUsername);
         registry.add("spring.datasource.password", DATABASE::getPassword);

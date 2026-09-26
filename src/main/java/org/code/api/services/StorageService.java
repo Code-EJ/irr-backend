@@ -18,6 +18,14 @@ public interface StorageService {
     String store(MultipartFile file) throws IOException;
 
     /**
+     * Reads bounded attachment content from this adapter's storage root.
+     * @param storedPath previously generated storage path
+     * @return stored bytes
+     * @throws IOException if the file cannot be read
+     */
+    byte[] read(String storedPath) throws IOException;
+
+    /**
      * Removes bytes belonging to the adapter's configured storage directory.
      * @param storedPath a path previously returned by this adapter
      * @throws IllegalArgumentException if the path is outside that directory
