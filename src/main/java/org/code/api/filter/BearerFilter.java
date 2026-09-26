@@ -25,20 +25,11 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 
 /**
- * Filtro de segurança customizado responsável pela interceptação de requisições HTTP,
- * validação de tokens JWT (Bearer) e injeção do usuário no contexto de segurança global.
+ * Validates bearer sessions and populates the request security principal.
+ * Exact status-only health routes bypass authentication for container probes.
+ * The legacy session-prefix exemption is retained until the provisioning refactor.
  *
- * <p>O fluxo de trabalho principal consiste em:
- * <ol>
- * <li>Ignorar rotas de bypass (como autenticação inicial).</li>
- * <li>Extrair e formatar o cabeçalho {@code Authorization}.</li>
- * <li>Validar a criptografia, expiração e integridade do token via {@link AuthService}.</li>
- * <li>Traduzir a {@code Session} decodificada para um {@link UsernamePasswordAuthenticationToken}
- * do Spring Security, populando as roles (autoridades) para viabilizar o uso do {@code @PreAuthorize}.</li>
- * </ol>
- *
- * @implNote Implementa uma regra de "Renewal Grace Period" que avisa o frontend
- * (via header {@code X-Token-Renewal}) sobre a necessidade de renovação do token.
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 @Slf4j
 @Component
@@ -47,19 +38,25 @@ public class BearerFilter implements Filter {
     @Autowired
     private AuthService authService;
 
+    @org.springframework.beans.factory.annotation.Value("${springdoc.api-docs.enabled:true}")
+    private boolean documentationEnabled;
+
+    /** {@inheritDoc} */
     @Override
     public void doFilter(
         ServletRequest servletRequest,
         ServletResponse servletResponse,
         FilterChain filterChain
     ) throws IOException, ServletException {
-        log.debug("Bearer Filter executando");
+        log.debug("Executing bearer authentication filter");
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
         String path = request.getRequestURI();
 
-        if (path.startsWith("/api/session/")) {
+        if (path.startsWith("/api/session/") || path.equals("/actuator/health")
+            || path.equals("/actuator/health/liveness") || path.equals("/actuator/health/readiness")
+            || isDocumentationPath(path)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -183,6 +180,17 @@ public class BearerFilter implements Filter {
             session.getExpiresAt(),
             session.getIssuedAt()
         );
+    }
+
+    /**
+     * Checks the exact documentation entrypoints and their static/configuration resources.
+     * @param path request URI
+     * @return whether enabled documentation may bypass business authentication
+     */
+    private boolean isDocumentationPath(String path) {
+        return documentationEnabled && (path.equals("/swagger-ui.html")
+            || path.startsWith("/swagger-ui/") || path.equals("/v3/api-docs")
+            || path.equals("/v3/api-docs.yaml") || path.startsWith("/v3/api-docs/"));
     }
 
     private void sendExpiredTokenResponse(

@@ -39,3 +39,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Local credentials, keys and uploaded files
+.local/
+*.pem

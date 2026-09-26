@@ -1,39 +1,61 @@
+name: irr-development
 services:
   database:
-    container_name: irr_database
-    image: postgres:16
-    restart: always
-
+    image: postgres:16-alpine
     environment:
-      POSTGRES_USER: irr_admin
-      POSTGRES_PASSWORD: root
-      POSTGRES_DB: irr
+      POSTGRES_USER: ${DB_USER:-irr_app}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      POSTGRES_DB: ${DB_NAME:-irr}
     volumes:
-      # O SEGREDO ESTÁ AQUI: Salva os dados na sua máquina real
-      - banco_dados_volume:/var/lib/postgresql/data
-    ports:
-      - "5435:5432"
-
+      - database_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
   backend:
-    container_name: irr_backend
-    image: eclipse-temurin:21-jdk
-    working_dir: /app
-    volumes:
-      - .:/app
-      - backend_maven_cache:/root/.m2
-    ports:
-      - "8081:8081"
-      - "5005:5005"
-    depends_on:
-      - database
+    build: .
     environment:
-      - DB_HOST=database
-      - DB_PORT=5432
-      - DB_NAME=irr
-      - DB_USER=irr_admin
-      - DB_PASSWORD=root
-    command: ./mvnw spring-boot:run -Dspring-boot.run.jvmArguments="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
-
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-irr}
+      DB_USER: ${DB_USER:-irr_app}
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      RSA_PUBLIC_KEY: file:/run/irr-keys/public.pem
+      RSA_PRIVATE_KEY: file:/run/irr-keys/private.pem
+      STORAGE_DIRECTORY: /data/uploads
+      API_DOCS_ENABLED: ${API_DOCS_ENABLED:-true}
+      SPRING_PROFILES_ACTIVE: development
+      DEV_BOOTSTRAP_ENABLED: ${DEV_BOOTSTRAP_ENABLED:-true}
+      DEV_ADMIN_NAME: ${DEV_ADMIN_NAME:-Development Administrator}
+      DEV_ADMIN_EMAIL: ${DEV_ADMIN_EMAIL:?Set DEV_ADMIN_EMAIL in .env}
+      DEV_ADMIN_PASSWORD: ${DEV_ADMIN_PASSWORD:?Set DEV_ADMIN_PASSWORD in .env}
+    ports:
+      - "127.0.0.1:${API_PORT:-9191}:9191"
+    volumes:
+      - type: bind
+        source: ./.local/keys
+        target: /run/irr-keys
+        read_only: true
+        bind:
+          create_host_path: false
+      - attachment_data:/data/uploads
+    depends_on:
+      database:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:9191/actuator/health/readiness"]
+      interval: 10s
+      timeout: 5s
+      start_period: 60s
+      retries: 12
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
 volumes:
-  backend_maven_cache:
-  banco_dados_volume: 
+  database_data:
+  attachment_data:
