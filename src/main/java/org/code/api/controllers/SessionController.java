@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Controller REST para autenticação e registro de usuários.
+ * Exposes the current authentication and registration contract.
+ *
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 @Slf4j
 @RestController
@@ -26,8 +28,14 @@ public class SessionController {
 
     private final AuthPort authPort;
 
+    /**
+     * Registers a representative using the current pre-production policy.
+     * @param data validated registration fields
+     * @return a created response containing the signed token
+     */
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "User registered")
     @PostMapping("/register")
-    public ResponseEntity<?> register(
+    public ResponseEntity<RegisterResponseDTO> register(
         @Valid @RequestBody RegisterRequestDTO data
     ) {
         String token = authPort.register(
@@ -41,8 +49,13 @@ public class SessionController {
         );
     }
 
+    /**
+     * Authenticates credentials and creates a signed session token.
+     * @param data validated login credentials
+     * @return a response containing the signed token
+     */
     @PostMapping("/authenticate")
-    public ResponseEntity<?> authenticate(
+    public ResponseEntity<LoginResponseDTO> authenticate(
         @Valid @RequestBody LoginRequestDTO data
     ) {
         String token = authPort.authenticate(data.email(), data.password());
