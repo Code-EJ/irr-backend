@@ -96,13 +96,12 @@ public class ErrorHandler {
 
     @ExceptionHandler(AuthError.InvalidToken.class)
     public ResponseEntity<?> handleInvalidToken(AuthError.InvalidToken exception) {
-        log.debug("Invalid token used: {}", exception.getToken());
+        log.debug("Rejected an invalid token");
         return ResponseEntity
             .status(HttpStatus.UNAUTHORIZED)
             .body(Map.of(
                 "error", "invalid_token",
-                "message", "The provided token is invalid.",
-                "token", exception.getToken()
+                "message", "The provided token is invalid."
             ));
     }
 
@@ -124,33 +123,14 @@ public class ErrorHandler {
             ));
     }
 
+    /**
+     * Uses the same response for unknown accounts and wrong passwords.
+     * @param exception rejected credentials
+     * @return a generic unauthorized response
+     */
     @ExceptionHandler(AuthError.WrongCredentials.class)
     public ResponseEntity<?> handleWrongCredentials(AuthError.WrongCredentials exception) {
-        log.debug(exception.isUserValid()
-            ? "Password mismatch for email: " + exception.getEmail()
-            : "No user found with email: " + exception.getEmail()
-        );
-
-        return ResponseEntity
-            .status(HttpStatus.UNAUTHORIZED)
-            .body(Map.of(
-                "error", "wrong_credentials",
-                "message", "The provided email or password is incorrect.",
-                "email", exception.getEmail()
-            ));
-    }
-
-    @ExceptionHandler(AuthError.PasswordTooLong.class)
-    public ResponseEntity<?> handlePasswordTooLong(AuthError.PasswordTooLong exception) {
-        log.debug("Attempt to register with a password exceeding 72 bytes: {} bytes", exception.getPasswordLength());
-
-        return ResponseEntity
-            .badRequest()
-            .body(Map.of(
-                "error", "password_too_long",
-                "message", "The provided password exceeds the maximum allowed length of 72 bytes.",
-                "password_length", exception.getPasswordLength()
-            ));
+        return ResponseEntity.status(401).body(Map.of("error", "wrong_credentials", "message", "Invalid email or password"));
     }
 
     // ────────────────────────────────────────────────────────────────────────────

@@ -44,7 +44,7 @@ public class OpenApiConfiguration {
     @Bean
     public OperationCustomizer operationDocumentation() {
         Map<String, String> resources = Map.ofEntries(
-            Map.entry("SessionController", "Sessions"), Map.entry("VehicleController", "Vehicles"),
+            Map.entry("UserController", "Partners"), Map.entry("SessionController", "Sessions"), Map.entry("VehicleController", "Vehicles"),
             Map.entry("MaterialCategoryController", "Material categories"), Map.entry("MaterialTypeController", "Material types"),
             Map.entry("MaterialSubtypeController", "Material subtypes"), Map.entry("DonorController", "Donors"),
             Map.entry("DonationController", "Donations"), Map.entry("SortingController", "Sorting"),
@@ -60,9 +60,9 @@ public class OpenApiConfiguration {
             String resource = resources.getOrDefault(handler.getBeanType().getSimpleName(), "Operations");
             String method = handler.getMethod().getName();
             operation.setTags(List.of(resource));
-            operation.setSummary(actions.getOrDefault(method, "Process request") + " — " + resource);
+            if (operation.getSummary() == null) operation.setSummary(actions.getOrDefault(method, "Process request") + " — " + resource);
             PreAuthorize rule = handler.getMethodAnnotation(PreAuthorize.class);
-            operation.setDescription(rule == null
+            if (operation.getDescription() == null) operation.setDescription(rule == null
                 ? "Access follows the session filter and application service. See the master plan for pending authorization changes."
                 : "Declared method authorization: " + rule.value() + ". Object ownership is enforced by the corresponding service where implemented.");
             return operation;
@@ -71,13 +71,13 @@ public class OpenApiConfiguration {
 
     /**
      * Documents public session operations as exceptions to the global bearer requirement.
-     * @return a customizer for the two existing public session routes
+     * @return a customizer for the public login route
      */
     @Bean
     public OpenApiCustomizer sessionSecurityDocumentation() {
         return api -> {
             if (api.getPaths() == null) return;
-            for (String path : List.of("/api/session/register", "/api/session/authenticate")) {
+            for (String path : List.of("/api/session/authenticate")) {
                 var item = api.getPaths().get(path);
                 if (item != null) item.readOperations().forEach(operation -> operation.setSecurity(List.of()));
             }

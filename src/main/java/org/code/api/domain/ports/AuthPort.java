@@ -3,11 +3,22 @@ package org.code.api.domain.ports;
 import org.code.api.domain.models.user.Session;
 
 /**
- * Porta de entrada (Inbound Port) para operações de autenticação e registro de usuários.
+ * Authentication boundary for existing users; provisioning never issues another user's token.
+ *
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 public interface AuthPort {
+    /**
+     * Validates existing credentials.
+     * @param email login address
+     * @param password supplied password
+     * @return signed bearer token
+     */
     String authenticate(String email, String password);
-    String register(String fullName, String email, String password);
-    String renew(String token);
+    /**
+     * Resolves an active database identity and current role from a valid token.
+     * @param token signed bearer token
+     * @return current session identity
+     */
     Session getSessionDetails(String token);
 }

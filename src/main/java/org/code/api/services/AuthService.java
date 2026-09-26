@@ -1,10 +1,8 @@
 package org.code.api.services;
 
 import java.util.Optional;
-import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.code.api.domain.enums.UserRole;
 import org.code.api.domain.exception.AuthError;
 import org.code.api.domain.models.user.Session;
 import org.code.api.domain.models.user.User;
@@ -15,6 +13,12 @@ import org.code.api.infrastructure.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Authenticates existing active users and reloads current identity/roles for bearer sessions.
+ * User provisioning is a separate administrator-only use case.
+ *
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
+ */
 @Slf4j
 @Service
 @AllArgsConstructor
@@ -24,6 +28,7 @@ public class AuthService implements AuthPort {
     private UserRepository userRepository;
     private EncryptionPort encryptionPort;
 
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
     public String authenticate(String email, String password) {
@@ -48,44 +53,7 @@ public class AuthService implements AuthPort {
         );
     }
 
-    @Override
-    @Transactional
-    public String register(String fullName, String email, String password) {
-        if (userRepository.existsByEmail(email)) {
-            throw new AuthError.EmailOccupied(email);
-        }
-
-        String encryptedPassword = encryptionPort.encrypt(password);
-
-        User user = userRepository.save(
-            User.builder()
-                .fullName(fullName)
-                .passwordHash(encryptedPassword)
-                .email(email)
-                .userRole(UserRole.REPRESENTATIVE)
-                .build()
-        );
-
-        return tokenPort.createToken(
-            Session.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .userRole(UserRole.REPRESENTATIVE)
-                .build()
-        );
-    }
-
-    @Override
-    public String renew(String token) {
-        throw new UnsupportedOperationException("Unimplemented method 'renew'");
-    }
-
-    /*
-    Validação de sessão
-    - Caso não exista o id dentro do payload no banco - lança InvalidToken
-    - Caso o token esteja inválido (seja por algoritmo errado, estrutura...) - lança InvalidToken
-    - Caso tudo esteja ok, retorna os dados da sessão
-  */
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
     public Session getSessionDetails(String token) {

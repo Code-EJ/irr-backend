@@ -59,26 +59,6 @@ class AuthServiceTests {
         assertThat(captured.getValue().getId()).isEqualTo(user.getId());
         assertThat(captured.getValue().getUserRole()).isEqualTo(UserRole.ADMINISTRATOR);
     }
-    /** Verifies that registration persists hash rather than password. */
-    @Test void registrationPersistsHashRatherThanPassword() {
-        when(encryption.encrypt("password")).thenReturn("hash");
-        when(users.save(any())).thenAnswer(invocation -> {
-            User user = invocation.getArgument(0); user.setId(UUID.randomUUID()); return user;
-        });
-        service.register("Test User", "user@example.test", "password");
-        ArgumentCaptor<User> captured = ArgumentCaptor.forClass(User.class);
-        verify(users).save(captured.capture());
-        assertThat(captured.getValue().getPasswordHash()).isEqualTo("hash");
-        assertThat(captured.getValue().getUserRole()).isEqualTo(UserRole.REPRESENTATIVE);
-    }
-    /** Verifies that duplicate email never persists or issues token. */
-    @Test void duplicateEmailNeverPersistsOrIssuesToken() {
-        when(users.existsByEmail("user@example.test")).thenReturn(true);
-        assertThatThrownBy(() -> service.register("User", "user@example.test", "password"))
-            .isInstanceOf(AuthError.EmailOccupied.class);
-        verify(users, never()).save(any());
-        verifyNoInteractions(tokens, encryption);
-    }
     /** Verifies that removed user cannot restore session from valid token. */
     @Test void removedUserCannotRestoreSessionFromValidToken() {
         Session session = Session.builder().id(UUID.randomUUID()).build();
