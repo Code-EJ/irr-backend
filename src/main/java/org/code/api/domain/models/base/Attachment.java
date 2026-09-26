@@ -9,9 +9,10 @@ import org.hibernate.annotations.SQLRestriction;
 import java.util.UUID;
 
 /**
- * Entidade JPA mapeada para a tabela {@code attachment}.
- * Centraliza referências a documentos anexos (NFe, MTR, Recibos, etc.)
- * usados pelas tabelas operacionais.
+ * Persistent metadata for operational documents, such as invoices and receipts.
+ * The filename limit matches the existing PostgreSQL column.
+ *
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 @Entity
 @Table(name = "attachment")
@@ -28,7 +29,7 @@ public class Attachment extends TimeStampedEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    @Column(name = "file_name", nullable = false, length = 900)
+    @Column(name = "file_name", nullable = false, length = 255)
     private String fileName;
 
     @Column(name = "file_type", nullable = false, length = 50)
