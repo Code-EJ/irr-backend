@@ -51,3 +51,17 @@ For a container smoke test, create a unique Compose project name and an unused A
 ## Known operating limits
 
 This is a local single-host topology. Public TLS, backup scheduling, resource sizing, release image digests, least-privilege runtime/migration database roles and external secret management are later release work. No Kubernetes cluster is required by current evidence. The complete authorization/domain refactor remains in the master plan.
+
+## Attachment cleanup operations
+
+V2 is an additive upgrade of the fresh V1 database and must apply without a reset. Rebuild with docker compose up --build -d --wait. The cleanup scheduler runs every 60 seconds; irr.attachments.cleanup-enabled=false is reserved for deterministic tests or deliberate maintenance. A successful API delete returns 202 after committing metadata removal and the queue job, not after physical deletion.
+
+Inspect retry backlog from a database session with:
+
+~~~sql
+SELECT id, created_at, attempts, next_attempt_at, last_error
+FROM attachment_file_deletion
+ORDER BY created_at;
+~~~
+
+Repeated failures require checking the attachment volume mount, storage availability and UID 10001 permissions. The worker retries idempotently; do not manually delete queue rows to conceal a storage error. A crash during upload can leave unreferenced bytes. Automated orphan reconciliation is not yet implemented: inspect metadata and backups before any manual cleanup, and never infer that a recently created file is an orphan while uploads are active. Backups must include both committed metadata and attachment content.

@@ -1,5 +1,7 @@
 # ADR-0007: Fresh pre-production database baseline and incremental evolution
 
+> Subsequent implementation: [ADR-0008](0008-identity-and-attachment-boundaries.md) adds runtime V2 for durable attachment cleanup. The initial V1 remains unchanged; the active schema now has 22 application tables. Incremental example tests now use V3. The baseline decision below records its original state.
+
 - Status: Accepted for the current backend foundation.
 - Date: 2026-09-26.
 - Documentation maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).

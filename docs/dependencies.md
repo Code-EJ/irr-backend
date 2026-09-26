@@ -36,3 +36,7 @@ Swagger/OpenAPI is the official API reference, per owner instruction. Keep JavaD
 - [Testcontainers Docker 29 compatibility report](https://github.com/testcontainers/testcontainers-java/issues/11211)
 - [Docker Engine API compatibility](https://docs.docker.com/reference/api/engine/)
 - [Execution evidence](adrs/0006-backend-foundation-execution.md)
+
+## Identity and attachment slice
+
+ADR-0008 adds no dependency. It uses existing Spring Security, validation, BCrypt, JDBC transactions, PostgreSQL and scheduling. Enzo Ribas (https://github.com/oEnzoRibas) maintains these decisions. The dependency advisory/upgrade backlog in ADR-0003 remains open; passing functional tests is not a new vulnerability scan.

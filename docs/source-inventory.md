@@ -2,10 +2,12 @@
 
 - Documentation maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
-Complete path index of current Java source and tests. Use the architecture map for responsibilities and target modules. These links describe presence, not feature completeness. Update this inventory when moving or adding files.
+Complete current Java path index. Presence does not imply feature completeness. Update alongside architectural changes.
 
 ## src/main/java
 
+- [src/main/java/org/code/api/IrrApplication.java](../src/main/java/org/code/api/IrrApplication.java)
+- [src/main/java/org/code/api/controllers/BoundaryErrorHandler.java](../src/main/java/org/code/api/controllers/BoundaryErrorHandler.java)
 - [src/main/java/org/code/api/controllers/DocumentController.java](../src/main/java/org/code/api/controllers/DocumentController.java)
 - [src/main/java/org/code/api/controllers/DonationController.java](../src/main/java/org/code/api/controllers/DonationController.java)
 - [src/main/java/org/code/api/controllers/DonorController.java](../src/main/java/org/code/api/controllers/DonorController.java)
@@ -16,6 +18,7 @@ Complete path index of current Java source and tests. Use the architecture map f
 - [src/main/java/org/code/api/controllers/PressingController.java](../src/main/java/org/code/api/controllers/PressingController.java)
 - [src/main/java/org/code/api/controllers/SessionController.java](../src/main/java/org/code/api/controllers/SessionController.java)
 - [src/main/java/org/code/api/controllers/SortingController.java](../src/main/java/org/code/api/controllers/SortingController.java)
+- [src/main/java/org/code/api/controllers/UserController.java](../src/main/java/org/code/api/controllers/UserController.java)
 - [src/main/java/org/code/api/controllers/VehicleController.java](../src/main/java/org/code/api/controllers/VehicleController.java)
 - [src/main/java/org/code/api/domain/common/TimeStampedEntity.java](../src/main/java/org/code/api/domain/common/TimeStampedEntity.java)
 - [src/main/java/org/code/api/domain/enums/DestinationType.java](../src/main/java/org/code/api/domain/enums/DestinationType.java)
@@ -52,8 +55,8 @@ Complete path index of current Java source and tests. Use the architecture map f
 - [src/main/java/org/code/api/domain/models/sorting/Sorting.java](../src/main/java/org/code/api/domain/models/sorting/Sorting.java)
 - [src/main/java/org/code/api/domain/models/user/Session.java](../src/main/java/org/code/api/domain/models/user/Session.java)
 - [src/main/java/org/code/api/domain/models/user/User.java](../src/main/java/org/code/api/domain/models/user/User.java)
-- [src/main/java/org/code/api/domain/ports/AuthenticatedUserProvider.java](../src/main/java/org/code/api/domain/ports/AuthenticatedUserProvider.java)
 - [src/main/java/org/code/api/domain/ports/AuthPort.java](../src/main/java/org/code/api/domain/ports/AuthPort.java)
+- [src/main/java/org/code/api/domain/ports/AuthenticatedUserProvider.java](../src/main/java/org/code/api/domain/ports/AuthenticatedUserProvider.java)
 - [src/main/java/org/code/api/domain/ports/DonationPort.java](../src/main/java/org/code/api/domain/ports/DonationPort.java)
 - [src/main/java/org/code/api/domain/ports/DonorPort.java](../src/main/java/org/code/api/domain/ports/DonorPort.java)
 - [src/main/java/org/code/api/domain/ports/EncryptionPort.java](../src/main/java/org/code/api/domain/ports/EncryptionPort.java)
@@ -65,6 +68,7 @@ Complete path index of current Java source and tests. Use the architecture map f
 - [src/main/java/org/code/api/domain/ports/SortingPort.java](../src/main/java/org/code/api/domain/ports/SortingPort.java)
 - [src/main/java/org/code/api/domain/ports/TokenPort.java](../src/main/java/org/code/api/domain/ports/TokenPort.java)
 - [src/main/java/org/code/api/domain/ports/VehiclePort.java](../src/main/java/org/code/api/domain/ports/VehiclePort.java)
+- [src/main/java/org/code/api/dto/attachment/AttachmentResponse.java](../src/main/java/org/code/api/dto/attachment/AttachmentResponse.java)
 - [src/main/java/org/code/api/dto/attachment/request/AttachmentCreateRequestDTO.java](../src/main/java/org/code/api/dto/attachment/request/AttachmentCreateRequestDTO.java)
 - [src/main/java/org/code/api/dto/attachment/response/AttachmentResponseDTO.java](../src/main/java/org/code/api/dto/attachment/response/AttachmentResponseDTO.java)
 - [src/main/java/org/code/api/dto/collection/request/CollectionCreateRequestDTO.java](../src/main/java/org/code/api/dto/collection/request/CollectionCreateRequestDTO.java)
@@ -116,9 +120,13 @@ Complete path index of current Java source and tests. Use the architecture map f
 - [src/main/java/org/code/api/dto/team/request/TeamMemberCreateRequestDTO.java](../src/main/java/org/code/api/dto/team/request/TeamMemberCreateRequestDTO.java)
 - [src/main/java/org/code/api/dto/team/request/TeamMemberUpdateRequestDTO.java](../src/main/java/org/code/api/dto/team/request/TeamMemberUpdateRequestDTO.java)
 - [src/main/java/org/code/api/dto/team/response/TeamMemberResponseDTO.java](../src/main/java/org/code/api/dto/team/response/TeamMemberResponseDTO.java)
+- [src/main/java/org/code/api/dto/user/CreatePartnerRequest.java](../src/main/java/org/code/api/dto/user/CreatePartnerRequest.java)
+- [src/main/java/org/code/api/dto/user/UserResponse.java](../src/main/java/org/code/api/dto/user/UserResponse.java)
 - [src/main/java/org/code/api/filter/BearerFilter.java](../src/main/java/org/code/api/filter/BearerFilter.java)
 - [src/main/java/org/code/api/filter/LoggingFilter.java](../src/main/java/org/code/api/filter/LoggingFilter.java)
 - [src/main/java/org/code/api/filter/ServletUtil.java](../src/main/java/org/code/api/filter/ServletUtil.java)
+- [src/main/java/org/code/api/infrastructure/development/DevelopmentAdministratorInitializer.java](../src/main/java/org/code/api/infrastructure/development/DevelopmentAdministratorInitializer.java)
+- [src/main/java/org/code/api/infrastructure/documentation/OpenApiConfiguration.java](../src/main/java/org/code/api/infrastructure/documentation/OpenApiConfiguration.java)
 - [src/main/java/org/code/api/infrastructure/repositories/AttachmentRepository.java](../src/main/java/org/code/api/infrastructure/repositories/AttachmentRepository.java)
 - [src/main/java/org/code/api/infrastructure/repositories/BuyerRepository.java](../src/main/java/org/code/api/infrastructure/repositories/BuyerRepository.java)
 - [src/main/java/org/code/api/infrastructure/repositories/CollectionRepository.java](../src/main/java/org/code/api/infrastructure/repositories/CollectionRepository.java)
@@ -147,8 +155,9 @@ Complete path index of current Java source and tests. Use the architecture map f
 - [src/main/java/org/code/api/infrastructure/security/SpringSecurityUserProvider.java](../src/main/java/org/code/api/infrastructure/security/SpringSecurityUserProvider.java)
 - [src/main/java/org/code/api/infrastructure/specifications/MaterialCategorySpecification.java](../src/main/java/org/code/api/infrastructure/specifications/MaterialCategorySpecification.java)
 - [src/main/java/org/code/api/infrastructure/specifications/VehicleSpecification.java](../src/main/java/org/code/api/infrastructure/specifications/VehicleSpecification.java)
+- [src/main/java/org/code/api/infrastructure/storage/AttachmentCleanupScheduler.java](../src/main/java/org/code/api/infrastructure/storage/AttachmentCleanupScheduler.java)
 - [src/main/java/org/code/api/infrastructure/web/GlobalExceptionHandler.java](../src/main/java/org/code/api/infrastructure/web/GlobalExceptionHandler.java)
-- [src/main/java/org/code/api/IrrApplication.java](../src/main/java/org/code/api/IrrApplication.java)
+- [src/main/java/org/code/api/services/AttachmentCleanupService.java](../src/main/java/org/code/api/services/AttachmentCleanupService.java)
 - [src/main/java/org/code/api/services/AuthService.java](../src/main/java/org/code/api/services/AuthService.java)
 - [src/main/java/org/code/api/services/DocumentService.java](../src/main/java/org/code/api/services/DocumentService.java)
 - [src/main/java/org/code/api/services/DonationService.java](../src/main/java/org/code/api/services/DonationService.java)
@@ -157,6 +166,7 @@ Complete path index of current Java source and tests. Use the architecture map f
 - [src/main/java/org/code/api/services/MaterialCategoryService.java](../src/main/java/org/code/api/services/MaterialCategoryService.java)
 - [src/main/java/org/code/api/services/MaterialSubtypeService.java](../src/main/java/org/code/api/services/MaterialSubtypeService.java)
 - [src/main/java/org/code/api/services/MaterialTypeService.java](../src/main/java/org/code/api/services/MaterialTypeService.java)
+- [src/main/java/org/code/api/services/PartnerProvisioningService.java](../src/main/java/org/code/api/services/PartnerProvisioningService.java)
 - [src/main/java/org/code/api/services/PressingService.java](../src/main/java/org/code/api/services/PressingService.java)
 - [src/main/java/org/code/api/services/ReportService.java](../src/main/java/org/code/api/services/ReportService.java)
 - [src/main/java/org/code/api/services/SortingService.java](../src/main/java/org/code/api/services/SortingService.java)
@@ -166,24 +176,20 @@ Complete path index of current Java source and tests. Use the architecture map f
 
 ## src/test/java
 
-- [src/test/java/org/code/api/dto/sorting/request/SortedItemRequestDTOTest.java](../src/test/java/org/code/api/dto/sorting/request/SortedItemRequestDTOTest.java)
-- [src/test/java/org/code/api/infrastructure/EncryptionPortTests.java](../src/test/java/org/code/api/infrastructure/EncryptionPortTests.java)
-- [src/test/java/org/code/api/infrastructure/InventoryBalanceSchemaIT.java](../src/test/java/org/code/api/infrastructure/InventoryBalanceSchemaIT.java)
-- [src/test/java/org/code/api/infrastructure/repository/MockedUserRepository.java](../src/test/java/org/code/api/infrastructure/repository/MockedUserRepository.java)
-- [src/test/java/org/code/api/infrastructure/TokenPortTests.java](../src/test/java/org/code/api/infrastructure/TokenPortTests.java)
+- [src/test/java/org/code/api/ApiDocumentationDisabledIT.java](../src/test/java/org/code/api/ApiDocumentationDisabledIT.java)
 - [src/test/java/org/code/api/IrrApplicationIT.java](../src/test/java/org/code/api/IrrApplicationIT.java)
+- [src/test/java/org/code/api/dto/sorting/request/SortedItemRequestDTOTest.java](../src/test/java/org/code/api/dto/sorting/request/SortedItemRequestDTOTest.java)
+- [src/test/java/org/code/api/infrastructure/DevelopmentAdministratorInitializerTest.java](../src/test/java/org/code/api/infrastructure/DevelopmentAdministratorInitializerTest.java)
+- [src/test/java/org/code/api/infrastructure/EncryptionPortTests.java](../src/test/java/org/code/api/infrastructure/EncryptionPortTests.java)
+- [src/test/java/org/code/api/infrastructure/IdentityAttachmentIT.java](../src/test/java/org/code/api/infrastructure/IdentityAttachmentIT.java)
+- [src/test/java/org/code/api/infrastructure/InventoryBalanceSchemaIT.java](../src/test/java/org/code/api/infrastructure/InventoryBalanceSchemaIT.java)
+- [src/test/java/org/code/api/infrastructure/InventoryMigrationIT.java](../src/test/java/org/code/api/infrastructure/InventoryMigrationIT.java)
+- [src/test/java/org/code/api/infrastructure/TokenPortTests.java](../src/test/java/org/code/api/infrastructure/TokenPortTests.java)
+- [src/test/java/org/code/api/infrastructure/repository/MockedUserRepository.java](../src/test/java/org/code/api/infrastructure/repository/MockedUserRepository.java)
 - [src/test/java/org/code/api/services/AuthServiceTests.java](../src/test/java/org/code/api/services/AuthServiceTests.java)
 - [src/test/java/org/code/api/services/InventoryBalanceConcurrencyIT.java](../src/test/java/org/code/api/services/InventoryBalanceConcurrencyIT.java)
+- [src/test/java/org/code/api/services/LocalStorageServiceTest.java](../src/test/java/org/code/api/services/LocalStorageServiceTest.java)
 - [src/test/java/org/code/api/services/PressingServiceTest.java](../src/test/java/org/code/api/services/PressingServiceTest.java)
 - [src/test/java/org/code/api/services/SortingServiceTest.java](../src/test/java/org/code/api/services/SortingServiceTest.java)
 - [src/test/java/org/code/api/support/PostgresIntegrationTest.java](../src/test/java/org/code/api/support/PostgresIntegrationTest.java)
 - [src/test/java/org/code/api/util/RSAKeysUtil.java](../src/test/java/org/code/api/util/RSAKeysUtil.java)
-
-- [src/test/java/org/code/api/infrastructure/InventoryMigrationIT.java](../src/test/java/org/code/api/infrastructure/InventoryMigrationIT.java)
-- [src/test/java/org/code/api/services/LocalStorageServiceTest.java](../src/test/java/org/code/api/services/LocalStorageServiceTest.java)
-
-- [src/main/java/org/code/api/infrastructure/documentation/OpenApiConfiguration.java](../src/main/java/org/code/api/infrastructure/documentation/OpenApiConfiguration.java)
-- [src/test/java/org/code/api/ApiDocumentationDisabledIT.java](../src/test/java/org/code/api/ApiDocumentationDisabledIT.java)
-
-- [src/main/java/org/code/api/infrastructure/development/DevelopmentAdministratorInitializer.java](../src/main/java/org/code/api/infrastructure/development/DevelopmentAdministratorInitializer.java)
-- [src/test/java/org/code/api/infrastructure/DevelopmentAdministratorInitializerTest.java](../src/test/java/org/code/api/infrastructure/DevelopmentAdministratorInitializerTest.java)

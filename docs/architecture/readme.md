@@ -16,7 +16,7 @@ flowchart LR
     CI[CI / Maven verify] --> Tests[Disposable PostgreSQL / test keys]
 ~~~
 
-The browser never talks to PostgreSQL or the file volume directly. The API owns transactions and authorization. PostgreSQL owns constraints; Hibernate validates, Flyway migrates. File writes are outside DB transactions and need an explicit durable lifecycle in the attachment slice. Container readiness includes DB connectivity and does not certify business correctness.
+The browser never talks to PostgreSQL or the file volume directly. The API owns transactions and authorization. PostgreSQL owns constraints; Hibernate validates, Flyway migrates. File writes are outside DB transactions. ADR-0008 implements upload rollback compensation and a PostgreSQL-backed post-commit deletion queue; crash-orphan reconciliation remains open. Container readiness includes DB connectivity and does not certify business correctness.
 
 ## Repository map
 
@@ -73,7 +73,7 @@ sequenceDiagram
     HTTP-->>Client: HTTP status and English contract
 ~~~
 
-This is the target flow. Current attachment entity serialization, session bypass and conflicting catalog rules are known deviations, not endorsed patterns. See ADR-0004 for evidence and ADR-0005 for the ordered remediation.
+This is the target module flow. ADR-0008 removes attachment entity serialization and the session-prefix bypass while retaining current package locations. Conflicting catalog rules and broader module extraction remain open. See ADR-0004 for historical evidence and ADR-0008 for the current identity/attachment implementation.
 
 ## Dependency ownership
 

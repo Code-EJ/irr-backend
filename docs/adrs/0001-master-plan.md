@@ -1,5 +1,7 @@
 # ADR-0001: IRR architecture overhaul and delivery master plan
 
+> Identity/attachment update: [ADR-0008](0008-identity-and-attachment-boundaries.md) implements administrator provisioning, exact public routes, creator-scoped attachment DTOs and durable physical deletion. V2 evolves the already-applied V1 without resetting data. Organization and inventory work remains open.
+
 > Database execution update: [ADR-0007](0007-fresh-database-baseline.md) replaces the active historical migration chain with one fresh English V1. Old databases are preserved, not automatically upgraded or deleted.
 
 > Execution update (2026-09-26): the owner confirmed no production deployment and authorized backend/database refactoring. [ADR-0005](0005-preproduction-docker-foundation.md) governs Docker Compose, pre-production compatibility, closed legacy PRs and staged implementation. Historical audit tables below remain dated evidence.

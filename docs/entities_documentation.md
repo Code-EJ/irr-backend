@@ -2,7 +2,7 @@
 
 - Documentation maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
-The current relational schema is defined by versioned SQL, not Hibernate auto-DDL. One fresh V1 now creates the complete current schema, including versions, destinations and unique/nonnegative balances. Historical migrations are archived outside the runtime path; ADR-0007 defines future V2+ evolution. See [target topology and ERD](adrs/0002-database-schema-redesign.md) for the planned redesign and [operations](operations.md) for upgrade preflight.
+The current relational schema is defined by versioned SQL, not Hibernate auto-DDL. Fresh V1 creates the initial 21-table operational schema, including versions, destinations and unique/nonnegative balances. Runtime V2 adds the attachment_file_deletion queue, bringing the current schema to 22 application tables. Historical migrations are archived outside the runtime path; ADR-0007 defines incremental evolution. See [target topology and ERD](adrs/0002-database-schema-redesign.md) for the planned redesign and [operations](operations.md) for upgrade preflight.
 
 ## JPA entity mapping
 
@@ -281,3 +281,7 @@ CREATE TABLE inventory_balance (
     CONSTRAINT ck_inventory_balance_nonnegative CHECK (current_weight_kg >= 0 AND current_volume_m3 >= 0)
 );
 ~~~
+
+## Attachment cleanup queue (runtime V2)
+
+[SQL migration](../src/main/resources/db/migrations/V2__attachment_deletion_queue.sql) defines attachment_file_deletion. This technical table is accessed transactionally through JdbcTemplate rather than a JPA entity. Columns: id UUID primary key, storage_path TEXT unique/non-null, created_at TIMESTAMPTZ, attempts INTEGER with a nonnegative check, next_attempt_at TIMESTAMPTZ and last_error VARCHAR(300). The due-time/creation-time index supports bounded retries. It intentionally has no foreign key to attachment: metadata has already been removed when the job is committed. See [ADR-0008](adrs/0008-identity-and-attachment-boundaries.md).

@@ -8,7 +8,7 @@ Generated from controller/record declarations on 2026-09-26. This documents impl
 
 ## Conventions and compatibility
 
-Bearer JWT is required outside the current /api/session prefix and exact health paths. Session authenticate accepts email/password and returns the current token DTO. Public registration remains a known BE1 issue. Collection endpoints generally return Spring Page (page/size/sort); UUID path IDs and PUT updates differ from the frontend's old numeric/Portuguese/PATCH contracts. Field validation is declared in the linked records. Error shapes currently differ across ErrorHandler and BearerFilter and will be standardized in BE1.
+Bearer JWT is required outside exact login, health and enabled documentation routes. Session authenticate accepts email/password and returns the token DTO. POST /api/users is administrator-only and returns safe partner metadata; POST /api/session/register is deprecated and returns 410 after authentication. Attachments use creator-scoped safe metadata and durable deletion; see ADR-0008 and the running Swagger specification. Collection endpoints generally return Spring Page (page/size/sort); UUID path IDs and PUT updates differ from the frontend's old numeric/Portuguese/PATCH contracts. Field validation is declared in the linked records. Identity and attachment boundary failures use safe English responses; unrelated legacy domain error shapes still require consolidation.
 
 The document upload still accepts the legacy multipart field documento; its HTTP rename to file requires an explicit frontend contract change. Entity response and object-authorization defects remain next-stage work. The configurable storage adapter change does not fix them. No collection, team or sale controller exists yet.
 
@@ -47,7 +47,7 @@ The document upload still accepts the legacy multipart field documento; its HTTP
 | POST | `/api/pressings` | hasAnyRole('ADMINISTRATOR', 'ORGANIZATION', 'CITY_HALL') | [src/main/java/org/code/api/controllers/PressingController.java](../src/main/java/org/code/api/controllers/PressingController.java) |
 | GET | `/api/pressings` | isAuthenticated() | [src/main/java/org/code/api/controllers/PressingController.java](../src/main/java/org/code/api/controllers/PressingController.java) |
 | GET | `/api/pressings/{id}` | isAuthenticated() | [src/main/java/org/code/api/controllers/PressingController.java](../src/main/java/org/code/api/controllers/PressingController.java) |
-| POST | `/api/session/register` | No method annotation; see filter and service behavior | [src/main/java/org/code/api/controllers/SessionController.java](../src/main/java/org/code/api/controllers/SessionController.java) |
+| POST | `/api/session/register` | Authenticated retirement response (410); no provisioning | [src/main/java/org/code/api/controllers/SessionController.java](../src/main/java/org/code/api/controllers/SessionController.java) |
 | POST | `/api/session/authenticate` | No method annotation; see filter and service behavior | [src/main/java/org/code/api/controllers/SessionController.java](../src/main/java/org/code/api/controllers/SessionController.java) |
 | POST | `/api/sortings` | hasAnyRole('ADMINISTRATOR', 'ORGANIZATION', 'CITY_HALL') | [src/main/java/org/code/api/controllers/SortingController.java](../src/main/java/org/code/api/controllers/SortingController.java) |
 | GET | `/api/sortings` | isAuthenticated() | [src/main/java/org/code/api/controllers/SortingController.java](../src/main/java/org/code/api/controllers/SortingController.java) |
@@ -909,3 +909,11 @@ public record TeamMemberResponseDTO(
     OffsetDateTime updatedAt
 ) {}
 ~~~
+
+## Current identity and attachment additions
+
+- POST /api/users: ADMINISTRATOR; safe UserResponse, no token.
+- POST /api/documents: AttachmentResponse DTO, never a JPA entity.
+- GET /api/documents/{id}/download: creator only.
+- DELETE /api/documents/{id}: creator only; 202 queued deletion; 409 if referenced.
+- The generated Swagger/OpenAPI document is authoritative for current request/response schemas.

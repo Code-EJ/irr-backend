@@ -38,6 +38,8 @@ On Linux/macOS use `cp .env.example .env`. Edit DB_PASSWORD and DEV_ADMIN_PASSWO
 | API_PORT | Host port; default 9191, bound to 127.0.0.1 |
 | API_DOCS_ENABLED | true enables Swagger/OpenAPI; false disables both |
 
+CORS_ALLOWED_ORIGINS is a comma-separated browser origin allowlist; local defaults cover http://localhost:5173 and http://127.0.0.1:5173. Update it if the frontend runs elsewhere, then recreate the backend container. A separate Docker .env is unnecessary: the shared file already supplies Compose and the development administrator.
+
 Compose automatically reads .env in this directory. DB_HOST and DB_PORT from older .env files are not used for container connectivity: the backend always uses database:5432 inside Compose. Older POSTGRES_USER/POSTGRES_PASSWORD/POSTGRES_DB entries are redundant: Compose derives PostgreSQL configuration from DB_USER/DB_PASSWORD/DB_NAME. JWT_SECRET is not used; this backend signs RSA JWTs with the key files generated below. Existing unused entries may be removed manually after confirming no other local scripts need them.
 
 Environment variables already exported in your shell take precedence over .env during Compose interpolation. Avoid conflicting exports. Use `docker compose --env-file .env config --quiet` to validate syntax without printing resolved secrets. Avoid pasting the unrestricted output of docker compose config into issues or chat.
@@ -74,26 +76,30 @@ The API runs as UID 10001 with a read-only root filesystem. Database data and up
 
 ## 5. Exercise the API with Swagger
 
-1. Open Swagger UI and expand Sessions. For administrator access, call POST /api/session/authenticate with DEV_ADMIN_EMAIL and DEV_ADMIN_PASSWORD from your local .env. Compose activates the development profile and provisions that account before readiness succeeds.
-2. To test the separate representative registration flow in a fresh disposable development database, call POST /api/session/register with fullName, a unique email and a password of 8-72 characters. This currently creates a REPRESENTATIVE and returns a token. Public partner provisioning is still a planned identity change; do not expect a self-registered representative to write every resource.
-3. Alternatively, call POST /api/session/authenticate with email/password for an existing development account. Read the token field in the response.
-4. Click Authorize, paste the token itself (without adding the Bearer prefix), and confirm. Swagger sends Authorization: Bearer automatically.
-5. Try a permitted GET such as /api/vehicles. A missing/invalid token gives 401; insufficient role access can give 403. Page lists use page/size/sort.
-6. Log out using Authorize when finished. Swagger does not persist authorization across page reloads.
+1. Open Swagger UI and expand Sessions. Call POST /api/session/authenticate with DEV_ADMIN_EMAIL and DEV_ADMIN_PASSWORD from your ignored local .env. Compose activates the development profile and provisions that administrator before readiness succeeds.
+2. Copy the token field. Click Authorize, paste the token itself (without the Bearer prefix), and confirm. Swagger sends Authorization: Bearer automatically.
+3. Expand Partners and call POST /api/users with the example below. Only an administrator may create CITY_HALL, ORGANIZATION or REPRESENTATIVE partners. Passwords require at least eight characters and fewer than 72 UTF-8 bytes. The response contains safe metadata and does not log you in as the new partner.
+4. To test partner access, authenticate separately using that partner's email/password and replace the Swagger authorization token. Missing/invalid authentication returns 401; insufficient roles return 403.
+5. Try a permitted GET such as /api/vehicles. Page lists use page/size/sort.
+6. For attachments, upload a small PDF, PNG or JPEG with POST /api/documents using the documento multipart field. Record the returned id. Only its creator can download or delete it, including when another caller is an administrator. Unsupported signatures/names return 400; foreign IDs return 404; referenced documents return 409. Deletion returns 202 after metadata removal and queues physical cleanup, normally processed within the next minute.
+7. Log out using Authorize when finished. Swagger does not persist authorization across page reloads.
 
-Example registration body for local testing only:
+Example partner body for local testing only:
 
 ~~~json
 {
-  "fullName": "Development User",
-  "email": "developer@example.test",
-  "password": "local-test-password"
+  "fullName": "Development Partner",
+  "email": "partner@example.test",
+  "password": "local-test-password",
+  "userRole": "REPRESENTATIVE"
 }
 ~~~
 
+POST /api/session/register is retired: authenticated callers receive 410 and anonymous callers receive 401. It cannot create accounts. The frontend must migrate to administrator provisioning as documented in [ADR-0008](docs/adrs/0008-identity-and-attachment-boundaries.md).
+
 Swagger is generated from running controllers/DTOs and documents bearer authentication and current method role rules. It does not certify unresolved ownership, lifecycle or inventory behavior. The [source API inventory](docs/api_documentation.md) is supporting audit material; it is not a second official specification.
 
-The development initializer updates the configured administrator password on restart if DEV_ADMIN_PASSWORD changes. It refuses to elevate an existing non-administrator with the same email. Set DEV_BOOTSTRAP_ENABLED=false to disable this initializer; it is never active outside the development profile. This is local test access, not the final partner-provisioning workflow.
+The development initializer updates the configured administrator password on restart if DEV_ADMIN_PASSWORD changes. It refuses to elevate an existing non-administrator with the same email. Set DEV_BOOTSTRAP_ENABLED=false to disable this initializer; it is never active outside the development profile. This initializer supplies local administrator access; partner creation uses the administrator-only endpoint.
 
 ## 6. Run automated tests
 
@@ -161,4 +167,4 @@ Stopping preserves named volumes. The new database_data volume is separate from 
 - [Contribution and JavaDoc rules](docs/feature_creation_workflow.md)
 - [Execution evidence](docs/adrs/0006-backend-foundation-execution.md)
 
-The foundation is implemented; the module/domain rewrite remains staged. Identity/provisioning, safe attachment DTOs and authorization, organization scoping, stock ledger/allocation and frontend contract migration remain explicit work. New/modified code and all maintained documentation use English, with Enzo Ribas attribution for this refactor. Preserve previous contributor credits.
+The foundation is implemented; the module/domain rewrite remains staged. Administrator provisioning and creator-scoped attachment lifecycle are implemented in ADR-0008. Organization scoping, stock ledger/allocation, remaining business workflows, dependency upgrades and frontend contract migration remain explicit work. New/modified code and all maintained documentation use English, with Enzo Ribas attribution for this refactor. Preserve previous contributor credits.
