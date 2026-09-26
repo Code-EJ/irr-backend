@@ -1,60 +1,70 @@
-# Documentação de Enums — Projeto IRR
+# Domain enum vocabulary
 
-Este documento detalha todas as enumerações (Enums) utilizadas no domínio do projeto IRR, suas constantes e seus respectivos propósitos dentro da regra de negócio.
+- Documentation maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
----
+Current values are source contracts. Renaming values can affect stored strings and JSON; coordinate SQL/backfill and frontend mappings before a change. SortingType stage semantics remain a decision gate in ADR-0004/0005.
 
-## 1. `UserRole`
-**Pacote:** `org.code.api.domain.enums`
+## DestinationType
 
-Define os níveis de permissão e perfis de acesso no sistema para controle RBAC (Role-Based Access Control).
+[src/main/java/org/code/api/domain/enums/DestinationType.java](../src/main/java/org/code/api/domain/enums/DestinationType.java)
 
-| Valor | Descrição |
-|---|---|
-| `ADMINISTRATOR` | Acesso total ao sistema. Único capaz de realizar ações destrutivas globais (soft deletes) em qualquer entidade. |
-| `CITY_HALL` | Perfil para Prefeituras parceiras. Pode criar e gerenciar seus próprios registros operacionais (Veículos, Coletas). |
-| `ORGANIZATION` | Perfil para Organizações de Catadores. Similar à Prefeitura, gerencia apenas seus próprios dados operacionais. |
-| `REPRESENTATIVE` | Perfil de leitura. Pode visualizar relatórios e dashboards, mas não tem permissão de modificação de dados. |
+~~~java
+public enum DestinationType {
+    STOCK,
+    SALE,
+    PRESSING
+}
+~~~
 
----
+## DonorType
 
-## 2. `DonorType`
-**Pacote:** `org.code.api.domain.enums`
+[src/main/java/org/code/api/domain/enums/DonorType.java](../src/main/java/org/code/api/domain/enums/DonorType.java)
 
-Define a natureza jurídica de um doador de materiais (Entidade `Donor`).
+~~~java
+public enum DonorType {
+    PF,
+    PJ
+}
+~~~
 
-| Valor | Descrição |
-|---|---|
-| `PF` | Pessoa Física (utiliza CPF como documento). |
-| `PJ` | Pessoa Jurídica (utiliza CNPJ como documento). |
+## OperationType
 
----
+[src/main/java/org/code/api/domain/enums/OperationType.java](../src/main/java/org/code/api/domain/enums/OperationType.java)
 
-## 3. `SortingType`
-**Pacote:** `org.code.api.domain.enums`
+~~~java
+public enum OperationType {
+    COLLECTION_INPUT,
+    DONATION_INPUT,
+    SALE_OUTPUT,
+    SORTING_INPUT,
+    SORTING_OUTPUT,
+    PRESSING_INPUT,
+    PRESSING_OUTPUT,
+    MANUAL_ADJUSTMENT
+}
+~~~
 
-Define a granularidade ou fase da triagem realizada no instituto (Entidade `Sorting`).
+## SortingType
 
-| Valor | Descrição |
-|---|---|
-| `GROSS` | Triagem Bruta (separação muito inicial ou macro). |
-| `PRIMARY` | Triagem Primária (separação principal por categorias amplas). |
-| `FINE` | Triagem Fina (separação granular por subtipos exatos de material). |
+[src/main/java/org/code/api/domain/enums/SortingType.java](../src/main/java/org/code/api/domain/enums/SortingType.java)
 
----
+~~~java
+public enum SortingType {
+    GROSS,
+    PRIMARY,
+    FINE
+}
+~~~
 
-## 4. `OperationType`
-**Pacote:** `org.code.api.domain.enums`
+## UserRole
 
-Define o tipo de operação de balanço (Entidade `InventoryLog`) responsável por gerar a modificação (entrada ou saída) no estoque de materiais.
+[src/main/java/org/code/api/domain/enums/UserRole.java](../src/main/java/org/code/api/domain/enums/UserRole.java)
 
-| Valor | Descrição | Efeito Típico no Estoque |
-|---|---|---|
-| `COLLECTION_INPUT` | Entrada de material advindo de Coleta. | Positivo (+) |
-| `DONATION_INPUT` | Entrada de material advindo de Doação. | Positivo (+) |
-| `SALE_OUTPUT` | Saída de material devido a Venda. | Negativo (-) |
-| `SORTING_INPUT` | Entrada de material resultante de uma Triagem. | Positivo (+) |
-| `SORTING_OUTPUT` | Saída de material consumido para realizar uma Triagem. | Negativo (-) |
-| `PRESSING_INPUT` | Entrada de fardo prensado resultante de Prensagem. | Positivo (+) |
-| `PRESSING_OUTPUT` | Saída de material solto consumido em Prensagem. | Negativo (-) |
-| `MANUAL_ADJUSTMENT` | Ajuste manual ou balanço corretivo realizado por um Admin. | Positivo ou Negativo (+/-) |
+~~~java
+public enum UserRole {
+    ADMINISTRATOR,
+    CITY_HALL,
+    ORGANIZATION,
+    REPRESENTATIVE
+}
+~~~

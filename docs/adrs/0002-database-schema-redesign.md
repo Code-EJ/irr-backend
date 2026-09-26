@@ -1,5 +1,10 @@
 # ADR-0002: PostgreSQL integrity, scoped inventory and safe schema evolution
 
+> Database execution update: [ADR-0007](0007-fresh-database-baseline.md) replaces the active historical migration chain with one fresh English V1. Old databases are preserved, not automatically upgraded or deleted.
+
+> Execution update (2026-09-26): the owner confirmed no production deployment and authorized backend/database refactoring. [ADR-0005](0005-preproduction-docker-foundation.md) governs Docker Compose, pre-production compatibility, closed legacy PRs and staged implementation. Historical audit tables below remain dated evidence.
+
+- Documentation maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 - Status: Proposed; conceptual target, not an executable migration or production schema certification.
 - Recorded: 2026-09-23.
 - Scope: backend schema and frontend-visible data contracts.
@@ -127,7 +132,7 @@ Introduce `stock_operation(id, organization_id, actor_id, operation_type, idempo
 
 Add typed `sorting_posting(operation_id, sorting_id)`, `pressing_posting(operation_id, pressing_id)`, `sale_posting(operation_id, sale_id)` and reviewed adjustment/opening links, with unique document IDs. A posting operation has exactly one typed source, enforced by the posting service plus a deferred constraint trigger if the multi-table design is retained. No generic UUID reference substitutes for referential integrity. Outbox events share the posting transaction and use unique operation/event identity for retry deduplication.
 
-For saleable inventory, the invariant is `balance = approved opening movement + SUM(committed movement deltas)`, by organization and subtype. Opening balances are signed off from physical/business records because the existing log is not a trustworthy reconstruction source. Legacy logs remain retained evidence, separately labeled; do not replay them as new movements. Corrections use reversal and replacement operations rather than mutation/deactivation of historical ledger entries.
+For saleable inventory, the invariant is `balance = SUM(all committed movement deltas, including OPENING)`, by organization and subtype. Opening balances are signed off from physical/business records because the existing log is not a trustworthy reconstruction source. Legacy logs remain retained evidence, separately labeled; do not replay them as new movements. Corrections use reversal and replacement operations rather than mutation/deactivation of historical ledger entries.
 
 Concrete accounting examples:
 

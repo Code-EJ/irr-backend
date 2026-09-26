@@ -1,31 +1,24 @@
-name: 🧩 Task
-description: Tarefa técnica ou operacional
+name: Task
+description: Track a technical or operational task
 title: "[TASK]: "
-labels:
-  - task
+labels: ["task"]
 body:
   - type: textarea
+    id: description
     attributes:
-      label: Descrição
-      description: O que precisa ser feito?
-      placeholder: Descreva a tarefa de forma objetiva.
+      label: Description
+      description: What needs to change and why?
     validations:
       required: true
-
   - type: textarea
+    id: acceptance
     attributes:
-      label: Critérios de Conclusão
-      description: Como saber que essa task está pronta?
-      placeholder: |
-        - [ ] Implementação concluída
-        - [ ] Testado
-        - [ ] Revisado
+      label: Acceptance criteria
+      description: State observable behavior and completion checks.
     validations:
       required: true
-
   - type: textarea
+    id: context
     attributes:
-      label: Observações
-      description: Contexto adicional, links ou dependências.
-    validations:
-      required: false
+      label: Context and dependencies
+      description: Link related issues, ADRs and contract implications.

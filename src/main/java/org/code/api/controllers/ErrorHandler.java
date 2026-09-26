@@ -18,16 +18,17 @@ import org.code.api.domain.exception.DonationError;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Handler global de exceções. Traduz exceções de domínio em respostas HTTP padronizadas.
+ * Translates domain exceptions into the current HTTP error responses.
+ *
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 @Slf4j
 @RestControllerAdvice
 public class ErrorHandler {
 
-    // ────────────────────────────────────────────────────────────────────────────
-    // Validação de payload (Jakarta Validation)
-    // ────────────────────────────────────────────────────────────────────────────
-
+    /**
+     * Validates request payloads using Jakarta Validation
+     * */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleRequestBodyValidationError(MethodArgumentNotValidException exception) {
         var missingFields = exception.getFieldErrors().stream()

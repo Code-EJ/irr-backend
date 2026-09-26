@@ -1,77 +1,84 @@
-# 🏛️ Arquitetura do Backend: Clean Architecture & Ports and Adapters
+# Backend architecture
 
-Este documento descreve as decisões e padrões arquiteturais adotados no backend do **Projeto IRR**.
+- Documentation maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
-Nosso objetivo com esta arquitetura é garantir que as **Regras de Negócio (Domínio)** sejam o coração da aplicação, permanecendo completamente isoladas de frameworks, bancos de dados e interfaces de usuário. Isso garante alta testabilidade, manutenibilidade e flexibilidade para o futuro.
+The accepted direction is a modular monolith in Docker Compose. [ADR-0005](../adrs/0005-preproduction-docker-foundation.md) defines decisions and tradeoffs; this document maps them to the repository. The implemented code is still predominantly layered. The future module tree below is a target, not a claim that all packages have already moved.
 
----
+## Container topology
 
-## 🧭 A Regra de Ouro: A Regra de Dependência
+~~~mermaid
+flowchart LR
+    Browser[Frontend browser] -->|HTTP 127.0.0.1:9191| API[Spring Boot API / non-root JRE]
+    API -->|JDBC / internal network| DB[(PostgreSQL 16)]
+    DB --> Data[(Database volume)]
+    API --> Uploads[(Attachment volume)]
+    Keys[Local RSA keys / read-only mount] --> API
+    CI[CI / Maven verify] --> Tests[Disposable PostgreSQL / test keys]
+~~~
 
-A base da nossa arquitetura é a **Regra de Dependência**. As dependências no código-fonte devem apontar *sempre* para dentro, em direção às políticas de nível mais alto (o Domínio).
+The browser never talks to PostgreSQL or the file volume directly. The API owns transactions and authorization. PostgreSQL owns constraints; Hibernate validates, Flyway migrates. File writes are outside DB transactions and need an explicit durable lifecycle in the attachment slice. Container readiness includes DB connectivity and does not certify business correctness.
 
-A camada de domínio não sabe absolutamente nada sobre HTTP, JSON, Spring Boot ou PostgreSQL.
+## Repository map
 
----
+| Path | Responsibility | Documentation / verification |
+| --- | --- | --- |
+| src/main/java/org/code/api/controllers | Existing HTTP entrypoints | [Operation map](../api_documentation.md) |
+| src/main/java/org/code/api/dto | Request/response records and validation | Same contract inventory |
+| src/main/java/org/code/api/services | Current use cases and transaction boundaries | [Source inventory](../source-inventory.md), unit tests |
+| src/main/java/org/code/api/domain | Current entities, enums, exceptions and ports; entities still use JPA | [Entities](../entities_documentation.md), [enums](../enums_documentation.md) |
+| src/main/java/org/code/api/infrastructure | JPA repositories, security and technical adapters | Source inventory; PostgreSQL and JWT tests |
+| src/main/java/org/code/api/filter | Current request authentication and logging | ADR-0004 identity findings; HTTP integration smoke tests |
+| src/main/resources | Environment configuration and Flyway SQL | [Operations](../operations.md) |
+| src/test/java | Unit tests and *IT integration suites | Maven Surefire/Failsafe |
+| scripts | Development key generation | README commands; no real credentials tracked |
+| Dockerfile / docker-compose.yml / .dockerignore | Build, local runtime, persistence and build-context exclusions | Image build and readiness smoke test |
+| pom.xml / mvnw / .mvn | Dependencies, Java toolchain and Maven wrapper | clean verify and dependency tree |
+| .github | Review templates and CI | Backend verification workflow |
+| docs/adrs | Strategic plan, alternatives, consequences and execution evidence | Update with every architectural change |
+| docs | Repository-wide architecture and contract references | Cross-link and inventory checks |
 
-## 🗺️ O Fluxo da Arquitetura
+## Target feature boundaries
 
-O sistema é dividido em camadas bem definidas, seguindo o fluxo ilustrado abaixo:
+| Module | Owns | Collaborates through |
+| --- | --- | --- |
+| identity | Users, credentials, sessions and provisioning | Principal/authorization ports |
+| organizations | Organizations, memberships and scope | Membership lookup; no creator-to-org guessing |
+| materials | Category/type/subtype catalog | Scoped material lookup |
+| logistics | Vehicles, team members and assignments | Validated logistics references |
+| intake | Collections, donations and input allocations | Logistics/material/attachment ports |
+| processing | Sorting stages and pressing transformations | Inventory posting commands |
+| inventory | Ledger, balances, reservations, idempotency and reversals | Single transactional posting interface |
+| sales | Buyer, invoice-backed sale and item allocation | Inventory/attachment application ports |
+| attachments | Metadata, storage lifecycle and object authorization | Opaque attachment references |
+| reporting | Read projections and reconciliation | Read-only queries/events |
 
-<p align="center">
-    <img src="./media/irr_clean_architecture.png" alt="Fluxo em camadas: Interface Adapters → Use Cases → Entities ← Ports ← Adapters ← Banco de Dados" width="920" />
-</p>
+Within each migrated module: api -> application -> domain. Infrastructure implements domain/application ports. Domain rules avoid servlet/security context and repository calls. A shared module contains only stable primitives/configuration; it must not become a cross-feature service repository. Application transactions encompass all DB writes for one business operation; external file effects require lifecycle/outbox handling. Cross-module repository access is prohibited in migrated slices and must be replaced by ports as each old slice moves.
 
-<p align="center"><em>Fluxo de dependência apontando para o Domínio (Entities).</em></p>
+## Request and transaction flow
 
-## 1. Interface Adapters (Adaptadores de Entrada)
+~~~mermaid
+sequenceDiagram
+    participant Client
+    participant HTTP as Controller / filter
+    participant UseCase as Application use case
+    participant Domain as Domain rules
+    participant Store as PostgreSQL / adapters
+    Client->>HTTP: Request with bearer token
+    HTTP->>UseCase: Validated DTO and authenticated principal
+    UseCase->>Domain: Authorize scope and check invariants
+    Domain-->>UseCase: Allowed command
+    UseCase->>Store: Transactional reads and writes
+    Store-->>UseCase: Constraint-checked result
+    UseCase-->>HTTP: Response DTO
+    HTTP-->>Client: HTTP status and English contract
+~~~
 
-**Componentes:** Controllers, DTOs.
+This is the target flow. Current attachment entity serialization, session bypass and conflicting catalog rules are known deviations, not endorsed patterns. See ADR-0004 for evidence and ADR-0005 for the ordered remediation.
 
-**Responsabilidade:** Traduzir o mundo externo para o formato que a nossa aplicação entende, e vice-versa.
+## Dependency ownership
 
-**Comportamento:** Recebem as requisições HTTP, validam a estrutura do payload JSON (usando DTOs) e repassam os comandos para a camada de Serviços (Use Cases). Retornam as respostas formatadas em HTTP (200, 201, 400, etc.).
+See [dependency decisions](../dependencies.md) for current purposes, convergence and test-only overrides; ADR-0003 retains the complete historical inventory.
 
-## 2. Use Cases (Application Services)
+## Quality and evolution
 
-**Componentes:** Services (ex: `VehicleService`).
-
-**Responsabilidade:** Orquestrar o fluxo específico de uma funcionalidade do sistema.
-
-**Comportamento:** Buscam entidades no banco de dados (através das Ports), invocam os métodos de negócio dessas entidades (Modelos Ricos) e salvam o novo estado. Esta camada não contém regras de negócio intrínsecas da entidade, apenas a "coreografia" do caso de uso.
-
-## 3. Entities (Domínio)
-
-**Componentes:** Models (ex: `Vehicle`), Exceptions de domínio.
-
-**Responsabilidade:** Representar os conceitos reais do negócio e proteger as regras universais (Invariantes).
-
-**Comportamento:** Utilizamos o padrão de **Rich Domain Model** (Modelo Rico). As entidades não são apenas "sacos de dados" (getters/setters). Elas possuem métodos de negócio que alteram seu próprio estado de forma segura (ex: `vehicle.inativar()`).
-
-## 4. Ports (Portas)
-
-**Componentes:** Interfaces no pacote de domínio (ex: `VehiclePort`, `AuthenticatedUserProvider`).
-
-**Responsabilidade:** Definir os contratos que a camada de Domínio precisa que o mundo externo cumpra.
-
-**Comportamento:** Aplicação direta do **Princípio da Inversão de Dependência (DIP)**. O Serviço diz: "Eu preciso de algo que salve um veículo", e cria uma Porta (interface) para isso. Ele não sabe como isso será salvo.
-
-## 5. Adapters (Adaptadores de Saída / Infraestrutura)
-
-**Componentes:** JPA Repositories, Integrações via Spring Security, APIs Externas.
-
-**Responsabilidade:** Implementar os contratos definidos pelas Ports.
-
-**Comportamento:** São as classes "sujas" que conversam com os frameworks. Elas traduzem os comandos do domínio para a linguagem SQL (via Hibernate/Spring Data) ou para integrações externas.
-
-## 6. Banco de Dados (PostgreSQL)
-
-A camada mais externa da aplicação. O banco de dados é tratado apenas como um detalhe de implementação, responsável por garantir a persistência, integridade (Constraints) e velocidade (Índices) dos dados estruturados.
-
-## 🛠️ Exemplo Prático do Fluxo (Inativação de Veículo)
-
-1. O Controller (Interface Adapter) recebe um `DELETE /api/veiculos/5`.
-2. O Controller chama o método `deactivate(5)` do `VehicleService` (Use Case).
-3. O Service pede para a Porta buscar o veículo de ID 5. O Adapter (JPA) vai no PostgreSQL, busca o dado e o entrega.
-4. O Service invoca o método de negócio na Entidade: `vehicle.deactivate()`. A Entidade muda seu estado interno para falso.
-5. O Service finaliza a transação, e o Adapter do Hibernate atualiza o PostgreSQL automaticamente (Dirty Checking).
+Unit tests cover domain/application behavior; integration tests use real PostgreSQL, independent transactions and generated keys. Every new invariant needs a meaningful failure case. Keep historical migrations immutable. Document wire renames and frontend migration together. Prefer a small tested vertical slice over package-wide renaming. Add enforceable package dependency rules when the first complete feature module moves; no dependency rule currently proves the entire legacy tree modular.

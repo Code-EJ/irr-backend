@@ -23,26 +23,33 @@ import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-
-
-
+/**
+ * Exposes the existing attachment routes while the ownership/DTO refactor is pending.
+ * The legacy multipart field name is preserved for the current wire contract.
+ *
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
+ */
 @RestController
 @RequestMapping("/api/documents")
 public class DocumentController {
     @Autowired
     private DocumentService documentService;
-    
-	
 
+    /**
+     * Accepts an attachment using the legacy multipart contract.
+     * @param arquivo uploaded bytes under the existing documento field
+     * @param request request containing the authenticated session
+     * @return the current upload response
+     */
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadDocumento(@RequestParam("documento") MultipartFile arquivo, HttpServletRequest request) {
         
         try {
             Session session = (Session) request.getAttribute("session");
         
-            UUID creatorId = session.getId(); // ID do usuário
+            UUID creatorId = session.getId(); // Authenticated user identity
 
-         // Chama o service, passando o arquivo e o creatorId
+         // Associate the upload with the authenticated creator
             Attachment docSalvo = documentService.registerDocument(arquivo, creatorId);
             return ResponseEntity.status(HttpStatus.CREATED).body(docSalvo);
         } catch (Exception e) {
@@ -51,7 +58,12 @@ public class DocumentController {
         }
     }
 
-	// Endpoint para Download Automático (GET)
+	// Attachment download
+/**
+ * Returns the stored bytes for the requested attachment.
+ * @param id attachment identifier
+ * @return the current download response
+ */
 @GetMapping("/{id}/download")
 public ResponseEntity<byte[]> downloadDocumento(@PathVariable UUID id) {
     try {
@@ -59,7 +71,7 @@ public ResponseEntity<byte[]> downloadDocumento(@PathVariable UUID id) {
         byte[] arquivoBytes = documentService.findLocalArchives(id);
         
         return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(doc.getFileType())) // Define dinamicamente se é JPEG, PNG ou PDF
+                .contentType(MediaType.parseMediaType(doc.getFileType())) // Use the recorded media type
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + doc.getFileName() + "\"")
                 .body(arquivoBytes);
     } catch (Exception e) {
@@ -67,7 +79,12 @@ public ResponseEntity<byte[]> downloadDocumento(@PathVariable UUID id) {
     }
 }
 
-// Endpoint para Deleção (DELETE)
+// Attachment deletion
+/**
+ * Removes an attachment through the existing service lifecycle.
+ * @param id attachment identifier
+ * @return the current deletion response
+ */
 @DeleteMapping("/{id}")
 public ResponseEntity<String> deletarDocumento(@PathVariable UUID id) {
     try {

@@ -1,32 +1,26 @@
-name: 🐛 Bug
-description: Reportar erro no sistema
+name: Bug
+description: Report incorrect application behavior
 title: "[BUG]: "
 labels: ["bug"]
 body:
   - type: textarea
     id: current
     attributes:
-      label: Comportamento atual
-      description: O que está acontecendo de errado?
+      label: Current behavior
+      description: Include sanitized evidence without credentials.
     validations:
       required: true
-
   - type: textarea
     id: expected
     attributes:
-      label: Comportamento esperado
-      description: O que deveria acontecer?
+      label: Expected behavior
+      description: What should happen?
     validations:
       required: true
-
   - type: textarea
     id: steps
     attributes:
-      label: Como reproduzir
-      description: Passo a passo para reproduzir o erro.
-      placeholder: |
-        1. Vá para...
-        2. Clique em...
-        3. Erro acontece
+      label: Steps to reproduce
+      description: Include the application version and environment.
     validations:
       required: true

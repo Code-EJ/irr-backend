@@ -1,6 +1,11 @@
 # ADR-0001: IRR architecture overhaul and delivery master plan
 
-- Status: Proposed; audit evidence recorded, implementation gates not yet satisfied.
+> Database execution update: [ADR-0007](0007-fresh-database-baseline.md) replaces the active historical migration chain with one fresh English V1. Old databases are preserved, not automatically upgraded or deleted.
+
+> Execution update (2026-09-26): the owner confirmed no production deployment and authorized backend/database refactoring. [ADR-0005](0005-preproduction-docker-foundation.md) governs Docker Compose, pre-production compatibility, closed legacy PRs and staged implementation. Historical audit tables below remain dated evidence.
+
+- Documentation maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
+- Status: Foundation authorized and implemented as recorded in [ADR-0006](0006-backend-foundation-execution.md); later domain decisions and acceptance gates remain open.
 - Recorded: 2026-09-23; repository and registry observations collected on 2026-09-22/23.
 - Scope: Code-EJ/irr-backend and Code-EJ/irr-frontend.
 - Decision owners: backend lead, frontend lead, product owner and release operator; individual assignments remain unconfirmed.

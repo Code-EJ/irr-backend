@@ -1,198 +1,283 @@
-# Documentação de Entidades — Projeto IRR
+# Current schema and entity inventory
 
-Este documento detalha o dicionário de dados da aplicação, cobrindo todos os módulos (IAM, Hierarquia de Materiais, Cadastros, Operacional, Triagem, Prensagem, Mercado e Estoque). A fonte inquestionável da verdade baseia-se no `V1__Initial_Schema.sql` e subsequentes migrations.
+- Documentation maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
----
+The current relational schema is defined by versioned SQL, not Hibernate auto-DDL. One fresh V1 now creates the complete current schema, including versions, destinations and unique/nonnegative balances. Historical migrations are archived outside the runtime path; ADR-0007 defines future V2+ evolution. See [target topology and ERD](adrs/0002-database-schema-redesign.md) for the planned redesign and [operations](operations.md) for upgrade preflight.
 
-## 1. Sistema e Acessos (IAM)
+## JPA entity mapping
 
-### `User`
-Responsável pela autenticação, autorização e amarração de multitenancy (`creator_id`) por todo o sistema.
+| Entity | SQL table | Source |
+| --- | --- | --- |
+| Attachment | `attachment` | [src/main/java/org/code/api/domain/models/base/Attachment.java](../src/main/java/org/code/api/domain/models/base/Attachment.java) |
+| Donor | `donor` | [src/main/java/org/code/api/domain/models/base/Donor.java](../src/main/java/org/code/api/domain/models/base/Donor.java) |
+| TeamMember | `team_member` | [src/main/java/org/code/api/domain/models/base/TeamMember.java](../src/main/java/org/code/api/domain/models/base/TeamMember.java) |
+| Vehicle | `vehicle` | [src/main/java/org/code/api/domain/models/base/Vehicle.java](../src/main/java/org/code/api/domain/models/base/Vehicle.java) |
+| Collection | `collection` | [src/main/java/org/code/api/domain/models/collection/Collection.java](../src/main/java/org/code/api/domain/models/collection/Collection.java) |
+| InputItem | `input_item` | [src/main/java/org/code/api/domain/models/collection/InputItem.java](../src/main/java/org/code/api/domain/models/collection/InputItem.java) |
+| Donation | `donation` | [src/main/java/org/code/api/domain/models/donation/Donation.java](../src/main/java/org/code/api/domain/models/donation/Donation.java) |
+| InventoryBalance | `inventory_balance` | [src/main/java/org/code/api/domain/models/inventory/InventoryBalance.java](../src/main/java/org/code/api/domain/models/inventory/InventoryBalance.java) |
+| InventoryLog | `inventory_log` | [src/main/java/org/code/api/domain/models/inventory/InventoryLog.java](../src/main/java/org/code/api/domain/models/inventory/InventoryLog.java) |
+| MaterialCategory | `material_category` | [src/main/java/org/code/api/domain/models/material/MaterialCategory.java](../src/main/java/org/code/api/domain/models/material/MaterialCategory.java) |
+| MaterialSubtype | `material_subtype` | [src/main/java/org/code/api/domain/models/material/MaterialSubtype.java](../src/main/java/org/code/api/domain/models/material/MaterialSubtype.java) |
+| MaterialType | `material_type` | [src/main/java/org/code/api/domain/models/material/MaterialType.java](../src/main/java/org/code/api/domain/models/material/MaterialType.java) |
+| PressedBale | `pressed_bale` | [src/main/java/org/code/api/domain/models/pressing/PressedBale.java](../src/main/java/org/code/api/domain/models/pressing/PressedBale.java) |
+| Pressing | `pressing` | [src/main/java/org/code/api/domain/models/pressing/Pressing.java](../src/main/java/org/code/api/domain/models/pressing/Pressing.java) |
+| Buyer | `buyer` | [src/main/java/org/code/api/domain/models/sale/Buyer.java](../src/main/java/org/code/api/domain/models/sale/Buyer.java) |
+| Sale | `sale` | [src/main/java/org/code/api/domain/models/sale/Sale.java](../src/main/java/org/code/api/domain/models/sale/Sale.java) |
+| SaleItem | `sale_item` | [src/main/java/org/code/api/domain/models/sale/SaleItem.java](../src/main/java/org/code/api/domain/models/sale/SaleItem.java) |
+| SortedItem | `sorted_item` | [src/main/java/org/code/api/domain/models/sorting/SortedItem.java](../src/main/java/org/code/api/domain/models/sorting/SortedItem.java) |
+| Sorting | `sorting` | [src/main/java/org/code/api/domain/models/sorting/Sorting.java](../src/main/java/org/code/api/domain/models/sorting/Sorting.java) |
+| User | `users` | [src/main/java/org/code/api/domain/models/user/User.java](../src/main/java/org/code/api/domain/models/user/User.java) |
 
-| Coluna | Tipo | Descrição / Constraints |
-|---|---|---|
-| `id` | `UUID` | Primary Key. |
-| `email` | `VARCHAR` | Unique. Login de acesso. |
-| `password_hash` | `TEXT` | Senha criptografada (BCrypt). |
-| `full_name` | `VARCHAR` | Nome completo. |
-| `user_role` | `Enum (UserRole)` | Nível de acesso (RBAC). |
-| `is_active` | `BOOLEAN` | Soft Delete padrão. |
-| `created_at` / `updated_at` | `TIMESTAMP` | Controle de auditoria de tempo. |
+## Current baseline DDL
 
----
+[Active V1](../src/main/resources/db/migrations/V1__initial_schema.sql). This is the implemented schema, not the completed target ledger/org redesign.
 
-## 2. Hierarquia Tipológica de Materiais
-A árvore de materiais categoriza os resíduos. Implementa **Optimistic Locking** (`version`) para evitar colisão de edições simultâneas (Ref: `V2__Add_Version_Column_Materials`).
+~~~sql
+-- Initial pre-production baseline for a new, empty PostgreSQL database.
+-- Author: Enzo Ribas (https://github.com/oEnzoRibas).
+-- Future shared schema changes use V2+; never clean or baseline an existing database automatically.
 
-### `MaterialCategory` (Nível 1)
-| Coluna | Tipo | Descrição / Constraints |
-|---|---|---|
-| `id` | `UUID` | Primary Key. |
-| `name` | `VARCHAR` | Nome da categoria (ex: Plástico). |
-| `is_active` | `BOOLEAN` | Soft Delete. (Em cascata para filhos). |
-| `creator_id` | `UUID` | FK -> `users`. |
-| `version` | `INTEGER` | Controle de concorrência (Optimistic Lock). |
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
-### `MaterialType` (Nível 2)
-| Coluna | Tipo | Descrição / Constraints |
-|---|---|---|
-| `id` | `UUID` | Primary Key. |
-| `category_id` | `UUID` | FK -> `material_category`. |
-| `name` | `VARCHAR` | Nome do tipo (ex: PET). |
-| `is_active` | `BOOLEAN` | Soft Delete. |
-| `creator_id` | `UUID` | FK -> `users`. |
-| `version` | `INTEGER` | Controle de concorrência (Optimistic Lock). |
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    full_name VARCHAR(255) NOT NULL,
+    user_role VARCHAR(50) NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
 
-### `MaterialSubtype` (Nível 3)
-*Este é o nó folha utilizado operacionalmente para dar entrada, movimentar e vender estoque.*
-| Coluna | Tipo | Descrição / Constraints |
-|---|---|---|
-| `id` | `UUID` | Primary Key. |
-| `type_id` | `UUID` | FK -> `material_type`. |
-| `name` | `VARCHAR` | Nome do subtipo (ex: PET Cristal). |
-| `is_active` | `BOOLEAN` | Soft Delete. Não permite inativação se houver estoque vinculado. |
-| `creator_id` | `UUID` | FK -> `users`. |
-| `version` | `INTEGER` | Controle de concorrência (Optimistic Lock). |
+CREATE TABLE material_category (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(100) NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    creator_id UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    version BIGINT NOT NULL DEFAULT 0
+);
 
----
+CREATE TABLE material_type (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    category_id UUID NOT NULL REFERENCES material_category(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    name VARCHAR(100) NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    creator_id UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    version BIGINT NOT NULL DEFAULT 0
+);
 
-## 3. Cadastros Base e Anexos
+CREATE TABLE material_subtype (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    type_id UUID NOT NULL REFERENCES material_type(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    name VARCHAR(100) NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    creator_id UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    version BIGINT NOT NULL DEFAULT 0
+);
 
-### `Attachment`
-Centraliza todos os arquivos e comprovantes físicos.
-| Coluna | Tipo | Descrição |
-|---|---|---|
-| `id` | `UUID` | Primary Key. |
-| `file_name` | `VARCHAR` | Nome do arquivo. |
-| `file_type` | `VARCHAR` | MIME type ou formato. |
-| `storage_url` | `TEXT` | URL ou path físico do S3/Bucket. |
+CREATE TABLE attachment (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    file_name VARCHAR(255) NOT NULL,
+    file_type VARCHAR(50) NOT NULL,
+    storage_url TEXT NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    creator_id UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
 
-### `Vehicle`
-Frota de veículos disponíveis para coleta.
-| Coluna | Tipo | Descrição |
-|---|---|---|
-| `id` | `UUID` | Primary Key. |
-| `license_plate` | `VARCHAR` | Placa do veículo. |
-| `model` | `VARCHAR` | Modelo ou descrição. |
-| `creator_id` | `UUID` | FK -> `users`. |
+CREATE TABLE vehicle (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    license_plate VARCHAR(20) NOT NULL,
+    model VARCHAR(100),
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    creator_id UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
 
-### `TeamMember`
-Funcionários e membros da equipe (motoristas, coletores).
-| Coluna | Tipo | Descrição |
-|---|---|---|
-| `id` | `UUID` | Primary Key. |
-| `name` | `VARCHAR` | Nome do membro. |
-| `role` | `VARCHAR` | Função desempenhada. |
+CREATE TABLE team_member (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(255) NOT NULL,
+    role VARCHAR(50),
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    creator_id UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
 
-### `Donor`
-Pessoas ou empresas que realizam doações de materiais no instituto.
-| Coluna | Tipo | Descrição |
-|---|---|---|
-| `id` | `UUID` | Primary Key. |
-| `name` | `VARCHAR` | Nome ou Razão Social. |
-| `document` | `VARCHAR` | CPF ou CNPJ. |
-| `donor_type` | `Enum (DonorType)`| `PF` ou `PJ`. |
+CREATE TABLE donor (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(255) NOT NULL,
+    document VARCHAR(20) NOT NULL,
+    donor_type VARCHAR(10) NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    creator_id UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
 
----
+CREATE TABLE collection (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    realization_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    total_weight_kg NUMERIC(15, 4) NOT NULL,
+    vehicle_id UUID NOT NULL REFERENCES vehicle(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    driver_id UUID NOT NULL REFERENCES team_member(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    mtr_generator_id UUID REFERENCES attachment(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    mtr_destinator_id UUID REFERENCES attachment(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    collection_diary_id UUID REFERENCES attachment(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    creator_id UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
 
-## 4. Operacional (Logística Reversa e Entrada)
+CREATE TABLE collection_team (
+    collection_id UUID REFERENCES collection(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    team_member_id UUID REFERENCES team_member(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    PRIMARY KEY (collection_id, team_member_id)
+);
 
-### `Collection` (Coleta)
-Registro macro de uma coleta realizada nas ruas.
-| Coluna | Tipo | Descrição |
-|---|---|---|
-| `id` | `UUID` | Primary Key. |
-| `realization_date` | `TIMESTAMP` | Data em que a coleta ocorreu. |
-| `total_weight_kg` | `NUMERIC` | Peso total estimado/balança. |
-| `vehicle_id` | `UUID` | FK -> `vehicle`. |
-| `driver_id` | `UUID` | FK -> `team_member` (O motorista responsável). |
-| `mtr_generator_id` | `UUID` | FK -> `attachment` (MTR Gerador). |
-| `mtr_destinator_id` | `UUID` | FK -> `attachment` (MTR Destinador). |
-| `collection_diary_id` | `UUID` | FK -> `attachment` (Diário de coleta). |
-| `creator_id` | `UUID` | FK -> `users`. |
+CREATE TABLE donation (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    donation_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    total_weight_kg NUMERIC(15, 4) NOT NULL,
+    donor_id UUID NOT NULL REFERENCES donor(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    proof_attachment_id UUID REFERENCES attachment(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    creator_id UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
 
-*(Nota: Tabela associativa `collection_team` mapeia `collection_id` <-> `team_member_id` para listar coletores).*
+CREATE TABLE input_item (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    collection_id UUID REFERENCES collection(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    donation_id UUID REFERENCES donation(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    material_subtype_id UUID NOT NULL REFERENCES material_subtype(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    weight_kg NUMERIC(15, 4) NOT NULL,
+    volume_m3 NUMERIC(15, 4) NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
 
-### `Donation` (Doação)
-Entrada passiva de material no pátio do instituto.
-| Coluna | Tipo | Descrição |
-|---|---|---|
-| `id` | `UUID` | Primary Key. |
-| `donation_date` | `TIMESTAMP` | Data da doação. |
-| `total_weight_kg` | `NUMERIC` | Peso total. |
-| `donor_id` | `UUID` | FK -> `donor`. |
-| `proof_attachment_id` | `UUID` | FK -> `attachment` (Recibo ou foto). |
+CREATE TABLE buyer (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(255) NOT NULL,
+    document VARCHAR(20),
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    creator_id UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
 
-### `InputItem` (Itens de Entrada)
-Discriminação dos materiais recolhidos (seja por Coleta ou por Doação).
-| Coluna | Tipo | Descrição |
-|---|---|---|
-| `id` | `UUID` | Primary Key. |
-| `collection_id` | `UUID` | FK -> `collection` (Nullable). |
-| `donation_id` | `UUID` | FK -> `donation` (Nullable). |
-| `material_subtype_id`| `UUID` | FK -> `material_subtype`. Material exato recebido. |
-| `weight_kg` | `NUMERIC` | Peso aferido deste material. |
-| `volume_m3` | `NUMERIC` | Volume a granel ocupado. |
+CREATE TABLE sale (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    sale_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    buyer_id UUID NOT NULL REFERENCES buyer(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    nfe_attachment_id UUID REFERENCES attachment(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    mtr_attachment_id UUID REFERENCES attachment(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    cdf_attachment_id UUID REFERENCES attachment(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    total_value NUMERIC(15, 2) NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    creator_id UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
 
----
+CREATE TABLE sale_item (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    sale_id UUID REFERENCES sale(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    material_subtype_id UUID NOT NULL REFERENCES material_subtype(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    weight_kg NUMERIC(15, 4) NOT NULL,
+    volume_m3 NUMERIC(15, 4) NOT NULL,
+    unit_price NUMERIC(15, 2) NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
 
-## 5. Tratamento de Materiais
+CREATE TABLE inventory_log (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    material_subtype_id UUID NOT NULL REFERENCES material_subtype(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    quantity_kg NUMERIC(15, 4) NOT NULL,
+    quantity_m3 NUMERIC(15, 4) NOT NULL,
+    operation_type VARCHAR(50) NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
 
-### `Sorting` (Triagem) e `SortedItem`
-Agrupa materiais da entrada (`InputItem`) que passaram por processo de triagem. Separa as impurezas (`reject`) do material recuperado (`SortedItem`).
+CREATE TABLE sorting (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    sorting_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    sorting_type VARCHAR(50),
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    creator_id UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
 
-| Tabela | Campos Importantes |
-|---|---|
-| `Sorting` | `id`, `sorting_date`, `sorting_type` (Enum), `creator_id`. |
-| `SortedItem` | `sorting_id`, `input_item_id` (origem), `material_subtype_id`, `weight_kg`, `volume_m3`, `reject_weight_kg`, `reject_volume_m3`. |
+CREATE TABLE sorted_item (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    sorting_id UUID REFERENCES sorting(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    input_item_id UUID REFERENCES input_item(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    material_subtype_id UUID NOT NULL REFERENCES material_subtype(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    weight_kg NUMERIC(15, 4) NOT NULL,
+    volume_m3 NUMERIC(15, 4) NOT NULL,
+    reject_weight_kg NUMERIC(15, 4) DEFAULT 0,
+    reject_volume_m3 NUMERIC(15, 4) DEFAULT 0,
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    destination_type VARCHAR(50),
+    destination_id UUID
+);
 
-### `Pressing` (Prensagem) e `PressedBale` (Fardo)
-Agrupa materiais já triados (`SortedItem`) transformando seu volume em fardos compactados.
+CREATE TABLE pressing (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    pressing_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    creator_id UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
 
-| Tabela | Campos Importantes |
-|---|---|
-| `Pressing` | `id`, `pressing_date`, `creator_id`. |
-| `PressedBale`| `pressing_id`, `sorted_item_id` (origem), `material_subtype_id`, `weight_kg`, `initial_volume_m3`, `final_volume_m3`. Demonstra a eficácia da compactação. |
+CREATE TABLE pressed_bale (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    pressing_id UUID REFERENCES pressing(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    sorted_item_id UUID REFERENCES sorted_item(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    material_subtype_id UUID NOT NULL REFERENCES material_subtype(id) ON UPDATE CASCADE ON DELETE RESTRICT,
 
----
+    weight_kg NUMERIC(15, 4) NOT NULL,
 
-## 6. Mercado (Saídas)
+    initial_volume_m3 NUMERIC(15, 4) NOT NULL,
+    final_volume_m3 NUMERIC(15, 4) NOT NULL,
 
-### `Buyer` (Comprador) e `Sale` (Venda)
-| Tabela | Campos Importantes |
-|---|---|
-| `Buyer` | `id`, `name`, `document`, `creator_id`. |
-| `Sale` | `id`, `sale_date`, `buyer_id`, Anexos (NFe, MTR, CDF), `total_value`, `creator_id`. |
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    destination_type VARCHAR(50),
+    destination_id UUID
+);
 
-### `SaleItem`
-Discriminação dos fardos ou materiais vendidos.
-| Coluna | Tipo | Descrição |
-|---|---|---|
-| `sale_id` | `UUID` | FK -> `sale`. |
-| `material_subtype_id`| `UUID` | FK -> `material_subtype`. |
-| `weight_kg` / `volume_m3` | `NUMERIC` | Quantidades transacionadas. |
-| `unit_price` | `NUMERIC` | Preço praticado no momento da venda. |
-
----
-
-## 7. Estoque (Inventory)
-
-### `InventoryLog` (Log Transacional)
-Cada inserção nas tabelas operacionais (Coleta, Doação, Venda) gera gatilhos na lógica de negócios para registrar no `InventoryLog`. Tabela imutável.
-| Coluna | Tipo | Descrição |
-|---|---|---|
-| `id` | `UUID` | Primary Key. |
-| `material_subtype_id`| `UUID` | FK -> `material_subtype`. |
-| `quantity_kg` | `NUMERIC` | Quantidade movimentada. |
-| `quantity_m3` | `NUMERIC` | Volume movimentado. |
-| `operation_type` | `Enum (OperationType)`| A justificativa do log (ex: `COLLECTION_INPUT`, `SALE_OUTPUT`). |
-
-### `InventoryBalance` (Fotografia Atual)
-Retrato consolidado do saldo de estoque do instituto, projetado a partir dos Logs.
-| Coluna | Tipo | Descrição |
-|---|---|---|
-| `id` | `UUID` | Primary Key. |
-| `material_subtype_id`| `UUID` | FK -> `material_subtype`. |
-| `current_weight_kg` | `NUMERIC` | Saldo total em quilos (hoje). |
-| `current_volume_m3` | `NUMERIC` | Saldo de espaço ocupado em metros cúbicos (hoje). |
-| `last_updated_at` | `TIMESTAMP` | Última modificação. |
+CREATE TABLE inventory_balance (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    material_subtype_id UUID NOT NULL REFERENCES material_subtype(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    current_weight_kg NUMERIC(15, 4) NOT NULL DEFAULT 0,
+    current_volume_m3 NUMERIC(15, 4) NOT NULL DEFAULT 0,
+    last_updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    version BIGINT NOT NULL DEFAULT 0,
+    CONSTRAINT uq_inventory_balance_material_subtype UNIQUE (material_subtype_id),
+    CONSTRAINT ck_inventory_balance_nonnegative CHECK (current_weight_kg >= 0 AND current_volume_m3 >= 0)
+);
+~~~

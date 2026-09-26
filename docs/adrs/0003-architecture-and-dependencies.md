@@ -1,5 +1,8 @@
 # ADR-0003: Modular architecture, API contracts and dependency standardization
 
+> Execution update (2026-09-26): the owner confirmed no production deployment and authorized backend/database refactoring. [ADR-0005](0005-preproduction-docker-foundation.md) governs Docker Compose, pre-production compatibility, closed legacy PRs and staged implementation. Historical audit tables below remain dated evidence.
+
+- Documentation maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 - Status: Proposed; dependency inventory and baseline checks completed, upgrades not applied.
 - Recorded: 2026-09-23.
 - Scope: both IRR repositories; backend integration branch `develop`, frontend `main`.
