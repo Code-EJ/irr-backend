@@ -20,16 +20,22 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.code.api.infrastructure.specifications.MaterialSearch;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
 
 /**
- * Serviço para gestão de Subtipos de Material (3° nível da árvore tipológica — mais granular).
+ * Applies creator-scoped material subtype use cases and server-managed optimistic locking.
+ * Catalog sharing and organization membership are separate architectural decisions.
+ *
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 @Slf4j
 @Service
+@PreAuthorize("isAuthenticated()")
 @RequiredArgsConstructor
 public class MaterialSubtypeService implements MaterialSubtypePort {
 
@@ -41,7 +47,9 @@ public class MaterialSubtypeService implements MaterialSubtypePort {
     private final UserRepository userRepository;
     private final AuthenticatedUserProvider userProvider;
 
+    /** {@inheritDoc} */
     @Override
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
     @Transactional
     public MaterialSubtypeResponseDTO create(MaterialSubtypeCreateRequestDTO data) {
         UUID userId = userProvider.getCurrentUserId();
@@ -73,22 +81,16 @@ public class MaterialSubtypeService implements MaterialSubtypePort {
         return toResponse(subtype);
     }
 
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
     public Page<MaterialSubtypeResponseDTO> list(UUID typeId, String name, Pageable pageable) {
         UUID userId = userProvider.getCurrentUserId();
-
-        Page<MaterialSubtype> page;
-
-        if (typeId != null) {
-            page = subtypeRepository.findAllByTypeIdAndCreatorId(typeId, userId, pageable);
-        } else {
-            page = subtypeRepository.findAllByCreatorId(userId, pageable);
-        }
-
-        return page.map(this::toResponse);
+        return subtypeRepository.findAll(MaterialSearch.matching(userId, "type", typeId, name), pageable)
+            .map(this::toResponse);
     }
 
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
     public MaterialSubtypeResponseDTO getById(UUID id) {
@@ -101,7 +103,9 @@ public class MaterialSubtypeService implements MaterialSubtypePort {
         return toResponse(subtype);
     }
 
+    /** {@inheritDoc} */
     @Override
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
     @Transactional
     public MaterialSubtypeResponseDTO update(UUID id, MaterialSubtypeUpdateRequestDTO data) {
         UUID userId = userProvider.getCurrentUserId();
@@ -114,7 +118,9 @@ public class MaterialSubtypeService implements MaterialSubtypePort {
             throw new MaterialError.InactiveMaterial(id, LEVEL);
         }
 
-        subtype.setVersion(data.version());
+        if (!java.util.Objects.equals(subtype.getVersion(), data.version())) {
+            throw new MaterialError.ConcurrentModification(id);
+        }
 
         String newName = data.name().trim();
 
@@ -127,14 +133,16 @@ public class MaterialSubtypeService implements MaterialSubtypePort {
         subtype.setName(newName);
 
         try {
-            MaterialSubtype updated = subtypeRepository.save(subtype);
+            MaterialSubtype updated = subtypeRepository.saveAndFlush(subtype);
             return toResponse(updated);
         } catch (ObjectOptimisticLockingFailureException e) {
             throw new MaterialError.ConcurrentModification(id);
         }
     }
 
+    /** {@inheritDoc} */
     @Override
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
     @Transactional
     public void deactivate(UUID id) {
         UUID userId = userProvider.getCurrentUserId();
@@ -149,7 +157,7 @@ public class MaterialSubtypeService implements MaterialSubtypePort {
             throw new MaterialError.InactiveMaterial(id, LEVEL);
         }
 
-        // Verificar vínculo direto com estoque
+        // Inspect the direct inventory binding.
         boolean hasInventoryBinding = inventoryBalanceRepository.existsByMaterialSubtypeId(id);
 
         if (hasInventoryBinding && !isAdmin) {

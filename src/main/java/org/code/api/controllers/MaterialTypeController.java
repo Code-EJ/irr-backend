@@ -18,9 +18,10 @@ import java.net.URI;
 import java.util.UUID;
 
 /**
- * Controller REST para Tipos de Material (2° nível da árvore tipológica).
+ * Exposes material type operations in the authenticated creator scope.
+ * Reads require authentication; writes require ADMINISTRATOR.
  *
- * <p>Leitura: qualquer autenticado. Escrita/Exclusão: apenas ADMINISTRATOR.</p>
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 @RestController
 @RequiredArgsConstructor
@@ -29,6 +30,7 @@ public class MaterialTypeController {
 
     private final MaterialTypePort typePort;
 
+    /** Creates a material for the current administrator. */
     @PostMapping
     @PreAuthorize("hasRole('ADMINISTRATOR')")
     public ResponseEntity<MaterialTypeResponseDTO> create(
@@ -44,6 +46,8 @@ public class MaterialTypeController {
         return ResponseEntity.created(location).body(response);
     }
 
+    /** Lists matching active materials; name and parent filters precede pagination. */
+    @io.swagger.v3.oas.annotations.Operation(description = "Lists only the authenticated creator's active materials. The optional name filter is a trimmed, case-insensitive literal substring; percent and underscore are not wildcards. Filtering precedes pagination and total counts.")
     @GetMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Page<MaterialTypeResponseDTO>> list(
@@ -54,12 +58,15 @@ public class MaterialTypeController {
         return ResponseEntity.ok(typePort.list(categoryId, name, pageable));
     }
 
+    /** Reads an owned material; missing and foreign IDs return 404. */
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<MaterialTypeResponseDTO> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(typePort.getById(id));
     }
 
+    /** Updates an owned material using the expected version. */
+    @io.swagger.v3.oas.annotations.Operation(description = "Administrator-only update in the authenticated creator scope. Send the last returned version. Stale versions return 409; refresh the record before retrying. Successful responses include the flushed server-managed version.")
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMINISTRATOR')")
     public ResponseEntity<MaterialTypeResponseDTO> update(
@@ -69,6 +76,7 @@ public class MaterialTypeController {
         return ResponseEntity.ok(typePort.update(id, data));
     }
 
+    /** Applies the existing owned-material deactivation policy. */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMINISTRATOR')")
     public ResponseEntity<Void> deactivate(@PathVariable UUID id) {

@@ -22,16 +22,22 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.code.api.infrastructure.specifications.MaterialSearch;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
 
 /**
- * Serviço para gestão de Tipos de Material (2° nível da árvore tipológica).
+ * Applies creator-scoped material type use cases and server-managed optimistic locking.
+ * Catalog sharing and organization membership are separate architectural decisions.
+ *
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 @Slf4j
 @Service
+@PreAuthorize("isAuthenticated()")
 @RequiredArgsConstructor
 public class MaterialTypeService implements MaterialTypePort {
 
@@ -44,13 +50,15 @@ public class MaterialTypeService implements MaterialTypePort {
     private final UserRepository userRepository;
     private final AuthenticatedUserProvider userProvider;
 
+    /** {@inheritDoc} */
     @Override
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
     @Transactional
     public MaterialTypeResponseDTO create(MaterialTypeCreateRequestDTO data) {
         UUID userId = userProvider.getCurrentUserId();
         User creator = userRepository.getReferenceById(userId);
 
-        // Validar que a categoria pai pertence ao mesmo creator
+        // Validate that the parent category belongs to the authenticated creator.
         MaterialCategory category = categoryRepository
             .findByIdAndCreatorId(data.categoryId(), userId)
             .orElseThrow(() -> new MaterialError.ParentNotFound(data.categoryId(), "CATEGORY"));
@@ -77,27 +85,16 @@ public class MaterialTypeService implements MaterialTypePort {
         return toResponse(type);
     }
 
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
     public Page<MaterialTypeResponseDTO> list(UUID categoryId, String name, Pageable pageable) {
         UUID userId = userProvider.getCurrentUserId();
-
-        Page<MaterialType> page;
-
-        if (categoryId != null) {
-            page = typeRepository.findAllByCategoryIdAndCreatorId(categoryId, userId, pageable);
-        } else {
-            page = typeRepository.findAllByCreatorId(userId, pageable);
-        }
-
-        if (name != null && !name.isBlank()) {
-            String filter = name.trim().toUpperCase();
-            return page.map(this::toResponse);
-        }
-
-        return page.map(this::toResponse);
+        return typeRepository.findAll(MaterialSearch.matching(userId, "category", categoryId, name), pageable)
+            .map(this::toResponse);
     }
 
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
     public MaterialTypeResponseDTO getById(UUID id) {
@@ -110,7 +107,9 @@ public class MaterialTypeService implements MaterialTypePort {
         return toResponse(type);
     }
 
+    /** {@inheritDoc} */
     @Override
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
     @Transactional
     public MaterialTypeResponseDTO update(UUID id, MaterialTypeUpdateRequestDTO data) {
         UUID userId = userProvider.getCurrentUserId();
@@ -123,7 +122,9 @@ public class MaterialTypeService implements MaterialTypePort {
             throw new MaterialError.InactiveMaterial(id, LEVEL);
         }
 
-        type.setVersion(data.version());
+        if (!java.util.Objects.equals(type.getVersion(), data.version())) {
+            throw new MaterialError.ConcurrentModification(id);
+        }
 
         String newName = data.name().trim();
 
@@ -136,14 +137,16 @@ public class MaterialTypeService implements MaterialTypePort {
         type.setName(newName);
 
         try {
-            MaterialType updated = typeRepository.save(type);
+            MaterialType updated = typeRepository.saveAndFlush(type);
             return toResponse(updated);
         } catch (ObjectOptimisticLockingFailureException e) {
             throw new MaterialError.ConcurrentModification(id);
         }
     }
 
+    /** {@inheritDoc} */
     @Override
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
     @Transactional
     public void deactivate(UUID id) {
         UUID userId = userProvider.getCurrentUserId();
@@ -158,7 +161,7 @@ public class MaterialTypeService implements MaterialTypePort {
             throw new MaterialError.InactiveMaterial(id, LEVEL);
         }
 
-        // Verificar vínculos de estoque nos subtypes filhos
+        // Inspect inventory bindings for child subtypes.
         List<MaterialSubtype> subtypes = subtypeRepository.findAllByTypeId(id);
         boolean hasInventoryBinding = subtypes.stream()
             .anyMatch(st -> inventoryBalanceRepository.existsByMaterialSubtypeId(st.getId()));
@@ -167,7 +170,7 @@ public class MaterialTypeService implements MaterialTypePort {
             throw new MaterialError.HasInventoryBinding(id, LEVEL);
         }
 
-        // Cascata: inativar subtypes filhos
+        // Deactivate child subtypes.
         for (MaterialSubtype subtype : subtypes) {
             subtype.setIsActive(false);
             subtypeRepository.save(subtype);

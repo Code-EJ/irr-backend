@@ -18,29 +18,26 @@ import org.code.api.infrastructure.repositories.MaterialCategoryRepository;
 import org.code.api.infrastructure.repositories.MaterialSubtypeRepository;
 import org.code.api.infrastructure.repositories.MaterialTypeRepository;
 import org.code.api.infrastructure.repositories.UserRepository;
-import org.code.api.infrastructure.specifications.MaterialCategorySpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.code.api.infrastructure.specifications.MaterialSearch;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
 
 /**
- * Serviço para gestão de Categorias de Material (1° nível da árvore tipológica).
+ * Applies creator-scoped material category use cases and server-managed optimistic locking.
+ * Catalog sharing and organization membership are separate architectural decisions.
  *
- * <p>Regras de negócio:</p>
- * <ul>
- *   <li>Unicidade de nome por tenant (creator_id)</li>
- *   <li>Optimistic locking via @Version</li>
- *   <li>Deactivate: admin pode desativar com cascata; não-admin bloqueado se houver vínculo de estoque</li>
- * </ul>
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 @Slf4j
 @Service
+@PreAuthorize("isAuthenticated()")
 @RequiredArgsConstructor
 public class MaterialCategoryService implements MaterialCategoryPort {
 
@@ -53,7 +50,9 @@ public class MaterialCategoryService implements MaterialCategoryPort {
     private final UserRepository userRepository;
     private final AuthenticatedUserProvider userProvider;
 
+    /** {@inheritDoc} */
     @Override
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
     @Transactional
     public MaterialCategoryResponseDTO create(MaterialCategoryCreateRequestDTO data) {
         UUID userId = userProvider.getCurrentUserId();
@@ -76,20 +75,16 @@ public class MaterialCategoryService implements MaterialCategoryPort {
         return toResponse(category);
     }
 
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
     public Page<MaterialCategoryResponseDTO> list(String name, Pageable pageable) {
         UUID userId = userProvider.getCurrentUserId();
-
-        Specification<MaterialCategory> spec = MaterialCategorySpecification.withCreatorId(userId);
-
-        if (name != null && !name.isBlank()) {
-            spec = spec.and(MaterialCategorySpecification.nameContains(name));
-        }
-
-        return categoryRepository.findAll(spec, pageable).map(this::toResponse);
+        return categoryRepository.findAll(MaterialSearch.matching(userId, null, null, name), pageable)
+            .map(this::toResponse);
     }
 
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
     public MaterialCategoryResponseDTO getById(UUID id) {
@@ -102,7 +97,9 @@ public class MaterialCategoryService implements MaterialCategoryPort {
         return toResponse(category);
     }
 
+    /** {@inheritDoc} */
     @Override
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
     @Transactional
     public MaterialCategoryResponseDTO update(UUID id, MaterialCategoryUpdateRequestDTO data) {
         UUID userId = userProvider.getCurrentUserId();
@@ -115,8 +112,10 @@ public class MaterialCategoryService implements MaterialCategoryPort {
             throw new MaterialError.InactiveMaterial(id, LEVEL);
         }
 
-        // Optimistic lock: setar a version do DTO na entidade antes do save
-        category.setVersion(data.version());
+        // Compare the client version without modifying Hibernate-managed state.
+        if (!java.util.Objects.equals(category.getVersion(), data.version())) {
+            throw new MaterialError.ConcurrentModification(id);
+        }
 
         String newName = data.name().trim();
 
@@ -128,14 +127,16 @@ public class MaterialCategoryService implements MaterialCategoryPort {
         category.setName(newName);
 
         try {
-            MaterialCategory updated = categoryRepository.save(category);
+            MaterialCategory updated = categoryRepository.saveAndFlush(category);
             return toResponse(updated);
         } catch (ObjectOptimisticLockingFailureException e) {
             throw new MaterialError.ConcurrentModification(id);
         }
     }
 
+    /** {@inheritDoc} */
     @Override
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
     @Transactional
     public void deactivate(UUID id) {
         UUID userId = userProvider.getCurrentUserId();
@@ -150,7 +151,7 @@ public class MaterialCategoryService implements MaterialCategoryPort {
             throw new MaterialError.InactiveMaterial(id, LEVEL);
         }
 
-        // Verificar vínculos de estoque em cascata: Category → Types → Subtypes → InventoryBalance
+        // Inspect inventory bindings through the category/type/subtype hierarchy.
         List<MaterialType> types = typeRepository.findAllByCategoryId(id);
         List<UUID> typeIds = types.stream().map(MaterialType::getId).toList();
 
@@ -165,7 +166,7 @@ public class MaterialCategoryService implements MaterialCategoryPort {
             throw new MaterialError.HasInventoryBinding(id, LEVEL);
         }
 
-        // Cascata de inativação: Category → Types → Subtypes
+        // Deactivate descendants using the existing lifecycle policy.
         for (MaterialType type : types) {
             List<MaterialSubtype> subtypes = subtypeRepository.findAllByTypeId(type.getId());
             for (MaterialSubtype subtype : subtypes) {
