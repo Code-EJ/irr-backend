@@ -1,11 +1,15 @@
 package org.code.api.dto.pressing.response;
 
-import org.code.api.domain.enums.DestinationType;
-
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
+import org.code.api.domain.enums.DestinationType;
 
+/**
+ * Typed Pressed Bale Response API value.
+ *
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
+ */
 public record PressedBaleResponseDTO(
     UUID id,
     UUID pressingId,
@@ -18,5 +22,4 @@ public record PressedBaleResponseDTO(
     OffsetDateTime createdAt,
     OffsetDateTime updatedAt,
     DestinationType destinationType,
-    UUID destinationId
-) {}
+    UUID destinationId) {}

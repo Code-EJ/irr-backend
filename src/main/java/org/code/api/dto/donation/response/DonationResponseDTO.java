@@ -1,17 +1,16 @@
 package org.code.api.dto.donation.response;
 
-import org.code.api.dto.collection.response.InputItemResponseDTO;
-
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
+import org.code.api.dto.collection.response.InputItemResponseDTO;
 
 /**
- * Typed Donation Response  API value.
+ * Typed Donation Response API value.
+ *
  * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
-
 public record DonationResponseDTO(
     UUID id,
     OffsetDateTime donationDate,
@@ -21,5 +20,4 @@ public record DonationResponseDTO(
     Boolean isActive,
     List<InputItemResponseDTO> inputItems,
     OffsetDateTime createdAt,
-    OffsetDateTime updatedAt
-) {}
+    OffsetDateTime updatedAt) {}

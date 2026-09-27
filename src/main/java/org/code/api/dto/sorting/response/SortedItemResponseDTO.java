@@ -1,11 +1,15 @@
 package org.code.api.dto.sorting.response;
 
-import org.code.api.domain.enums.DestinationType;
-
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
+import org.code.api.domain.enums.DestinationType;
 
+/**
+ * Typed Sorted Item Response API value.
+ *
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
+ */
 public record SortedItemResponseDTO(
     UUID id,
     UUID sortingId,
@@ -19,5 +23,4 @@ public record SortedItemResponseDTO(
     OffsetDateTime createdAt,
     OffsetDateTime updatedAt,
     DestinationType destinationType,
-    UUID destinationId
-) {}
+    UUID destinationId) {}

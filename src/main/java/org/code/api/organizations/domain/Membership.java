@@ -1,7 +1,10 @@
 package org.code.api.organizations.domain;
+
 import java.util.UUID;
+
 /**
  * Safe membership state retained after revocation for audit continuity.
+ *
  * @param organizationId scope identity
  * @param userId member identity
  * @param role organization-local role

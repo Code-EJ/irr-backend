@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
-
 import org.code.api.domain.models.user.User;
 import org.code.api.infrastructure.repositories.UserRepository;
 import org.springframework.data.domain.Example;
@@ -13,7 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
 
-public class MockedUserRepository implements UserRepository{
+public class MockedUserRepository implements UserRepository {
   @Override
   public void flush() {
     // TODO Auto-generated method stub
@@ -189,7 +188,8 @@ public class MockedUserRepository implements UserRepository{
   }
 
   @Override
-  public <S extends User, R> R findBy(Example<S> example, Function<FetchableFluentQuery<S>, R> queryFunction) {
+  public <S extends User, R> R findBy(
+      Example<S> example, Function<FetchableFluentQuery<S>, R> queryFunction) {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'findBy'");
   }
@@ -205,5 +205,4 @@ public class MockedUserRepository implements UserRepository{
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'existsByEmail'");
   }
-  
 }

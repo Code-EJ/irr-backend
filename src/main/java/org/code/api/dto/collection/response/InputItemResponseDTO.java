@@ -5,10 +5,10 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 /**
- * Typed Input Item Response  API value.
+ * Typed Input Item Response API value.
+ *
  * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
-
 public record InputItemResponseDTO(
     UUID id,
     UUID collectionId,
@@ -18,5 +18,4 @@ public record InputItemResponseDTO(
     BigDecimal volumeM3,
     Boolean isActive,
     OffsetDateTime createdAt,
-    OffsetDateTime updatedAt
-) {}
+    OffsetDateTime updatedAt) {}

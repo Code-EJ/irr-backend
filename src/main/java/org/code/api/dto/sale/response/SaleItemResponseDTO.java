@@ -4,6 +4,11 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
+/**
+ * Typed Sale Item Response API value.
+ *
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
+ */
 public record SaleItemResponseDTO(
     UUID id,
     UUID saleId,
@@ -13,5 +18,4 @@ public record SaleItemResponseDTO(
     BigDecimal unitPrice,
     Boolean isActive,
     OffsetDateTime createdAt,
-    OffsetDateTime updatedAt
-) {}
+    OffsetDateTime updatedAt) {}

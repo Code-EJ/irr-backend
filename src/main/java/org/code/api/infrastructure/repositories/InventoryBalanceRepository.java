@@ -1,18 +1,20 @@
 package org.code.api.infrastructure.repositories;
 
+import java.util.Optional;
+import java.util.UUID;
 import org.code.api.domain.models.inventory.InventoryBalance;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-import java.util.UUID;
-
 /**
- * Repositório para {@link InventoryBalance} (Tabela de Leitura).
- * Sem creator_id, sem is_active — é um saldo consolidado por material.
+ * Persistence queries for InventoryBalance; business callers must enforce explicit organization
+ * scope.
+ *
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 @Repository
 public interface InventoryBalanceRepository extends JpaRepository<InventoryBalance, UUID> {
-    Optional<InventoryBalance> findByMaterialSubtypeId(UUID materialSubtypeId);
-    boolean existsByMaterialSubtypeId(UUID materialSubtypeId);
+  Optional<InventoryBalance> findByMaterialSubtypeId(UUID materialSubtypeId);
+
+  boolean existsByMaterialSubtypeId(UUID materialSubtypeId);
 }

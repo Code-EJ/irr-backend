@@ -6,11 +6,12 @@ import java.util.UUID;
 
 /**
  * DTO de resposta da Tabela de Leitura (saldo consolidado). Somente leitura.
+ *
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 public record InventoryBalanceResponseDTO(
     UUID id,
     UUID materialSubtypeId,
     BigDecimal currentWeightKg,
     BigDecimal currentVolumeM3,
-    OffsetDateTime lastUpdatedAt
-) {}
+    OffsetDateTime lastUpdatedAt) {}

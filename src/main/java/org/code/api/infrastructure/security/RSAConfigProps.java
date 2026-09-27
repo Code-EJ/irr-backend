@@ -2,12 +2,15 @@ package org.code.api.infrastructure.security;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
+/**
+ * RSAConfig Props boundary for the IRR application.
+ *
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
+ */
 @ConfigurationProperties(prefix = "rsa")
 @Getter
 @Setter

@@ -1,6 +1,7 @@
 package org.code.api.domain.common;
 
 import jakarta.persistence.*;
+import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,14 +11,10 @@ import org.code.api.domain.models.user.User;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.OffsetDateTime;
-
 /**
- * Classe base abstrata para entidades que possuem auditoria de criação/atualização
- * e vínculo com o usuário criador (creator_id).
+ * Shared creation actor, organization ownership and timestamps for auditable persistence entities.
  *
- * <p>Entidades que NÃO possuem creator_id no schema (ex: input_item, sale_item,
- * inventory_log) NÃO devem estender esta classe.</p>
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 @MappedSuperclass
 @SuperBuilder
@@ -27,19 +24,19 @@ import java.time.OffsetDateTime;
 @NoArgsConstructor
 public abstract class TimeStampedEntity {
 
-    /** Organization ownership; null exists only for unmapped historical rows. */
-    @Column(name = "organization_id")
-    private java.util.UUID organizationId;
+  /** Organization ownership; null exists only for unmapped historical rows. */
+  @Column(name = "organization_id")
+  private java.util.UUID organizationId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "creator_id", nullable = false)
-    private User creator;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "creator_id", nullable = false)
+  private User creator;
 
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
-    private OffsetDateTime createdAt;
+  @CreationTimestamp
+  @Column(name = "created_at", updatable = false)
+  private OffsetDateTime createdAt;
 
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private OffsetDateTime updatedAt;
+  @UpdateTimestamp
+  @Column(name = "updated_at")
+  private OffsetDateTime updatedAt;
 }

@@ -1,74 +1,59 @@
 package org.code.api.domain.exception;
 
+import java.util.UUID;
 import lombok.Getter;
 
-import java.util.UUID;
-
 /**
- * Namespace centralizador das exceções de negócio do contexto de Veículos.
+ * Groups domain failures for vehicle operations and HTTP error translation.
  *
- * <p>Todas as classes internas devem ser interceptadas pelo {@code ErrorHandler}
- * para tradução em códigos HTTP adequados.</p>
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 public class VehicleError extends RuntimeException {
 
-    public VehicleError(String message) {
-        super(message);
+  public VehicleError(String message) {
+    super(message);
+  }
+
+  /** Rejects mutation of an inactive vehicle. */
+  public static class InactiveVehicle extends VehicleError {
+    public InactiveVehicle(UUID id) {
+      super(String.format("Vehicle with ID %s is inactive and cannot be modified.", id));
     }
+  }
 
-    /**
-     * Lançada quando o sistema detecta uma tentativa de modificação em um veículo inativo.
-     * Mapeada para HTTP 422 (Unprocessable Entity).
-     */
-    public static class InactiveVehicle extends VehicleError {
-        public InactiveVehicle(UUID id) {
-            super(String.format("Vehicle with ID %s is inactive and cannot be modified.", id));
-        }
+  /** Indicates a duplicate normalized license plate within the organization. */
+  @Getter
+  public static class PlateAlreadyExists extends VehicleError {
+
+    private final String licensePlate;
+
+    public PlateAlreadyExists(String licensePlate) {
+      super("Vehicle plate already exists");
+      this.licensePlate = licensePlate;
     }
+  }
 
-    /**
-     * Lançada de forma proativa (fail-fast) ou reativa (DataIntegrityViolationException)
-     * quando ocorre violação da unique constraint da coluna {@code license_plate}.
-     * Mapeada para HTTP 409 (Conflict).
-     */
-    @Getter
-    public static class PlateAlreadyExists extends VehicleError {
+  /** Conceals absent or foreign records behind one resource-not-found failure. */
+  @Getter
+  public static class NotFound extends VehicleError {
 
-        private final String licensePlate;
+    private final UUID vehicleId;
 
-        public PlateAlreadyExists(String licensePlate) {
-            super("Vehicle plate already exists");
-            this.licensePlate = licensePlate;
-        }
+    public NotFound(UUID vehicleId) {
+      super("Vehicle not found");
+      this.vehicleId = vehicleId;
     }
+  }
 
-    /**
-     * Lançada quando nenhum veículo é encontrado com o ID informado.
-     * Mapeada para HTTP 404 (Not Found).
-     */
-    @Getter
-    public static class NotFound extends VehicleError {
+  /** Rejects vehicle deactivation while collection history references it. */
+  @Getter
+  public static class HasCollectionBinding extends VehicleError {
 
-        private final UUID vehicleId;
+    private final UUID vehicleId;
 
-        public NotFound(UUID vehicleId) {
-            super("Vehicle not found");
-            this.vehicleId = vehicleId;
-        }
+    public HasCollectionBinding(UUID vehicleId) {
+      super("The vehicle is referenced by collection history and cannot be deactivated.");
+      this.vehicleId = vehicleId;
     }
-
-    /**
-     * Lançada quando um não-administrador tenta excluir um veículo que possui coletas vinculadas.
-     * Mapeada para HTTP 409 (Conflict).
-     */
-    @Getter
-    public static class HasCollectionBinding extends VehicleError {
-
-        private final UUID vehicleId;
-
-        public HasCollectionBinding(UUID vehicleId) {
-            super("Permissão negada. Este veículo possui coletas vinculadas. Necessário requisitar ao instituto para prosseguir.");
-            this.vehicleId = vehicleId;
-        }
-    }
+  }
 }

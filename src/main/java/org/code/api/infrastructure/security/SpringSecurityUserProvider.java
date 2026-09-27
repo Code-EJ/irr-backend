@@ -17,17 +17,27 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class SpringSecurityUserProvider implements AuthenticatedUserProvider {
-    /** {@inheritDoc} */
-    @Override public UUID getCurrentUserId() { return (UUID) identity().getPrincipal(); }
-    /** {@inheritDoc} */
-    @Override public List<UserRole> getCurrentUserRoles() {
-        var authorities = identity().getAuthorities().stream().map(Object::toString).toList();
-        return Arrays.stream(UserRole.values()).filter(role -> authorities.contains("ROLE_" + role.name())).toList();
-    }
-    private Authentication identity() {
-        Authentication identity = SecurityContextHolder.getContext().getAuthentication();
-        if (identity == null || !identity.isAuthenticated() || !(identity.getPrincipal() instanceof UUID))
-            throw new AuthError.Unauthorized("No authenticated UUID principal is available");
-        return identity;
-    }
+  /** {@inheritDoc} */
+  @Override
+  public UUID getCurrentUserId() {
+    return (UUID) identity().getPrincipal();
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public List<UserRole> getCurrentUserRoles() {
+    var authorities = identity().getAuthorities().stream().map(Object::toString).toList();
+    return Arrays.stream(UserRole.values())
+        .filter(role -> authorities.contains("ROLE_" + role.name()))
+        .toList();
+  }
+
+  private Authentication identity() {
+    Authentication identity = SecurityContextHolder.getContext().getAuthentication();
+    if (identity == null
+        || !identity.isAuthenticated()
+        || !(identity.getPrincipal() instanceof UUID))
+      throw new AuthError.Unauthorized("No authenticated UUID principal is available");
+    return identity;
+  }
 }

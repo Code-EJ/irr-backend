@@ -5,6 +5,11 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Typed Sale Response API value.
+ *
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
+ */
 public record SaleResponseDTO(
     UUID id,
     OffsetDateTime saleDate,
@@ -16,5 +21,4 @@ public record SaleResponseDTO(
     Boolean isActive,
     List<SaleItemResponseDTO> saleItems,
     OffsetDateTime createdAt,
-    OffsetDateTime updatedAt
-) {}
+    OffsetDateTime updatedAt) {}

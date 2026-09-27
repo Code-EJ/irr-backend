@@ -10,21 +10,19 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 /**
- * Repositório Spring Data JPA para a entidade {@link Vehicle}.
+ * Persistence queries for Vehicle; business callers must enforce explicit organization scope.
  *
- * <p>Estende {@link JpaSpecificationExecutor} para suportar filtragem dinâmica
- * via Criteria API (Specifications).</p>
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 @Repository
-public interface VehicleRepository extends JpaRepository<Vehicle, UUID>,
-        JpaSpecificationExecutor<Vehicle> {
+public interface VehicleRepository
+    extends JpaRepository<Vehicle, UUID>, JpaSpecificationExecutor<Vehicle> {
 
-    boolean existsByLicensePlateAndOrganizationId(String licensePlate, UUID organizationId);
+  boolean existsByLicensePlateAndOrganizationId(String licensePlate, UUID organizationId);
 
-    Optional<Vehicle> findByLicensePlateAndOrganizationId(String licensePlate, UUID organizationId);
+  Optional<Vehicle> findByLicensePlateAndOrganizationId(String licensePlate, UUID organizationId);
 
-    Optional<Vehicle> findByIdAndOrganizationId(UUID id, UUID organizationId);
+  Optional<Vehicle> findByIdAndOrganizationId(UUID id, UUID organizationId);
 
-    Page<Vehicle> findAllByOrganizationId(UUID organizationId, Pageable pageable);
-
+  Page<Vehicle> findAllByOrganizationId(UUID organizationId, Pageable pageable);
 }

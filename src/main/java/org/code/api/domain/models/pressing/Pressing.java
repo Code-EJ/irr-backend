@@ -1,19 +1,19 @@
 package org.code.api.domain.models.pressing;
 
 import jakarta.persistence.*;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.code.api.domain.common.TimeStampedEntity;
 import org.hibernate.annotations.SQLRestriction;
 
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 /**
- * Entidade JPA mapeada para a tabela {@code pressing}.
- * Representa uma operação de prensagem de materiais triados.
+ * Posted compaction document whose stock operation preserves material mass.
+ *
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 @Entity
 @Table(name = "pressing")
@@ -24,23 +24,24 @@ import java.util.UUID;
 @AllArgsConstructor
 @SuperBuilder
 public class Pressing extends TimeStampedEntity {
-    /** Posted records remain readable after an audited reversal. */
-    @Column(name="status",nullable=false) @Builder.Default
-    private String status="POSTED";
+  /** Posted records remain readable after an audited reversal. */
+  @Column(name = "status", nullable = false)
+  @Builder.Default
+  private String status = "POSTED";
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", updatable = false, nullable = false)
-    private UUID id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  @Column(name = "id", updatable = false, nullable = false)
+  private UUID id;
 
-    @Column(name = "pressing_date")
-    private OffsetDateTime pressingDate;
+  @Column(name = "pressing_date")
+  private OffsetDateTime pressingDate;
 
-    @Column(name = "is_active", nullable = false)
-    @Builder.Default
-    private Boolean isActive = true;
+  @Column(name = "is_active", nullable = false)
+  @Builder.Default
+  private Boolean isActive = true;
 
-    @OneToMany(mappedBy = "pressing")
-    @Builder.Default
-    private List<PressedBale> pressedBales = new ArrayList<>();
+  @OneToMany(mappedBy = "pressing")
+  @Builder.Default
+  private List<PressedBale> pressedBales = new ArrayList<>();
 }

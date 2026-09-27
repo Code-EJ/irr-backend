@@ -1,13 +1,14 @@
 package org.code.api.dto.inventory.response;
 
-import org.code.api.domain.enums.OperationType;
-
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
+import org.code.api.domain.enums.OperationType;
 
 /**
- * DTO de resposta do Livro Razão (Append-Only). Somente leitura.
+ * Validated inventory log response contract fields for the organization-scoped API.
+ *
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 public record InventoryLogResponseDTO(
     UUID id,
@@ -17,5 +18,4 @@ public record InventoryLogResponseDTO(
     OperationType operationType,
     Boolean isActive,
     OffsetDateTime createdAt,
-    OffsetDateTime updatedAt
-) {}
+    OffsetDateTime updatedAt) {}

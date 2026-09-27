@@ -10,8 +10,13 @@ import org.code.api.domain.enums.UserRole;
  * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 public interface AuthenticatedUserProvider {
-    /** @return the authenticated actor's persistent identifier */
-    UUID getCurrentUserId();
-    /** @return the actor's current server-resolved roles */
-    List<UserRole> getCurrentUserRoles();
+  /**
+   * @return the authenticated actor's persistent identifier
+   */
+  UUID getCurrentUserId();
+
+  /**
+   * @return the actor's current server-resolved roles
+   */
+  List<UserRole> getCurrentUserRoles();
 }

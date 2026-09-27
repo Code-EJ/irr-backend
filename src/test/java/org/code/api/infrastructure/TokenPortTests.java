@@ -9,7 +9,6 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Instant;
 import java.util.UUID;
-
 import org.code.api.domain.enums.UserRole;
 import org.code.api.domain.exception.AuthError;
 import org.code.api.domain.models.user.Session;
@@ -28,28 +27,26 @@ public class TokenPortTests {
     RSAPrivateKey privateKey = RSAKeysUtil.getPrivateKey();
     RSAPublicKey publicKey = RSAKeysUtil.getPublicKey();
 
-    SecurityBeansConfig securityBeans = new SecurityBeansConfig(new RSAConfigProps(publicKey, privateKey));
+    SecurityBeansConfig securityBeans =
+        new SecurityBeansConfig(new RSAConfigProps(publicKey, privateKey));
 
-    this.tokenPort = new JWTTokenProvider(
-      securityBeans.jwtEncoder(),
-      securityBeans.jwtDecoder()
-    );
+    this.tokenPort = new JWTTokenProvider(securityBeans.jwtEncoder(), securityBeans.jwtDecoder());
   }
-
 
   @Test
   @DisplayName("Should generate a valid token")
   public void shouldGenerateValidToken() {
     Instant now = Instant.now();
 
-    String token = tokenPort.createToken(Session.builder()
-      .id(UUID.randomUUID())
-      .email("test@test.com")
-      .userRole(UserRole.ADMINISTRATOR)
-      .issuedAt(now)
-      .expiresAt(now.plusSeconds(3600))
-      .build()
-    );
+    String token =
+        tokenPort.createToken(
+            Session.builder()
+                .id(UUID.randomUUID())
+                .email("test@test.com")
+                .userRole(UserRole.ADMINISTRATOR)
+                .issuedAt(now)
+                .expiresAt(now.plusSeconds(3600))
+                .build());
 
     assertNotNull(token);
     assertTrue(token.length() > 0);
@@ -62,11 +59,8 @@ public class TokenPortTests {
     UUID sessionId = UUID.randomUUID();
     String email = "test@test.com";
 
-    Session originalSession = Session.builder()
-      .id(sessionId)
-      .email(email)
-      .userRole(UserRole.ADMINISTRATOR)
-      .build();
+    Session originalSession =
+        Session.builder().id(sessionId).email(email).userRole(UserRole.ADMINISTRATOR).build();
 
     String token = tokenPort.createToken(originalSession);
     Session decodedSession = tokenPort.decodeToken(token);
@@ -79,11 +73,12 @@ public class TokenPortTests {
   @Test
   @DisplayName("Should renew token from string and return new valid token")
   public void shouldRenewTokenFromStringAndReturnNewToken() {
-    Session originalSession = Session.builder()
-      .id(UUID.randomUUID())
-      .email("test@test.com")
-      .userRole(UserRole.ADMINISTRATOR)
-      .build();
+    Session originalSession =
+        Session.builder()
+            .id(UUID.randomUUID())
+            .email("test@test.com")
+            .userRole(UserRole.ADMINISTRATOR)
+            .build();
 
     String originalToken = tokenPort.createToken(originalSession);
     String renewedToken = tokenPort.renewToken(originalToken);
@@ -93,17 +88,17 @@ public class TokenPortTests {
     assertTrue(renewedToken.split("\\.").length == 3);
   }
 
-
   @Test
   @DisplayName("Should maintain email when renewing token from string")
   public void shouldMaintainEmailWhenRenewingTokenFromString() {
     String email = "test@test.com";
 
-    Session originalSession = Session.builder()
-      .id(UUID.randomUUID())
-      .email(email)
-      .userRole(UserRole.ADMINISTRATOR)
-      .build();
+    Session originalSession =
+        Session.builder()
+            .id(UUID.randomUUID())
+            .email(email)
+            .userRole(UserRole.ADMINISTRATOR)
+            .build();
 
     String originalToken = tokenPort.createToken(originalSession);
     String renewedToken = tokenPort.renewToken(originalToken);
@@ -118,9 +113,11 @@ public class TokenPortTests {
   public void shouldThrowInvalidTokenExceptionWhenDecodingInvalidFormat() {
     String invalidToken = "invalid.jwt.token";
 
-    assertThrows(AuthError.InvalidToken.class, () -> {
-      tokenPort.decodeToken(invalidToken);
-    });
+    assertThrows(
+        AuthError.InvalidToken.class,
+        () -> {
+          tokenPort.decodeToken(invalidToken);
+        });
   }
 
   @Test
@@ -128,9 +125,11 @@ public class TokenPortTests {
   public void shouldThrowInvalidTokenExceptionWhenDecodingMalformedToken() {
     String malformedToken = "not-a-valid-token";
 
-    assertThrows(AuthError.InvalidToken.class, () -> {
-      tokenPort.decodeToken(malformedToken);
-    });
+    assertThrows(
+        AuthError.InvalidToken.class,
+        () -> {
+          tokenPort.decodeToken(malformedToken);
+        });
   }
 
   @Test
@@ -138,31 +137,36 @@ public class TokenPortTests {
   public void shouldThrowInvalidTokenExceptionWhenDecodingEmptyToken() {
     String emptyToken = "";
 
-    assertThrows(AuthError.InvalidToken.class, () -> {
-      tokenPort.decodeToken(emptyToken);
-    });
+    assertThrows(
+        AuthError.InvalidToken.class,
+        () -> {
+          tokenPort.decodeToken(emptyToken);
+        });
   }
 
   @Test
   @DisplayName("Should throw InvalidToken exception when decoding token with invalid signature")
   public void shouldThrowInvalidTokenExceptionWhenDecodingTokenWithInvalidSignature() {
     Instant now = Instant.now();
-    
-    Session session = Session.builder()
-      .id(UUID.randomUUID())
-      .email("test@test.com")
-      .userRole(UserRole.ADMINISTRATOR)
-      .issuedAt(now)
-      .expiresAt(now.plusSeconds(3600))
-      .build();
+
+    Session session =
+        Session.builder()
+            .id(UUID.randomUUID())
+            .email("test@test.com")
+            .userRole(UserRole.ADMINISTRATOR)
+            .issuedAt(now)
+            .expiresAt(now.plusSeconds(3600))
+            .build();
 
     String validToken = tokenPort.createToken(session);
     // Tamper with the token signature
     String[] parts = validToken.split("\\.");
     String tamperedToken = parts[0] + "." + parts[1] + ".invalid-signature";
 
-    assertThrows(AuthError.InvalidToken.class, () -> {
-      tokenPort.decodeToken(tamperedToken);
-    });
+    assertThrows(
+        AuthError.InvalidToken.class,
+        () -> {
+          tokenPort.decodeToken(tamperedToken);
+        });
   }
 }

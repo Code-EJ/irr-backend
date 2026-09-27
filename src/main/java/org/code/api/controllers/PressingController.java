@@ -1,6 +1,8 @@
 package org.code.api.controllers;
 
 import jakarta.validation.Valid;
+import java.net.URI;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.code.api.domain.ports.PressingPort;
 import org.code.api.dto.pressing.request.PressingCreateRequestDTO;
@@ -13,45 +15,43 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
-import java.util.UUID;
-
 /**
- * Controller REST para gestão do processo de Prensagem de Materiais.
+ * HTTP boundary for organization-owned pressing use cases; Swagger is the official contract.
+ *
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping({"/api/pressings", "/api/v1/pressings"})
 public class PressingController {
 
-    private final PressingPort pressingPort;
+  private final PressingPort pressingPort;
 
-    @PostMapping
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<PressingResponseDTO> create(
-        @Valid @RequestBody PressingCreateRequestDTO data
-    ) {
-        PressingResponseDTO response = pressingPort.create(data);
+  @PostMapping
+  @PreAuthorize("isAuthenticated()")
+  public ResponseEntity<PressingResponseDTO> create(
+      @Valid @RequestBody PressingCreateRequestDTO data) {
+    PressingResponseDTO response = pressingPort.create(data);
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+    URI location =
+        ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{id}")
             .buildAndExpand(response.id())
             .toUri();
 
-        return ResponseEntity.created(location).body(response);
-    }
+    return ResponseEntity.created(location).body(response);
+  }
 
-    @GetMapping
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Page<PressingResponseDTO>> list(
-        @PageableDefault(size = 20, sort = "pressingDate") Pageable pageable
-    ) {
-        return ResponseEntity.ok(pressingPort.list(pageable));
-    }
+  @GetMapping
+  @PreAuthorize("isAuthenticated()")
+  public ResponseEntity<Page<PressingResponseDTO>> list(
+      @PageableDefault(size = 20, sort = "pressingDate") Pageable pageable) {
+    return ResponseEntity.ok(pressingPort.list(pageable));
+  }
 
-    @GetMapping("/{id}")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<PressingResponseDTO> getById(@PathVariable UUID id) {
-        return ResponseEntity.ok(pressingPort.getById(id));
-    }
+  @GetMapping("/{id}")
+  @PreAuthorize("isAuthenticated()")
+  public ResponseEntity<PressingResponseDTO> getById(@PathVariable UUID id) {
+    return ResponseEntity.ok(pressingPort.getById(id));
+  }
 }

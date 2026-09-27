@@ -1,20 +1,19 @@
 package org.code.api.domain.models.user;
 
 import jakarta.persistence.*;
+import java.time.OffsetDateTime;
+import java.util.UUID;
 import lombok.*;
 import org.code.api.domain.enums.UserRole;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.OffsetDateTime;
-import java.util.UUID;
-
 /**
- * Entidade JPA mapeada para a tabela {@code users}.
+ * Platform account with an active-state filter; credentials must never cross API response
+ * boundaries.
  *
- * <p>Não estende {@link org.code.api.domain.common.TimeStampedEntity}
- * pois a tabela {@code users} não possui coluna {@code creator_id}.</p>
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 @Entity
 @Table(name = "users")
@@ -27,33 +26,33 @@ import java.util.UUID;
 @ToString(exclude = "passwordHash")
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", updatable = false, nullable = false)
-    private UUID id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  @Column(name = "id", updatable = false, nullable = false)
+  private UUID id;
 
-    @Column(name = "email", nullable = false, unique = true, length = 255)
-    private String email;
+  @Column(name = "email", nullable = false, unique = true, length = 255)
+  private String email;
 
-    @Column(name = "password_hash", nullable = false)
-    private String passwordHash;
+  @Column(name = "password_hash", nullable = false)
+  private String passwordHash;
 
-    @Column(name = "full_name", nullable = false, length = 255)
-    private String fullName;
+  @Column(name = "full_name", nullable = false, length = 255)
+  private String fullName;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "user_role", nullable = false, length = 50)
-    private UserRole userRole;
+  @Enumerated(EnumType.STRING)
+  @Column(name = "user_role", nullable = false, length = 50)
+  private UserRole userRole;
 
-    @Column(name = "is_active", nullable = false)
-    @Builder.Default
-    private Boolean isActive = true;
+  @Column(name = "is_active", nullable = false)
+  @Builder.Default
+  private Boolean isActive = true;
 
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
-    private OffsetDateTime createdAt;
+  @CreationTimestamp
+  @Column(name = "created_at", updatable = false)
+  private OffsetDateTime createdAt;
 
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private OffsetDateTime updatedAt;
+  @UpdateTimestamp
+  @Column(name = "updated_at")
+  private OffsetDateTime updatedAt;
 }

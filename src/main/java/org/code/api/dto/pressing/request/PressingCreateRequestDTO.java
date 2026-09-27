@@ -2,13 +2,15 @@ package org.code.api.dto.pressing.request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
-
 import java.time.OffsetDateTime;
 import java.util.List;
 
+/**
+ * Typed Pressing Create Request API value.
+ *
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
+ */
 public record PressingCreateRequestDTO(
     OffsetDateTime pressingDate,
-    @NotEmpty(message = "This list must not be empty")
-    @Valid
-    List<PressedBaleRequestDTO> pressedBales
-) {}
+    @NotEmpty(message = "This list must not be empty") @Valid
+        List<PressedBaleRequestDTO> pressedBales) {}
