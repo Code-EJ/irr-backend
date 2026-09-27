@@ -116,6 +116,29 @@ class OrganizationMembershipIT extends PostgresIntegrationTest {
         mvc.perform(post("/api/organizations").header("Authorization",token(admin)).contentType(MediaType.APPLICATION_JSON)
             .content(json.writeValueAsString(Map.of("name", " ", "organizationType", "Association")))).andExpect(status().isBadRequest());
     }
+    /** Organization lifecycle changes are audited and revoke scoped visibility without deleting history. */
+    @Test void organizationUpdateAndDeactivationAreAdministratorOnly() throws Exception {
+        UUID admin=user("ADMINISTRATOR"),member=user("REPRESENTATIVE"),org=create(admin);grant(admin,org,member,"MANAGER");
+        String body=json.writeValueAsString(Map.of("name","Updated organization","organizationType","Association"));
+        mvc.perform(put("/api/organizations/{id}",org).header("Authorization",token(member)).contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isForbidden());
+        mvc.perform(put("/api/organizations/{id}",org).header("Authorization",token(admin)).contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isOk()).andExpect(jsonPath("name").value("Updated organization"));
+        mvc.perform(get("/api/organizations/{id}/membership",org).header("Authorization",token(member))).andExpect(status().isOk()).andExpect(jsonPath("role").value("MANAGER"));
+        mvc.perform(delete("/api/organizations/{id}",org).header("Authorization",token(admin))).andExpect(status().isNoContent());
+        mvc.perform(get("/api/organizations/{id}",org).header("Authorization",token(member))).andExpect(status().isNotFound());
+        assertThat(jdbc.queryForObject("SELECT count(*) FROM organization_access_audit WHERE organization_id=?",Integer.class,org)).isEqualTo(4);
+        assertThat(jdbc.queryForObject("SELECT details->>'name' FROM organization_access_audit WHERE organization_id=? AND action='UPDATE'",String.class,org)).isEqualTo("Updated organization");
+    }
+    /** Development seeding runs once and does not restore revoked membership on a restart. */
+    @Test void developmentOrganizationSeedPreservesRevocation() {
+        UUID admin=user("ADMINISTRATOR"),org=UUID.randomUUID();
+        var initializer=new org.code.api.infrastructure.development.DevelopmentOrganizationInitializer(jdbc,org,"Local fixture",admin+"@example.test");
+        var tx=new TransactionTemplate(transactions);
+        tx.executeWithoutResult(status->initializer.run(null));
+        jdbc.update("UPDATE organization_membership SET is_active=false WHERE organization_id=?",org);
+        tx.executeWithoutResult(status->initializer.run(null));
+        assertThat(jdbc.queryForObject("SELECT is_active FROM organization_membership WHERE organization_id=?",Boolean.class,org)).isFalse();
+        assertThat(jdbc.queryForObject("SELECT count(*) FROM organization_access_audit WHERE organization_id=?",Integer.class,org)).isEqualTo(2);
+    }
     private UUID user(String role) {
         UUID id=UUID.randomUUID(); jdbc.update("INSERT INTO users(id,email,password_hash,full_name,user_role) VALUES (?,?,'fixture','Fixture',?)",id,id+"@example.test",role); return id;
     }

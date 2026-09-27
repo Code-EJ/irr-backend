@@ -18,8 +18,8 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Entidade JPA mapeada para a tabela {@code collection}.
- * Representa uma operação de coleta de materiais recicláveis.
+ * Organization-owned raw intake with fleet, team, evidence and optional route logistics.
+  * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 @Entity
 @Table(name = "collection")
@@ -30,6 +30,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @SuperBuilder
 public class Collection extends TimeStampedEntity {
+    @Column(name="route_description",length=2000) private String routeDescription;
+    @Column(name="departure_at") private OffsetDateTime departureAt;
+    @Column(name="arrival_at") private OffsetDateTime arrivalAt;
+    @Column(name="distance_km",precision=12,scale=3) private BigDecimal distanceKm;
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

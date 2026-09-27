@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Enforces organization membership and coordinates transactional metadata with persistent bytes.
- * Upload rollback cleanup is compensating; process crashes still require orphan reconciliation.
+ * Upload rollback uses compensation; age-based reconciliation recovers files left by process crashes.
  *
  * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
@@ -30,6 +30,7 @@ public class DocumentService {
     private final StorageService storage;
     private final AuthenticatedUserProvider actor;
     private final AttachmentCleanupService cleanup;
+    private final org.springframework.jdbc.core.JdbcTemplate jdbc;
     private final org.code.api.domain.ports.OrganizationScope scope;
     /**
      * Configures attachment boundaries.
@@ -40,8 +41,8 @@ public class DocumentService {
      * @param cleanup durable deletion queue
      */
     public DocumentService(AttachmentRepository attachments, UserRepository users, StorageService storage,
-        AuthenticatedUserProvider actor, AttachmentCleanupService cleanup, org.code.api.domain.ports.OrganizationScope scope) {
-        this.attachments = attachments; this.users = users; this.storage = storage; this.actor = actor; this.cleanup = cleanup; this.scope = scope;
+        AuthenticatedUserProvider actor, AttachmentCleanupService cleanup, org.code.api.domain.ports.OrganizationScope scope, org.springframework.jdbc.core.JdbcTemplate jdbc) {
+        this.attachments = attachments; this.users = users; this.storage = storage; this.actor = actor; this.cleanup = cleanup; this.scope = scope; this.jdbc=jdbc;
     }
     /**
      * Validates supported signatures and persists safe upload metadata.
@@ -60,6 +61,7 @@ public class DocumentService {
         try (var input = file.getInputStream()) { header = input.readNBytes(8); }
         String contentType = detect(header);
         var creator = users.findById(actor.getCurrentUserId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+        jdbc.execute("SELECT pg_advisory_xact_lock_shared(hashtext('irr-attachment-storage'))");
         String path = storage.store(file);
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override public void afterCompletion(int status) {

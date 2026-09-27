@@ -7,15 +7,18 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 /**
- * DTO para um item de entrada (InputItem) usado em Collection ou Donation.
+ * Validated input item request contract fields for the organization-scoped API.
+  * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 public record InputItemRequestDTO(
     @NotNull(message = "Material subtype ID is required")
     UUID materialSubtypeId,
     @NotNull(message = "Weight is required")
     @Positive(message = "Weight must be positive")
+    @jakarta.validation.constraints.Digits(integer = 11, fraction = 4)
     BigDecimal weightKg,
     @NotNull(message = "Volume is required")
     @Positive(message = "Volume must be positive")
+    @jakarta.validation.constraints.Digits(integer = 11, fraction = 4)
     BigDecimal volumeM3
 ) {}

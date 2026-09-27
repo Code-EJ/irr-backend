@@ -4,9 +4,11 @@ import org.code.api.domain.models.material.MaterialCategory;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.UUID;
+import java.util.Locale;
 
 /**
- * Specifications reutilizáveis para filtragem dinâmica de {@link MaterialCategory}.
+ * Reusable category predicates; combine organization scope with any optional search condition.
+  * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 public final class MaterialCategorySpecification {
 
@@ -18,6 +20,11 @@ public final class MaterialCategorySpecification {
 
     public static Specification<MaterialCategory> nameContains(String name) {
         return (root, query, cb) ->
-            cb.like(cb.upper(root.get("name")), "%" + name.trim().toUpperCase() + "%");
+            cb.like(cb.upper(root.get("name")), literalPattern(name), '\\');
+    }
+    /** Builds a literal case-insensitive substring, escaping SQL LIKE metacharacters. */
+    private static String literalPattern(String value) {
+        return "%" + value.trim().toUpperCase(Locale.ROOT).replace("\\", "\\\\")
+            .replace("%", "\\%").replace("_", "\\_") + "%";
     }
 }

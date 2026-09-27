@@ -263,6 +263,35 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
         mvc.perform(delete("/api/users/{id}",partner.getId()).header("Authorization",adminToken)).andExpect(status().isNoContent());
         mvc.perform(get("/api/users/me").header("Authorization",partnerToken)).andExpect(status().isUnauthorized());
     }
+    @Autowired org.code.api.services.AttachmentOrphanReconciler orphans;
+    /** Recovery queues only old generated files without metadata; referenced and recent bytes survive. */
+    @Test void orphanReconciliationPreservesReferencedRecentAndUnrelatedFiles() throws Exception {
+        String orphan=storage.store(pdf()),recent=storage.store(pdf());
+        UUID ownedId=upload(token(account(UserRole.REPRESENTATIVE)));String owned=stored(ownedId);
+        var old=java.nio.file.attribute.FileTime.from(java.time.Instant.now().minus(48,java.time.temporal.ChronoUnit.HOURS));
+        Files.setLastModifiedTime(Path.of(orphan),old);Files.setLastModifiedTime(Path.of(owned),old);
+        Path unrelated=UPLOADS.resolve("operator-note.txt");Files.writeString(unrelated,"Not an attachment");Files.setLastModifiedTime(unrelated,old);
+        try {
+            orphans.reconcile();orphans.reconcile();
+            assertThat(queueCount(orphan)).isEqualTo(1);assertThat(queueCount(owned)).isZero();assertThat(queueCount(recent)).isZero();
+            cleanup.processPending();
+            assertThat(Files.exists(Path.of(orphan))).isFalse();assertThat(Files.exists(Path.of(owned))).isTrue();assertThat(Files.exists(Path.of(recent))).isTrue();assertThat(Files.exists(unrelated)).isTrue();
+        } finally { Files.deleteIfExists(unrelated);Files.deleteIfExists(Path.of(recent)); }
+    }
+    /** Exclusive reconciliation never races an upload holding the shared transaction lock. */
+    @Test void orphanReconciliationSkipsInFlightUploads() throws Exception {
+        var entered=new java.util.concurrent.CountDownLatch(1);var release=new java.util.concurrent.CountDownLatch(1);
+        try(var pool=java.util.concurrent.Executors.newSingleThreadExecutor()) {
+            var future=pool.submit(()->new TransactionTemplate(transactions).executeWithoutResult(tx->{
+                jdbc.execute("SELECT pg_advisory_xact_lock_shared(hashtext('irr-attachment-storage'))");entered.countDown();
+                try { if(!release.await(10,java.util.concurrent.TimeUnit.SECONDS)) throw new IllegalStateException("Upload fixture timed out"); }
+                catch(InterruptedException error) { Thread.currentThread().interrupt();throw new IllegalStateException(error); }
+            }));
+            try { assertThat(entered.await(10,java.util.concurrent.TimeUnit.SECONDS)).isTrue();assertThat(orphans.reconcile()).isZero(); }
+            finally { release.countDown(); }
+            future.get(10,java.util.concurrent.TimeUnit.SECONDS);
+        }
+    }
     private final java.util.Map<String,UUID> tokenOrganizations=new java.util.HashMap<>();
     private User account(UserRole role) {
         User user=users.saveAndFlush(User.builder().email(UUID.randomUUID() + "@example.test").fullName("Fixture")

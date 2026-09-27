@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 @Component
+@org.springframework.core.annotation.Order(0)
 @Profile("development")
 @ConditionalOnProperty(name = "irr.development.bootstrap-enabled", havingValue = "true")
 public class DevelopmentAdministratorInitializer implements ApplicationRunner {

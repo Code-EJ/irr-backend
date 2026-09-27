@@ -4,58 +4,50 @@ import org.code.api.domain.models.base.Vehicle;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.UUID;
+import java.util.Locale;
 
 /**
- * Specifications reutilizáveis para filtragem dinâmica de {@link Vehicle}.
- *
- * <p>Cada método retorna uma {@link Specification} que pode ser combinada
- * com {@code .and()} / {@code .or()} para montar queries dinâmicas sem SQL nativo.</p>
- *
- * <p>Uso típico no Service:</p>
- * <pre>{@code
- * Specification<Vehicle> spec = VehicleSpecification.withOrganizationId(userId)
- *     .and(VehicleSpecification.licensePlateContains("ABC"))
- *     .and(VehicleSpecification.modelContains("Fiat"));
- * repository.findAll(spec, pageable);
- * }</pre>
+ * Reusable organization-owned vehicle query predicates.
+  * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 public final class VehicleSpecification {
 
     private VehicleSpecification() {
-        // Utility class — não instanciar
+        // Utility class; no instances.
     }
 
     /**
-     * Filtra veículos por creator_id (isolamento multilocatário).
-     */
+ * Reusable organization-owned vehicle query predicates.
+ */
     public static Specification<Vehicle> withOrganizationId(UUID organizationId) {
         return (root, query, cb) -> cb.equal(root.get("organizationId"), organizationId);
     }
 
     /**
-     * Filtra veículos cuja placa contenha o termo informado (case-insensitive, LIKE %term%).
-     */
+ * Reusable organization-owned vehicle query predicates.
+ */
     public static Specification<Vehicle> licensePlateContains(String licensePlate) {
         return (root, query, cb) ->
-                cb.like(cb.upper(root.get("licensePlate")), "%" + licensePlate.trim().toUpperCase() + "%");
+                cb.like(cb.upper(root.get("licensePlate")), literalPattern(licensePlate), '\\');
     }
 
     /**
-     * Filtra veículos cujo modelo contenha o termo informado (case-insensitive, LIKE %term%).
-     */
+ * Reusable organization-owned vehicle query predicates.
+ */
     public static Specification<Vehicle> modelContains(String model) {
         return (root, query, cb) ->
-                cb.like(cb.upper(root.get("model")), "%" + model.trim().toUpperCase() + "%");
+                cb.like(cb.upper(root.get("model")), literalPattern(model), '\\');
     }
 
     /**
-     * Filtra veículos pelo status ativo/inativo.
-     *
-     * <p>Nota: a entidade possui {@code @SQLRestriction("is_active = true")},
-     * portanto este filtro é útil principalmente quando se deseja
-     * futuramente consultar inativos via query nativa ou desativar o filtro global.</p>
-     */
+ * Reusable organization-owned vehicle query predicates.
+ */
     public static Specification<Vehicle> withIsActive(Boolean isActive) {
         return (root, query, cb) -> cb.equal(root.get("isActive"), isActive);
+    }
+    /** Builds a literal case-insensitive substring, escaping SQL LIKE metacharacters. */
+    private static String literalPattern(String value) {
+        return "%" + value.trim().toUpperCase(Locale.ROOT).replace("\\", "\\\\")
+            .replace("%", "\\%").replace("_", "\\_") + "%";
     }
 }

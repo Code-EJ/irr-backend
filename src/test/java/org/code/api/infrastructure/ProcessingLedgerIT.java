@@ -101,7 +101,7 @@ class ProcessingLedgerIT extends PostgresIntegrationTest {
         }
         assertThat(results.stream().map(r->r.getResponse().getStatus()).toList()).containsExactlyInAnyOrder(200,409);
         var posted=json.readTree(results.stream().filter(r->r.getResponse().getStatus()==200).findFirst().orElseThrow().getResponse().getContentAsString());
-        assertThat(posted.get("totalValue").decimalValue()).isEqualByComparingTo("127.50");
+        assertThat(new BigDecimal(posted.get("totalValue").asText())).isEqualByComparingTo("127.50");
         balance(f,"40","4");
         UUID winner=UUID.fromString(posted.get("id").asText());
         request(f,"PUT","/api/v1/sales/"+winner,draft,409);
@@ -149,8 +149,12 @@ class ProcessingLedgerIT extends PostgresIntegrationTest {
         jdbc.update("INSERT INTO vehicle(id,organization_id,license_plate,creator_id) VALUES (?,?,'ABC1234',?)",vehicle,f.org(),f.actor());
         jdbc.update("INSERT INTO team_member(id,organization_id,name,role,creator_id) VALUES (?,?,'Driver','DRIVER',?)",driver,f.org(),f.actor());
         var fields=new java.util.HashMap<String,Object>(Map.of("realizationDate","2026-09-27T10:00:00Z","totalWeightKg","100","vehicleId",vehicle,"driverId",driver,"inputItems",List.of(Map.of("materialSubtypeId",f.material(),"weightKg","100","volumeM3","10"))));
+        fields.put("routeDescription","North district route");fields.put("departureAt","2026-09-27T08:00:00Z");fields.put("arrivalAt","2026-09-27T09:00:00Z");fields.put("distanceKm","12.345");
         String body=json.writeValueAsString(fields);
         var created=json.readTree(request(f,"POST","/api/v1/collections",body,201));
+        assertThat(created.get("routeDescription").asText()).isEqualTo("North district route");
+        assertThat(created.get("distanceKm").asText()).isEqualTo("12.345");
+        fields.put("arrivalAt","2026-09-27T07:00:00Z");request(f,"POST","/api/v1/collections",json.writeValueAsString(fields),400);fields.put("arrivalAt","2026-09-27T09:00:00Z");
         String url="/api/v1/collections/"+created.get("id").asText();
         var updated=json.readTree(request(f,"PUT",url,body,200));
         UUID input=UUID.fromString(updated.get("inputItems").get(0).get("id").asText());
@@ -184,6 +188,26 @@ class ProcessingLedgerIT extends PostgresIntegrationTest {
     }
     private void reverse(Fixture f,String path,String key,int expected) throws Exception {
         mvc.perform(post(path+"/reverse").header("Authorization",token(f)).header("X-Organization-Id",f.org()).header("Idempotency-Key",key)).andExpect(status().is(expected));
+    }
+    /** Backdated intake appears immediately in live reports, and donor addresses remain structured. */
+    @Test void donorAddressesAndBackdatedReportsUseTheCurrentDatabase() throws Exception {
+        Fixture f=fixture(); jdbc.update("UPDATE organization_membership SET role='MANAGER' WHERE organization_id=?",f.org());
+        var address=Map.of("line1","10 Example Street","city","Example City","region","PR","postalCode","80000000","countryCode","BR");
+        var donor=json.readTree(request(f,"POST","/api/v1/donors",json.writeValueAsString(Map.of("name","Address fixture","document","12345678902","donorType","PF","address",address)),201));
+        assertThat(donor.get("address").get("city").asText()).isEqualTo("Example City");
+        java.time.LocalDate date=java.time.LocalDate.now(java.time.ZoneOffset.UTC).minusDays(10);
+        String query="?from="+date+"&to="+date;
+        var before=json.readTree(request(f,"GET","/api/v1/reports/summary"+query,null,200));
+        assertThat(new BigDecimal(before.get("donationWeightKg").asText())).isZero();
+        String body=json.writeValueAsString(Map.of("donationDate",date+"T12:00:00Z","donorId",donor.get("id").asText(),"totalWeightKg","10","inputItems",List.of(Map.of("materialSubtypeId",f.material(),"weightKg","10","volumeM3","1"))));
+        request(f,"POST","/api/v1/donations",body,201);
+        var after=json.readTree(request(f,"GET","/api/v1/reports/summary"+query,null,200));
+        assertThat(new BigDecimal(after.get("donationWeightKg").asText())).isEqualByComparingTo("10");
+        assertThat(after.get("donationWeightKg").isTextual()).isTrue();
+        assertThat(request(f,"GET","/api/v1/reports/summary.csv"+query,null,200)).contains("donation_weight_kg").contains("10.0000");
+        request(f,"DELETE","/api/v1/donors/"+donor.get("id").asText(),null,409);
+        request(f,"GET","/api/v1/reports/summary?from=2020-01-01&to=2026-01-01",null,400);
+        assertThat(new BigDecimal(json.readTree(request(fixture(),"GET","/api/v1/reports/summary"+query,null,200)).get("donationWeightKg").asText())).isZero();
     }
     private String request(Fixture f,String method,String path,String body,int expected) throws Exception {
         var builder=org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request(org.springframework.http.HttpMethod.valueOf(method),path).header("Authorization",token(f)).header("X-Organization-Id",f.org());

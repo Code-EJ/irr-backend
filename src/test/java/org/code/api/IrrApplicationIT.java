@@ -24,7 +24,11 @@ class IrrApplicationIT extends PostgresIntegrationTest {
             .andExpect(jsonPath("$.components.securitySchemes.bearerAuth.scheme").value("bearer"))
             .andExpect(jsonPath("$.paths['/api/session/authenticate'].post.security").isEmpty())
             .andExpect(jsonPath("$.components.schemas.LoginResponseDTO.properties.token").exists())
-            .andExpect(jsonPath("$.paths['/api/vehicles'].get").exists());
+            .andExpect(jsonPath("$.paths['/api/vehicles'].get").exists())
+            .andExpect(jsonPath("$.components.schemas.SaleResponse.properties.totalValue.type").value("string"))
+            .andExpect(jsonPath("$.components.schemas.BuyerRequest.properties.document").exists())
+            .andExpect(jsonPath("$.components.schemas.TeamMemberRequest.properties.role").exists())
+            .andExpect(jsonPath("$.paths['/api/v1/sales/{id}/post'].post.parameters[?(@.name=='Idempotency-Key')].required").value(org.hamcrest.Matchers.contains(true)));
     }
     /** Verifies Swagger UI resources are reachable without a session token. */
     @Test void swaggerUiIsAvailable() throws Exception {

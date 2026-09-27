@@ -17,8 +17,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Organizations")
 public class OrganizationController {
     private final OrganizationService organizations;
+    private final org.code.api.organizations.application.OrganizationLifecycle lifecycle;
     /** @param organizations membership application boundary */
-    public OrganizationController(OrganizationService organizations) { this.organizations = organizations; }
+    public OrganizationController(OrganizationService organizations, org.code.api.organizations.application.OrganizationLifecycle lifecycle) { this.organizations = organizations; this.lifecycle=lifecycle; }
     /** @return the current actor's bounded page of active organizations */
     @GetMapping
     @Operation(summary = "List my organizations", description = "Returns only organizations with an active membership for the current active user. Platform administrators have no automatic membership bypass.")
@@ -39,7 +40,7 @@ public class OrganizationController {
     /** @return confirmation after revocation and its audit event commit */
     @DeleteMapping("/{id}/members/{userId}")
     @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "204", description = "Membership revoked; audit committed")
-    @Operation(summary = "Revoke organization membership", description = "ADMINISTRATOR only. Retains the membership row and writes an audit event. Further organization reads fail immediately. Existing legacy creator-owned business APIs are not yet organization-scoped.")
+    @Operation(summary = "Revoke organization membership", description = "ADMINISTRATOR only. Retains the membership row and writes an audit event. Further organization reads fail immediately. Business APIs require the organization header and current membership.")
     public ResponseEntity<Void> revoke(@PathVariable UUID id, @PathVariable UUID userId) { organizations.revoke(id,userId); return ResponseEntity.noContent().build(); }
     /**
      * @param name nonblank display name
@@ -52,4 +53,10 @@ public class OrganizationController {
  * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
      */
     public record GrantMembership(@NotNull MembershipRole role) {}
+    /** Returns the current user's organization role for client feature controls. */
+    @GetMapping("/{id}/membership") public Membership membership(@PathVariable UUID id) { return organizations.requireMembership(id); }
+    /** Replaces descriptive metadata as a platform administrator. */
+    @PutMapping("/{id}") public Organization update(@PathVariable UUID id,@Valid @RequestBody CreateOrganization request) { return lifecycle.update(id,request.name(),request.organizationType()); }
+    /** Deactivates an organization while preserving every business and audit record. */
+    @DeleteMapping("/{id}") public ResponseEntity<Void> deactivate(@PathVariable UUID id) { lifecycle.deactivate(id); return ResponseEntity.noContent().build(); }
 }

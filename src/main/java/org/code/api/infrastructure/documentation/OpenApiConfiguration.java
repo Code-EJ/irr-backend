@@ -30,7 +30,7 @@ public class OpenApiConfiguration {
     public OpenAPI irrOpenApi() {
         return new OpenAPI().info(new Info().title("IRR Backend API").version("0.0.1-SNAPSHOT")
             .description("Pre-production waste management API. This specification documents the current contract; "
-                + "role, ownership and inventory redesign work is tracked in the repository ADRs.")
+                + "business operations require explicit organization membership. Decimal quantities and money are JSON strings. Posted operations are corrected through audited reversals.")
             .contact(new Contact().name("Enzo Ribas").url("https://github.com/oEnzoRibas")))
             .components(new Components().addSecuritySchemes("bearerAuth", new SecurityScheme()
                 .type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")))
@@ -44,7 +44,10 @@ public class OpenApiConfiguration {
     @Bean
     public OperationCustomizer operationDocumentation() {
         Map<String, String> resources = Map.ofEntries(
-            Map.entry("OrganizationController", "Organizations"), Map.entry("UserController", "Partners"), Map.entry("SessionController", "Sessions"), Map.entry("VehicleController", "Vehicles"),
+            Map.entry("BuyerController", "Buyers"), Map.entry("TeamMemberController", "Team members"),
+            Map.entry("CollectionController", "Collections"), Map.entry("SaleController", "Sales"),
+            Map.entry("InventoryController", "Inventory"), Map.entry("ProcessingReversalController", "Processing reversals"),
+            Map.entry("ReportController", "Reports"), Map.entry("OrganizationController", "Organizations"), Map.entry("UserController", "Partners"), Map.entry("SessionController", "Sessions"), Map.entry("VehicleController", "Vehicles"),
             Map.entry("MaterialCategoryController", "Material categories"), Map.entry("MaterialTypeController", "Material types"),
             Map.entry("MaterialSubtypeController", "Material subtypes"), Map.entry("DonorController", "Donors"),
             Map.entry("DonationController", "Donations"), Map.entry("SortingController", "Sorting"),
@@ -65,11 +68,19 @@ public class OpenApiConfiguration {
                     .description("Explicit active organization membership; platform administrator status is not a bypass")
                     .schema(new io.swagger.v3.oas.models.media.StringSchema().format("uuid")));
             }
+            String controller=handler.getBeanType().getSimpleName();
+            if ((List.of("SortingController","PressingController").contains(controller) && method.equals("create"))
+                || (controller.equals("SaleController") && List.of("post","reverse").contains(method))
+                || controller.equals("ProcessingReversalController")) {
+                operation.addParametersItem(new io.swagger.v3.oas.models.parameters.Parameter().name("Idempotency-Key").in("header").required(true)
+                    .description("Organization-scoped command key. Repeat with the same payload to replay the committed response; changed payload returns 409.")
+                    .schema(new io.swagger.v3.oas.models.media.StringSchema().minLength(1).maxLength(128)));
+            }
             if (operation.getSummary() == null) operation.setSummary(actions.getOrDefault(method, "Process request") + " — " + resource);
             PreAuthorize rule = handler.getMethodAnnotation(PreAuthorize.class);
             if (operation.getDescription() == null) operation.setDescription(rule == null
-                ? "Access follows the session filter and application service. See the master plan for pending authorization changes."
-                : "Declared method authorization: " + rule.value() + ". Object ownership is enforced by the corresponding service where implemented.");
+                ? "Authenticated access is checked by the application service. Business records require current organization membership; platform administration uses the administrator role."
+                : "Declared method authorization: " + rule.value() + ". Organization ownership is checked by the application service.");
             return operation;
         };
     }
@@ -82,10 +93,27 @@ public class OpenApiConfiguration {
     public OpenApiCustomizer sessionSecurityDocumentation() {
         return api -> {
             if (api.getPaths() == null) return;
+            api.getPaths().forEach((path,item) -> {
+                if(path.startsWith("/api/") && !path.startsWith("/api/v1/") && !path.startsWith("/api/session") && !path.startsWith("/api/users") && !path.startsWith("/api/organizations"))
+                    item.readOperations().forEach(operation -> operation.setDeprecated(true));
+            });
             for (String path : List.of("/api/session/authenticate")) {
                 var item = api.getPaths().get(path);
                 if (item != null) item.readOperations().forEach(operation -> operation.setSecurity(List.of()));
             }
         };
+    }
+    /** Serializes decimal business values as strings to prevent JavaScript precision loss. */
+    @Bean
+    public org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer decimalWireFormat() {
+        org.springdoc.core.utils.SpringDocUtils.getConfig().replaceWithSchema(java.math.BigDecimal.class,
+            new io.swagger.v3.oas.models.media.StringSchema().pattern("^-?[0-9]+(?:[.][0-9]+)?$").example("123.4500")
+                .description("Exact decimal string; use decimal arithmetic and preserve the documented unit"));
+        return builder -> builder.serializerByType(java.math.BigDecimal.class,new com.fasterxml.jackson.databind.JsonSerializer<java.math.BigDecimal>() {
+            @Override public void serialize(java.math.BigDecimal value, com.fasterxml.jackson.core.JsonGenerator generator,
+                com.fasterxml.jackson.databind.SerializerProvider provider) throws java.io.IOException {
+                generator.writeString(value.toPlainString());
+            }
+        });
     }
 }

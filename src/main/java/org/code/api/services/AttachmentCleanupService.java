@@ -30,7 +30,7 @@ public class AttachmentCleanupService {
      */
     @Transactional(propagation = Propagation.MANDATORY)
     public void enqueue(String path) {
-        jdbc.update("INSERT INTO attachment_file_deletion(id, storage_path) VALUES (?, ?)", UUID.randomUUID(), path);
+        jdbc.update("INSERT INTO attachment_file_deletion(id, storage_path) VALUES (?, ?) ON CONFLICT(storage_path) DO NOTHING", UUID.randomUUID(), path);
     }
     /** Processes up to ten committed jobs; failed deletions remain eligible for a later retry. */
     @Transactional

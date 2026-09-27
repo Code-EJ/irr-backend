@@ -10,8 +10,8 @@ import org.hibernate.annotations.SQLRestriction;
 import java.util.UUID;
 
 /**
- * Entidade JPA mapeada para a tabela {@code donor}.
- * Representa um doador de materiais recicláveis (PF ou PJ).
+ * Organization-owned individual or company donor with optional complete postal address.
+  * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 @Entity
 @Table(name = "donor")
@@ -22,6 +22,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @SuperBuilder
 public class Donor extends TimeStampedEntity {
+    @Embedded
+    private PostalAddress address;
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

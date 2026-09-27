@@ -76,6 +76,7 @@ public class CollectionService {
         if(request.inputItems()==null || request.inputItems().isEmpty()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Input items are required");
         BigDecimal total=request.inputItems().stream().map(item->item.weightKg()).reduce(BigDecimal.ZERO,BigDecimal::add);
         if(request.totalWeightKg()!=null && total.compareTo(request.totalWeightKg())!=0) throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Total weight must equal the sum of input items");
+        record.setRouteDescription(request.routeDescription()); record.setDepartureAt(request.departureAt()); record.setArrivalAt(request.arrivalAt()); record.setDistanceKm(request.distanceKm());
         record.setRealizationDate(request.realizationDate()); record.setTotalWeightKg(total);
         record.setVehicle(vehicles.findByIdAndOrganizationId(request.vehicleId(),org).orElseThrow(()->missing("Vehicle")));
         TeamMember driver=member(request.driverId(),org);
@@ -100,6 +101,6 @@ public class CollectionService {
     private ResponseStatusException missing(String resource) { return new ResponseStatusException(HttpStatus.NOT_FOUND,resource+" not found"); }
     private CollectionResponseDTO response(Collection r) {
         List<InputItemResponseDTO> items=inputs.findAllByCollectionId(r.getId()).stream().map(i->new InputItemResponseDTO(i.getId(),r.getId(),null,i.getMaterialSubtype().getId(),i.getWeightKg(),i.getVolumeM3(),i.getIsActive(),i.getCreatedAt(),i.getUpdatedAt())).toList();
-        return new CollectionResponseDTO(r.getId(),r.getRealizationDate(),r.getTotalWeightKg(),r.getVehicle().getId(),r.getDriver().getId(),r.getMtrGenerator()==null?null:r.getMtrGenerator().getId(),r.getMtrDestinator()==null?null:r.getMtrDestinator().getId(),r.getCollectionDiary()==null?null:r.getCollectionDiary().getId(),r.getIsActive(),r.getTeamMembers().stream().map(TeamMember::getId).collect(Collectors.toSet()),items,r.getCreatedAt(),r.getUpdatedAt());
+        return new CollectionResponseDTO(r.getId(),r.getRealizationDate(),r.getTotalWeightKg(),r.getVehicle().getId(),r.getDriver().getId(),r.getMtrGenerator()==null?null:r.getMtrGenerator().getId(),r.getMtrDestinator()==null?null:r.getMtrDestinator().getId(),r.getCollectionDiary()==null?null:r.getCollectionDiary().getId(),r.getIsActive(),r.getTeamMembers().stream().map(TeamMember::getId).collect(Collectors.toSet()),items,r.getCreatedAt(),r.getUpdatedAt(),r.getRouteDescription(),r.getDepartureAt(),r.getArrivalAt(),r.getDistanceKm());
     }
 }

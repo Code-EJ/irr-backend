@@ -23,10 +23,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Serviço responsável pela orquestração das regras de negócio relacionadas à entidade {@link Donor}.
- *
- * <p>Todas as operações filtram pelo {@code creator_id} do usuário autenticado,
- * garantindo isolamento de dados multilocatário.</p>
+ * Maintains organization-owned donor records with manager permissions and retained historical references.
+  * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 @Slf4j
 @Service
@@ -61,6 +59,7 @@ public class DonorService implements DonorPort {
                             .name(data.name().trim())
                             .document(document)
                             .donorType(data.donorType())
+                            .address(data.address()==null?null:data.address().toValue())
                             .isActive(true)
                             .creator(creator).organizationId(organizationId)
                             .build()
@@ -108,6 +107,7 @@ public class DonorService implements DonorPort {
 
         donor.setName(data.name().trim());
         donor.setDocument(newDocument);
+        donor.setAddress(data.address()==null?null:data.address().toValue());
 
         try {
             Donor updated = donorRepository.saveAndFlush(donor);
@@ -146,7 +146,7 @@ public class DonorService implements DonorPort {
         return donorRepository.findAllByOrganizationId(organizationId, pageable).map(this::toResponse);
     }
 
-    // ── Métodos privados ─────────────────────────────────────────────────────
+    // ── Internal mapping and validation ─────────────────────────────────────────────────────
 
     private String normalizeDocument(String document) {
         return document.replaceAll("\\D", "");
@@ -169,7 +169,8 @@ public class DonorService implements DonorPort {
                 donor.getDonorType(),
                 donor.getIsActive(),
                 donor.getCreatedAt(),
-                donor.getUpdatedAt()
+                donor.getUpdatedAt(),
+                org.code.api.dto.donor.PostalAddressDTO.from(donor.getAddress())
         );
     }
 }
