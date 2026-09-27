@@ -14,7 +14,7 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: maven
-      - name: Unit tests, disposable PostgreSQL integration tests and package
+      - name: Unit tests, disposable PostgreSQL and Redis integration tests and package
         run: bash mvnw --batch-mode --no-transfer-progress verify
       - name: Validate container build
         run: docker build -t irr-backend:ci .

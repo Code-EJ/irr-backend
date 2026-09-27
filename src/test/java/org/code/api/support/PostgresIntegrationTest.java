@@ -10,7 +10,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 /**
- * Supplies a shared disposable PostgreSQL database and independent test credentials.
+ * Supplies shared disposable PostgreSQL and Redis services and independent test credentials.
  *
  * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
@@ -18,7 +18,9 @@ import org.testcontainers.containers.PostgreSQLContainer;
 public abstract class PostgresIntegrationTest {
     private static final PostgreSQLContainer<?> DATABASE = new PostgreSQLContainer<>("postgres:16-alpine")
         .withDatabaseName("irr_test").withUsername("irr_test").withPassword("isolated-test-only");
-    static { DATABASE.start(); }
+    private static final org.testcontainers.containers.GenericContainer<?> REDIS = new org.testcontainers.containers.GenericContainer<>("redis:8.2-alpine@sha256:b51665e66f00759be7c3152ad5ac3c66fb2f619c13ef62dea7cc1f9914524635")
+        .withExposedPorts(6379).withCommand("redis-server", "--requirepass", "isolated-redis-only");
+    static { DATABASE.start(); REDIS.start(); }
 
     /**
      * Binds this test context exclusively to disposable infrastructure.
@@ -26,6 +28,9 @@ public abstract class PostgresIntegrationTest {
      */
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
+        registry.add("spring.data.redis.host", REDIS::getHost);
+        registry.add("spring.data.redis.port", () -> REDIS.getMappedPort(6379));
+        registry.add("spring.data.redis.password", () -> "isolated-redis-only");
         registry.add("irr.attachments.cleanup-enabled", () -> "false");
         registry.add("spring.datasource.url", DATABASE::getJdbcUrl);
         registry.add("spring.datasource.username", DATABASE::getUsername);

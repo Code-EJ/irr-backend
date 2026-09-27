@@ -48,6 +48,11 @@
         <springdoc.version>2.9.1</springdoc.version>
     </properties>
     <dependencies>
+        <!-- Enzo Ribas (https://github.com/oEnzoRibas): Boot-managed Lettuce/Redis integration. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>

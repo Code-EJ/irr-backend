@@ -14,9 +14,32 @@ services:
       timeout: 3s
       retries: 20
     restart: unless-stopped
+  redis:
+    image: redis:8.2-alpine@sha256:b51665e66f00759be7c3152ad5ac3c66fb2f619c13ef62dea7cc1f9914524635
+    user: redis
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}
+    command: ["sh", "-ec", 'exec redis-server --appendonly yes --appendfsync everysec --requirepass "$REDIS_PASSWORD" --maxmemory 128mb --maxmemory-policy noeviction']
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", 'REDISCLI_AUTH="$REDIS_PASSWORD" redis-cli ping | grep -qx PONG']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    mem_limit: 384m
+    restart: unless-stopped
   backend:
     build: .
     environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}
       DB_HOST: database
       DB_PORT: 5432
       DB_NAME: ${DB_NAME:-irr}
@@ -43,6 +66,8 @@ services:
           create_host_path: false
       - attachment_data:/data/uploads
     depends_on:
+      redis:
+        condition: service_healthy
       database:
         condition: service_healthy
     healthcheck:
@@ -60,3 +85,4 @@ services:
 volumes:
   database_data:
   attachment_data:
+  redis_data:
