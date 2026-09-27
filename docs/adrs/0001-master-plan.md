@@ -1,5 +1,7 @@
 # ADR-0001: IRR architecture overhaul and delivery master plan
 
+> Execution update (2026-09-27): [ADR-0011](0011-organization-business-cutover.md) documents the organization API cutover and [ADR-0012](0012-transactional-stock-ledger.md) defines the transactional stock ledger. Sorting and pressing are implemented and tested; additional CRUDs, sales/reversals and frontend integration remain in progress. Earlier issue/PR states below are historical audit evidence, not current completion claims.
+
 > Accepted ownership decision (2026-09-27): the owner selected separate catalogs and stock per organization. [ADR-0009](0009-organization-scope-and-catalog-integrity.md) implements the explicit membership foundation and catalog integrity corrections. Full organization-scoped business-data migration remains pending. [ADR-0010](0010-containerized-redis.md) adds authenticated Docker Redis without moving authorization or inventory truth out of PostgreSQL.
 
 > Identity/attachment update: [ADR-0008](0008-identity-and-attachment-boundaries.md) implements administrator provisioning, exact public routes, creator-scoped attachment DTOs and durable physical deletion. V2 evolves the already-applied V1 without resetting data. Organization and inventory work remains open.
