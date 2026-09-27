@@ -1,5 +1,11 @@
 # ADR-0002: PostgreSQL integrity, scoped inventory and safe schema evolution
 
+> Final pre-production contract: [ADR-0014](0014-final-preproduction-contract-and-baseline.md) supersedes transitional HTTP aliases and the unreleased migration chain. Earlier evidence remains historical; the supported application API is /api/v1 and the final runtime schema starts at one fresh V1.
+
+
+> Current implementation reference: [ADR-0013](0013-backend-operational-completion.md) records the completed backend and verified local operations. This ADR retains its decision-time evidence; later records supersede pending implementation statements.
+
+
 > Accepted ownership decision (2026-09-27): the owner selected separate catalogs and stock per organization. [ADR-0009](0009-organization-scope-and-catalog-integrity.md) implements the explicit membership foundation and catalog integrity corrections. Full organization-scoped business-data migration remains pending. [ADR-0010](0010-containerized-redis.md) adds authenticated Docker Redis without moving authorization or inventory truth out of PostgreSQL.
 
 > Database execution update: [ADR-0007](0007-fresh-database-baseline.md) replaces the active historical migration chain with one fresh English V1. Old databases are preserved, not automatically upgraded or deleted.

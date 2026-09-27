@@ -1,5 +1,11 @@
 # ADR-0007: Fresh pre-production database baseline and incremental evolution
 
+> Final pre-production contract: [ADR-0014](0014-final-preproduction-contract-and-baseline.md) supersedes transitional HTTP aliases and the unreleased migration chain. Earlier evidence remains historical; the supported application API is /api/v1 and the final runtime schema starts at one fresh V1.
+
+
+> Current implementation reference: [ADR-0013](0013-backend-operational-completion.md) records the completed backend and verified local operations. This ADR retains its decision-time evidence; later records supersede pending implementation statements.
+
+
 > Subsequent implementation: [ADR-0008](0008-identity-and-attachment-boundaries.md) adds runtime V2 for durable attachment cleanup. The initial V1 remains unchanged; the active schema now has 22 application tables. Incremental example tests now use V3. The baseline decision below records its original state.
 
 - Status: Accepted for the current backend foundation.

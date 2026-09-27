@@ -1,5 +1,11 @@
 # ADR-0011: Organization-owned business API cutover
 
+> Final pre-production contract: [ADR-0014](0014-final-preproduction-contract-and-baseline.md) supersedes transitional HTTP aliases and the unreleased migration chain. Earlier evidence remains historical; the supported application API is /api/v1 and the final runtime schema starts at one fresh V1.
+
+
+> Completion update: [ADR-0013](0013-backend-operational-completion.md) records implemented sales, reversals, scoped CRUDs, reconciliation and local verification. Pending statements below describe the decision-time baseline.
+
+
 - Status: Accepted; implementation and regression verification in progress.
 - Date: 2026-09-27.
 - Author: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).

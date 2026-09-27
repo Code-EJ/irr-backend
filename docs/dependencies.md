@@ -54,3 +54,7 @@ node scripts/audit-dependencies.mjs
 On Windows use .\mvnw.cmd. The audit script queries the public [OSV API](https://google.github.io/osv.dev/api/), records coordinate/advisory evidence under .local/audit and exits nonzero on findings or API failures. It sends package coordinates only. Review advisories and upgrade safely; never suppress a scanner failure as an empty result. CI publishes this package-only report, never environment or backup files.
 
 Official references: [Spring Boot 3.5 documentation](https://docs.spring.io/spring-boot/3.5/reference/index.html), [Java/system requirements](https://docs.spring.io/spring-boot/3.5/system-requirements.html), [Maven Central](https://repo.maven.apache.org/maven2/), [springdoc](https://springdoc.org/). Historical findings and rejected major-upgrade combinations remain in ADR-0003; current execution is ADR-0013.
+
+## Build formatting policy
+
+Spotless Maven plugin 3.10.3 is intentional project tooling and runs check in the validate phase. Its configured Java steps shorten qualified types, organize/remove unused imports, apply Google Java Format, trim trailing whitespace and ensure a final newline. Use ./mvnw spotless:apply before ./mvnw clean verify. The Docker Maven build runs the same validation; it skips tests only after CI/local verification, not formatting. Application-coordinate OSV evidence does not claim to audit Maven plugin implementation dependencies.

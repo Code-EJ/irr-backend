@@ -1,291 +1,457 @@
-# Current schema and entity inventory
+# Relational schema and persistence topology
 
 - Documentation maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
-The current relational schema is defined by versioned SQL, not Hibernate auto-DDL. Fresh V1 creates the initial 21-table operational schema, including versions, destinations and unique/nonnegative balances. Runtime V2 adds the attachment_file_deletion queue, followed by V3 organization/membership/audit tables, bringing the current schema to 25 application tables. Historical migrations are archived outside the runtime path; ADR-0007 defines incremental evolution. See [target topology and ERD](adrs/0002-database-schema-redesign.md) for the planned redesign and [operations](operations.md) for upgrade preflight.
+Verified runtime: PostgreSQL 16, the final Flyway V1, 29 application tables plus flyway_schema_history. The schema inventory below is generated from information_schema; authoritative checks, indexes and foreign keys are the immutable SQL under src/main/resources/db/migrations.
 
-## JPA entity mapping
+## Domain relationships
 
-| Entity | SQL table | Source |
-| --- | --- | --- |
-| Attachment | `attachment` | [src/main/java/org/code/api/domain/models/base/Attachment.java](../src/main/java/org/code/api/domain/models/base/Attachment.java) |
-| Donor | `donor` | [src/main/java/org/code/api/domain/models/base/Donor.java](../src/main/java/org/code/api/domain/models/base/Donor.java) |
-| TeamMember | `team_member` | [src/main/java/org/code/api/domain/models/base/TeamMember.java](../src/main/java/org/code/api/domain/models/base/TeamMember.java) |
-| Vehicle | `vehicle` | [src/main/java/org/code/api/domain/models/base/Vehicle.java](../src/main/java/org/code/api/domain/models/base/Vehicle.java) |
-| Collection | `collection` | [src/main/java/org/code/api/domain/models/collection/Collection.java](../src/main/java/org/code/api/domain/models/collection/Collection.java) |
-| InputItem | `input_item` | [src/main/java/org/code/api/domain/models/collection/InputItem.java](../src/main/java/org/code/api/domain/models/collection/InputItem.java) |
-| Donation | `donation` | [src/main/java/org/code/api/domain/models/donation/Donation.java](../src/main/java/org/code/api/domain/models/donation/Donation.java) |
-| InventoryBalance | `inventory_balance` | [src/main/java/org/code/api/domain/models/inventory/InventoryBalance.java](../src/main/java/org/code/api/domain/models/inventory/InventoryBalance.java) |
-| InventoryLog | `inventory_log` | [src/main/java/org/code/api/domain/models/inventory/InventoryLog.java](../src/main/java/org/code/api/domain/models/inventory/InventoryLog.java) |
-| MaterialCategory | `material_category` | [src/main/java/org/code/api/domain/models/material/MaterialCategory.java](../src/main/java/org/code/api/domain/models/material/MaterialCategory.java) |
-| MaterialSubtype | `material_subtype` | [src/main/java/org/code/api/domain/models/material/MaterialSubtype.java](../src/main/java/org/code/api/domain/models/material/MaterialSubtype.java) |
-| MaterialType | `material_type` | [src/main/java/org/code/api/domain/models/material/MaterialType.java](../src/main/java/org/code/api/domain/models/material/MaterialType.java) |
-| PressedBale | `pressed_bale` | [src/main/java/org/code/api/domain/models/pressing/PressedBale.java](../src/main/java/org/code/api/domain/models/pressing/PressedBale.java) |
-| Pressing | `pressing` | [src/main/java/org/code/api/domain/models/pressing/Pressing.java](../src/main/java/org/code/api/domain/models/pressing/Pressing.java) |
-| Buyer | `buyer` | [src/main/java/org/code/api/domain/models/sale/Buyer.java](../src/main/java/org/code/api/domain/models/sale/Buyer.java) |
-| Sale | `sale` | [src/main/java/org/code/api/domain/models/sale/Sale.java](../src/main/java/org/code/api/domain/models/sale/Sale.java) |
-| SaleItem | `sale_item` | [src/main/java/org/code/api/domain/models/sale/SaleItem.java](../src/main/java/org/code/api/domain/models/sale/SaleItem.java) |
-| SortedItem | `sorted_item` | [src/main/java/org/code/api/domain/models/sorting/SortedItem.java](../src/main/java/org/code/api/domain/models/sorting/SortedItem.java) |
-| Sorting | `sorting` | [src/main/java/org/code/api/domain/models/sorting/Sorting.java](../src/main/java/org/code/api/domain/models/sorting/Sorting.java) |
-| User | `users` | [src/main/java/org/code/api/domain/models/user/User.java](../src/main/java/org/code/api/domain/models/user/User.java) |
-
-## Current baseline DDL
-
-[Active V1](../src/main/resources/db/migrations/V1__initial_schema.sql). This is the implemented schema, not the completed target ledger/org redesign.
-
-~~~sql
--- Initial pre-production baseline for a new, empty PostgreSQL database.
--- Author: Enzo Ribas (https://github.com/oEnzoRibas).
--- Future shared schema changes use V2+; never clean or baseline an existing database automatically.
-
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
-
-CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password_hash TEXT NOT NULL,
-    full_name VARCHAR(255) NOT NULL,
-    user_role VARCHAR(50) NOT NULL,
-    is_active BOOLEAN NOT NULL DEFAULT true,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE material_category (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(100) NOT NULL,
-    is_active BOOLEAN NOT NULL DEFAULT true,
-    creator_id UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    version BIGINT NOT NULL DEFAULT 0
-);
-
-CREATE TABLE material_type (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    category_id UUID NOT NULL REFERENCES material_category(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    name VARCHAR(100) NOT NULL,
-    is_active BOOLEAN NOT NULL DEFAULT true,
-    creator_id UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    version BIGINT NOT NULL DEFAULT 0
-);
-
-CREATE TABLE material_subtype (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    type_id UUID NOT NULL REFERENCES material_type(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    name VARCHAR(100) NOT NULL,
-    is_active BOOLEAN NOT NULL DEFAULT true,
-    creator_id UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    version BIGINT NOT NULL DEFAULT 0
-);
-
-CREATE TABLE attachment (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    file_name VARCHAR(255) NOT NULL,
-    file_type VARCHAR(50) NOT NULL,
-    storage_url TEXT NOT NULL,
-    is_active BOOLEAN NOT NULL DEFAULT true,
-    creator_id UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE vehicle (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    license_plate VARCHAR(20) NOT NULL,
-    model VARCHAR(100),
-    is_active BOOLEAN NOT NULL DEFAULT true,
-    creator_id UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE team_member (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(255) NOT NULL,
-    role VARCHAR(50),
-    is_active BOOLEAN NOT NULL DEFAULT true,
-    creator_id UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE donor (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(255) NOT NULL,
-    document VARCHAR(20) NOT NULL,
-    donor_type VARCHAR(10) NOT NULL,
-    is_active BOOLEAN NOT NULL DEFAULT true,
-    creator_id UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE collection (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    realization_date TIMESTAMP WITH TIME ZONE NOT NULL,
-    total_weight_kg NUMERIC(15, 4) NOT NULL,
-    vehicle_id UUID NOT NULL REFERENCES vehicle(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    driver_id UUID NOT NULL REFERENCES team_member(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    mtr_generator_id UUID REFERENCES attachment(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    mtr_destinator_id UUID REFERENCES attachment(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    collection_diary_id UUID REFERENCES attachment(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    is_active BOOLEAN NOT NULL DEFAULT true,
-    creator_id UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE collection_team (
-    collection_id UUID REFERENCES collection(id) ON UPDATE CASCADE ON DELETE CASCADE,
-    team_member_id UUID REFERENCES team_member(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    PRIMARY KEY (collection_id, team_member_id)
-);
-
-CREATE TABLE donation (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    donation_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    total_weight_kg NUMERIC(15, 4) NOT NULL,
-    donor_id UUID NOT NULL REFERENCES donor(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    proof_attachment_id UUID REFERENCES attachment(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    is_active BOOLEAN NOT NULL DEFAULT true,
-    creator_id UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE input_item (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    collection_id UUID REFERENCES collection(id) ON UPDATE CASCADE ON DELETE CASCADE,
-    donation_id UUID REFERENCES donation(id) ON UPDATE CASCADE ON DELETE CASCADE,
-    material_subtype_id UUID NOT NULL REFERENCES material_subtype(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    weight_kg NUMERIC(15, 4) NOT NULL,
-    volume_m3 NUMERIC(15, 4) NOT NULL,
-    is_active BOOLEAN NOT NULL DEFAULT true,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE buyer (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(255) NOT NULL,
-    document VARCHAR(20),
-    is_active BOOLEAN NOT NULL DEFAULT true,
-    creator_id UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE sale (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    sale_date TIMESTAMP WITH TIME ZONE NOT NULL,
-    buyer_id UUID NOT NULL REFERENCES buyer(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    nfe_attachment_id UUID REFERENCES attachment(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    mtr_attachment_id UUID REFERENCES attachment(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    cdf_attachment_id UUID REFERENCES attachment(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    total_value NUMERIC(15, 2) NOT NULL,
-    is_active BOOLEAN NOT NULL DEFAULT true,
-    creator_id UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE sale_item (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    sale_id UUID REFERENCES sale(id) ON UPDATE CASCADE ON DELETE CASCADE,
-    material_subtype_id UUID NOT NULL REFERENCES material_subtype(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    weight_kg NUMERIC(15, 4) NOT NULL,
-    volume_m3 NUMERIC(15, 4) NOT NULL,
-    unit_price NUMERIC(15, 2) NOT NULL,
-    is_active BOOLEAN NOT NULL DEFAULT true,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE inventory_log (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    material_subtype_id UUID NOT NULL REFERENCES material_subtype(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    quantity_kg NUMERIC(15, 4) NOT NULL,
-    quantity_m3 NUMERIC(15, 4) NOT NULL,
-    operation_type VARCHAR(50) NOT NULL,
-    is_active BOOLEAN NOT NULL DEFAULT true,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE sorting (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    sorting_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    sorting_type VARCHAR(50),
-    is_active BOOLEAN NOT NULL DEFAULT true,
-    creator_id UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE sorted_item (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    sorting_id UUID REFERENCES sorting(id) ON UPDATE CASCADE ON DELETE CASCADE,
-    input_item_id UUID REFERENCES input_item(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    material_subtype_id UUID NOT NULL REFERENCES material_subtype(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    weight_kg NUMERIC(15, 4) NOT NULL,
-    volume_m3 NUMERIC(15, 4) NOT NULL,
-    reject_weight_kg NUMERIC(15, 4) DEFAULT 0,
-    reject_volume_m3 NUMERIC(15, 4) DEFAULT 0,
-    is_active BOOLEAN NOT NULL DEFAULT true,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    destination_type VARCHAR(50),
-    destination_id UUID
-);
-
-CREATE TABLE pressing (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    pressing_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    is_active BOOLEAN NOT NULL DEFAULT true,
-    creator_id UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE pressed_bale (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    pressing_id UUID REFERENCES pressing(id) ON UPDATE CASCADE ON DELETE CASCADE,
-    sorted_item_id UUID REFERENCES sorted_item(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    material_subtype_id UUID NOT NULL REFERENCES material_subtype(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-
-    weight_kg NUMERIC(15, 4) NOT NULL,
-
-    initial_volume_m3 NUMERIC(15, 4) NOT NULL,
-    final_volume_m3 NUMERIC(15, 4) NOT NULL,
-
-    is_active BOOLEAN NOT NULL DEFAULT true,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    destination_type VARCHAR(50),
-    destination_id UUID
-);
-
-CREATE TABLE inventory_balance (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    material_subtype_id UUID NOT NULL REFERENCES material_subtype(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    current_weight_kg NUMERIC(15, 4) NOT NULL DEFAULT 0,
-    current_volume_m3 NUMERIC(15, 4) NOT NULL DEFAULT 0,
-    last_updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    version BIGINT NOT NULL DEFAULT 0,
-    CONSTRAINT uq_inventory_balance_material_subtype UNIQUE (material_subtype_id),
-    CONSTRAINT ck_inventory_balance_nonnegative CHECK (current_weight_kg >= 0 AND current_volume_m3 >= 0)
-);
+~~~mermaid
+erDiagram
+    organization ||--o{ organization_membership : grants
+    users ||--o{ organization_membership : belongs
+    organization ||--o{ material_category : owns
+    material_category ||--o{ material_type : classifies
+    material_type ||--o{ material_subtype : classifies
+    donor ||--o{ donation : supplies
+    vehicle ||--o{ collection : transports
+    collection ||--o{ input_item : receives
+    donation ||--o{ input_item : receives
+    input_item ||--o{ sorted_item : allocates
+    sorted_item ||--o{ pressed_bale : compacts
+    material_subtype ||--o{ stock_lot : identifies
+    buyer ||--o{ sale : purchases
+    sale ||--o{ sale_item : allocates
+    stock_lot ||--o{ sale_item : supplies
+    stock_operation ||--o{ stock_movement : records
 ~~~
 
-## Attachment cleanup queue (runtime V2)
+The diagram summarizes relationships; it does not show every ownership/audit key. New business data always has organization_id. The final schema preserves predecessor nullability for structural equivalence; application writes always require explicit ownership. Any later import must validate ownership rather than infer it from creator_id. Input rows belong to exactly one donation or collection. Composite foreign keys prevent cross-organization references. Category/type/subtype normalization avoids repeated free-text material labels.
 
-[SQL migration](../src/main/resources/db/migrations/V2__attachment_deletion_queue.sql) defines attachment_file_deletion. This technical table is accessed transactionally through JdbcTemplate rather than a JPA entity. Columns: id UUID primary key, storage_path TEXT unique/non-null, created_at TIMESTAMPTZ, attempts INTEGER with a nonnegative check, next_attempt_at TIMESTAMPTZ and last_error VARCHAR(300). The due-time/creation-time index supports bounded retries. It intentionally has no foreign key to attachment: metadata has already been removed when the job is committed. See [ADR-0008](adrs/0008-identity-and-attachment-boundaries.md).
+## Invariants and migration sequence
 
-## Organization foundation (runtime V3)
+- Final V1 creates all 29 application tables with the complete verified constraints, indexes, functions and triggers.
+- Future shared changes start at V2; applied versions are immutable.
+- The unreleased predecessor chain is retained in Git and private backups, not replayed on fresh setup.
+- FinalBaselineSchemaIT independently checks all 560 schema definitions against the predecessor.
 
-[SQL migration](../src/main/resources/db/migrations/V3__organization_membership_foundation.sql) adds organization, organization_membership and organization_access_audit: 25 application tables in total. JdbcOrganizationStore implements transactional access without JPA entities for this feature. Memberships use the composite key (organization_id, user_id), active status, MEMBER/MANAGER role, grant actor and timestamp. Audit entries record committed CREATE/GRANT/REVOKE effects with actor, subject, previous/assigned role and time. Existing creator-owned records are not backfilled or linked automatically. See [ADR-0009](adrs/0009-organization-scope-and-catalog-integrity.md).
+Quantities use NUMERIC(15,4); financial totals retain their dedicated fixed precision. Raw intake creates provenance, sorting credits net output, pressing conserves mass and reduces volume, and sale posting debits allocated lots. Reversals compensate original operations; they never mutate/delete ledger history. inventory_balance is a constrained projection, not an independent stock source. inventory_log retains historical records but is not used for new ledger postings.
+
+Shared JPA models remain in domain/models; new application modules may use JDBC records for query and audit boundaries. HTTP controllers return safe DTOs/value records. Attachment metadata never exposes storage paths. Soft-deactivated reference rows remain valid historical references and cannot be replaced by destructive cascades.
+
+
+## attachment
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| file_name | character varying | NO |
+| file_type | character varying | NO |
+| storage_url | text | NO |
+| is_active | boolean | NO |
+| creator_id | uuid | NO |
+| created_at | timestamp with time zone | YES |
+| updated_at | timestamp with time zone | YES |
+| organization_id | uuid | YES |
+
+## attachment_file_deletion
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| storage_path | text | NO |
+| created_at | timestamp with time zone | NO |
+| attempts | integer | NO |
+| next_attempt_at | timestamp with time zone | NO |
+| last_error | character varying | YES |
+
+## buyer
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| name | character varying | NO |
+| document | character varying | YES |
+| is_active | boolean | NO |
+| creator_id | uuid | NO |
+| created_at | timestamp with time zone | YES |
+| updated_at | timestamp with time zone | YES |
+| organization_id | uuid | YES |
+
+## collection
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| realization_date | timestamp with time zone | NO |
+| total_weight_kg | numeric | NO |
+| vehicle_id | uuid | NO |
+| driver_id | uuid | NO |
+| mtr_generator_id | uuid | YES |
+| mtr_destinator_id | uuid | YES |
+| collection_diary_id | uuid | YES |
+| is_active | boolean | NO |
+| creator_id | uuid | NO |
+| created_at | timestamp with time zone | YES |
+| updated_at | timestamp with time zone | YES |
+| organization_id | uuid | YES |
+| route_description | character varying | YES |
+| departure_at | timestamp with time zone | YES |
+| arrival_at | timestamp with time zone | YES |
+| distance_km | numeric | YES |
+
+## collection_team
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| collection_id | uuid | NO |
+| team_member_id | uuid | NO |
+
+## command_receipt
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| organization_id | uuid | NO |
+| request_key | character varying | NO |
+| command_type | character varying | NO |
+| request_hash | character varying | NO |
+| response | jsonb | NO |
+| actor_id | uuid | NO |
+| recorded_at | timestamp with time zone | NO |
+
+## donation
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| donation_date | timestamp with time zone | YES |
+| total_weight_kg | numeric | NO |
+| donor_id | uuid | NO |
+| proof_attachment_id | uuid | YES |
+| is_active | boolean | NO |
+| creator_id | uuid | NO |
+| created_at | timestamp with time zone | YES |
+| updated_at | timestamp with time zone | YES |
+| organization_id | uuid | YES |
+
+## donor
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| name | character varying | NO |
+| document | character varying | NO |
+| donor_type | character varying | NO |
+| is_active | boolean | NO |
+| creator_id | uuid | NO |
+| created_at | timestamp with time zone | YES |
+| updated_at | timestamp with time zone | YES |
+| organization_id | uuid | YES |
+| address_line1 | character varying | YES |
+| address_line2 | character varying | YES |
+| address_city | character varying | YES |
+| address_region | character varying | YES |
+| address_postal_code | character varying | YES |
+| address_country_code | character varying | YES |
+
+## input_item
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| collection_id | uuid | YES |
+| donation_id | uuid | YES |
+| material_subtype_id | uuid | NO |
+| weight_kg | numeric | NO |
+| volume_m3 | numeric | NO |
+| is_active | boolean | NO |
+| created_at | timestamp with time zone | YES |
+| updated_at | timestamp with time zone | YES |
+| organization_id | uuid | YES |
+
+## inventory_balance
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| material_subtype_id | uuid | NO |
+| current_weight_kg | numeric | NO |
+| current_volume_m3 | numeric | NO |
+| last_updated_at | timestamp with time zone | YES |
+| version | bigint | NO |
+| organization_id | uuid | YES |
+
+## inventory_log
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| material_subtype_id | uuid | NO |
+| quantity_kg | numeric | NO |
+| quantity_m3 | numeric | NO |
+| operation_type | character varying | NO |
+| is_active | boolean | NO |
+| created_at | timestamp with time zone | YES |
+| updated_at | timestamp with time zone | YES |
+| organization_id | uuid | YES |
+
+## material_category
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| name | character varying | NO |
+| is_active | boolean | NO |
+| creator_id | uuid | NO |
+| created_at | timestamp with time zone | YES |
+| updated_at | timestamp with time zone | YES |
+| version | bigint | NO |
+| organization_id | uuid | YES |
+
+## material_subtype
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| type_id | uuid | NO |
+| name | character varying | NO |
+| is_active | boolean | NO |
+| creator_id | uuid | NO |
+| created_at | timestamp with time zone | YES |
+| updated_at | timestamp with time zone | YES |
+| version | bigint | NO |
+| organization_id | uuid | YES |
+
+## material_type
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| category_id | uuid | NO |
+| name | character varying | NO |
+| is_active | boolean | NO |
+| creator_id | uuid | NO |
+| created_at | timestamp with time zone | YES |
+| updated_at | timestamp with time zone | YES |
+| version | bigint | NO |
+| organization_id | uuid | YES |
+
+## organization
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| name | character varying | NO |
+| organization_type | character varying | NO |
+| is_active | boolean | NO |
+| created_by | uuid | NO |
+| created_at | timestamp with time zone | NO |
+| updated_at | timestamp with time zone | NO |
+
+## organization_access_audit
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| organization_id | uuid | NO |
+| actor_id | uuid | NO |
+| subject_user_id | uuid | YES |
+| action | character varying | NO |
+| previous_role | character varying | YES |
+| assigned_role | character varying | YES |
+| recorded_at | timestamp with time zone | NO |
+| details | jsonb | NO |
+
+## organization_membership
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| organization_id | uuid | NO |
+| user_id | uuid | NO |
+| role | character varying | NO |
+| is_active | boolean | NO |
+| granted_by | uuid | NO |
+| updated_at | timestamp with time zone | NO |
+
+## pressed_bale
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| pressing_id | uuid | YES |
+| sorted_item_id | uuid | YES |
+| material_subtype_id | uuid | NO |
+| weight_kg | numeric | NO |
+| initial_volume_m3 | numeric | NO |
+| final_volume_m3 | numeric | NO |
+| is_active | boolean | NO |
+| created_at | timestamp with time zone | YES |
+| updated_at | timestamp with time zone | YES |
+| destination_type | character varying | YES |
+| destination_id | uuid | YES |
+| organization_id | uuid | YES |
+
+## pressing
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| pressing_date | timestamp with time zone | YES |
+| is_active | boolean | NO |
+| creator_id | uuid | NO |
+| created_at | timestamp with time zone | YES |
+| updated_at | timestamp with time zone | YES |
+| organization_id | uuid | YES |
+| status | character varying | NO |
+
+## sale
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| sale_date | timestamp with time zone | NO |
+| buyer_id | uuid | NO |
+| nfe_attachment_id | uuid | YES |
+| mtr_attachment_id | uuid | YES |
+| cdf_attachment_id | uuid | YES |
+| total_value | numeric | NO |
+| is_active | boolean | NO |
+| creator_id | uuid | NO |
+| created_at | timestamp with time zone | YES |
+| updated_at | timestamp with time zone | YES |
+| organization_id | uuid | YES |
+| status | character varying | NO |
+| currency | character varying | NO |
+| version | bigint | NO |
+
+## sale_item
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| sale_id | uuid | YES |
+| material_subtype_id | uuid | NO |
+| weight_kg | numeric | NO |
+| volume_m3 | numeric | NO |
+| unit_price | numeric | NO |
+| is_active | boolean | NO |
+| created_at | timestamp with time zone | YES |
+| updated_at | timestamp with time zone | YES |
+| organization_id | uuid | YES |
+| stock_lot_id | uuid | YES |
+
+## sorted_item
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| sorting_id | uuid | YES |
+| input_item_id | uuid | YES |
+| material_subtype_id | uuid | NO |
+| weight_kg | numeric | NO |
+| volume_m3 | numeric | NO |
+| reject_weight_kg | numeric | YES |
+| reject_volume_m3 | numeric | YES |
+| is_active | boolean | NO |
+| created_at | timestamp with time zone | YES |
+| updated_at | timestamp with time zone | YES |
+| destination_type | character varying | YES |
+| destination_id | uuid | YES |
+| organization_id | uuid | YES |
+
+## sorting
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| sorting_date | timestamp with time zone | YES |
+| sorting_type | character varying | YES |
+| is_active | boolean | NO |
+| creator_id | uuid | NO |
+| created_at | timestamp with time zone | YES |
+| updated_at | timestamp with time zone | YES |
+| organization_id | uuid | YES |
+| status | character varying | NO |
+
+## stock_lot
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| organization_id | uuid | NO |
+| material_subtype_id | uuid | NO |
+| sorted_item_id | uuid | YES |
+| pressed_bale_id | uuid | YES |
+| available_weight_kg | numeric | NO |
+| available_volume_m3 | numeric | NO |
+| original_weight_kg | numeric | NO |
+| original_volume_m3 | numeric | NO |
+| is_active | boolean | NO |
+| created_at | timestamp with time zone | NO |
+
+## stock_movement
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| organization_id | uuid | NO |
+| operation_id | uuid | NO |
+| material_subtype_id | uuid | NO |
+| weight_delta_kg | numeric | NO |
+| volume_delta_m3 | numeric | NO |
+
+## stock_operation
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| organization_id | uuid | NO |
+| actor_id | uuid | NO |
+| kind | character varying | NO |
+| sorting_id | uuid | YES |
+| pressing_id | uuid | YES |
+| sale_id | uuid | YES |
+| reversal_of | uuid | YES |
+| occurred_at | timestamp with time zone | NO |
+| recorded_at | timestamp with time zone | NO |
+
+## team_member
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| name | character varying | NO |
+| role | character varying | YES |
+| is_active | boolean | NO |
+| creator_id | uuid | NO |
+| created_at | timestamp with time zone | YES |
+| updated_at | timestamp with time zone | YES |
+| organization_id | uuid | YES |
+
+## users
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| email | character varying | NO |
+| password_hash | text | NO |
+| full_name | character varying | NO |
+| user_role | character varying | NO |
+| is_active | boolean | NO |
+| created_at | timestamp with time zone | YES |
+| updated_at | timestamp with time zone | YES |
+
+## vehicle
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| license_plate | character varying | NO |
+| model | character varying | YES |
+| is_active | boolean | NO |
+| creator_id | uuid | NO |
+| created_at | timestamp with time zone | YES |
+| updated_at | timestamp with time zone | YES |
+| organization_id | uuid | YES |
+

@@ -1,7 +1,7 @@
 # ADR-0014: Final pre-production API contract and database baseline
 
 - Documentation maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
-- Status: Accepted by the owner on 2026-09-27; implementation and final verification in progress.
+- Status: Accepted, implemented and locally verified on 2026-09-27.
 - Scope: Final backend consolidation before frontend integration.
 - Architecture: The pragmatic modular monolith in ADR-0003 remains in force.
 
@@ -80,3 +80,15 @@ The ownership, transaction, ledger, reporting, attachment recovery and modular-m
 ## Consequences
 
 The new frontend has one stable route family and one fresh schema. Existing local scripts using old paths must be updated; this is an intentional pre-production breaking change with no supported-consumer deprecation window. Old development data remains recoverable but is not automatically imported. Future migrations regain immutability after this explicitly authorized reset. Docker Compose remains sufficient, and the consolidation does not claim production deployment or completed frontend integration.
+
+## Final execution evidence
+
+- Decision recorded first in commit 3ca0cab; owner Maven/Spotless and line-ending policy preserved in dd355e5. Runtime contract/schema consolidation committed in 6f449e4.
+- Maven Spotless apply/check and clean verify passed: 40 unit tests plus 62 integration tests, zero failures/errors/skips.
+- FinalBaselineSchemaIT matched all 560 independently captured predecessor definitions. Future V2 upgrade, idempotent migration, failed-DDL rollback and changed-baseline rejection passed.
+- Application handler and Swagger tests reject unversioned routes, deprecated operations and the signup stub. The running specification contains 89 supported operations.
+- Docker rebuilt successfully with the configured Maven formatting gate. API, PostgreSQL and Redis are healthy. Development login used the real ignored .env.
+- The full donation/sorting/pressing/sale/reversal/report workflow passed with stable replay, exact decimal strings, foreign-organization denial and zero stock differences.
+- Final backup restored in a network-isolated container: one V1 (Flyway checksum 583196656), 30 public tables including history, one evidence attachment and zero ledger/lot/projection differences.
+- Old database_data and attachment_data volumes remain present beside database_final_v1 and attachment_final_v1; Redis persistence was retained. The pre-consolidation backup and exact working/index snapshot remain private under .local.
+- Frontend integration is the next major milestone. No supported external consumer or production migration is claimed. GitHub Projects reconciliation remains an external access follow-up, not a backend-runtime defect.

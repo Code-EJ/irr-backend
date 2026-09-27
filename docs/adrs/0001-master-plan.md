@@ -1,6 +1,9 @@
 # ADR-0001: IRR architecture overhaul and delivery master plan
 
-> Execution update (2026-09-27): [ADR-0011](0011-organization-business-cutover.md) documents the organization API cutover and [ADR-0012](0012-transactional-stock-ledger.md) defines the transactional stock ledger. Sorting and pressing are implemented and tested; additional CRUDs, sales/reversals and frontend integration remain in progress. Earlier issue/PR states below are historical audit evidence, not current completion claims.
+> Final pre-production contract: [ADR-0014](0014-final-preproduction-contract-and-baseline.md) supersedes transitional HTTP aliases and the unreleased migration chain. Earlier evidence remains historical; the supported application API is /api/v1 and the final runtime schema starts at one fresh V1.
+
+
+> Current backend status (2026-09-27): [ADR-0013](0013-backend-operational-completion.md) records completed backend workflows, organization isolation, immutable stock accounting, Docker execution and backup restoration. Backend portions of M1–M4 and the local recovery gate are verified. M5 frontend integration, the compatible release pair and external board reconciliation remain open. Earlier statements below are historical audit evidence.
 
 > Accepted ownership decision (2026-09-27): the owner selected separate catalogs and stock per organization. [ADR-0009](0009-organization-scope-and-catalog-integrity.md) implements the explicit membership foundation and catalog integrity corrections. Full organization-scoped business-data migration remains pending. [ADR-0010](0010-containerized-redis.md) adds authenticated Docker Redis without moving authorization or inventory truth out of PostgreSQL.
 
@@ -11,7 +14,7 @@
 > Execution update (2026-09-26): the owner confirmed no production deployment and authorized backend/database refactoring. [ADR-0005](0005-preproduction-docker-foundation.md) governs Docker Compose, pre-production compatibility, closed legacy PRs and staged implementation. Historical audit tables below remain dated evidence.
 
 - Documentation maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
-- Status: Foundation authorized and implemented as recorded in [ADR-0006](0006-backend-foundation-execution.md); later domain decisions and acceptance gates remain open.
+- Status: Backend implementation and local operational gates verified in ADR-0013; frontend and release-pair gates remain open.
 - Recorded: 2026-09-23; repository and registry observations collected on 2026-09-22/23.
 - Scope: Code-EJ/irr-backend and Code-EJ/irr-frontend.
 - Decision owners: backend lead, frontend lead, product owner and release operator; individual assignments remain unconfirmed.
@@ -231,3 +234,20 @@ Board target workflow: Backlog → Ready → In progress → Review → Validati
 | D04 | M1/M5 | F01/F08: frontend contract and gates | Strict typecheck/lint pass; matched login, pagination and 204 contracts. |
 | D05 | M1 | F07/F09: dependency remediation | Aligned Flyway; reviewed advisory dispositions; fresh scans and real migration tests. |
 | D06 | M6 | F10/F12: reproducible deployment | Ephemeral test keys; isolated DB fixtures; health/port/static serving verified. |
+
+## Current backend milestone closure — 2026-09-27
+
+| Master-plan gate | Current backend outcome | Remaining cross-repository work |
+| --- | --- | --- |
+| M0 | Ownership accepted; API/schema captured; historical issues mapped | GitHub Projects access remains unavailable; board mutations are not claimed |
+| M1 | Identity/roles, CORS, safe attachments, isolated tests, patched dependency scan | Frontend type/lint and consumer contract |
+| M2 | V1–V6, organization constraints, immutable ledger, atomic lots, idempotency and reconciliation | Deliberate legacy import only if requested; no inferred ownership |
+| M3 | Reference CRUD, collections/donations, logistics, protected evidence and orphan cleanup | Corresponding frontend screens and browser tests |
+| M4 | Sorting/pressing/sales, fiscal evidence, exact money and ordered reversals | UI operational workflow |
+| M6 backend operations | Healthy Docker stack, actual .env smoke, isolated successful restore | Compatible frontend/backend release pair and public-deployment requirements |
+
+Backend acceptance evidence: 40 unit tests plus 59 real PostgreSQL/Redis integration tests; complete Docker workflow; zero stock reconciliation differences; restored six migration checksums and attachment archive. New report, recovery and development scripts replace obsolete stubs and direct SQL seed paths. See ADR-0013 for tradeoffs and the limits of this completion claim. Issue states in the earlier inventory remain historical until GitHub is explicitly reconciled against these changes.
+
+## Final pre-production consolidation — ADR-0014
+
+The backend contract is now exclusively /api/v1, with 89 operations and no transitional aliases or signup stub. The final fresh V1 preserves all 560 captured schema definitions. Spotless and 102 tests pass; Docker smoke and isolated restoration pass. Old development volumes are retained. Backend M1–M4 and local M6 recovery gates are complete for the documented scope. Frontend integration and a compatible release pair are next; prior V1–V6 and alias statements above are historical.

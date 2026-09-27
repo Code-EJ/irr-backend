@@ -1,5 +1,11 @@
 # ADR-0009: Organization-owned catalogs and stock, explicit membership foundation
 
+> Final pre-production contract: [ADR-0014](0014-final-preproduction-contract-and-baseline.md) supersedes transitional HTTP aliases and the unreleased migration chain. Earlier evidence remains historical; the supported application API is /api/v1 and the final runtime schema starts at one fresh V1.
+
+
+> Current implementation reference: [ADR-0013](0013-backend-operational-completion.md) records the completed backend and verified local operations. This ADR retains its decision-time evidence; later records supersede pending implementation statements.
+
+
 - Status: Organization ownership model accepted by the owner on 2026-09-27; membership foundation implemented; catalog/operational ownership cutover remains pending.
 - Author and documentation maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 - Related: [master plan](0001-master-plan.md), [target database topology](0002-database-schema-redesign.md), [identity boundary](0008-identity-and-attachment-boundaries.md).

@@ -1,5 +1,11 @@
 # ADR-0004: Implementation readiness and backend entry criteria
 
+> Final pre-production contract: [ADR-0014](0014-final-preproduction-contract-and-baseline.md) supersedes transitional HTTP aliases and the unreleased migration chain. Earlier evidence remains historical; the supported application API is /api/v1 and the final runtime schema starts at one fresh V1.
+
+
+> Current implementation reference: [ADR-0013](0013-backend-operational-completion.md) records the completed backend and verified local operations. This ADR retains its decision-time evidence; later records supersede pending implementation statements.
+
+
 - Documentation maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 - Status: Historical readiness review, superseded in deployment assumptions and PR disposition by [ADR-0005](0005-preproduction-docker-foundation.md).
 - Review date: 2026-09-26.

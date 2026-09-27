@@ -1,5 +1,11 @@
 # ADR-0003: Modular architecture, API contracts and dependency standardization
 
+> Final pre-production contract: [ADR-0014](0014-final-preproduction-contract-and-baseline.md) supersedes transitional HTTP aliases and the unreleased migration chain. Earlier evidence remains historical; the supported application API is /api/v1 and the final runtime schema starts at one fresh V1.
+
+
+> Current implementation reference: [ADR-0013](0013-backend-operational-completion.md) records the completed backend and verified local operations. This ADR retains its decision-time evidence; later records supersede pending implementation statements.
+
+
 > Execution update (2026-09-26): the owner confirmed no production deployment and authorized backend/database refactoring. [ADR-0005](0005-preproduction-docker-foundation.md) governs Docker Compose, pre-production compatibility, closed legacy PRs and staged implementation. Historical audit tables below remain dated evidence.
 
 - Documentation maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).

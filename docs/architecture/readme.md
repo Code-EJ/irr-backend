@@ -2,86 +2,62 @@
 
 - Documentation maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
-The accepted direction is a modular monolith in Docker Compose. [ADR-0005](../adrs/0005-preproduction-docker-foundation.md) defines decisions and tradeoffs; this document maps them to the repository. The implemented code is still predominantly layered. The future module tree below is a target, not a claim that all packages have already moved.
+IRR is a transactional modular monolith. New modules use feature-owned API/application contracts. Established catalog, identity, attachment and processing adapters remain in controllers/services with shared JPA entities and ports. This is an intentional hybrid, not a claim of framework-free Clean Architecture. [ADR-0014](../adrs/0014-final-preproduction-contract-and-baseline.md) records the verified implementation and limits.
 
-## Container topology
+## Runtime topology
 
 ~~~mermaid
 flowchart LR
-    Browser[Frontend browser] -->|HTTP 127.0.0.1:9191| API[Spring Boot API / non-root JRE]
-    API -->|JDBC / internal network| DB[(PostgreSQL 16)]
-    DB --> Data[(Database volume)]
-    API -->|Authenticated internal connection| Redis[(Redis 8.2)]
-    Redis --> RedisData[(Redis AOF volume)]
-    API --> Uploads[(Attachment volume)]
-    Keys[Local RSA keys / read-only mount] --> API
-    CI[CI / Maven verify] --> Tests[Disposable PostgreSQL and Redis / test keys]
+    Browser[React client] -->|HTTP and bearer JWT| API[Spring Boot API :9191]
+    API -->|JDBC transaction| DB[(PostgreSQL 16)]
+    API -->|Authenticated connection| Redis[(Redis 8.2)]
+    API --> Uploads[Persistent attachment volume]
+    Keys[Read-only RSA keys] --> API
+    DB --> DBVolume[Database volume]
+    Redis --> AOF[Redis AOF volume]
+    Tests[Maven integration suites] --> Ephemeral[Disposable PostgreSQL and Redis]
 ~~~
 
-The browser never talks to PostgreSQL or the file volume directly. The API owns transactions and authorization. PostgreSQL owns constraints; Hibernate validates, Flyway migrates. File writes are outside DB transactions. ADR-0008 implements upload rollback compensation and a PostgreSQL-backed post-commit deletion queue; crash-orphan reconciliation remains open. Container readiness includes PostgreSQL and Redis connectivity and does not certify business correctness.
+Only the API loopback port is published. The API runs non-root with a read-only root filesystem. PostgreSQL owns authorization associations, business truth, receipts, immutable stock movements and cleanup jobs. Redis participates in readiness but is not a correctness dependency for stock or membership decisions. Upload bytes use a separate volume. Kubernetes is deferred until deployment demand justifies it.
 
-## Repository map
+## Repository responsibilities
 
-| Path | Responsibility | Documentation / verification |
+| Path under src/main/java/org/code/api | Responsibility | Boundary |
 | --- | --- | --- |
-| src/main/java/org/code/api/organizations | First feature module: api/application/domain/infrastructure, explicit audited membership | [ADR-0009](../adrs/0009-organization-scope-and-catalog-integrity.md) |
-| src/main/java/org/code/api/controllers | Existing HTTP entrypoints | [Operation map](../api_documentation.md) |
-| src/main/java/org/code/api/dto | Request/response records and validation | Same contract inventory |
-| src/main/java/org/code/api/services | Current use cases and transaction boundaries | [Source inventory](../source-inventory.md), unit tests |
-| src/main/java/org/code/api/domain | Current entities, enums, exceptions and ports; entities still use JPA | [Entities](../entities_documentation.md), [enums](../enums_documentation.md) |
-| src/main/java/org/code/api/infrastructure | JPA repositories, security and technical adapters | Source inventory; PostgreSQL and JWT tests |
-| src/main/java/org/code/api/filter | Current request authentication and logging | ADR-0004 identity findings; HTTP integration smoke tests |
-| src/main/resources | Environment configuration and Flyway SQL | [Operations](../operations.md) |
-| src/test/java | Unit tests and *IT integration suites | Maven Surefire/Failsafe |
-| scripts | Development key generation | README commands; no real credentials tracked |
-| Dockerfile / docker-compose.yml / .dockerignore | Build, local runtime, persistence and build-context exclusions | Image build and readiness smoke test |
-| pom.xml / mvnw / .mvn | Dependencies, Java toolchain and Maven wrapper | clean verify and dependency tree |
-| .github | Review templates and CI | Backend verification workflow |
-| docs/adrs | Strategic plan, alternatives, consequences and execution evidence | Update with every architectural change |
-| docs | Repository-wide architecture and contract references | Cross-link and inventory checks |
+| organizations | Organization metadata, memberships, audit and request scope | Explicit associations; no creator inference |
+| parties | Buyers and team staff | Scoped reference CRUD and retained-history guards |
+| intake | Collection orchestration and logistics | Validated raw inputs; no saleable stock credit |
+| inventory | Ledger, lots, receipts, reversals and queries | Sole stock writer; immutable history |
+| sales | Draft/post/reverse use cases | Optimistic drafts, fiscal evidence, transactional lots |
+| reporting | Operational summaries and CSV | PostgreSQL repeatable-read snapshot |
+| controllers / dto | Established HTTP adapters and safe value contracts | No persistence entities or secrets serialized |
+| services | Existing identity, materials, fleet, donation, processing and attachment use cases | Transactions and domain validation |
+| domain/models / domain/ports | Shared JPA mappings and application/infrastructure ports | Persistence annotations retained deliberately |
+| infrastructure | Security, JPA/JDBC repositories, storage, Swagger, development bootstrap | Framework and external-resource adapters |
+| filter | Authentication and request handling | Active account revalidation |
 
-## Target feature boundaries
+Other repository boundaries: src/main/resources/db/migrations owns immutable versioned SQL; src/test contains disposable integration fixtures; scripts owns key generation, advisory audit, smoke and recovery tools; Dockerfile/Compose own local containers; .github/workflows owns build gates; docs/adrs owns decisions. [Source inventory](../source-inventory.md) indexes every Java file.
 
-| Module | Owns | Collaborates through |
-| --- | --- | --- |
-| identity | Users, credentials, sessions and provisioning | Principal/authorization ports |
-| organizations | Organizations, memberships and scope | Membership lookup; no creator-to-org guessing |
-| materials | Category/type/subtype catalog | Scoped material lookup |
-| logistics | Vehicles, team members and assignments | Validated logistics references |
-| intake | Collections, donations and input allocations | Logistics/material/attachment ports |
-| processing | Sorting stages and pressing transformations | Inventory posting commands |
-| inventory | Ledger, balances, reservations, idempotency and reversals | Single transactional posting interface |
-| sales | Buyer, invoice-backed sale and item allocation | Inventory/attachment application ports |
-| attachments | Metadata, storage lifecycle and object authorization | Opaque attachment references |
-| reporting | Read projections and reconciliation | Read-only queries/events |
+## Request and transaction sequence
 
-Within each migrated module: api -> application -> domain. Infrastructure implements domain/application ports. Domain rules avoid servlet/security context and repository calls. A shared module contains only stable primitives/configuration; it must not become a cross-feature service repository. Application transactions encompass all DB writes for one business operation; external file effects require lifecycle/outbox handling. Cross-module repository access is prohibited in migrated slices and must be replaced by ports as each old slice moves.
+1. Spring Security verifies the RSA bearer token and reloads the active account.
+2. OrganizationScope resolves X-Organization-Id and validates current organization/membership. A write transaction locks that organization and rechecks permission.
+3. The application use case resolves every foreign identifier inside the same organization, validates lifecycle/quantities and persists entities.
+4. Stock commands flush JPA rows before JDBC inserts. Receipt, operational document, lot allocation, movement and balance projection commit together.
+5. Safe DTOs serialize exact decimals as plain strings. The client uses returned versions and stable command keys on retries.
 
-## Request and transaction flow
+Organization locks serialize writes within one organization. Conditional updates and database checks prevent negative stock even if a higher-level bug bypasses validation. Composite keys prevent cross-organization relationships. First-time balance insertion uses the same serialization. Different organizations remain independent.
 
-~~~mermaid
-sequenceDiagram
-    participant Client
-    participant HTTP as Controller / filter
-    participant UseCase as Application use case
-    participant Domain as Domain rules
-    participant Store as PostgreSQL / adapters
-    Client->>HTTP: Request with bearer token
-    HTTP->>UseCase: Validated DTO and authenticated principal
-    UseCase->>Domain: Authorize scope and check invariants
-    Domain-->>UseCase: Allowed command
-    UseCase->>Store: Transactional reads and writes
-    Store-->>UseCase: Constraint-checked result
-    UseCase-->>HTTP: Response DTO
-    HTTP-->>Client: HTTP status and English contract
-~~~
+## Storage and reporting
 
-This is the target module flow. ADR-0008 removes attachment entity serialization and the session-prefix bypass while retaining current package locations. Conflicting catalog rules and broader module extraction remain open. See ADR-0004 for historical evidence and ADR-0008 for the current identity/attachment implementation.
+Upload bytes cannot join PostgreSQL's transaction. Rollback compensation handles ordinary failures; a durable cleanup queue handles committed deletion; an hourly exclusive advisory-lock scan queues old unreferenced UUID files after crashes. Uploads hold a shared lock until metadata commit. Readers never see filesystem paths or account credentials. Files referenced by business records cannot be deleted.
 
-## Dependency ownership
+Reports use live data, inclusive UTC ranges and current POSTED status. Stock is a current snapshot. Historical closing balances and external fiscal validation are not claimed. See [operations](../operations.md) for recovery and [schema](../entities_documentation.md) for constraints.
 
-See [dependency decisions](../dependencies.md) for current purposes, convergence and test-only overrides; ADR-0003 retains the complete historical inventory.
+## Extension rules
 
-## Quality and evolution
+New features belong to a feature package with an explicit request/response contract and service transaction. Reuse OrganizationScope and StockLedger; never update balances directly or infer ownership from creator_id. Avoid moving every old class merely for package symmetry. Introduce an ADR when changing ownership, lifecycle, accounting or infrastructure semantics. JavaDoc, tests, Swagger, migrations and maintained documentation are English and credit the maintainer.
 
-Unit tests cover domain/application behavior; integration tests use real PostgreSQL, independent transactions and generated keys. Every new invariant needs a meaningful failure case. Keep historical migrations immutable. Document wire renames and frontend migration together. Prefer a small tested vertical slice over package-wide renaming. Add enforceable package dependency rules when the first complete feature module moves; no dependency rule currently proves the entire legacy tree modular.
+## Final contract and schema
+
+Every application controller uses /api/v1. Unversioned mappings and the signup retirement stub are removed; no compatibility adapter remains. The final fresh V1 reproduces the verified schema in new database/attachment volumes. Spotless is enforced by Maven and preserved in the Docker build. ADR-0003 remains the pragmatic modular-monolith direction; this consolidation adds no strict Clean Architecture layer or package-only rewrite.

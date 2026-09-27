@@ -1,5 +1,11 @@
 # ADR-0010: Authenticated Redis infrastructure in Docker Compose
 
+> Final pre-production contract: [ADR-0014](0014-final-preproduction-contract-and-baseline.md) supersedes transitional HTTP aliases and the unreleased migration chain. Earlier evidence remains historical; the supported application API is /api/v1 and the final runtime schema starts at one fresh V1.
+
+
+> Current implementation reference: [ADR-0013](0013-backend-operational-completion.md) records the completed backend and verified local operations. This ADR retains its decision-time evidence; later records supersede pending implementation statements.
+
+
 - Status: Accepted and implemented infrastructure; business caches and distributed controls remain separate decisions.
 - Date: 2026-09-27.
 - Author and dependency documentation maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).

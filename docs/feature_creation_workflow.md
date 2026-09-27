@@ -12,8 +12,10 @@
 8. Run ./mvnw clean verify and the container build/smoke checks affected by the change. Record actual results, failures and limitations.
 9. Commit coherent changes with English semantic messages. PR descriptions explain the problem, resulting behavior, compatibility and validation. Keep unresolved product choices visible.
 
-The current code is a migration baseline, not a template for entity serialization, global stock mutation, public partner creation or direct cross-feature repository access. See ADR-0004 for known deviations.
+Read ADR-0014 for the final backend contract and baseline; earlier readiness findings are historical. Never serialize JPA entities, mutate stock outside StockLedger or grant implicit organization access. The next runtime migration is V2; test-only upgrade examples live outside the runtime location.
 
 ## JavaDoc and attribution
 
 Document every new or modified Java type and public operation in English JavaDoc, including parameter/return/exception contracts where applicable. Credit this refactor with @author Enzo Ribas and the profile https://github.com/oEnzoRibas; preserve previous contributor credits. Dependency decisions identify Enzo Ribas as documentation maintainer, not as author of third-party libraries. Keep commit author identity consistent with repository Git configuration.
+
+Use the Maven-configured Spotless formatter: ./mvnw spotless:apply, then ./mvnw clean verify. Never restore unversioned aliases or edit the applied final V1; add a reviewed V2+ migration.

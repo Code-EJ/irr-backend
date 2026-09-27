@@ -2,7 +2,7 @@
 
 - Documentation maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
-Current values are source contracts. Renaming values can affect stored strings and JSON; coordinate SQL/backfill and frontend mappings before a change. SortingType stage semantics remain a decision gate in ADR-0004/0005.
+Current values are source contracts. Renaming values can affect stored strings and JSON; coordinate SQL/backfill and frontend mappings before a change. SortingType is descriptive metadata; each sorting command independently allocates raw input under ADR-0012. It does not authorize repeated credits for the same raw quantities.
 
 ## DestinationType
 
@@ -68,3 +68,9 @@ public enum UserRole {
     REPRESENTATIVE
 }
 ~~~
+
+## Compatibility and lifecycle vocabulary
+
+PF means an individual donor and PJ means a legal-entity donor. These existing stored/wire codes remain unchanged; all maintained explanations are English. DestinationType retains SALE/PRESSING for historical compatibility, but new sorting/pressing requests accept only STOCK without destinationId. Typed downstream commands create real links.
+
+Membership roles are MEMBER and MANAGER, independent of platform UserRole. Team roles are DRIVER, HELPER and OPERATOR. Sales use DRAFT/POSTED/REVERSED; processing uses POSTED/REVERSED. Stock operations use SORTING/PRESSING/SALE/REVERSAL. These states are database-checked strings in their owning modules and are documented in Swagger and ADR-0012.
