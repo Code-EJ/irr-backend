@@ -44,7 +44,7 @@ public class OpenApiConfiguration {
     @Bean
     public OperationCustomizer operationDocumentation() {
         Map<String, String> resources = Map.ofEntries(
-            Map.entry("UserController", "Partners"), Map.entry("SessionController", "Sessions"), Map.entry("VehicleController", "Vehicles"),
+            Map.entry("OrganizationController", "Organizations"), Map.entry("UserController", "Partners"), Map.entry("SessionController", "Sessions"), Map.entry("VehicleController", "Vehicles"),
             Map.entry("MaterialCategoryController", "Material categories"), Map.entry("MaterialTypeController", "Material types"),
             Map.entry("MaterialSubtypeController", "Material subtypes"), Map.entry("DonorController", "Donors"),
             Map.entry("DonationController", "Donations"), Map.entry("SortingController", "Sorting"),

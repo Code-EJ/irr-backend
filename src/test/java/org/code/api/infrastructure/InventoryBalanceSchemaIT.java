@@ -15,7 +15,7 @@ class InventoryBalanceSchemaIT extends PostgresIntegrationTest {
     @Autowired JdbcTemplate jdbc;
     /** Verifies that migrations apply and enforce inventory constraints. */
     @Test void migrationsApplyAndEnforceInventoryConstraints() {
-        assertThat(jdbc.queryForObject("SELECT count(*) FROM flyway_schema_history WHERE success AND version IS NOT NULL", Integer.class)).isEqualTo(2);
+        assertThat(jdbc.queryForObject("SELECT count(*) FROM flyway_schema_history WHERE success AND version IS NOT NULL", Integer.class)).isEqualTo(3);
         assertThat(jdbc.queryForList("SELECT conname FROM pg_constraint WHERE conrelid = 'inventory_balance'::regclass", String.class))
             .contains("uq_inventory_balance_material_subtype", "ck_inventory_balance_nonnegative");
     }
