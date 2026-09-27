@@ -1,3 +1,4 @@
+-- Schema equivalence fixture. Maintainer: Enzo Ribas (https://github.com/oEnzoRibas).
 SELECT definition FROM (
 SELECT 'COLUMN '||c.relname||'.'||a.attname||' '||format_type(a.atttypid,a.atttypmod)||' NOTNULL='||a.attnotnull||' DEFAULT='||COALESCE(pg_get_expr(d.adbin,d.adrelid),'') definition
 FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace JOIN pg_attribute a ON a.attrelid=c.oid AND a.attnum>0 AND NOT a.attisdropped LEFT JOIN pg_attrdef d ON d.adrelid=c.oid AND d.adnum=a.attnum WHERE n.nspname='public' AND c.relkind='r' AND c.relname<>'flyway_schema_history'
