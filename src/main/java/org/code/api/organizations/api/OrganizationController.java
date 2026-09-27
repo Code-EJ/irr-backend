@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import java.util.UUID;
+import org.code.api.organizations.application.OrganizationLifecycle;
 import org.code.api.organizations.application.OrganizationService;
 import org.code.api.organizations.domain.*;
 import org.springframework.http.ResponseEntity;
@@ -16,18 +17,17 @@ import org.springframework.web.bind.annotation.*;
  * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 @RestController
-@RequestMapping(value = "/api/organizations", produces = "application/json")
+@RequestMapping(value = "/api/v1/organizations", produces = "application/json")
 @Tag(name = "Organizations")
 public class OrganizationController {
   private final OrganizationService organizations;
-  private final org.code.api.organizations.application.OrganizationLifecycle lifecycle;
+  private final OrganizationLifecycle lifecycle;
 
   /**
    * @param organizations membership application boundary
    */
   public OrganizationController(
-      OrganizationService organizations,
-      org.code.api.organizations.application.OrganizationLifecycle lifecycle) {
+      OrganizationService organizations, OrganizationLifecycle lifecycle) {
     this.organizations = organizations;
     this.lifecycle = lifecycle;
   }

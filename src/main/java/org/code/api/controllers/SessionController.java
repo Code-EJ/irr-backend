@@ -1,20 +1,22 @@
 package org.code.api.controllers;
 
 import jakarta.validation.Valid;
-import java.util.Map;
 import org.code.api.domain.ports.AuthPort;
 import org.code.api.dto.session.request.LoginRequestDTO;
 import org.code.api.dto.session.response.LoginResponseDTO;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Exposes existing-user authentication and an explicit retirement response for public signup.
+ * Exposes authentication for active accounts through the supported versioned API.
  *
  * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 @RestController
-@RequestMapping("/api/session")
+@RequestMapping("/api/v1/session")
 public class SessionController {
   private final AuthPort auth;
 
@@ -23,26 +25,6 @@ public class SessionController {
    */
   public SessionController(AuthPort auth) {
     this.auth = auth;
-  }
-
-  /**
-   * Explains the pre-production contract replacement without creating an account.
-   *
-   * @return the retired-endpoint response; unauthenticated callers receive 401 first
-   */
-  @io.swagger.v3.oas.annotations.Operation(deprecated = true, summary = "Retired self-registration")
-  @io.swagger.v3.oas.annotations.responses.ApiResponse(
-      responseCode = "410",
-      description = "Use administrator provisioning at POST /api/users")
-  @PostMapping("/register")
-  public ResponseEntity<Map<String, String>> register() {
-    return ResponseEntity.status(410)
-        .body(
-            Map.of(
-                "error",
-                "registration_retired",
-                "message",
-                "An administrator must create partners through POST /api/users"));
   }
 
   /**

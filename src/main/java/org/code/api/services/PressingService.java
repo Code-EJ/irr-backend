@@ -1,5 +1,6 @@
 package org.code.api.services;
 
+import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -7,6 +8,7 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.code.api.domain.enums.DestinationType;
 import org.code.api.domain.exception.MaterialError;
 import org.code.api.domain.exception.PressingError;
 import org.code.api.domain.models.material.MaterialSubtype;
@@ -15,17 +17,23 @@ import org.code.api.domain.models.pressing.Pressing;
 import org.code.api.domain.models.sorting.SortedItem;
 import org.code.api.domain.models.user.User;
 import org.code.api.domain.ports.AuthenticatedUserProvider;
+import org.code.api.domain.ports.OrganizationScope;
 import org.code.api.domain.ports.PressingPort;
 import org.code.api.dto.pressing.request.PressedBaleRequestDTO;
 import org.code.api.dto.pressing.request.PressingCreateRequestDTO;
 import org.code.api.dto.pressing.response.PressedBaleResponseDTO;
 import org.code.api.dto.pressing.response.PressingResponseDTO;
 import org.code.api.infrastructure.repositories.*;
+import org.code.api.inventory.application.IdempotentCommands;
+import org.code.api.inventory.application.StockLedger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Posts organization-owned pressing with conserved quantities and traceable stock lots. Business
@@ -43,13 +51,13 @@ public class PressingService implements PressingPort {
   private final PressedBaleRepository pressedBaleRepository;
   private final SortedItemRepository sortedItemRepository;
   private final MaterialSubtypeRepository subtypeRepository;
-  private final org.code.api.inventory.application.StockLedger ledger;
-  private final org.code.api.inventory.application.IdempotentCommands commands;
-  private final org.springframework.jdbc.core.JdbcTemplate jdbc;
-  private final jakarta.persistence.EntityManager entityManager;
+  private final StockLedger ledger;
+  private final IdempotentCommands commands;
+  private final JdbcTemplate jdbc;
+  private final EntityManager entityManager;
   private final UserRepository userRepository;
   private final AuthenticatedUserProvider userProvider;
-  private final org.code.api.domain.ports.OrganizationScope scope;
+  private final OrganizationScope scope;
 
   @Override
   @Transactional
@@ -97,15 +105,14 @@ public class PressingService implements PressingPort {
                 .findByIdAndOrganizationId(baleDto.sortedItemId(), organizationId)
                 .orElseThrow(() -> new PressingError.SortedItemNotFound(baleDto.sortedItemId()));
         if (!sortedItem.getMaterialSubtype().getId().equals(subtype.getId())) {
-          throw new org.springframework.web.server.ResponseStatusException(
-              org.springframework.http.HttpStatus.BAD_REQUEST,
-              "Pressing must preserve the source material subtype");
+          throw new ResponseStatusException(
+              HttpStatus.BAD_REQUEST, "Pressing must preserve the source material subtype");
         }
         if (baleDto.destinationId() != null
             || (baleDto.destinationType() != null
-                && baleDto.destinationType() != org.code.api.domain.enums.DestinationType.STOCK)) {
-          throw new org.springframework.web.server.ResponseStatusException(
-              org.springframework.http.HttpStatus.BAD_REQUEST,
+                && baleDto.destinationType() != DestinationType.STOCK)) {
+          throw new ResponseStatusException(
+              HttpStatus.BAD_REQUEST,
               "Pressing creates stock; use a separate sale command to sell it");
         }
         var lots =
@@ -116,9 +123,8 @@ public class PressingService implements PressingPort {
                 organizationId,
                 sortedItem.getId());
         if (lots.isEmpty()) {
-          throw new org.springframework.web.server.ResponseStatusException(
-              org.springframework.http.HttpStatus.CONFLICT,
-              "The sorting output has no available stock lot");
+          throw new ResponseStatusException(
+              HttpStatus.CONFLICT, "The sorting output has no available stock lot");
         }
         ledger.consume(
             lots.getFirst(), subtype.getId(), baleDto.weightKg(), baleDto.initialVolumeM3());
@@ -132,7 +138,7 @@ public class PressingService implements PressingPort {
                 .weightKg(baleDto.weightKg())
                 .initialVolumeM3(baleDto.initialVolumeM3())
                 .finalVolumeM3(baleDto.finalVolumeM3())
-                .destinationType(org.code.api.domain.enums.DestinationType.STOCK)
+                .destinationType(DestinationType.STOCK)
                 .destinationId(baleDto.destinationId())
                 .isActive(true)
                 .build();

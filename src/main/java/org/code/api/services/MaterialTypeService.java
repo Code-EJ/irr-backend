@@ -1,6 +1,7 @@
 package org.code.api.services;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,7 @@ import org.code.api.domain.models.material.MaterialType;
 import org.code.api.domain.models.user.User;
 import org.code.api.domain.ports.AuthenticatedUserProvider;
 import org.code.api.domain.ports.MaterialTypePort;
+import org.code.api.domain.ports.OrganizationScope;
 import org.code.api.dto.material.request.MaterialTypeCreateRequestDTO;
 import org.code.api.dto.material.request.MaterialTypeUpdateRequestDTO;
 import org.code.api.dto.material.response.MaterialTypeResponseDTO;
@@ -24,6 +26,7 @@ import org.code.api.infrastructure.specifications.MaterialSearch;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,7 +52,7 @@ public class MaterialTypeService implements MaterialTypePort {
   private final InventoryBalanceRepository inventoryBalanceRepository;
   private final UserRepository userRepository;
   private final AuthenticatedUserProvider userProvider;
-  private final org.code.api.domain.ports.OrganizationScope scope;
+  private final OrganizationScope scope;
 
   /** {@inheritDoc} */
   @Override
@@ -58,8 +61,7 @@ public class MaterialTypeService implements MaterialTypePort {
   public MaterialTypeResponseDTO create(MaterialTypeCreateRequestDTO data) {
     UUID organizationId = scope.organizationId();
     if (!scope.manager())
-      throw new org.springframework.security.access.AccessDeniedException(
-          "Organization manager permission is required");
+      throw new AccessDeniedException("Organization manager permission is required");
     User creator = userRepository.getReferenceById(userProvider.getCurrentUserId());
 
     // Validate that the parent category belongs to the authenticated creator.
@@ -123,8 +125,7 @@ public class MaterialTypeService implements MaterialTypePort {
   public MaterialTypeResponseDTO update(UUID id, MaterialTypeUpdateRequestDTO data) {
     UUID organizationId = scope.organizationId();
     if (!scope.manager())
-      throw new org.springframework.security.access.AccessDeniedException(
-          "Organization manager permission is required");
+      throw new AccessDeniedException("Organization manager permission is required");
 
     MaterialType type =
         typeRepository
@@ -135,7 +136,7 @@ public class MaterialTypeService implements MaterialTypePort {
       throw new MaterialError.InactiveMaterial(id, LEVEL);
     }
 
-    if (!java.util.Objects.equals(type.getVersion(), data.version())) {
+    if (!Objects.equals(type.getVersion(), data.version())) {
       throw new MaterialError.ConcurrentModification(id);
     }
 
@@ -164,8 +165,7 @@ public class MaterialTypeService implements MaterialTypePort {
   public void deactivate(UUID id) {
     UUID organizationId = scope.organizationId();
     if (!scope.manager())
-      throw new org.springframework.security.access.AccessDeniedException(
-          "Organization manager permission is required");
+      throw new AccessDeniedException("Organization manager permission is required");
     List<UserRole> roles = userProvider.getCurrentUserRoles();
     boolean isAdmin = roles.contains(UserRole.ADMINISTRATOR);
 

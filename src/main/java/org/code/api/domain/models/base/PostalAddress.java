@@ -2,6 +2,7 @@ package org.code.api.domain.models.base;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.*;
 
 /**
  * Optional complete postal address owned by a donor, without a separate lifecycle.
@@ -9,11 +10,11 @@ import jakarta.persistence.Embeddable;
  * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 @Embeddable
-@lombok.Getter
-@lombok.Setter
-@lombok.Builder
-@lombok.NoArgsConstructor
-@lombok.AllArgsConstructor
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class PostalAddress {
   @Column(name = "address_line1", length = 255)
   private String line1;

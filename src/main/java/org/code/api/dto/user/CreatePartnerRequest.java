@@ -1,5 +1,6 @@
 package org.code.api.dto.user;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import org.code.api.domain.enums.UserRole;
 
@@ -17,8 +18,7 @@ public record CreatePartnerRequest(
     @NotBlank @Email @Size(max = 255) String email,
     @NotBlank
         @Size(min = 8, max = 72)
-        @io.swagger.v3.oas.annotations.media.Schema(
-            accessMode = io.swagger.v3.oas.annotations.media.Schema.AccessMode.WRITE_ONLY)
+        @io.swagger.v3.oas.annotations.media.Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
         String password,
     @NotNull
         @io.swagger.v3.oas.annotations.media.Schema(

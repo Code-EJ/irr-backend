@@ -1,6 +1,8 @@
 package org.code.api.infrastructure.storage;
 
+import java.io.IOException;
 import org.code.api.services.AttachmentCleanupService;
+import org.code.api.services.AttachmentOrphanReconciler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -19,13 +21,13 @@ import org.springframework.scheduling.annotation.Scheduled;
     matchIfMissing = true)
 public class AttachmentCleanupScheduler {
   private final AttachmentCleanupService cleanup;
-  private final org.code.api.services.AttachmentOrphanReconciler orphans;
+  private final AttachmentOrphanReconciler orphans;
 
   /**
    * @param cleanup durable deletion use case
    */
   public AttachmentCleanupScheduler(
-      AttachmentCleanupService cleanup, org.code.api.services.AttachmentOrphanReconciler orphans) {
+      AttachmentCleanupService cleanup, AttachmentOrphanReconciler orphans) {
     this.cleanup = cleanup;
     this.orphans = orphans;
   }
@@ -44,7 +46,7 @@ public class AttachmentCleanupScheduler {
   @Scheduled(
       fixedDelayString = "${irr.attachments.orphan-delay-ms:3600000}",
       initialDelayString = "${irr.attachments.orphan-delay-ms:3600000}")
-  public void reconcile() throws java.io.IOException {
+  public void reconcile() throws IOException {
     orphans.reconcile();
   }
 }

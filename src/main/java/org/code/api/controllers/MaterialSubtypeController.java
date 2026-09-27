@@ -24,7 +24,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping({"/api/materials/subtypes", "/api/v1/materials/subtypes"})
+@RequestMapping("/api/v1/materials/subtypes")
 public class MaterialSubtypeController {
 
   private final MaterialSubtypePort subtypePort;

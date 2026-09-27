@@ -22,7 +22,7 @@ class InventoryBalanceSchemaIT extends PostgresIntegrationTest {
             jdbc.queryForObject(
                 "SELECT count(*) FROM flyway_schema_history WHERE success AND version IS NOT NULL",
                 Integer.class))
-        .isEqualTo(6);
+        .isEqualTo(1);
     assertThat(
             jdbc.queryForList(
                 "SELECT conname FROM pg_constraint WHERE conrelid = 'inventory_balance'::regclass",

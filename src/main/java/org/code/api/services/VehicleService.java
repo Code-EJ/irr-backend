@@ -3,6 +3,7 @@ package org.code.api.services;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.code.api.domain.exception.VehicleError;
 import org.code.api.domain.models.base.Vehicle;
 import org.code.api.domain.models.user.User;
 import org.code.api.domain.ports.AuthenticatedUserProvider;
+import org.code.api.domain.ports.OrganizationScope;
 import org.code.api.domain.ports.VehiclePort;
 import org.code.api.dto.logistic.vehicle.request.*;
 import org.code.api.dto.logistic.vehicle.response.VehicleResponseDTO;
@@ -23,6 +25,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,7 +47,7 @@ public class VehicleService implements VehiclePort {
   private final CollectionRepository collectionRepository;
   private final UserRepository userRepository;
   private final AuthenticatedUserProvider userProvider;
-  private final org.code.api.domain.ports.OrganizationScope scope;
+  private final OrganizationScope scope;
 
   // ═══════════════════════════════════════════════════════════════════════════
   // Individual operations
@@ -56,8 +59,7 @@ public class VehicleService implements VehiclePort {
   public VehicleResponseDTO create(VehicleCreateRequestDTO data) {
     UUID organizationId = scope.organizationId();
     if (!scope.manager())
-      throw new org.springframework.security.access.AccessDeniedException(
-          "Organization manager permission is required");
+      throw new AccessDeniedException("Organization manager permission is required");
     User creator = userRepository.getReferenceById(userProvider.getCurrentUserId());
 
     String licensePlate = normalizePlate(data.licensePlate());
@@ -103,8 +105,7 @@ public class VehicleService implements VehiclePort {
   public VehicleResponseDTO update(UUID id, VehicleUpdateRequestDTO data) {
     UUID organizationId = scope.organizationId();
     if (!scope.manager())
-      throw new org.springframework.security.access.AccessDeniedException(
-          "Organization manager permission is required");
+      throw new AccessDeniedException("Organization manager permission is required");
 
     Vehicle vehicle =
         vehicleRepository
@@ -146,8 +147,7 @@ public class VehicleService implements VehiclePort {
   public void deactivate(UUID id) {
     UUID organizationId = scope.organizationId();
     if (!scope.manager())
-      throw new org.springframework.security.access.AccessDeniedException(
-          "Organization manager permission is required");
+      throw new AccessDeniedException("Organization manager permission is required");
     List<UserRole> roles = userProvider.getCurrentUserRoles();
     boolean isAdmin = roles.contains(UserRole.ADMINISTRATOR);
 
@@ -207,8 +207,7 @@ public class VehicleService implements VehiclePort {
   public List<VehicleResponseDTO> bulkCreate(VehicleBulkCreateRequestDTO data) {
     UUID organizationId = scope.organizationId();
     if (!scope.manager())
-      throw new org.springframework.security.access.AccessDeniedException(
-          "Organization manager permission is required");
+      throw new AccessDeniedException("Organization manager permission is required");
     User creator = userRepository.getReferenceById(userProvider.getCurrentUserId());
 
     // Reject duplicate plates inside the batch.
@@ -255,8 +254,7 @@ public class VehicleService implements VehiclePort {
   public List<VehicleResponseDTO> bulkUpdate(VehicleBulkUpdateRequestDTO data) {
     UUID organizationId = scope.organizationId();
     if (!scope.manager())
-      throw new org.springframework.security.access.AccessDeniedException(
-          "Organization manager permission is required");
+      throw new AccessDeniedException("Organization manager permission is required");
 
     // Reject repeated record identities inside the batch.
     Set<UUID> idBatch = new HashSet<>();
@@ -318,7 +316,7 @@ public class VehicleService implements VehiclePort {
   // ═══════════════════════════════════════════════════════════════════════════
 
   private String normalizePlate(String plate) {
-    return plate.trim().toUpperCase(java.util.Locale.ROOT);
+    return plate.trim().toUpperCase(Locale.ROOT);
   }
 
   private VehicleResponseDTO toResponse(Vehicle vehicle) {

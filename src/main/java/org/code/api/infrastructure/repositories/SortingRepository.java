@@ -2,6 +2,7 @@ package org.code.api.infrastructure.repositories;
 
 import java.util.Optional;
 import java.util.UUID;
+import org.code.api.domain.enums.SortingType;
 import org.code.api.domain.models.sorting.Sorting;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,5 +21,5 @@ public interface SortingRepository extends JpaRepository<Sorting, UUID> {
   Page<Sorting> findAllByOrganizationId(UUID organizationId, Pageable pageable);
 
   Page<Sorting> findAllByOrganizationIdAndSortingType(
-      UUID organizationId, org.code.api.domain.enums.SortingType sortingType, Pageable pageable);
+      UUID organizationId, SortingType sortingType, Pageable pageable);
 }

@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
       POSTGRES_DB: ${DB_NAME:-irr}
     volumes:
-      - database_data:/var/lib/postgresql/data
+      - database_final_v1:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 5s
@@ -66,7 +66,7 @@ services:
         read_only: true
         bind:
           create_host_path: false
-      - attachment_data:/data/uploads
+      - attachment_final_v1:/data/uploads
     depends_on:
       redis:
         condition: service_healthy
@@ -85,6 +85,7 @@ services:
     security_opt: ["no-new-privileges:true"]
     restart: unless-stopped
 volumes:
-  database_data:
-  attachment_data:
+  # ADR-0014: new volumes preserve the earlier unreleased schema and attachment snapshots.
+  database_final_v1:
+  attachment_final_v1:
   redis_data:

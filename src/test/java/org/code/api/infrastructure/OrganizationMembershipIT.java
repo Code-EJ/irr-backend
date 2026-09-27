@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -12,6 +13,7 @@ import java.util.concurrent.*;
 import org.code.api.domain.enums.UserRole;
 import org.code.api.domain.models.user.Session;
 import org.code.api.domain.ports.TokenPort;
+import org.code.api.infrastructure.development.DevelopmentOrganizationInitializer;
 import org.code.api.organizations.application.OrganizationService;
 import org.code.api.organizations.domain.MembershipRole;
 import org.code.api.support.PostgresIntegrationTest;
@@ -46,18 +48,18 @@ class OrganizationMembershipIT extends PostgresIntegrationTest {
   void organizationVisibilityRequiresExplicitMembership() throws Exception {
     UUID admin = user("ADMINISTRATOR"), member = user("REPRESENTATIVE");
     UUID org = create(admin);
-    mvc.perform(get("/api/organizations/{id}", org).header("Authorization", token(admin)))
+    mvc.perform(get("/api/v1/organizations/{id}", org).header("Authorization", token(admin)))
         .andExpect(status().isNotFound());
-    mvc.perform(get("/api/organizations/{id}", org).header("Authorization", token(member)))
+    mvc.perform(get("/api/v1/organizations/{id}", org).header("Authorization", token(member)))
         .andExpect(status().isNotFound());
     grant(admin, org, member, "MEMBER");
-    mvc.perform(get("/api/organizations/{id}", org).header("Authorization", token(member)))
+    mvc.perform(get("/api/v1/organizations/{id}", org).header("Authorization", token(member)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("id").value(org.toString()));
-    mvc.perform(get("/api/organizations").header("Authorization", token(member)))
+    mvc.perform(get("/api/v1/organizations").header("Authorization", token(member)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("totalElements").value(1));
-    mvc.perform(get("/api/organizations").header("Authorization", token(admin)))
+    mvc.perform(get("/api/v1/organizations").header("Authorization", token(admin)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("totalElements").value(0));
   }
@@ -71,7 +73,7 @@ class OrganizationMembershipIT extends PostgresIntegrationTest {
     UUID org = create(admin);
     grant(admin, org, member, "MANAGER");
     mvc.perform(
-            post("/api/organizations")
+            post("/api/v1/organizations")
                 .header("Authorization", token(member))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
@@ -79,16 +81,16 @@ class OrganizationMembershipIT extends PostgresIntegrationTest {
                         Map.of("name", "Forbidden", "organizationType", "Association"))))
         .andExpect(status().isForbidden());
     mvc.perform(
-            put("/api/organizations/{id}/members/{user}", org, other)
+            put("/api/v1/organizations/{id}/members/{user}", org, other)
                 .header("Authorization", token(member))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.writeValueAsString(Map.of("role", "MEMBER"))))
         .andExpect(status().isForbidden());
     mvc.perform(
-            delete("/api/organizations/{id}/members/{user}", org, member)
+            delete("/api/v1/organizations/{id}/members/{user}", org, member)
                 .header("Authorization", token(member)))
         .andExpect(status().isForbidden());
-    mvc.perform(get("/api/organizations")).andExpect(status().isUnauthorized());
+    mvc.perform(get("/api/v1/organizations")).andExpect(status().isUnauthorized());
   }
 
   /** Verifies revocation takes effect with the same bearer token and retains the audit trail. */
@@ -101,10 +103,10 @@ class OrganizationMembershipIT extends PostgresIntegrationTest {
     String bearer = token(member);
     for (int i = 0; i < 2; i++)
       mvc.perform(
-              delete("/api/organizations/{id}/members/{user}", org, member)
+              delete("/api/v1/organizations/{id}/members/{user}", org, member)
                   .header("Authorization", token(admin)))
           .andExpect(status().isNoContent());
-    mvc.perform(get("/api/organizations/{id}", org).header("Authorization", bearer))
+    mvc.perform(get("/api/v1/organizations/{id}", org).header("Authorization", bearer))
         .andExpect(status().isNotFound());
     assertThat(
             jdbc.queryForObject(
@@ -121,7 +123,7 @@ class OrganizationMembershipIT extends PostgresIntegrationTest {
                 member))
         .isFalse();
     grant(admin, org, member, "MANAGER");
-    mvc.perform(get("/api/organizations/{id}", org).header("Authorization", bearer))
+    mvc.perform(get("/api/v1/organizations/{id}", org).header("Authorization", bearer))
         .andExpect(status().isOk());
   }
 
@@ -138,15 +140,15 @@ class OrganizationMembershipIT extends PostgresIntegrationTest {
     grant(admin, org, member, "MEMBER");
     jdbc.update("UPDATE users SET is_active=false WHERE id=?", inactive);
     mvc.perform(
-            put("/api/organizations/{id}/members/{user}", org, inactive)
+            put("/api/v1/organizations/{id}/members/{user}", org, inactive)
                 .header("Authorization", token(admin))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.writeValueAsString(Map.of("role", "MEMBER"))))
         .andExpect(status().isNotFound());
     jdbc.update("UPDATE organization SET is_active=false WHERE id=?", org);
-    mvc.perform(get("/api/organizations/{id}", org).header("Authorization", token(member)))
+    mvc.perform(get("/api/v1/organizations/{id}", org).header("Authorization", token(member)))
         .andExpect(status().isNotFound());
-    mvc.perform(get("/api/organizations").header("Authorization", token(member)))
+    mvc.perform(get("/api/v1/organizations").header("Authorization", token(member)))
         .andExpect(jsonPath("totalElements").value(0));
   }
 
@@ -176,7 +178,7 @@ class OrganizationMembershipIT extends PostgresIntegrationTest {
                 Integer.class,
                 org))
         .isZero();
-    mvc.perform(get("/api/organizations/{id}", org).header("Authorization", token(member)))
+    mvc.perform(get("/api/v1/organizations/{id}", org).header("Authorization", token(member)))
         .andExpect(status().isOk());
   }
 
@@ -186,7 +188,7 @@ class OrganizationMembershipIT extends PostgresIntegrationTest {
     UUID admin = user("ADMINISTRATOR"), member = user("REPRESENTATIVE"), org = create(admin);
     var barrier = new CyclicBarrier(2);
     try (var pool = Executors.newFixedThreadPool(2)) {
-      var futures = new java.util.ArrayList<Future<?>>();
+      var futures = new ArrayList<Future<?>>();
       for (MembershipRole role : MembershipRole.values())
         futures.add(
             pool.submit(
@@ -225,10 +227,10 @@ class OrganizationMembershipIT extends PostgresIntegrationTest {
   void validatesPaginationAndOrganizationFields() throws Exception {
     UUID admin = user("ADMINISTRATOR");
     mvc.perform(
-            get("/api/organizations").header("Authorization", token(admin)).param("size", "101"))
+            get("/api/v1/organizations").header("Authorization", token(admin)).param("size", "101"))
         .andExpect(status().isBadRequest());
     mvc.perform(
-            post("/api/organizations")
+            post("/api/v1/organizations")
                 .header("Authorization", token(admin))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
@@ -249,25 +251,26 @@ class OrganizationMembershipIT extends PostgresIntegrationTest {
         json.writeValueAsString(
             Map.of("name", "Updated organization", "organizationType", "Association"));
     mvc.perform(
-            put("/api/organizations/{id}", org)
+            put("/api/v1/organizations/{id}", org)
                 .header("Authorization", token(member))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body))
         .andExpect(status().isForbidden());
     mvc.perform(
-            put("/api/organizations/{id}", org)
+            put("/api/v1/organizations/{id}", org)
                 .header("Authorization", token(admin))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body))
         .andExpect(status().isOk())
         .andExpect(jsonPath("name").value("Updated organization"));
     mvc.perform(
-            get("/api/organizations/{id}/membership", org).header("Authorization", token(member)))
+            get("/api/v1/organizations/{id}/membership", org)
+                .header("Authorization", token(member)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("role").value("MANAGER"));
-    mvc.perform(delete("/api/organizations/{id}", org).header("Authorization", token(admin)))
+    mvc.perform(delete("/api/v1/organizations/{id}", org).header("Authorization", token(admin)))
         .andExpect(status().isNoContent());
-    mvc.perform(get("/api/organizations/{id}", org).header("Authorization", token(member)))
+    mvc.perform(get("/api/v1/organizations/{id}", org).header("Authorization", token(member)))
         .andExpect(status().isNotFound());
     assertThat(
             jdbc.queryForObject(
@@ -289,8 +292,7 @@ class OrganizationMembershipIT extends PostgresIntegrationTest {
   void developmentOrganizationSeedPreservesRevocation() {
     UUID admin = user("ADMINISTRATOR"), org = UUID.randomUUID();
     var initializer =
-        new org.code.api.infrastructure.development.DevelopmentOrganizationInitializer(
-            jdbc, org, "Local fixture", admin + "@example.test");
+        new DevelopmentOrganizationInitializer(jdbc, org, "Local fixture", admin + "@example.test");
     var tx = new TransactionTemplate(transactions);
     tx.executeWithoutResult(status -> initializer.run(null));
     jdbc.update("UPDATE organization_membership SET is_active=false WHERE organization_id=?", org);
@@ -333,7 +335,7 @@ class OrganizationMembershipIT extends PostgresIntegrationTest {
   private UUID create(UUID actor) throws Exception {
     var response =
         mvc.perform(
-                post("/api/organizations")
+                post("/api/v1/organizations")
                     .header("Authorization", token(actor))
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(
@@ -351,7 +353,7 @@ class OrganizationMembershipIT extends PostgresIntegrationTest {
 
   private void grant(UUID actor, UUID org, UUID user, String role) throws Exception {
     mvc.perform(
-            put("/api/organizations/{id}/members/{user}", org, user)
+            put("/api/v1/organizations/{id}/members/{user}", org, user)
                 .header("Authorization", token(actor))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.writeValueAsString(Map.of("role", role))))

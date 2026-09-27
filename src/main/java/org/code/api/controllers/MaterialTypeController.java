@@ -24,7 +24,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping({"/api/materials/types", "/api/v1/materials/types"})
+@RequestMapping("/api/v1/materials/types")
 public class MaterialTypeController {
 
   private final MaterialTypePort typePort;

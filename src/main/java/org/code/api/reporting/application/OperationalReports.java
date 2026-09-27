@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -23,9 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 @lombok.RequiredArgsConstructor
 @PreAuthorize("isAuthenticated()")
-@Transactional(
-    readOnly = true,
-    isolation = org.springframework.transaction.annotation.Isolation.REPEATABLE_READ)
+@Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
 public class OperationalReports {
   private final JdbcTemplate jdbc;
   private final OrganizationScope scope;

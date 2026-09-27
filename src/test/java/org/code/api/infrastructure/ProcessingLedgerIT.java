@@ -6,9 +6,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import org.code.api.domain.enums.UserRole;
 import org.code.api.domain.models.user.Session;
 import org.code.api.domain.ports.TokenPort;
@@ -16,9 +24,13 @@ import org.code.api.support.PostgresIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 /**
  * Exercises conserved quantities, atomic rollback, scope isolation and command replay in
@@ -113,10 +125,10 @@ class ProcessingLedgerIT extends PostgresIntegrationTest {
             () ->
                 jdbc.update(
                     "UPDATE stock_movement SET weight_delta_kg=0 WHERE organization_id=?", f.org()))
-        .isInstanceOf(org.springframework.dao.DataIntegrityViolationException.class);
+        .isInstanceOf(DataIntegrityViolationException.class);
     assertThatThrownBy(
             () -> jdbc.update("DELETE FROM stock_operation WHERE organization_id=?", f.org()))
-        .isInstanceOf(org.springframework.dao.DataIntegrityViolationException.class);
+        .isInstanceOf(DataIntegrityViolationException.class);
     balance(f, "100", "10");
   }
 
@@ -172,18 +184,15 @@ class ProcessingLedgerIT extends PostgresIntegrationTest {
             json.readTree(request(f, "POST", "/api/v1/sales", draft, 201)).get("id").asText());
     balance(f, "100", "10");
     String transition = json.writeValueAsString(Map.of("version", 0));
-    var gate = new java.util.concurrent.CyclicBarrier(2);
-    java.util.List<org.springframework.test.web.servlet.MvcResult> results =
-        new java.util.ArrayList<>();
-    try (var pool = java.util.concurrent.Executors.newFixedThreadPool(2)) {
-      var futures =
-          new java.util.ArrayList<
-              java.util.concurrent.Future<org.springframework.test.web.servlet.MvcResult>>();
+    var gate = new CyclicBarrier(2);
+    List<MvcResult> results = new ArrayList<>();
+    try (var pool = Executors.newFixedThreadPool(2)) {
+      var futures = new ArrayList<Future<MvcResult>>();
       for (UUID id : List.of(first, second))
         futures.add(
             pool.submit(
                 () -> {
-                  gate.await(10, java.util.concurrent.TimeUnit.SECONDS);
+                  gate.await(10, TimeUnit.SECONDS);
                   return mvc.perform(
                           post("/api/v1/sales/{id}/post", id)
                               .header("Authorization", token(f))
@@ -193,7 +202,7 @@ class ProcessingLedgerIT extends PostgresIntegrationTest {
                               .content(transition))
                       .andReturn();
                 }));
-      for (var future : futures) results.add(future.get(20, java.util.concurrent.TimeUnit.SECONDS));
+      for (var future : futures) results.add(future.get(20, TimeUnit.SECONDS));
     }
     assertThat(results.stream().map(r -> r.getResponse().getStatus()).toList())
         .containsExactlyInAnyOrder(200, 409);
@@ -247,7 +256,7 @@ class ProcessingLedgerIT extends PostgresIntegrationTest {
         f.org(),
         f.actor());
     var fields =
-        new java.util.HashMap<String, Object>(
+        new HashMap<String, Object>(
             Map.of(
                 "saleDate",
                 "2026-09-27T10:00:00Z",
@@ -328,7 +337,7 @@ class ProcessingLedgerIT extends PostgresIntegrationTest {
         f.org(),
         f.actor());
     var fields =
-        new java.util.HashMap<String, Object>(
+        new HashMap<String, Object>(
             Map.of(
                 "realizationDate",
                 "2026-09-27T10:00:00Z",
@@ -474,7 +483,7 @@ class ProcessingLedgerIT extends PostgresIntegrationTest {
                         address)),
                 201));
     assertThat(donor.get("address").get("city").asText()).isEqualTo("Example City");
-    java.time.LocalDate date = java.time.LocalDate.now(java.time.ZoneOffset.UTC).minusDays(10);
+    LocalDate date = LocalDate.now(ZoneOffset.UTC).minusDays(10);
     String query = "?from=" + date + "&to=" + date;
     var before = json.readTree(request(f, "GET", "/api/v1/reports/summary" + query, null, 200));
     assertThat(new BigDecimal(before.get("donationWeightKg").asText())).isZero();
@@ -511,8 +520,7 @@ class ProcessingLedgerIT extends PostgresIntegrationTest {
   private String request(Fixture f, String method, String path, String body, int expected)
       throws Exception {
     var builder =
-        org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request(
-                org.springframework.http.HttpMethod.valueOf(method), path)
+        MockMvcRequestBuilders.request(HttpMethod.valueOf(method), path)
             .header("Authorization", token(f))
             .header("X-Organization-Id", f.org());
     if (body != null) builder.contentType(MediaType.APPLICATION_JSON).content(body);

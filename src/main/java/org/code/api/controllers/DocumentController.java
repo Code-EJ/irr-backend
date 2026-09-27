@@ -23,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 @RestController
-@RequestMapping({"/api/documents", "/api/v1/documents"})
+@RequestMapping("/api/v1/documents")
 public class DocumentController {
   private final DocumentService documents;
 

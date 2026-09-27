@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.data.redis.RedisHealthIndicator;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -54,7 +55,7 @@ class RedisInfrastructureIT extends PostgresIntegrationTest {
                   connection.ping();
                 }
               })
-          .isInstanceOf(org.springframework.dao.DataAccessException.class)
+          .isInstanceOf(DataAccessException.class)
           .hasStackTraceContaining("NOAUTH");
     } finally {
       factory.destroy();

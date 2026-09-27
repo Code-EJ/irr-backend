@@ -1,5 +1,6 @@
 package org.code.api.services;
 
+import java.nio.charset.StandardCharsets;
 import org.code.api.domain.enums.UserRole;
 import org.code.api.domain.models.user.User;
 import org.code.api.domain.ports.EncryptionPort;
@@ -47,7 +48,7 @@ public class PartnerProvisioningService {
     if (request.userRole() == UserRole.ADMINISTRATOR)
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Administrator creation is not part of partner provisioning");
-    if (request.password().getBytes(java.nio.charset.StandardCharsets.UTF_8).length >= 72)
+    if (request.password().getBytes(StandardCharsets.UTF_8).length >= 72)
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Password must contain fewer than 72 UTF-8 bytes");
     if (users.existsByEmail(request.email()))

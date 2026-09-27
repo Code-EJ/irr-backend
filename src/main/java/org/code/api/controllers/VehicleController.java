@@ -28,7 +28,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping({"/api/vehicles", "/api/v1/vehicles"})
+@RequestMapping("/api/v1/vehicles")
 public class VehicleController {
 
   private final VehiclePort vehiclePort;

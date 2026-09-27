@@ -1,5 +1,6 @@
 package org.code.api.infrastructure.development;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import org.code.api.domain.enums.UserRole;
 import org.code.api.domain.models.user.User;
@@ -69,7 +70,7 @@ public class DevelopmentAdministratorInitializer implements ApplicationRunner {
         || email.chars().anyMatch(Character::isWhitespace)
         || !email.matches("[^ @]+@[^ @]+[.][^ @]+")
         || password.length() < 12
-        || password.getBytes(java.nio.charset.StandardCharsets.UTF_8).length > 72
+        || password.getBytes(StandardCharsets.UTF_8).length > 72
         || password.startsWith("replace-with-")) {
       throw new IllegalStateException(
           "Configure a valid development administrator and a non-placeholder password of 12-72"

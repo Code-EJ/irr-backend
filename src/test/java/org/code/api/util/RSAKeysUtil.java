@@ -1,5 +1,6 @@
 package org.code.api.util;
 
+import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
@@ -20,7 +21,7 @@ public final class RSAKeysUtil {
       KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
       generator.initialize(2048);
       return generator.generateKeyPair();
-    } catch (java.security.GeneralSecurityException exception) {
+    } catch (GeneralSecurityException exception) {
       throw new IllegalStateException("Cannot generate test keys", exception);
     }
   }

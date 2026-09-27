@@ -2,6 +2,8 @@ package org.code.api.infrastructure;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import javax.sql.DataSource;
 import org.code.api.support.PostgresIntegrationTest;
@@ -13,7 +15,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * Verifies fresh baseline creation, incremental upgrade and transactional migration failure.
- * Example V7 migrations live only in test resources and never enter the runtime image.
+ * Example V2 migrations live only in test resources and never enter the runtime image.
  *
  * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
@@ -21,32 +23,18 @@ class InventoryMigrationIT extends PostgresIntegrationTest {
   @Autowired DataSource dataSource;
   @Autowired JdbcTemplate jdbc;
 
-  /**
-   * Verifies the deployed V1 database upgrades to the cleanup queue and organizations without
-   * changing accounts.
-   */
+  /** An applied final baseline cannot be silently repaired after its checksum changes. */
   @Test
-  void runtimeUpgradesPreserveExistingAccounts() {
-    String schema = "upgrade_" + UUID.randomUUID().toString().replace("-", "");
-    Flyway.configure()
-        .dataSource(dataSource)
-        .schemas(schema)
-        .defaultSchema(schema)
-        .locations("classpath:db/migrations")
-        .target("1")
-        .baselineOnMigrate(false)
-        .load()
-        .migrate();
+  void rejectsChangedBaselineWithoutLosingRecords() {
+    String schema = baseline();
     UUID id = user(schema);
-    assertThat(flyway(schema).migrate().migrationsExecuted).isEqualTo(5);
+    jdbc.update(
+        "UPDATE " + schema + ".flyway_schema_history SET checksum=checksum+1 WHERE version='1'");
+    assertThatThrownBy(() -> flyway(schema).migrate()).isInstanceOf(FlywayException.class);
     assertThat(
             jdbc.queryForObject(
                 "SELECT count(*) FROM " + schema + ".users WHERE id=?", Integer.class, id))
         .isEqualTo(1);
-    assertThat(
-            jdbc.queryForObject(
-                "SELECT count(*) FROM " + schema + ".attachment_file_deletion", Integer.class))
-        .isZero();
   }
 
   /** Verifies an incremental migration preserves data created on the current runtime migrations. */
@@ -65,7 +53,7 @@ class InventoryMigrationIT extends PostgresIntegrationTest {
             jdbc.queryForObject(
                 "SELECT count(*) FROM "
                     + schema
-                    + ".flyway_schema_history WHERE version='7' AND success",
+                    + ".flyway_schema_history WHERE version='2' AND success",
                 Integer.class))
         .isEqualTo(1);
     assertThat(upgrade.migrate().migrationsExecuted).isZero();
@@ -86,7 +74,7 @@ class InventoryMigrationIT extends PostgresIntegrationTest {
         .isEqualTo(1);
     assertThat(
             jdbc.queryForObject(
-                "SELECT count(*) FROM " + schema + ".flyway_schema_history WHERE version='7'",
+                "SELECT count(*) FROM " + schema + ".flyway_schema_history WHERE version='2'",
                 Integer.class))
         .isZero();
     assertThat(
@@ -114,9 +102,9 @@ class InventoryMigrationIT extends PostgresIntegrationTest {
   }
 
   private Flyway flyway(String schema, String... additionalLocations) {
-    var locations = new java.util.ArrayList<String>();
+    var locations = new ArrayList<String>();
     locations.add("classpath:db/migrations");
-    locations.addAll(java.util.List.of(additionalLocations));
+    locations.addAll(List.of(additionalLocations));
     return Flyway.configure()
         .dataSource(dataSource)
         .schemas(schema)

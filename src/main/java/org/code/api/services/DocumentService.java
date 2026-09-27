@@ -1,14 +1,20 @@
 package org.code.api.services;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.code.api.domain.models.base.Attachment;
 import org.code.api.domain.ports.AuthenticatedUserProvider;
+import org.code.api.domain.ports.OrganizationScope;
 import org.code.api.dto.attachment.AttachmentResponse;
 import org.code.api.infrastructure.repositories.AttachmentRepository;
 import org.code.api.infrastructure.repositories.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
@@ -31,8 +37,8 @@ public class DocumentService {
   private final StorageService storage;
   private final AuthenticatedUserProvider actor;
   private final AttachmentCleanupService cleanup;
-  private final org.springframework.jdbc.core.JdbcTemplate jdbc;
-  private final org.code.api.domain.ports.OrganizationScope scope;
+  private final JdbcTemplate jdbc;
+  private final OrganizationScope scope;
 
   /**
    * Configures attachment boundaries.
@@ -49,8 +55,8 @@ public class DocumentService {
       StorageService storage,
       AuthenticatedUserProvider actor,
       AttachmentCleanupService cleanup,
-      org.code.api.domain.ports.OrganizationScope scope,
-      org.springframework.jdbc.core.JdbcTemplate jdbc) {
+      OrganizationScope scope,
+      JdbcTemplate jdbc) {
     this.attachments = attachments;
     this.users = users;
     this.storage = storage;
@@ -139,7 +145,7 @@ public class DocumentService {
   public void delete(UUID id) {
     Attachment attachment = owned(id);
     if (!attachment.getCreator().getId().equals(actor.getCurrentUserId()) && !scope.manager())
-      throw new org.springframework.security.access.AccessDeniedException(
+      throw new AccessDeniedException(
           "Only the uploader or organization manager can delete an attachment");
     attachments.delete(attachment);
     attachments.flush();
@@ -148,8 +154,7 @@ public class DocumentService {
 
   /** Lists safe metadata visible to the selected organization. */
   @Transactional(readOnly = true)
-  public org.springframework.data.domain.Page<AttachmentResponse> list(
-      org.springframework.data.domain.Pageable page) {
+  public Page<AttachmentResponse> list(Pageable page) {
     return attachments.findAllByOrganizationId(scope.organizationId(), page).map(this::metadata);
   }
 
@@ -164,7 +169,7 @@ public class DocumentService {
   public AttachmentResponse rename(UUID id, String name) {
     Attachment attachment = owned(id);
     if (!attachment.getCreator().getId().equals(actor.getCurrentUserId()) && !scope.manager())
-      throw new org.springframework.security.access.AccessDeniedException(
+      throw new AccessDeniedException(
           "Only the uploader or organization manager can rename an attachment");
     if (name == null
         || name.isBlank()
@@ -200,7 +205,7 @@ public class DocumentService {
         && header[3] == 'F'
         && header[4] == '-') return "application/pdf";
     if (header.length >= 8
-        && java.util.Arrays.equals(header, new byte[] {(byte) 137, 80, 78, 71, 13, 10, 26, 10}))
+        && Arrays.equals(header, new byte[] {(byte) 137, 80, 78, 71, 13, 10, 26, 10}))
       return "image/png";
     if (header.length >= 3
         && header[0] == (byte) 255

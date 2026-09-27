@@ -5,11 +5,20 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import org.code.api.domain.enums.UserRole;
 import org.code.api.domain.models.user.Session;
 import org.code.api.domain.models.user.User;
@@ -18,14 +27,17 @@ import org.code.api.domain.ports.EncryptionPort;
 import org.code.api.domain.ports.TokenPort;
 import org.code.api.infrastructure.repositories.UserRepository;
 import org.code.api.services.AttachmentCleanupService;
+import org.code.api.services.AttachmentOrphanReconciler;
 import org.code.api.services.DocumentService;
 import org.code.api.services.StorageService;
 import org.code.api.support.PostgresIntegrationTest;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -35,6 +47,8 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * Exercises real signatures, PostgreSQL transactions, HTTP authorization and file lifecycle. Each
@@ -45,8 +59,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 @AutoConfigureMockMvc
 class IdentityAttachmentIT extends PostgresIntegrationTest {
   private static final Path UPLOADS = uploads();
-  private static final byte[] PDF =
-      "%PDF-1.7 fixture".getBytes(java.nio.charset.StandardCharsets.UTF_8);
+  private static final byte[] PDF = "%PDF-1.7 fixture".getBytes(StandardCharsets.UTF_8);
   @Autowired MockMvc mvc;
   @Autowired ObjectMapper json;
   @Autowired JdbcTemplate jdbc;
@@ -75,7 +88,7 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
         List.of(UserRole.CITY_HALL, UserRole.ORGANIZATION, UserRole.REPRESENTATIVE)) {
       String email = UUID.randomUUID() + "@example.test";
       mvc.perform(
-              post("/api/users")
+              post("/api/v1/users")
                   .header("Authorization", admin)
                   .contentType(MediaType.APPLICATION_JSON)
                   .content(partner(email, role)))
@@ -95,18 +108,18 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
   @Test
   void provisioningRejectsUnauthorizedAndAdministratorTargets() throws Exception {
     String body = partner(UUID.randomUUID() + "@example.test", UserRole.REPRESENTATIVE);
-    mvc.perform(post("/api/users").contentType(MediaType.APPLICATION_JSON).content(body))
+    mvc.perform(post("/api/v1/users").contentType(MediaType.APPLICATION_JSON).content(body))
         .andExpect(status().isUnauthorized());
     for (UserRole role :
         List.of(UserRole.CITY_HALL, UserRole.ORGANIZATION, UserRole.REPRESENTATIVE))
       mvc.perform(
-              post("/api/users")
+              post("/api/v1/users")
                   .header("Authorization", token(account(role)))
                   .contentType(MediaType.APPLICATION_JSON)
                   .content(body))
           .andExpect(status().isForbidden());
     mvc.perform(
-            post("/api/users")
+            post("/api/v1/users")
                 .header("Authorization", token(account(UserRole.ADMINISTRATOR)))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(partner(UUID.randomUUID() + "@example.test", UserRole.ADMINISTRATOR)))
@@ -119,7 +132,7 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
     User existing = account(UserRole.REPRESENTATIVE);
     String admin = token(account(UserRole.ADMINISTRATOR));
     mvc.perform(
-            post("/api/users")
+            post("/api/v1/users")
                 .header("Authorization", admin)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(partner(existing.getEmail(), UserRole.REPRESENTATIVE)))
@@ -136,7 +149,7 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
                 "userRole",
                 "REPRESENTATIVE"));
     mvc.perform(
-            post("/api/users")
+            post("/api/v1/users")
                 .header("Authorization", admin)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body))
@@ -148,13 +161,13 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
   void registrationIsRetiredAndSessionPrefixIsProtected() throws Exception {
     String actor = token(account(UserRole.REPRESENTATIVE));
     long count = users.count();
-    mvc.perform(post("/api/session/register")).andExpect(status().isUnauthorized());
+    mvc.perform(post("/api/v1/session/register")).andExpect(status().isUnauthorized());
     mvc.perform(
-            post("/api/session/register")
+            post("/api/v1/session/register")
                 .header("Authorization", actor)
                 .header("X-Organization-Id", tokenOrganizations.get(actor)))
-        .andExpect(status().isGone());
-    mvc.perform(get("/api/session/unknown")).andExpect(status().isUnauthorized());
+        .andExpect(status().isNotFound());
+    mvc.perform(get("/api/v1/session/unknown")).andExpect(status().isUnauthorized());
     assertThat(users.count()).isEqualTo(count);
   }
 
@@ -165,31 +178,27 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
     String bearer = token(admin);
     jdbc.update("UPDATE users SET user_role='REPRESENTATIVE' WHERE id=?", admin.getId());
     mvc.perform(
-            post("/api/users")
+            post("/api/v1/users")
                 .header("Authorization", bearer)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(partner(UUID.randomUUID() + "@example.test", UserRole.ORGANIZATION)))
         .andExpect(status().isForbidden());
     jdbc.update("UPDATE users SET is_active=false WHERE id=?", admin.getId());
-    mvc.perform(get("/api/vehicles").header("Authorization", bearer))
+    mvc.perform(get("/api/v1/vehicles").header("Authorization", bearer))
         .andExpect(status().isUnauthorized());
-    mvc.perform(get("/api/vehicles")).andExpect(status().isUnauthorized());
+    mvc.perform(get("/api/v1/vehicles")).andExpect(status().isUnauthorized());
   }
 
   /** Verifies error responses never echo bearer tokens or reveal account existence. */
   @Test
   void authenticationErrorsAreGeneric() throws Exception {
-    mvc.perform(get("/api/vehicles").header("Authorization", "Bearer invalid-secret-token"))
+    mvc.perform(get("/api/v1/vehicles").header("Authorization", "Bearer invalid-secret-token"))
         .andExpect(status().isUnauthorized())
-        .andExpect(
-            content()
-                .string(
-                    org.hamcrest.Matchers.not(
-                        org.hamcrest.Matchers.containsString("invalid-secret-token"))));
+        .andExpect(content().string(Matchers.not(Matchers.containsString("invalid-secret-token"))));
     User user = account(UserRole.REPRESENTATIVE);
     String known =
         mvc.perform(
-                post("/api/session/authenticate")
+                post("/api/v1/session/authenticate")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(
                         json.writeValueAsString(
@@ -200,7 +209,7 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
             .getContentAsString();
     String unknown =
         mvc.perform(
-                post("/api/session/authenticate")
+                post("/api/v1/session/authenticate")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(
                         json.writeValueAsString(
@@ -220,14 +229,14 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
   @Test
   void corsAndSwaggerMatchRuntimePolicy() throws Exception {
     mvc.perform(
-            options("/api/users")
+            options("/api/v1/users")
                 .header("Origin", "http://localhost:5173")
                 .header("Access-Control-Request-Method", "POST")
                 .header("Access-Control-Request-Headers", "authorization,content-type"))
         .andExpect(status().isOk())
         .andExpect(header().string("Access-Control-Allow-Origin", "http://localhost:5173"));
     mvc.perform(
-            options("/api/users")
+            options("/api/v1/users")
                 .header("Origin", "https://untrusted.example")
                 .header("Access-Control-Request-Method", "POST"))
         .andExpect(status().isForbidden());
@@ -238,11 +247,11 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString());
-    assertThat(api.at("/paths/~1api~1session~1authenticate/post/security").isEmpty()).isTrue();
-    assertThat(api.at("/paths/~1api~1session~1register/post/deprecated").asBoolean()).isTrue();
+    assertThat(api.at("/paths/~1api~1v1~1session~1authenticate/post/security").isEmpty()).isTrue();
+    assertThat(api.at("/paths/~1api~1v1~1session~1register").isMissingNode()).isTrue();
     assertThat(
             api.at(
-                    "/paths/~1api~1documents/post/responses/201/content/application~1json/schema/$ref")
+                    "/paths/~1api~1v1~1documents/post/responses/201/content/application~1json/schema/$ref")
                 .asText())
         .contains("AttachmentResponse");
   }
@@ -257,7 +266,7 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
       assertThat(actors.getCurrentUserRoles()).containsExactly(UserRole.ORGANIZATION);
     } finally {
       SecurityContextHolder.clearContext();
-      org.springframework.web.context.request.RequestContextHolder.resetRequestAttributes();
+      RequestContextHolder.resetRequestAttributes();
     }
   }
 
@@ -267,7 +276,7 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
     String owner = token(account(UserRole.REPRESENTATIVE));
     UUID id = upload(owner);
     mvc.perform(
-            get("/api/documents/{id}/download", id)
+            get("/api/v1/documents/{id}/download", id)
                 .header("Authorization", owner)
                 .header("X-Organization-Id", tokenOrganizations.get(owner)))
         .andExpect(status().isOk())
@@ -275,12 +284,12 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
     for (UserRole role : List.of(UserRole.ADMINISTRATOR, UserRole.REPRESENTATIVE)) {
       String foreign = token(account(role));
       mvc.perform(
-              get("/api/documents/{id}/download", id)
+              get("/api/v1/documents/{id}/download", id)
                   .header("Authorization", foreign)
                   .header("X-Organization-Id", tokenOrganizations.get(foreign)))
           .andExpect(status().isNotFound());
       mvc.perform(
-              delete("/api/documents/{id}", id)
+              delete("/api/v1/documents/{id}", id)
                   .header("Authorization", foreign)
                   .header("X-Organization-Id", tokenOrganizations.get(foreign)))
           .andExpect(status().isNotFound());
@@ -292,7 +301,7 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
   void unsupportedContentAndUnsafeNamesAreRejected() throws Exception {
     String actor = token(account(UserRole.REPRESENTATIVE));
     mvc.perform(
-            multipart("/api/documents")
+            multipart("/api/v1/documents")
                 .file(
                     new MockMultipartFile(
                         "documento", "payload.pdf", "application/pdf", "<script>".getBytes()))
@@ -300,7 +309,7 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
                 .header("X-Organization-Id", tokenOrganizations.get(actor)))
         .andExpect(status().isBadRequest());
     mvc.perform(
-            multipart("/api/documents")
+            multipart("/api/v1/documents")
                 .file(new MockMultipartFile("documento", "../payload.pdf", "application/pdf", PDF))
                 .header("Authorization", actor)
                 .header("X-Organization-Id", tokenOrganizations.get(actor)))
@@ -314,7 +323,7 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
     UUID id = upload(actor);
     String path = stored(id);
     mvc.perform(
-            delete("/api/documents/{id}", id)
+            delete("/api/v1/documents/{id}", id)
                 .header("Authorization", actor)
                 .header("X-Organization-Id", tokenOrganizations.get(actor)))
         .andExpect(status().isAccepted());
@@ -346,7 +355,7 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
         id,
         owner.getId());
     mvc.perform(
-            delete("/api/documents/{id}", id)
+            delete("/api/v1/documents/{id}", id)
                 .header("Authorization", actor)
                 .header("X-Organization-Id", tokenOrganizations.get(actor)))
         .andExpect(status().isConflict());
@@ -371,7 +380,7 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
               });
     } finally {
       SecurityContextHolder.clearContext();
-      org.springframework.web.context.request.RequestContextHolder.resetRequestAttributes();
+      RequestContextHolder.resetRequestAttributes();
     }
     assertThat(stored(id)).isEqualTo(path);
     assertThat(Files.exists(Path.of(path))).isTrue();
@@ -390,14 +399,14 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
               tx -> {
                 try {
                   path[0] = stored(documents.upload(pdf()).id());
-                } catch (java.io.IOException exception) {
+                } catch (IOException exception) {
                   throw new IllegalStateException(exception);
                 }
                 tx.setRollbackOnly();
               });
     } finally {
       SecurityContextHolder.clearContext();
-      org.springframework.web.context.request.RequestContextHolder.resetRequestAttributes();
+      RequestContextHolder.resetRequestAttributes();
     }
     assertThat(Files.exists(Path.of(path[0]))).isFalse();
     assertThat(
@@ -504,10 +513,10 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
   void partnerLifecyclePreservesAdministratorBoundaryAndRevokesDisabledAccess() throws Exception {
     User admin = account(UserRole.ADMINISTRATOR), partner = account(UserRole.REPRESENTATIVE);
     String adminToken = token(admin), partnerToken = token(partner);
-    mvc.perform(get("/api/users/me").header("Authorization", partnerToken))
+    mvc.perform(get("/api/v1/users/me").header("Authorization", partnerToken))
         .andExpect(status().isOk())
         .andExpect(jsonPath("passwordHash").doesNotExist());
-    mvc.perform(get("/api/users").header("Authorization", partnerToken))
+    mvc.perform(get("/api/v1/users").header("Authorization", partnerToken))
         .andExpect(status().isForbidden());
     String update =
         json.writeValueAsString(
@@ -519,30 +528,30 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
                 "userRole",
                 "CITY_HALL"));
     mvc.perform(
-            put("/api/users/{id}", partner.getId())
+            put("/api/v1/users/{id}", partner.getId())
                 .header("Authorization", adminToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(update))
         .andExpect(status().isOk())
         .andExpect(jsonPath("userRole").value("CITY_HALL"));
-    mvc.perform(get("/api/users/me").header("Authorization", partnerToken))
+    mvc.perform(get("/api/v1/users/me").header("Authorization", partnerToken))
         .andExpect(status().isOk())
         .andExpect(jsonPath("userRole").value("CITY_HALL"));
     mvc.perform(
-            put("/api/users/{id}", admin.getId())
+            put("/api/v1/users/{id}", admin.getId())
                 .header("Authorization", adminToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(update))
         .andExpect(status().isConflict());
-    mvc.perform(delete("/api/users/{id}", admin.getId()).header("Authorization", adminToken))
+    mvc.perform(delete("/api/v1/users/{id}", admin.getId()).header("Authorization", adminToken))
         .andExpect(status().isConflict());
-    mvc.perform(delete("/api/users/{id}", partner.getId()).header("Authorization", adminToken))
+    mvc.perform(delete("/api/v1/users/{id}", partner.getId()).header("Authorization", adminToken))
         .andExpect(status().isNoContent());
-    mvc.perform(get("/api/users/me").header("Authorization", partnerToken))
+    mvc.perform(get("/api/v1/users/me").header("Authorization", partnerToken))
         .andExpect(status().isUnauthorized());
   }
 
-  @Autowired org.code.api.services.AttachmentOrphanReconciler orphans;
+  @Autowired AttachmentOrphanReconciler orphans;
 
   /**
    * Recovery queues only old generated files without metadata; referenced and recent bytes survive.
@@ -552,9 +561,7 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
     String orphan = storage.store(pdf()), recent = storage.store(pdf());
     UUID ownedId = upload(token(account(UserRole.REPRESENTATIVE)));
     String owned = stored(ownedId);
-    var old =
-        java.nio.file.attribute.FileTime.from(
-            java.time.Instant.now().minus(48, java.time.temporal.ChronoUnit.HOURS));
+    var old = FileTime.from(Instant.now().minus(48, ChronoUnit.HOURS));
     Files.setLastModifiedTime(Path.of(orphan), old);
     Files.setLastModifiedTime(Path.of(owned), old);
     Path unrelated = UPLOADS.resolve("operator-note.txt");
@@ -580,9 +587,9 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
   /** Exclusive reconciliation never races an upload holding the shared transaction lock. */
   @Test
   void orphanReconciliationSkipsInFlightUploads() throws Exception {
-    var entered = new java.util.concurrent.CountDownLatch(1);
-    var release = new java.util.concurrent.CountDownLatch(1);
-    try (var pool = java.util.concurrent.Executors.newSingleThreadExecutor()) {
+    var entered = new CountDownLatch(1);
+    var release = new CountDownLatch(1);
+    try (var pool = Executors.newSingleThreadExecutor()) {
       var future =
           pool.submit(
               () ->
@@ -594,7 +601,7 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
                                     + " pg_advisory_xact_lock_shared(hashtext('irr-attachment-storage'))");
                             entered.countDown();
                             try {
-                              if (!release.await(10, java.util.concurrent.TimeUnit.SECONDS))
+                              if (!release.await(10, TimeUnit.SECONDS))
                                 throw new IllegalStateException("Upload fixture timed out");
                             } catch (InterruptedException error) {
                               Thread.currentThread().interrupt();
@@ -602,16 +609,16 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
                             }
                           }));
       try {
-        assertThat(entered.await(10, java.util.concurrent.TimeUnit.SECONDS)).isTrue();
+        assertThat(entered.await(10, TimeUnit.SECONDS)).isTrue();
         assertThat(orphans.reconcile()).isZero();
       } finally {
         release.countDown();
       }
-      future.get(10, java.util.concurrent.TimeUnit.SECONDS);
+      future.get(10, TimeUnit.SECONDS);
     }
   }
 
-  private final java.util.Map<String, UUID> tokenOrganizations = new java.util.HashMap<>();
+  private final Map<String, UUID> tokenOrganizations = new HashMap<>();
 
   private User account(UserRole role) {
     User user =
@@ -669,7 +676,7 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
   private UUID upload(String actor) throws Exception {
     var response =
         mvc.perform(
-                multipart("/api/documents")
+                multipart("/api/v1/documents")
                     .file(pdf())
                     .header("Authorization", actor)
                     .header("X-Organization-Id", tokenOrganizations.get(actor)))
@@ -693,10 +700,9 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
   }
 
   private void identify(User user) {
-    var request = new org.springframework.mock.web.MockHttpServletRequest();
+    var request = new MockHttpServletRequest();
     request.addHeader("X-Organization-Id", user.getId().toString());
-    org.springframework.web.context.request.RequestContextHolder.setRequestAttributes(
-        new org.springframework.web.context.request.ServletRequestAttributes(request));
+    RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
     SecurityContextHolder.getContext()
         .setAuthentication(
             new UsernamePasswordAuthenticationToken(
@@ -708,7 +714,7 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
   private static Path uploads() {
     try {
       return Files.createTempDirectory("irr-attachment-it-");
-    } catch (java.io.IOException exception) {
+    } catch (IOException exception) {
       throw new IllegalStateException(exception);
     }
   }

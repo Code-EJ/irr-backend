@@ -3,13 +3,19 @@ package org.code.api.services;
 import static org.assertj.core.api.Assertions.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import org.code.api.domain.models.inventory.InventoryBalance;
 import org.code.api.infrastructure.repositories.InventoryBalanceRepository;
 import org.code.api.support.PostgresIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -29,30 +35,27 @@ class InventoryBalanceConcurrencyIT extends PostgresIntegrationTest {
   @Test
   void concurrentFirstInsertsCommitExactlyOneBalance() throws Exception {
     UUID subtype = fixture();
-    var start = new java.util.concurrent.CountDownLatch(1);
-    var ready = new java.util.concurrent.CountDownLatch(2);
-    try (var executor = java.util.concurrent.Executors.newFixedThreadPool(2)) {
-      java.util.concurrent.Callable<Boolean> insert =
+    var start = new CountDownLatch(1);
+    var ready = new CountDownLatch(2);
+    try (var executor = Executors.newFixedThreadPool(2)) {
+      Callable<Boolean> insert =
           () -> {
             ready.countDown();
-            if (!start.await(10, java.util.concurrent.TimeUnit.SECONDS)) {
+            if (!start.await(10, TimeUnit.SECONDS)) {
               throw new IllegalStateException("Concurrent insert start timed out");
             }
             try {
               jdbc.update("INSERT INTO inventory_balance(material_subtype_id) VALUES (?)", subtype);
               return true;
-            } catch (org.springframework.dao.DuplicateKeyException expected) {
+            } catch (DuplicateKeyException expected) {
               return false;
             }
           };
       var first = executor.submit(insert);
       var second = executor.submit(insert);
-      assertThat(ready.await(10, java.util.concurrent.TimeUnit.SECONDS)).isTrue();
+      assertThat(ready.await(10, TimeUnit.SECONDS)).isTrue();
       start.countDown();
-      assertThat(
-              java.util.List.of(
-                  first.get(10, java.util.concurrent.TimeUnit.SECONDS),
-                  second.get(10, java.util.concurrent.TimeUnit.SECONDS)))
+      assertThat(List.of(first.get(10, TimeUnit.SECONDS), second.get(10, TimeUnit.SECONDS)))
           .containsExactlyInAnyOrder(true, false);
     }
     assertThat(

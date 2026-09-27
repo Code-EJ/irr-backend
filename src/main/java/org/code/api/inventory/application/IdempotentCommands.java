@@ -1,9 +1,12 @@
 package org.code.api.inventory.application;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HexFormat;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -86,9 +89,7 @@ public class IdempotentCommands {
           throw new ResponseStatusException(
               HttpStatus.CONFLICT, "Idempotency key was already used for a different command");
         return json.readerFor(type)
-            .without(
-                com.fasterxml.jackson.databind.DeserializationFeature
-                    .ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+            .without(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
             .readValue((String) saved.get("response"));
       }
       T result = action.get();
@@ -104,8 +105,7 @@ public class IdempotentCommands {
           json.writeValueAsString(result),
           actor.getCurrentUserId());
       return result;
-    } catch (com.fasterxml.jackson.core.JsonProcessingException
-        | java.security.NoSuchAlgorithmException error) {
+    } catch (JsonProcessingException | NoSuchAlgorithmException error) {
       throw new IllegalStateException("Cannot serialize the command receipt", error);
     }
   }

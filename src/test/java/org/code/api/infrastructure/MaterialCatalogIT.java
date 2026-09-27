@@ -5,12 +5,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.code.api.domain.enums.UserRole;
+import org.code.api.domain.exception.MaterialError.ConcurrentModification;
 import org.code.api.domain.models.user.Session;
 import org.code.api.domain.ports.TokenPort;
 import org.code.api.dto.material.request.MaterialCategoryCreateRequestDTO;
@@ -21,14 +23,19 @@ import org.code.api.support.PostgresIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * Verifies database pagination, current version responses and creator/role boundaries.
@@ -57,7 +64,7 @@ class MaterialCatalogIT extends PostgresIntegrationTest {
     UUID subtype = material("subtype", owner, type, "Original");
     for (var entry :
         Map.of("categories", category, "types", type, "subtypes", subtype).entrySet()) {
-      String url = "/api/materials/" + entry.getKey() + "/" + entry.getValue();
+      String url = "/api/v1/materials/" + entry.getKey() + "/" + entry.getValue();
       mvc.perform(
               put(url)
                   .header("Authorization", token(owner))
@@ -102,7 +109,7 @@ class MaterialCatalogIT extends PostgresIntegrationTest {
       material(level, owner, p, "Unrelated");
       String endpoint = level.equals("category") ? "categories" : level + "s";
       var request =
-          get("/api/materials/" + endpoint)
+          get("/api/v1/materials/" + endpoint)
               .header("Authorization", token(owner))
               .header("X-Organization-Id", owner)
               .param("name", " mAtCh ")
@@ -128,7 +135,7 @@ class MaterialCatalogIT extends PostgresIntegrationTest {
     material("category", owner, null, "100%_!");
     material("category", owner, null, "100abcd");
     mvc.perform(
-            get("/api/materials/categories")
+            get("/api/v1/materials/categories")
                 .header("Authorization", token(owner))
                 .header("X-Organization-Id", owner)
                 .param("name", "%_!"))
@@ -143,7 +150,7 @@ class MaterialCatalogIT extends PostgresIntegrationTest {
     UUID owner = user("ADMINISTRATOR"), foreign = user("ADMINISTRATOR");
     UUID category = material("category", owner, null, "Owned");
     mvc.perform(
-            get("/api/materials/categories/{id}", category)
+            get("/api/v1/materials/categories/{id}", category)
                 .header("Authorization", token(foreign))
                 .header("X-Organization-Id", foreign))
         .andExpect(status().isNotFound());
@@ -151,10 +158,10 @@ class MaterialCatalogIT extends PostgresIntegrationTest {
     try {
       assertThatThrownBy(
               () -> categories.create(new MaterialCategoryCreateRequestDTO("Unauthorized")))
-          .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+          .isInstanceOf(AccessDeniedException.class);
     } finally {
       SecurityContextHolder.clearContext();
-      org.springframework.web.context.request.RequestContextHolder.resetRequestAttributes();
+      RequestContextHolder.resetRequestAttributes();
     }
   }
 
@@ -167,7 +174,7 @@ class MaterialCatalogIT extends PostgresIntegrationTest {
     AtomicInteger successes = new AtomicInteger();
     AtomicInteger conflicts = new AtomicInteger();
     try (var pool = Executors.newFixedThreadPool(2)) {
-      List<Future<?>> futures = new java.util.ArrayList<>();
+      List<Future<?>> futures = new ArrayList<>();
       for (int i = 0; i < 2; i++) {
         String name = "Winner " + i;
         futures.add(
@@ -187,13 +194,11 @@ class MaterialCatalogIT extends PostgresIntegrationTest {
                               categories.update(id, new MaterialCategoryUpdateRequestDTO(name, 0L));
                             });
                     successes.incrementAndGet();
-                  } catch (org.code.api.domain.exception.MaterialError.ConcurrentModification
-                      | org.springframework.dao.OptimisticLockingFailureException exception) {
+                  } catch (ConcurrentModification | OptimisticLockingFailureException exception) {
                     conflicts.incrementAndGet();
                   } finally {
                     SecurityContextHolder.clearContext();
-                    org.springframework.web.context.request.RequestContextHolder
-                        .resetRequestAttributes();
+                    RequestContextHolder.resetRequestAttributes();
                   }
                 }));
       }
@@ -264,10 +269,9 @@ class MaterialCatalogIT extends PostgresIntegrationTest {
   }
 
   private void identify(UUID id, String role) {
-    var request = new org.springframework.mock.web.MockHttpServletRequest();
+    var request = new MockHttpServletRequest();
     request.addHeader("X-Organization-Id", id.toString());
-    org.springframework.web.context.request.RequestContextHolder.setRequestAttributes(
-        new org.springframework.web.context.request.ServletRequestAttributes(request));
+    RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
     SecurityContextHolder.getContext()
         .setAuthentication(
             new UsernamePasswordAuthenticationToken(

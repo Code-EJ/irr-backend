@@ -1,15 +1,24 @@
 package org.code.api.infrastructure.documentation;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springdoc.core.customizers.OperationCustomizer;
+import org.springdoc.core.utils.SpringDocUtils;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -100,14 +109,14 @@ public class OpenApiConfiguration {
       if (!List.of("SessionController", "UserController", "OrganizationController")
           .contains(handler.getBeanType().getSimpleName())) {
         operation.addParametersItem(
-            new io.swagger.v3.oas.models.parameters.Parameter()
+            new Parameter()
                 .name("X-Organization-Id")
                 .in("header")
                 .required(true)
                 .description(
                     "Explicit active organization membership; platform administrator status is not"
                         + " a bypass")
-                .schema(new io.swagger.v3.oas.models.media.StringSchema().format("uuid")));
+                .schema(new StringSchema().format("uuid")));
       }
       String controller = handler.getBeanType().getSimpleName();
       if ((List.of("SortingController", "PressingController").contains(controller)
@@ -115,15 +124,14 @@ public class OpenApiConfiguration {
           || (controller.equals("SaleController") && List.of("post", "reverse").contains(method))
           || controller.equals("ProcessingReversalController")) {
         operation.addParametersItem(
-            new io.swagger.v3.oas.models.parameters.Parameter()
+            new Parameter()
                 .name("Idempotency-Key")
                 .in("header")
                 .required(true)
                 .description(
                     "Organization-scoped command key. Repeat with the same payload to replay the"
                         + " committed response; changed payload returns 409.")
-                .schema(
-                    new io.swagger.v3.oas.models.media.StringSchema().minLength(1).maxLength(128)));
+                .schema(new StringSchema().minLength(1).maxLength(128)));
       }
       if (operation.getSummary() == null)
         operation.setSummary(actions.getOrDefault(method, "Process request") + " — " + resource);
@@ -132,8 +140,8 @@ public class OpenApiConfiguration {
         operation.setDescription(
             rule == null
                 ? "Authenticated access is checked by the application service. Business records"
-                      + " require current organization membership; platform administration uses the"
-                      + " administrator role."
+                    + " require current organization membership; platform administration uses the"
+                    + " administrator role."
                 : "Declared method authorization: "
                     + rule.value()
                     + ". Organization ownership is checked by the application service.");
@@ -150,17 +158,7 @@ public class OpenApiConfiguration {
   public OpenApiCustomizer sessionSecurityDocumentation() {
     return api -> {
       if (api.getPaths() == null) return;
-      api.getPaths()
-          .forEach(
-              (path, item) -> {
-                if (path.startsWith("/api/")
-                    && !path.startsWith("/api/v1/")
-                    && !path.startsWith("/api/session")
-                    && !path.startsWith("/api/users")
-                    && !path.startsWith("/api/organizations"))
-                  item.readOperations().forEach(operation -> operation.setDeprecated(true));
-              });
-      for (String path : List.of("/api/session/authenticate")) {
+      for (String path : List.of("/api/v1/session/authenticate")) {
         var item = api.getPaths().get(path);
         if (item != null)
           item.readOperations().forEach(operation -> operation.setSecurity(List.of()));
@@ -170,12 +168,11 @@ public class OpenApiConfiguration {
 
   /** Serializes decimal business values as strings to prevent JavaScript precision loss. */
   @Bean
-  public org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
-      decimalWireFormat() {
-    org.springdoc.core.utils.SpringDocUtils.getConfig()
+  public Jackson2ObjectMapperBuilderCustomizer decimalWireFormat() {
+    SpringDocUtils.getConfig()
         .replaceWithSchema(
-            java.math.BigDecimal.class,
-            new io.swagger.v3.oas.models.media.StringSchema()
+            BigDecimal.class,
+            new StringSchema()
                 .pattern("^-?[0-9]+(?:[.][0-9]+)?$")
                 .example("123.4500")
                 .description(
@@ -183,14 +180,12 @@ public class OpenApiConfiguration {
                         + " unit"));
     return builder ->
         builder.serializerByType(
-            java.math.BigDecimal.class,
-            new com.fasterxml.jackson.databind.JsonSerializer<java.math.BigDecimal>() {
+            BigDecimal.class,
+            new JsonSerializer<BigDecimal>() {
               @Override
               public void serialize(
-                  java.math.BigDecimal value,
-                  com.fasterxml.jackson.core.JsonGenerator generator,
-                  com.fasterxml.jackson.databind.SerializerProvider provider)
-                  throws java.io.IOException {
+                  BigDecimal value, JsonGenerator generator, SerializerProvider provider)
+                  throws IOException {
                 generator.writeString(value.toPlainString());
               }
             });

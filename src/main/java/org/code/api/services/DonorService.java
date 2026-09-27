@@ -9,6 +9,8 @@ import org.code.api.domain.models.base.Donor;
 import org.code.api.domain.models.user.User;
 import org.code.api.domain.ports.AuthenticatedUserProvider;
 import org.code.api.domain.ports.DonorPort;
+import org.code.api.domain.ports.OrganizationScope;
+import org.code.api.dto.donor.PostalAddressDTO;
 import org.code.api.dto.donor.request.DonorCreateRequestDTO;
 import org.code.api.dto.donor.request.DonorUpdateRequestDTO;
 import org.code.api.dto.donor.response.DonorResponseDTO;
@@ -17,6 +19,7 @@ import org.code.api.infrastructure.repositories.UserRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +40,7 @@ public class DonorService implements DonorPort {
   private final DonorRepository donorRepository;
   private final UserRepository userRepository;
   private final AuthenticatedUserProvider userProvider;
-  private final org.code.api.domain.ports.OrganizationScope scope;
+  private final OrganizationScope scope;
 
   @Override
   @PreAuthorize("@organizationScope.manager()")
@@ -45,8 +48,7 @@ public class DonorService implements DonorPort {
   public DonorResponseDTO create(DonorCreateRequestDTO data) {
     UUID organizationId = scope.organizationId();
     if (!scope.manager())
-      throw new org.springframework.security.access.AccessDeniedException(
-          "Organization manager permission is required");
+      throw new AccessDeniedException("Organization manager permission is required");
     User creator = userRepository.getReferenceById(userProvider.getCurrentUserId());
 
     String document = normalizeDocument(data.document());
@@ -94,8 +96,7 @@ public class DonorService implements DonorPort {
   public DonorResponseDTO update(UUID id, DonorUpdateRequestDTO data) {
     UUID organizationId = scope.organizationId();
     if (!scope.manager())
-      throw new org.springframework.security.access.AccessDeniedException(
-          "Organization manager permission is required");
+      throw new AccessDeniedException("Organization manager permission is required");
 
     Donor donor =
         donorRepository
@@ -132,8 +133,7 @@ public class DonorService implements DonorPort {
   public void deactivate(UUID id) {
     UUID organizationId = scope.organizationId();
     if (!scope.manager())
-      throw new org.springframework.security.access.AccessDeniedException(
-          "Organization manager permission is required");
+      throw new AccessDeniedException("Organization manager permission is required");
 
     Donor donor =
         donorRepository
@@ -182,6 +182,6 @@ public class DonorService implements DonorPort {
         donor.getIsActive(),
         donor.getCreatedAt(),
         donor.getUpdatedAt(),
-        org.code.api.dto.donor.PostalAddressDTO.from(donor.getAddress()));
+        PostalAddressDTO.from(donor.getAddress()));
   }
 }

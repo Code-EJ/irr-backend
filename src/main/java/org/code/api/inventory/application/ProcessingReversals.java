@@ -1,6 +1,7 @@
 package org.code.api.inventory.application;
 
 import java.math.BigDecimal;
+import java.util.Set;
 import java.util.UUID;
 import org.code.api.domain.ports.OrganizationScope;
 import org.springframework.http.HttpStatus;
@@ -38,7 +39,7 @@ public class ProcessingReversals {
    */
   @Transactional
   public Result reverse(String kind, UUID id) {
-    if (!java.util.Set.of("SORTING", "PRESSING").contains(kind))
+    if (!Set.of("SORTING", "PRESSING").contains(kind))
       throw new IllegalArgumentException("Unsupported processing kind");
     return commands.execute(
         "REVERSE_" + kind,

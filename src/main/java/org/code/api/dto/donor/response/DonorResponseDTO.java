@@ -3,6 +3,7 @@ package org.code.api.dto.donor.response;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 import org.code.api.domain.enums.DonorType;
+import org.code.api.dto.donor.PostalAddressDTO;
 
 /**
  * Typed Donor Response API value.
@@ -17,4 +18,4 @@ public record DonorResponseDTO(
     Boolean isActive,
     OffsetDateTime createdAt,
     OffsetDateTime updatedAt,
-    @jakarta.validation.Valid org.code.api.dto.donor.PostalAddressDTO address) {}
+    @jakarta.validation.Valid PostalAddressDTO address) {}

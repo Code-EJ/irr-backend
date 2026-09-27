@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.code.api.domain.ports.OrganizationScope;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -25,9 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @lombok.RequiredArgsConstructor
 @PreAuthorize("isAuthenticated()")
-@Transactional(
-    readOnly = true,
-    isolation = org.springframework.transaction.annotation.Isolation.REPEATABLE_READ)
+@Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
 public class InventoryQueries {
   private final JdbcTemplate jdbc;
   private final OrganizationScope scope;
@@ -57,7 +57,7 @@ public class InventoryQueries {
   public Page<Lot> lots(UUID material, Pageable page) {
     UUID org = scope.organizationId();
     String filter = material == null ? "" : " AND l.material_subtype_id=?";
-    var args = new java.util.ArrayList<Object>();
+    var args = new ArrayList<Object>();
     args.add(org);
     if (material != null) args.add(material);
     long total =

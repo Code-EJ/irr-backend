@@ -25,7 +25,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping({"/api/materials/categories", "/api/v1/materials/categories"})
+@RequestMapping("/api/v1/materials/categories")
 public class MaterialCategoryController {
 
   private final MaterialCategoryPort categoryPort;

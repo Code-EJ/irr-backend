@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -53,7 +54,7 @@ public class AttachmentOrphanReconciler {
     if (!Files.exists(directory, LinkOption.NOFOLLOW_LINKS)) return 0;
     if (Files.isSymbolicLink(directory))
       throw new IOException("Attachment directory must not be a symbolic link");
-    java.util.List<Path> candidates;
+    List<Path> candidates;
     try (var paths = Files.list(directory)) {
       candidates =
           paths

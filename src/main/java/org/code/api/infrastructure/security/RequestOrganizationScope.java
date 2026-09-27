@@ -6,7 +6,9 @@ import org.code.api.domain.ports.OrganizationScope;
 import org.code.api.organizations.application.OrganizationService;
 import org.code.api.organizations.domain.MembershipRole;
 import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
@@ -19,16 +21,14 @@ import org.springframework.web.server.ResponseStatusException;
 public class RequestOrganizationScope implements OrganizationScope {
   private final HttpServletRequest request;
   private final OrganizationService organizations;
-  private final org.springframework.jdbc.core.JdbcTemplate jdbc;
+  private final JdbcTemplate jdbc;
 
   /**
    * @param request current servlet request proxy
    * @param organizations current membership application boundary
    */
   public RequestOrganizationScope(
-      HttpServletRequest request,
-      OrganizationService organizations,
-      org.springframework.jdbc.core.JdbcTemplate jdbc) {
+      HttpServletRequest request, OrganizationService organizations, JdbcTemplate jdbc) {
     this.request = request;
     this.organizations = organizations;
     this.jdbc = jdbc;
@@ -61,10 +61,8 @@ public class RequestOrganizationScope implements OrganizationScope {
   }
 
   private void lockWritingScope(UUID id) {
-    if (org.springframework.transaction.support.TransactionSynchronizationManager
-            .isActualTransactionActive()
-        && !org.springframework.transaction.support.TransactionSynchronizationManager
-            .isCurrentTransactionReadOnly()) {
+    if (TransactionSynchronizationManager.isActualTransactionActive()
+        && !TransactionSynchronizationManager.isCurrentTransactionReadOnly()) {
       jdbc.query(
           "SELECT id FROM organization WHERE id=? FOR UPDATE", (rs, row) -> rs.getObject(1), id);
     }

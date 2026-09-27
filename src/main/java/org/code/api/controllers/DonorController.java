@@ -23,7 +23,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping({"/api/donors", "/api/v1/donors"})
+@RequestMapping("/api/v1/donors")
 public class DonorController {
 
   private final DonorPort donorPort;

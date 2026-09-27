@@ -4,6 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.code.api.support.PostgresIntegrationTest;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -29,9 +30,9 @@ class IrrApplicationIT extends PostgresIntegrationTest {
         .andExpect(jsonPath("$.info.title").value("IRR Backend API"))
         .andExpect(jsonPath("$.info.contact.name").value("Enzo Ribas"))
         .andExpect(jsonPath("$.components.securitySchemes.bearerAuth.scheme").value("bearer"))
-        .andExpect(jsonPath("$.paths['/api/session/authenticate'].post.security").isEmpty())
+        .andExpect(jsonPath("$.paths['/api/v1/session/authenticate'].post.security").isEmpty())
         .andExpect(jsonPath("$.components.schemas.LoginResponseDTO.properties.token").exists())
-        .andExpect(jsonPath("$.paths['/api/vehicles'].get").exists())
+        .andExpect(jsonPath("$.paths['/api/v1/vehicles'].get").exists())
         .andExpect(
             jsonPath("$.components.schemas.SaleResponse.properties.totalValue.type")
                 .value("string"))
@@ -40,7 +41,7 @@ class IrrApplicationIT extends PostgresIntegrationTest {
         .andExpect(
             jsonPath(
                     "$.paths['/api/v1/sales/{id}/post'].post.parameters[?(@.name=='Idempotency-Key')].required")
-                .value(org.hamcrest.Matchers.contains(true)));
+                .value(Matchers.contains(true)));
   }
 
   /** Verifies Swagger UI resources are reachable without a session token. */
@@ -65,6 +66,6 @@ class IrrApplicationIT extends PostgresIntegrationTest {
   /** Verifies that business endpoints still require authentication. */
   @Test
   void businessEndpointsStillRequireAuthentication() throws Exception {
-    http.perform(get("/api/vehicles")).andExpect(status().isUnauthorized());
+    http.perform(get("/api/v1/vehicles")).andExpect(status().isUnauthorized());
   }
 }

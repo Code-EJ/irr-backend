@@ -1,5 +1,6 @@
 package org.code.api.services;
 
+import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -7,6 +8,7 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.code.api.domain.enums.DestinationType;
 import org.code.api.domain.enums.SortingType;
 import org.code.api.domain.exception.MaterialError;
 import org.code.api.domain.exception.SortingError;
@@ -16,17 +18,23 @@ import org.code.api.domain.models.sorting.SortedItem;
 import org.code.api.domain.models.sorting.Sorting;
 import org.code.api.domain.models.user.User;
 import org.code.api.domain.ports.AuthenticatedUserProvider;
+import org.code.api.domain.ports.OrganizationScope;
 import org.code.api.domain.ports.SortingPort;
 import org.code.api.dto.sorting.request.SortedItemRequestDTO;
 import org.code.api.dto.sorting.request.SortingCreateRequestDTO;
 import org.code.api.dto.sorting.response.SortedItemResponseDTO;
 import org.code.api.dto.sorting.response.SortingResponseDTO;
 import org.code.api.infrastructure.repositories.*;
+import org.code.api.inventory.application.IdempotentCommands;
+import org.code.api.inventory.application.StockLedger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Posts organization-owned sorting with conserved quantities and traceable stock lots. Business
@@ -44,13 +52,13 @@ public class SortingService implements SortingPort {
   private final SortedItemRepository sortedItemRepository;
   private final MaterialSubtypeRepository subtypeRepository;
   private final InputItemRepository inputItemRepository;
-  private final org.code.api.inventory.application.StockLedger ledger;
-  private final org.code.api.inventory.application.IdempotentCommands commands;
-  private final org.springframework.jdbc.core.JdbcTemplate jdbc;
-  private final jakarta.persistence.EntityManager entityManager;
+  private final StockLedger ledger;
+  private final IdempotentCommands commands;
+  private final JdbcTemplate jdbc;
+  private final EntityManager entityManager;
   private final UserRepository userRepository;
   private final AuthenticatedUserProvider userProvider;
-  private final org.code.api.domain.ports.OrganizationScope scope;
+  private final OrganizationScope scope;
 
   @Override
   @Transactional
@@ -95,9 +103,9 @@ public class SortingService implements SortingPort {
                 .orElseThrow(() -> new SortingError.InputItemNotFound(itemDto.inputItemId()));
         if (itemDto.destinationId() != null
             || (itemDto.destinationType() != null
-                && itemDto.destinationType() != org.code.api.domain.enums.DestinationType.STOCK)) {
-          throw new org.springframework.web.server.ResponseStatusException(
-              org.springframework.http.HttpStatus.BAD_REQUEST,
+                && itemDto.destinationType() != DestinationType.STOCK)) {
+          throw new ResponseStatusException(
+              HttpStatus.BAD_REQUEST,
               "Sorting creates stock; use a separate pressing or sale command for subsequent"
                   + " destinations");
         }
@@ -117,9 +125,8 @@ public class SortingService implements SortingPort {
                     .add(itemDto.volumeM3())
                     .compareTo(inputItem.getVolumeM3())
                 > 0) {
-          throw new org.springframework.web.server.ResponseStatusException(
-              org.springframework.http.HttpStatus.CONFLICT,
-              "Sorting exceeds the unprocessed input quantity");
+          throw new ResponseStatusException(
+              HttpStatus.CONFLICT, "Sorting exceeds the unprocessed input quantity");
         }
 
         BigDecimal rejectWeight =
@@ -137,7 +144,7 @@ public class SortingService implements SortingPort {
                 .volumeM3(itemDto.volumeM3())
                 .rejectWeightKg(rejectWeight)
                 .rejectVolumeM3(rejectVolume)
-                .destinationType(org.code.api.domain.enums.DestinationType.STOCK)
+                .destinationType(DestinationType.STOCK)
                 .destinationId(itemDto.destinationId())
                 .isActive(true)
                 .build();

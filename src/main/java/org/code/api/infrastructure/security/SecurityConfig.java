@@ -67,7 +67,7 @@ public class SecurityConfig {
         .authorizeHttpRequests(
             access -> {
               access.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
-              access.requestMatchers(HttpMethod.POST, "/api/session/authenticate").permitAll();
+              access.requestMatchers(HttpMethod.POST, "/api/v1/session/authenticate").permitAll();
               access
                   .requestMatchers(
                       HttpMethod.GET,

@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.code.api.domain.enums.DonorType;
+import org.code.api.dto.donor.PostalAddressDTO;
 
 /**
  * Typed Donor Create Request API value.
@@ -18,4 +19,4 @@ public record DonorCreateRequestDTO(
         @Size(max = 20, message = "Document must be at most 20 characters")
         String document,
     @NotNull(message = "Donor type is required") DonorType donorType,
-    @jakarta.validation.Valid org.code.api.dto.donor.PostalAddressDTO address) {}
+    @jakarta.validation.Valid PostalAddressDTO address) {}

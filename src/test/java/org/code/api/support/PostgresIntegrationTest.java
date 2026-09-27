@@ -1,5 +1,6 @@
 package org.code.api.support;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Base64;
@@ -7,6 +8,7 @@ import org.code.api.util.RSAKeysUtil;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 /**
@@ -21,8 +23,8 @@ public abstract class PostgresIntegrationTest {
           .withDatabaseName("irr_test")
           .withUsername("irr_test")
           .withPassword("isolated-test-only");
-  private static final org.testcontainers.containers.GenericContainer<?> REDIS =
-      new org.testcontainers.containers.GenericContainer<>(
+  private static final GenericContainer<?> REDIS =
+      new GenericContainer<>(
               "redis:8.2-alpine@sha256:b51665e66f00759be7c3152ad5ac3c66fb2f619c13ef62dea7cc1f9914524635")
           .withExposedPorts(6379)
           .withCommand("redis-server", "--requirepass", "isolated-redis-only");
@@ -65,7 +67,7 @@ public abstract class PostgresIntegrationTest {
               + kind
               + " KEY-----\n");
       return file.toUri().toString();
-    } catch (java.io.IOException exception) {
+    } catch (IOException exception) {
       throw new IllegalStateException("Cannot create isolated test key", exception);
     }
   }

@@ -2,6 +2,7 @@ package org.code.api.domain.common;
 
 import jakarta.persistence.*;
 import java.time.OffsetDateTime;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +27,7 @@ public abstract class TimeStampedEntity {
 
   /** Organization ownership; null exists only for unmapped historical rows. */
   @Column(name = "organization_id")
-  private java.util.UUID organizationId;
+  private UUID organizationId;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "creator_id", nullable = false)

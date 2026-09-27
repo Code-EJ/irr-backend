@@ -52,8 +52,10 @@ public class ErrorHandler {
     return ResponseEntity.status(HttpStatus.FORBIDDEN)
         .body(
             Map.of(
-                "error", "access_denied",
-                "message", "You do not have permission to perform this action."));
+                "error",
+                "access_denied",
+                "message",
+                "You do not have permission to perform this action."));
   }
 
   /**
@@ -285,9 +287,12 @@ public class ErrorHandler {
     return ResponseEntity.status(HttpStatus.NOT_FOUND)
         .body(
             Map.of(
-                "error", "attachment_not_found",
-                "message", "Proof attachment not found",
-                "attachment_id", exception.getAttachmentId().toString()));
+                "error",
+                "attachment_not_found",
+                "message",
+                "Proof attachment not found",
+                "attachment_id",
+                exception.getAttachmentId().toString()));
   }
 
   /**
@@ -404,9 +409,12 @@ public class ErrorHandler {
     return ResponseEntity.status(HttpStatus.NOT_FOUND)
         .body(
             Map.of(
-                "error", "input_item_not_found",
-                "message", exception.getMessage(),
-                "input_item_id", exception.getInputItemId().toString()));
+                "error",
+                "input_item_not_found",
+                "message",
+                exception.getMessage(),
+                "input_item_id",
+                exception.getInputItemId().toString()));
   }
 
   /**
@@ -432,9 +440,12 @@ public class ErrorHandler {
     return ResponseEntity.status(HttpStatus.NOT_FOUND)
         .body(
             Map.of(
-                "error", "sorted_item_not_found",
-                "message", exception.getMessage(),
-                "sorted_item_id", exception.getSortedItemId().toString()));
+                "error",
+                "sorted_item_not_found",
+                "message",
+                exception.getMessage(),
+                "sorted_item_id",
+                exception.getSortedItemId().toString()));
   }
 
   /**
@@ -446,10 +457,14 @@ public class ErrorHandler {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(
             Map.of(
-                "error", "invalid_compaction",
-                "message", exception.getMessage(),
-                "initial_volume_m3", exception.getInitialVolumeM3().toString(),
-                "final_volume_m3", exception.getFinalVolumeM3().toString()));
+                "error",
+                "invalid_compaction",
+                "message",
+                exception.getMessage(),
+                "initial_volume_m3",
+                exception.getInitialVolumeM3().toString(),
+                "final_volume_m3",
+                exception.getFinalVolumeM3().toString()));
   }
 
   /**
@@ -462,7 +477,9 @@ public class ErrorHandler {
     return ResponseEntity.status(HttpStatus.CONFLICT)
         .body(
             Map.of(
-                "error", "concurrent_modification",
-                "message", "The record was modified by another transaction. Please retry."));
+                "error",
+                "concurrent_modification",
+                "message",
+                "The record was modified by another transaction. Please retry."));
   }
 }

@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import org.code.api.domain.exception.AuthError;
 import org.code.api.domain.models.user.Session;
 import org.code.api.services.AuthService;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,7 +53,7 @@ public class BearerFilter extends OncePerRequestFilter {
     String path = request.getServletPath();
     if (path.isEmpty()) path = request.getRequestURI();
     return "OPTIONS".equals(request.getMethod())
-        || ("POST".equals(request.getMethod()) && path.equals("/api/session/authenticate"))
+        || ("POST".equals(request.getMethod()) && path.equals("/api/v1/session/authenticate"))
         || ("GET".equals(request.getMethod())
             && (path.equals("/actuator/health")
                 || path.equals("/actuator/health/liveness")
@@ -86,7 +87,7 @@ public class BearerFilter extends OncePerRequestFilter {
         reject(response);
         return;
       }
-    } catch (org.code.api.domain.exception.AuthError | IllegalArgumentException exception) {
+    } catch (AuthError | IllegalArgumentException exception) {
       reject(response);
       return;
     }

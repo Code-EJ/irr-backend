@@ -4,10 +4,13 @@ import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.code.api.domain.exception.AuthError;
+import org.code.api.organizations.domain.OrganizationAccessDenied;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Global Exception Handler boundary for the IRR application.
@@ -30,9 +33,8 @@ public class GlobalExceptionHandler {
   /**
    * @return a safe status response for rejected request scope
    */
-  @ExceptionHandler(org.springframework.web.server.ResponseStatusException.class)
-  public ResponseEntity<?> requestRejected(
-      org.springframework.web.server.ResponseStatusException error) {
+  @ExceptionHandler(ResponseStatusException.class)
+  public ResponseEntity<?> requestRejected(ResponseStatusException error) {
     return ResponseEntity.status(error.getStatusCode())
         .body(
             Map.of(
@@ -45,9 +47,8 @@ public class GlobalExceptionHandler {
   /**
    * @return the same result for missing and inaccessible organizational scope
    */
-  @ExceptionHandler(org.code.api.organizations.domain.OrganizationAccessDenied.class)
-  public ResponseEntity<?> scopeNotFound(
-      org.code.api.organizations.domain.OrganizationAccessDenied error) {
+  @ExceptionHandler(OrganizationAccessDenied.class)
+  public ResponseEntity<?> scopeNotFound(OrganizationAccessDenied error) {
     return ResponseEntity.status(404)
         .body(
             Map.of(
@@ -60,9 +61,8 @@ public class GlobalExceptionHandler {
   /**
    * @return a generic relational conflict without internal database details
    */
-  @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
-  public ResponseEntity<?> integrityConflict(
-      org.springframework.dao.DataIntegrityViolationException error) {
+  @ExceptionHandler(DataIntegrityViolationException.class)
+  public ResponseEntity<?> integrityConflict(DataIntegrityViolationException error) {
     return ResponseEntity.status(409)
         .body(
             Map.of(

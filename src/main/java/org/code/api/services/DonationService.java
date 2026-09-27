@@ -1,5 +1,6 @@
 package org.code.api.services;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -16,6 +17,7 @@ import org.code.api.domain.models.material.MaterialSubtype;
 import org.code.api.domain.models.user.User;
 import org.code.api.domain.ports.AuthenticatedUserProvider;
 import org.code.api.domain.ports.DonationPort;
+import org.code.api.domain.ports.OrganizationScope;
 import org.code.api.dto.collection.request.InputItemRequestDTO;
 import org.code.api.dto.collection.response.InputItemResponseDTO;
 import org.code.api.dto.donation.request.DonationCreateRequestDTO;
@@ -29,9 +31,12 @@ import org.code.api.infrastructure.repositories.MaterialSubtypeRepository;
 import org.code.api.infrastructure.repositories.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Coordinates organization-owned intake without crediting saleable stock. Consumed input history
@@ -45,7 +50,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class DonationService implements DonationPort {
 
-  private final org.springframework.jdbc.core.JdbcTemplate jdbc;
+  private final JdbcTemplate jdbc;
   private final DonationRepository donationRepository;
   private final DonorRepository donorRepository;
   private final InputItemRepository inputItemRepository;
@@ -53,7 +58,7 @@ public class DonationService implements DonationPort {
   private final AttachmentRepository attachmentRepository;
   private final UserRepository userRepository;
   private final AuthenticatedUserProvider userProvider;
-  private final org.code.api.domain.ports.OrganizationScope scope;
+  private final OrganizationScope scope;
 
   @Override
   @Transactional
@@ -192,22 +197,17 @@ public class DonationService implements DonationPort {
             id,
             organizationId);
     if (Boolean.TRUE.equals(used))
-      throw new org.springframework.web.server.ResponseStatusException(
-          org.springframework.http.HttpStatus.CONFLICT,
-          "Processed donations cannot be edited or deactivated");
+      throw new ResponseStatusException(
+          HttpStatus.CONFLICT, "Processed donations cannot be edited or deactivated");
   }
 
   /** Derives the total from line quantities and rejects inconsistent client totals. */
-  private java.math.BigDecimal total(
-      List<InputItemRequestDTO> items, java.math.BigDecimal declared) {
-    java.math.BigDecimal total =
-        items.stream()
-            .map(InputItemRequestDTO::weightKg)
-            .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
+  private BigDecimal total(List<InputItemRequestDTO> items, BigDecimal declared) {
+    BigDecimal total =
+        items.stream().map(InputItemRequestDTO::weightKg).reduce(BigDecimal.ZERO, BigDecimal::add);
     if (declared != null && declared.compareTo(total) != 0)
-      throw new org.springframework.web.server.ResponseStatusException(
-          org.springframework.http.HttpStatus.BAD_REQUEST,
-          "Total weight must equal the sum of input items");
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "Total weight must equal the sum of input items");
     return total;
   }
 

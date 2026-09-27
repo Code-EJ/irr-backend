@@ -2,6 +2,7 @@ package org.code.api.inventory.application;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.Set;
 import java.util.UUID;
 import org.code.api.domain.ports.AuthenticatedUserProvider;
 import org.code.api.domain.ports.OrganizationScope;
@@ -46,7 +47,7 @@ public class StockLedger {
    * @return immutable operation identity
    */
   public UUID begin(String kind, UUID source, OffsetDateTime occurredAt) {
-    if (!java.util.Set.of("SORTING", "PRESSING", "SALE").contains(kind))
+    if (!Set.of("SORTING", "PRESSING", "SALE").contains(kind))
       throw new IllegalArgumentException("Unsupported stock operation");
     UUID id = UUID.randomUUID();
     jdbc.update(
