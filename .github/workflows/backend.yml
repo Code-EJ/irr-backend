@@ -16,6 +16,13 @@ jobs:
           cache: maven
       - name: Unit tests, disposable PostgreSQL and Redis integration tests and package
         run: bash mvnw --batch-mode --no-transfer-progress verify
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Audit resolved Maven dependency coordinates
+        run: |
+          bash mvnw --batch-mode --no-transfer-progress dependency:tree -DoutputType=json -DoutputFile=.local/audit/dependency-tree.json
+          node scripts/audit-dependencies.mjs
       - name: Validate container build
         run: docker build -t irr-backend:ci .
       - name: Publish test reports
@@ -26,3 +33,5 @@ jobs:
           path: |
             target/surefire-reports
             target/failsafe-reports
+            .local/audit/osv-audit.json
+          include-hidden-files: true

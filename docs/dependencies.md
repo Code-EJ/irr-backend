@@ -1,48 +1,56 @@
-# Backend dependency decisions
+# Backend dependency register
 
 - Documentation maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
-## Baseline and current changes
+Audit date: 2026-09-27T17:50:35.214Z. The resolved Maven graph contains 156 distinct coordinates across production and test scopes. OSV returned 0 matching advisories. This is a point-in-time coordinate scan, not a reachability proof, container OS scan or security guarantee.
 
-Java 21 and Spring Boot 3.5.6 remain the compatibility baseline. The historical complete inventory and advisory evidence are in [ADR-0003](adrs/0003-architecture-and-dependencies.md); its September 22/23 vulnerability counts are not a new scan or a claim of current safety. This slice is dependency convergence and verification infrastructure, not the entire security upgrade campaign.
+## Decisions
 
-| Dependency group | Responsibility | Decision |
+Use Java 21 and Spring Boot 3.5.16 for the existing Spring 6 / Jackson 2 compatibility baseline. A separate Boot 4 migration must revisit framework behavior, security, Jackson integration and springdoc compatibility; it is not silently bundled into this domain overhaul. Version selection does not itself establish a support entitlement. Remove spring-boot-devtools from the application and delete the unused ReportPort/ReportService stub; reporting now has a real feature module.
+
+| Explicit override | Version | Reason |
 | --- | --- | --- |
-| Boot Web / Validation | HTTP, JSON and request constraints | Retain; characterize current contracts before major changes |
-| Boot Data JPA / PostgreSQL driver | Relational persistence and transactions | Retain; use PostgreSQL integration tests, not H2 substitutions |
-| Boot Security / OAuth2 resource server / JOSE | Authentication and signed tokens | Retain for now; redundant direct JOSE declaration is a later prune candidate after graph verification |
-| Boot Actuator | Status-only liveness and readiness | Retain; expose health only |
-| Flyway core / database-postgresql | Versioned SQL migration | Both resolve through the Boot BOM; remove the conflicting explicit 10.17.0 database module override |
-| Lombok | Existing builders/accessors | Retain during module migration; do not combine broad Lombok removal with domain changes |
-| Boot Devtools | Optional local development support | Retain existing optional runtime declaration; executable Boot packaging excludes development support by default |
-| Boot Test / Security Test | JUnit, Mockito, MVC and security tests | Test scope only |
-| Testcontainers PostgreSQL | Disposable real database for integration tests | Test scope; 1.21.4 BOM override addresses Docker 29 API compatibility; no test database fallback |
-| springdoc-openapi-starter-webmvc-ui 2.9.1 | Official Swagger UI and generated OpenAPI | Current Spring Boot 3-compatible v2 release; verified through specification/UI integration tests |
-| Maven Failsafe | Integration-test lifecycle and verify failure propagation | Boot-managed plugin version; *IT naming separates database tests from unit tests |
+| Jackson BOM | 2.21.5 | Resolve advisories found against 2.21.4; align the whole family |
+| Netty family | 4.1.137.Final | Resolve advisories against 4.1.135.Final used by Redis transport |
+| Embedded Tomcat | 10.1.60 | Published patched 10.1 line |
+| PostgreSQL JDBC | 42.7.12 | Resolve the matched driver advisory |
+| Log4j2 family | 2.25.5 | Resolve the matched API-family advisory |
+| Commons Lang | 3.18.0 | Resolve transitive 3.17.0 advisory |
+| Commons Compress | 1.28.0 | Resolve Testcontainers archive-extraction dependency advisory |
 
-## Upgrade and prune procedure
+The initial post-Boot-upgrade scan found 14 coordinate/advisory matches. Pinning compatible families reduced the fresh scan to zero matches across 156 coordinates. The full functional suite and Docker workflow were rerun with these pins. Remove an override only when the inherited BOM supplies an equally reviewed version; do not independently downgrade sibling artifacts. Redis uses Boot-managed Spring Data/Lettuce. Testcontainers 1.21.4 retains Docker Engine 29 compatibility. No dependency is added solely for architectural naming.
 
-Capture the resolved dependency tree, refresh advisory sources, determine reachable production/test scope, select a compatible patched family, then run unit/integration and container checks. Remove the Testcontainers override when Boot manages a compatible version. Do not infer exploitability from an advisory match or claim remediation from version alignment alone. The next dependency upgrade should cover the full Boot-managed family rather than independently forcing incompatible transitive versions.
+## Direct resolved dependencies
 
-The runtime container uses PostgreSQL 16 and Temurin Java 21, with Maven 3.9.14 in the build stage only. Pin validated image digests when a deployment/release process is introduced and establish refresh/scanning automation. The current image build proves reproducibility of this run, not indefinite immutability of upstream tags.
+| Coordinate | Version | Scope |
+| --- | --- | --- |
+| org.springframework.boot:spring-boot-starter-data-redis | 3.5.16 | compile |
+| org.springframework.boot:spring-boot-starter-validation | 3.5.16 | compile |
+| org.springframework.boot:spring-boot-starter-actuator | 3.5.16 | compile |
+| org.springframework.boot:spring-boot-starter-data-jpa | 3.5.16 | compile |
+| org.springframework.boot:spring-boot-starter-security | 3.5.16 | compile |
+| org.springframework.boot:spring-boot-starter-oauth2-resource-server | 3.5.16 | compile |
+| org.springframework.security:spring-security-oauth2-jose | 6.5.11 | compile |
+| org.springframework.boot:spring-boot-starter-web | 3.5.16 | compile |
+| org.flywaydb:flyway-core | 11.7.2 | compile |
+| org.flywaydb:flyway-database-postgresql | 11.7.2 | compile |
+| org.postgresql:postgresql | 42.7.12 | runtime |
+| org.projectlombok:lombok | 1.18.46 | compile |
+| org.springframework.boot:spring-boot-starter-test | 3.5.16 | test |
+| org.springframework.security:spring-security-test | 6.5.11 | test |
+| org.springdoc:springdoc-openapi-starter-webmvc-ui | 2.9.1 | compile |
+| org.testcontainers:postgresql | 1.21.4 | test |
 
-## Official API documentation
+## Repeat the scan
 
-Swagger/OpenAPI is the official API reference, per owner instruction. Keep JavaDoc, controller/DTO signatures and OpenAPI customization in English and maintain the Enzo Ribas contact attribution. JSON/YAML output is generated from the application and must not diverge into an independently edited static specification.
+Run Java 21 and Node.js 22.6+ from the repository root:
 
-## References
+~~~sh
+./mvnw --batch-mode dependency:tree -DoutputType=json -DoutputFile=.local/audit/dependency-tree.json
+node scripts/audit-dependencies.mjs
+./mvnw clean verify
+~~~
 
-- [springdoc v2 documentation and compatibility](https://springdoc.org/v2/)
-- [Testcontainers Docker 29 compatibility report](https://github.com/testcontainers/testcontainers-java/issues/11211)
-- [Docker Engine API compatibility](https://docs.docker.com/reference/api/engine/)
-- [Execution evidence](adrs/0006-backend-foundation-execution.md)
+On Windows use .\mvnw.cmd. The audit script queries the public [OSV API](https://google.github.io/osv.dev/api/), records coordinate/advisory evidence under .local/audit and exits nonzero on findings or API failures. It sends package coordinates only. Review advisories and upgrade safely; never suppress a scanner failure as an empty result. CI publishes this package-only report, never environment or backup files.
 
-## Identity and attachment slice
-
-ADR-0008 adds no dependency. It uses existing Spring Security, validation, BCrypt, JDBC transactions, PostgreSQL and scheduling. Enzo Ribas (https://github.com/oEnzoRibas) maintains these decisions. The dependency advisory/upgrade backlog in ADR-0003 remains open; passing functional tests is not a new vulnerability scan.
-
-## Redis integration (2026-09-27)
-
-Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas). Added spring-boot-starter-data-redis with Boot BOM-managed Spring Data Redis and Lettuce; no manually overridden Redis client version. Redis repository scanning is disabled. Docker uses the inspected Redis 8.2.10 image pinned by digest in Compose and isolated test fixtures. See [ADR-0010](adrs/0010-containerized-redis.md) for official references, memory/persistence settings and accepted operational limits. This is an integration decision, not a completed vulnerability rescan of the full dependency tree.
-
-Resolved Maven graph verified for this change: Spring Data Redis 3.5.4 and Lettuce 6.6.0.RELEASE (compile scope), managed by the existing Boot BOM.
+Official references: [Spring Boot 3.5 documentation](https://docs.spring.io/spring-boot/3.5/reference/index.html), [Java/system requirements](https://docs.spring.io/spring-boot/3.5/system-requirements.html), [Maven Central](https://repo.maven.apache.org/maven2/), [springdoc](https://springdoc.org/). Historical findings and rejected major-upgrade combinations remain in ADR-0003; current execution is ADR-0013.

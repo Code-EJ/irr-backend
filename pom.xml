@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.6</version>
+        <version>3.5.16</version>
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.code</groupId>
@@ -30,7 +30,7 @@
                     Developer
                 </role>
                 <role>
-                    Cheif Executive of Technology and Information
+                    Chief Executive of Technology and Information
                 </role>
             </roles>
         </developer>
@@ -46,7 +46,24 @@
         <!-- Docker Engine 29 requires the Docker API compatibility fix in 1.21.4. -->
         <testcontainers.version>1.21.4</testcontainers.version>
         <springdoc.version>2.9.1</springdoc.version>
+        <!-- Enzo Ribas (https://github.com/oEnzoRibas): patched families verified by the dependency audit. -->
+        <jackson-bom.version>2.21.5</jackson-bom.version>
+        <netty.version>4.1.137.Final</netty.version>
+        <tomcat.version>10.1.60</tomcat.version>
+        <postgresql.version>42.7.12</postgresql.version>
+        <log4j2.version>2.25.5</log4j2.version>
+        <commons-lang3.version>3.18.0</commons-lang3.version>
     </properties>
+    <dependencyManagement>
+        <dependencies>
+            <!-- Testcontainers archive extraction: remove the vulnerable transitive 1.24.0 release. -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-compress</artifactId>
+                <version>1.28.0</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
         <!-- Enzo Ribas (https://github.com/oEnzoRibas): Boot-managed Lettuce/Redis integration. -->
         <dependency>
@@ -88,12 +105,6 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
