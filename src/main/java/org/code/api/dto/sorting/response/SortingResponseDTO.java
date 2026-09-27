@@ -13,5 +13,6 @@ public record SortingResponseDTO(
     Boolean isActive,
     List<SortedItemResponseDTO> sortedItems,
     OffsetDateTime createdAt,
-    OffsetDateTime updatedAt
+    OffsetDateTime updatedAt,
+    String status
 ) {}

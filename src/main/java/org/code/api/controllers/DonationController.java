@@ -31,13 +31,13 @@ import java.util.UUID;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/donations")
+@RequestMapping({"/api/donations", "/api/v1/donations"})
 public class DonationController {
 
     private final DonationPort donationPort;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'ORGANIZATION', 'CITY_HALL')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<DonationResponseDTO> create(
             @Valid @RequestBody DonationCreateRequestDTO data
     ) {
@@ -68,7 +68,7 @@ public class DonationController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'ORGANIZATION', 'CITY_HALL')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<DonationResponseDTO> update(
             @PathVariable UUID id,
             @Valid @RequestBody DonationUpdateRequestDTO data
@@ -77,7 +77,7 @@ public class DonationController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'ORGANIZATION', 'CITY_HALL')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> deactivate(
             @PathVariable UUID id
     ) {

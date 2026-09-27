@@ -14,9 +14,9 @@ import java.util.UUID;
 public interface MaterialCategoryRepository extends JpaRepository<MaterialCategory, UUID>,
         JpaSpecificationExecutor<MaterialCategory> {
 
-    Optional<MaterialCategory> findByIdAndCreatorId(UUID id, UUID creatorId);
+    Optional<MaterialCategory> findByIdAndOrganizationId(UUID id, UUID organizationId);
 
-    Page<MaterialCategory> findAllByCreatorId(UUID creatorId, Pageable pageable);
+    Page<MaterialCategory> findAllByOrganizationId(UUID organizationId, Pageable pageable);
 
-    boolean existsByNameAndCreatorId(String name, UUID creatorId);
+    boolean existsByNameAndOrganizationId(String name, UUID organizationId);
 }

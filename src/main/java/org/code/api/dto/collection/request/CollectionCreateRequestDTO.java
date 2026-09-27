@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Collection intake fields; totals must match input lines and all references share one organization.
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
+ */
 public record CollectionCreateRequestDTO(
     @NotNull(message = "Realization date is required")
     OffsetDateTime realizationDate,
@@ -24,6 +28,8 @@ public record CollectionCreateRequestDTO(
     UUID mtrDestinatorId,
     UUID collectionDiaryId,
     Set<UUID> teamMemberIds,
+    @jakarta.validation.constraints.NotEmpty
+    @jakarta.validation.constraints.Size(max=200)
     @Valid
     List<InputItemRequestDTO> inputItems
 ) {}

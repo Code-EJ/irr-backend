@@ -17,7 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Enforces creator ownership and coordinates transactional metadata with persistent bytes.
+ * Enforces organization membership and coordinates transactional metadata with persistent bytes.
  * Upload rollback cleanup is compensating; process crashes still require orphan reconciliation.
  *
  * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
@@ -30,6 +30,7 @@ public class DocumentService {
     private final StorageService storage;
     private final AuthenticatedUserProvider actor;
     private final AttachmentCleanupService cleanup;
+    private final org.code.api.domain.ports.OrganizationScope scope;
     /**
      * Configures attachment boundaries.
      * @param attachments metadata repository
@@ -39,8 +40,8 @@ public class DocumentService {
      * @param cleanup durable deletion queue
      */
     public DocumentService(AttachmentRepository attachments, UserRepository users, StorageService storage,
-        AuthenticatedUserProvider actor, AttachmentCleanupService cleanup) {
-        this.attachments = attachments; this.users = users; this.storage = storage; this.actor = actor; this.cleanup = cleanup;
+        AuthenticatedUserProvider actor, AttachmentCleanupService cleanup, org.code.api.domain.ports.OrganizationScope scope) {
+        this.attachments = attachments; this.users = users; this.storage = storage; this.actor = actor; this.cleanup = cleanup; this.scope = scope;
     }
     /**
      * Validates supported signatures and persists safe upload metadata.
@@ -50,6 +51,7 @@ public class DocumentService {
      */
     @Transactional(rollbackFor = IOException.class)
     public AttachmentResponse upload(MultipartFile file) throws IOException {
+        UUID organizationId=scope.organizationId();
         if (file.isEmpty() || file.getSize() > 10 * 1024 * 1024) throw badRequest("Attachment must contain between 1 byte and 10 MiB");
         String name = file.getOriginalFilename();
         if (name == null || name.isBlank() || name.length() > 255 || name.chars().anyMatch(Character::isISOControl)
@@ -69,12 +71,12 @@ public class DocumentService {
         });
         Attachment attachment = new Attachment();
         attachment.setFileName(name); attachment.setFileType(contentType); attachment.setStorageUrl(path);
-        attachment.setCreator(creator); attachment.setIsActive(true);
+        attachment.setOrganizationId(organizationId); attachment.setCreator(creator); attachment.setIsActive(true);
         attachments.saveAndFlush(attachment);
         return new AttachmentResponse(attachment.getId(), name, contentType, attachment.getCreatedAt());
     }
     /**
-     * Returns bytes only to the creator, including when the caller is an administrator.
+     * Returns bytes to active organization members; platform administrators have no implicit access.
      * @param id attachment identity
      * @return safe download information
      * @throws IOException if bytes are unavailable
@@ -91,12 +93,33 @@ public class DocumentService {
     @Transactional
     public void delete(UUID id) {
         Attachment attachment = owned(id);
+        if(!attachment.getCreator().getId().equals(actor.getCurrentUserId()) && !scope.manager())
+            throw new org.springframework.security.access.AccessDeniedException("Only the uploader or organization manager can delete an attachment");
         attachments.delete(attachment);
         attachments.flush();
         cleanup.enqueue(attachment.getStorageUrl());
     }
+    /** Lists safe metadata visible to the selected organization. */
+    @Transactional(readOnly=true)
+    public org.springframework.data.domain.Page<AttachmentResponse> list(org.springframework.data.domain.Pageable page) {
+        return attachments.findAllByOrganizationId(scope.organizationId(),page).map(this::metadata);
+    }
+    /** Returns one scoped metadata record without storage paths. */
+    @Transactional(readOnly=true)
+    public AttachmentResponse get(UUID id) { return metadata(owned(id)); }
+    /** Renames display metadata without changing stored bytes or their detected content type. */
+    @Transactional
+    public AttachmentResponse rename(UUID id,String name) {
+        Attachment attachment=owned(id);
+        if(!attachment.getCreator().getId().equals(actor.getCurrentUserId()) && !scope.manager())
+            throw new org.springframework.security.access.AccessDeniedException("Only the uploader or organization manager can rename an attachment");
+        if(name==null || name.isBlank() || name.length()>255 || name.chars().anyMatch(Character::isISOControl) || name.indexOf('/')>=0 || name.indexOf((char)92)>=0)
+            throw badRequest("A valid display filename is required");
+        attachment.setFileName(name.strip()); attachments.saveAndFlush(attachment); return metadata(attachment);
+    }
+    private AttachmentResponse metadata(Attachment attachment) { return new AttachmentResponse(attachment.getId(),attachment.getFileName(),attachment.getFileType(),attachment.getCreatedAt()); }
     private Attachment owned(UUID id) {
-        return attachments.findByIdAndCreatorId(id, actor.getCurrentUserId())
+        return attachments.findByIdAndOrganizationId(id, scope.organizationId())
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Attachment not found"));
     }
     private String detect(byte[] header) {

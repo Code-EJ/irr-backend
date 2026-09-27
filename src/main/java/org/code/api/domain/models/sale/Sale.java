@@ -26,6 +26,12 @@ import java.util.UUID;
 @AllArgsConstructor
 @SuperBuilder
 public class Sale extends TimeStampedEntity {
+    @Column(name="status",nullable=false) @Builder.Default
+    private String status="DRAFT";
+    @Column(name="currency",nullable=false,length=3) @Builder.Default
+    private String currency="BRL";
+    @Version @Column(name="version",nullable=false) @Builder.Default
+    private Long version=0L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

@@ -25,14 +25,14 @@ import java.util.UUID;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/materials/types")
+@RequestMapping({"/api/materials/types", "/api/v1/materials/types"})
 public class MaterialTypeController {
 
     private final MaterialTypePort typePort;
 
     /** Creates a material for the current administrator. */
     @PostMapping
-    @PreAuthorize("hasRole('ADMINISTRATOR')")
+    @PreAuthorize("@organizationScope.manager()")
     public ResponseEntity<MaterialTypeResponseDTO> create(
         @Valid @RequestBody MaterialTypeCreateRequestDTO data
     ) {
@@ -68,7 +68,7 @@ public class MaterialTypeController {
     /** Updates an owned material using the expected version. */
     @io.swagger.v3.oas.annotations.Operation(description = "Administrator-only update in the authenticated creator scope. Send the last returned version. Stale versions return 409; refresh the record before retrying. Successful responses include the flushed server-managed version.")
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMINISTRATOR')")
+    @PreAuthorize("@organizationScope.manager()")
     public ResponseEntity<MaterialTypeResponseDTO> update(
         @PathVariable UUID id,
         @Valid @RequestBody MaterialTypeUpdateRequestDTO data
@@ -78,7 +78,7 @@ public class MaterialTypeController {
 
     /** Applies the existing owned-material deactivation policy. */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMINISTRATOR')")
+    @PreAuthorize("@organizationScope.manager()")
     public ResponseEntity<Void> deactivate(@PathVariable UUID id) {
         typePort.deactivate(id);
         return ResponseEntity.noContent().build();

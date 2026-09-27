@@ -17,8 +17,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/users")
 public class UserController {
     private final PartnerProvisioningService partners;
+    private final org.code.api.services.AccountLifecycleService accounts;
     /** @param partners administrator provisioning use case */
-    public UserController(PartnerProvisioningService partners) { this.partners = partners; }
+    public UserController(PartnerProvisioningService partners, org.code.api.services.AccountLifecycleService accounts) { this.partners = partners; this.accounts=accounts; }
     /**
      * Creates a partner without issuing a token on their behalf.
      * @param request validated partner attributes
@@ -30,4 +31,14 @@ public class UserController {
     public ResponseEntity<UserResponse> create(@Valid @RequestBody CreatePartnerRequest request) {
         return ResponseEntity.status(201).body(partners.create(request));
     }
+    /** Returns the current account before organization selection. */
+    @GetMapping("/me") public UserResponse me() { return accounts.me(); }
+    /** Lists active accounts for platform administrators. */
+    @GetMapping public org.springframework.data.domain.Page<UserResponse> list(@org.springframework.data.web.PageableDefault(size=20,sort="fullName") org.springframework.data.domain.Pageable page) { return accounts.list(page); }
+    /** Returns a safe account representation for administrators. */
+    @GetMapping("/{id}") public UserResponse get(@PathVariable java.util.UUID id) { return accounts.get(id); }
+    /** Replaces partner metadata without granting administrator privileges. */
+    @PutMapping("/{id}") public UserResponse update(@PathVariable java.util.UUID id,@Valid @RequestBody org.code.api.dto.user.UpdatePartnerRequest request) { return accounts.update(id,request); }
+    /** Deactivates a partner and invalidates its access on subsequent requests. */
+    @DeleteMapping("/{id}") public ResponseEntity<Void> delete(@PathVariable java.util.UUID id) { accounts.deactivate(id); return ResponseEntity.noContent().build(); }
 }

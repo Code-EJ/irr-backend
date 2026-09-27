@@ -19,13 +19,12 @@ import org.springframework.stereotype.Repository;
 public interface VehicleRepository extends JpaRepository<Vehicle, UUID>,
         JpaSpecificationExecutor<Vehicle> {
 
-    boolean existsByLicensePlate(String licensePlate);
+    boolean existsByLicensePlateAndOrganizationId(String licensePlate, UUID organizationId);
 
-    Optional<Vehicle> findByLicensePlate(String licensePlate);
+    Optional<Vehicle> findByLicensePlateAndOrganizationId(String licensePlate, UUID organizationId);
 
-    Optional<Vehicle> findByIdAndCreatorId(UUID id, UUID creatorId);
+    Optional<Vehicle> findByIdAndOrganizationId(UUID id, UUID organizationId);
 
-    Page<Vehicle> findAllByCreatorId(UUID creatorId, Pageable pageable);
+    Page<Vehicle> findAllByOrganizationId(UUID organizationId, Pageable pageable);
 
-    boolean existsByLicensePlateAndCreatorId(String licensePlate, UUID creatorId);
 }

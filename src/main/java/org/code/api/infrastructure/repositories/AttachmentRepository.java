@@ -11,6 +11,6 @@ import java.util.UUID;
 
 @Repository
 public interface AttachmentRepository extends JpaRepository<Attachment, UUID> {
-    Optional<Attachment> findByIdAndCreatorId(UUID id, UUID creatorId);
-    Page<Attachment> findAllByCreatorId(UUID creatorId, Pageable pageable);
+    Optional<Attachment> findByIdAndOrganizationId(UUID id, UUID organizationId);
+    Page<Attachment> findAllByOrganizationId(UUID organizationId, Pageable pageable);
 }

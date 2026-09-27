@@ -21,13 +21,13 @@ import java.util.UUID;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/pressings")
+@RequestMapping({"/api/pressings", "/api/v1/pressings"})
 public class PressingController {
 
     private final PressingPort pressingPort;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'ORGANIZATION', 'CITY_HALL')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<PressingResponseDTO> create(
         @Valid @RequestBody PressingCreateRequestDTO data
     ) {

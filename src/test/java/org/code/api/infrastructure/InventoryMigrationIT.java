@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.*;
 
 /**
  * Verifies fresh baseline creation, incremental upgrade and transactional migration failure.
- * Example V4 migrations live only in test resources and never enter the runtime image.
+ * Example V6 migrations live only in test resources and never enter the runtime image.
  *
  * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
@@ -26,7 +26,7 @@ class InventoryMigrationIT extends PostgresIntegrationTest {
         Flyway.configure().dataSource(dataSource).schemas(schema).defaultSchema(schema)
             .locations("classpath:db/migrations").target("1").baselineOnMigrate(false).load().migrate();
         UUID id = user(schema);
-        assertThat(flyway(schema).migrate().migrationsExecuted).isEqualTo(2);
+        assertThat(flyway(schema).migrate().migrationsExecuted).isEqualTo(4);
         assertThat(jdbc.queryForObject("SELECT count(*) FROM " + schema + ".users WHERE id=?", Integer.class, id)).isEqualTo(1);
         assertThat(jdbc.queryForObject("SELECT count(*) FROM " + schema + ".attachment_file_deletion", Integer.class)).isZero();
     }
@@ -39,7 +39,7 @@ class InventoryMigrationIT extends PostgresIntegrationTest {
         assertThat(upgrade.migrate().migrationsExecuted).isEqualTo(1);
         assertThat(upgrade.validateWithResult().validationSuccessful).isTrue();
         assertThat(jdbc.queryForObject("SELECT count(*) FROM " + schema + ".users WHERE id = ?", Integer.class, id)).isEqualTo(1);
-        assertThat(jdbc.queryForObject("SELECT count(*) FROM " + schema + ".flyway_schema_history WHERE version='4' AND success", Integer.class)).isEqualTo(1);
+        assertThat(jdbc.queryForObject("SELECT count(*) FROM " + schema + ".flyway_schema_history WHERE version='6' AND success", Integer.class)).isEqualTo(1);
         assertThat(upgrade.migrate().migrationsExecuted).isZero();
     }
 
@@ -50,14 +50,14 @@ class InventoryMigrationIT extends PostgresIntegrationTest {
         assertThatThrownBy(() -> flyway(schema, "classpath:db/migration-examples/invalid").migrate())
             .isInstanceOf(FlywayException.class);
         assertThat(jdbc.queryForObject("SELECT count(*) FROM " + schema + ".users WHERE id = ?", Integer.class, id)).isEqualTo(1);
-        assertThat(jdbc.queryForObject("SELECT count(*) FROM " + schema + ".flyway_schema_history WHERE version='4'", Integer.class)).isZero();
+        assertThat(jdbc.queryForObject("SELECT count(*) FROM " + schema + ".flyway_schema_history WHERE version='6'", Integer.class)).isZero();
         assertThat(jdbc.queryForObject("SELECT count(*) FROM information_schema.tables WHERE table_schema=? AND table_name='failed_migration_marker'", Integer.class, schema)).isZero();
     }
 
     /** Verifies the initial baseline contains all current tables and can be validated repeatedly. */
     @Test void freshBaselineCreatesCompleteCurrentSchema() {
         String schema = baseline();
-        assertThat(jdbc.queryForObject("SELECT count(*) FROM information_schema.tables WHERE table_schema=? AND table_type='BASE TABLE' AND table_name <> 'flyway_schema_history'", Integer.class, schema)).isEqualTo(25);
+        assertThat(jdbc.queryForObject("SELECT count(*) FROM information_schema.tables WHERE table_schema=? AND table_type='BASE TABLE' AND table_name <> 'flyway_schema_history'", Integer.class, schema)).isEqualTo(29);
         assertThat(flyway(schema).validateWithResult().validationSuccessful).isTrue();
         assertThat(flyway(schema).migrate().migrationsExecuted).isZero();
     }

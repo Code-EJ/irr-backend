@@ -95,7 +95,7 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
         String actor = token(account(UserRole.REPRESENTATIVE));
         long count = users.count();
         mvc.perform(post("/api/session/register")).andExpect(status().isUnauthorized());
-        mvc.perform(post("/api/session/register").header("Authorization", actor)).andExpect(status().isGone());
+        mvc.perform(post("/api/session/register").header("Authorization", actor).header("X-Organization-Id", tokenOrganizations.get(actor))).andExpect(status().isGone());
         mvc.perform(get("/api/session/unknown")).andExpect(status().isUnauthorized());
         assertThat(users.count()).isEqualTo(count);
     }
@@ -142,33 +142,33 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
         try {
             assertThat(actors.getCurrentUserId()).isEqualTo(user.getId());
             assertThat(actors.getCurrentUserRoles()).containsExactly(UserRole.ORGANIZATION);
-        } finally { SecurityContextHolder.clearContext(); }
+        } finally { SecurityContextHolder.clearContext(); org.springframework.web.context.request.RequestContextHolder.resetRequestAttributes(); }
     }
     /** Verifies even another administrator cannot read or remove a creator's attachment. */
     @Test void attachmentOwnershipAndSafeMetadataAreEnforced() throws Exception {
         String owner = token(account(UserRole.REPRESENTATIVE));
         UUID id = upload(owner);
-        mvc.perform(get("/api/documents/{id}/download", id).header("Authorization", owner)).andExpect(status().isOk()).andExpect(content().bytes(PDF));
+        mvc.perform(get("/api/documents/{id}/download", id).header("Authorization", owner).header("X-Organization-Id", tokenOrganizations.get(owner))).andExpect(status().isOk()).andExpect(content().bytes(PDF));
         for (UserRole role : List.of(UserRole.ADMINISTRATOR, UserRole.REPRESENTATIVE)) {
             String foreign = token(account(role));
-            mvc.perform(get("/api/documents/{id}/download", id).header("Authorization", foreign)).andExpect(status().isNotFound());
-            mvc.perform(delete("/api/documents/{id}", id).header("Authorization", foreign)).andExpect(status().isNotFound());
+            mvc.perform(get("/api/documents/{id}/download", id).header("Authorization", foreign).header("X-Organization-Id", tokenOrganizations.get(foreign))).andExpect(status().isNotFound());
+            mvc.perform(delete("/api/documents/{id}", id).header("Authorization", foreign).header("X-Organization-Id", tokenOrganizations.get(foreign))).andExpect(status().isNotFound());
         }
     }
     /** Verifies signatures and display filenames are validated before writing any bytes. */
     @Test void unsupportedContentAndUnsafeNamesAreRejected() throws Exception {
         String actor = token(account(UserRole.REPRESENTATIVE));
         mvc.perform(multipart("/api/documents").file(new MockMultipartFile("documento", "payload.pdf", "application/pdf", "<script>".getBytes()))
-            .header("Authorization", actor)).andExpect(status().isBadRequest());
+            .header("Authorization", actor).header("X-Organization-Id", tokenOrganizations.get(actor))).andExpect(status().isBadRequest());
         mvc.perform(multipart("/api/documents").file(new MockMultipartFile("documento", "../payload.pdf", "application/pdf", PDF))
-            .header("Authorization", actor)).andExpect(status().isBadRequest());
+            .header("Authorization", actor).header("X-Organization-Id", tokenOrganizations.get(actor))).andExpect(status().isBadRequest());
     }
     /** Verifies metadata commits first and committed cleanup removes the physical file. */
     @Test void deletionIsDurableAndIdempotent() throws Exception {
         String actor = token(account(UserRole.REPRESENTATIVE));
         UUID id = upload(actor);
         String path = stored(id);
-        mvc.perform(delete("/api/documents/{id}", id).header("Authorization", actor)).andExpect(status().isAccepted());
+        mvc.perform(delete("/api/documents/{id}", id).header("Authorization", actor).header("X-Organization-Id", tokenOrganizations.get(actor))).andExpect(status().isAccepted());
         assertThat(Files.exists(Path.of(path))).isTrue();
         assertThat(queueCount(path)).isEqualTo(1);
         cleanup.processPending();
@@ -185,7 +185,7 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
         UUID donor = UUID.randomUUID();
         jdbc.update("INSERT INTO donor(id,name,document,donor_type,creator_id) VALUES (?,'Fixture','000','PF',?)", donor, owner.getId());
         jdbc.update("INSERT INTO donation(total_weight_kg,donor_id,proof_attachment_id,creator_id) VALUES (1,?,?,?)", donor, id, owner.getId());
-        mvc.perform(delete("/api/documents/{id}", id).header("Authorization", actor)).andExpect(status().isConflict());
+        mvc.perform(delete("/api/documents/{id}", id).header("Authorization", actor).header("X-Organization-Id", tokenOrganizations.get(actor))).andExpect(status().isConflict());
         assertThat(stored(id)).isEqualTo(path);
         assertThat(Files.exists(Path.of(path))).isTrue();
         assertThat(queueCount(path)).isZero();
@@ -198,7 +198,7 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
         identify(owner);
         try {
             new TransactionTemplate(transactions).executeWithoutResult(tx -> { documents.delete(id); tx.setRollbackOnly(); });
-        } finally { SecurityContextHolder.clearContext(); }
+        } finally { SecurityContextHolder.clearContext(); org.springframework.web.context.request.RequestContextHolder.resetRequestAttributes(); }
         assertThat(stored(id)).isEqualTo(path);
         assertThat(Files.exists(Path.of(path))).isTrue();
         assertThat(queueCount(path)).isZero();
@@ -214,7 +214,7 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
                 catch (java.io.IOException exception) { throw new IllegalStateException(exception); }
                 tx.setRollbackOnly();
             });
-        } finally { SecurityContextHolder.clearContext(); }
+        } finally { SecurityContextHolder.clearContext(); org.springframework.web.context.request.RequestContextHolder.resetRequestAttributes(); }
         assertThat(Files.exists(Path.of(path[0]))).isFalse();
         assertThat(jdbc.queryForObject("SELECT count(*) FROM attachment WHERE storage_url=?", Integer.class, path[0])).isZero();
     }
@@ -235,19 +235,53 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
             assertThatThrownBy(() -> storage.read(outside.toString())).isInstanceOf(IllegalArgumentException.class);
         } finally { Files.deleteIfExists(outside); }
     }
+    /** Organization members share evidence, but only the uploader or a manager can rename or delete it. */
+    @Test void attachmentMetadataAndSharedAccessRespectManagerBoundary() throws Exception {
+        User owner=account(UserRole.REPRESENTATIVE),member=account(UserRole.REPRESENTATIVE);
+        String ownerToken=token(owner),memberToken=token(member); UUID id=upload(ownerToken);
+        jdbc.update("INSERT INTO organization_membership(organization_id,user_id,role,granted_by) VALUES (?,?,'MEMBER',?)",owner.getId(),member.getId(),owner.getId());
+        mvc.perform(get("/api/v1/documents/{id}",id).header("Authorization",memberToken).header("X-Organization-Id",owner.getId())).andExpect(status().isOk()).andExpect(jsonPath("storageUrl").doesNotExist());
+        mvc.perform(get("/api/v1/documents").header("Authorization",memberToken).header("X-Organization-Id",owner.getId())).andExpect(status().isOk()).andExpect(jsonPath("totalElements").value(1));
+        String body=json.writeValueAsString(Map.of("fileName","Renamed.pdf"));
+        mvc.perform(put("/api/v1/documents/{id}",id).header("Authorization",memberToken).header("X-Organization-Id",owner.getId()).contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isForbidden());
+        mvc.perform(delete("/api/v1/documents/{id}",id).header("Authorization",memberToken).header("X-Organization-Id",owner.getId())).andExpect(status().isForbidden());
+        jdbc.update("UPDATE organization_membership SET role='MANAGER' WHERE organization_id=? AND user_id=?",owner.getId(),member.getId());
+        mvc.perform(put("/api/v1/documents/{id}",id).header("Authorization",memberToken).header("X-Organization-Id",owner.getId()).contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isOk()).andExpect(jsonPath("fileName").value("Renamed.pdf"));
+        mvc.perform(delete("/api/v1/documents/{id}",id).header("Authorization",memberToken).header("X-Organization-Id",owner.getId())).andExpect(status().isAccepted());
+    }
+    /** Partner CRUD does not expose secrets or allow administrator creation, modification or lockout. */
+    @Test void partnerLifecyclePreservesAdministratorBoundaryAndRevokesDisabledAccess() throws Exception {
+        User admin=account(UserRole.ADMINISTRATOR),partner=account(UserRole.REPRESENTATIVE);
+        String adminToken=token(admin),partnerToken=token(partner);
+        mvc.perform(get("/api/users/me").header("Authorization",partnerToken)).andExpect(status().isOk()).andExpect(jsonPath("passwordHash").doesNotExist());
+        mvc.perform(get("/api/users").header("Authorization",partnerToken)).andExpect(status().isForbidden());
+        String update=json.writeValueAsString(Map.of("fullName","Updated Partner","email",partner.getEmail(),"userRole","CITY_HALL"));
+        mvc.perform(put("/api/users/{id}",partner.getId()).header("Authorization",adminToken).contentType(MediaType.APPLICATION_JSON).content(update)).andExpect(status().isOk()).andExpect(jsonPath("userRole").value("CITY_HALL"));
+        mvc.perform(get("/api/users/me").header("Authorization",partnerToken)).andExpect(status().isOk()).andExpect(jsonPath("userRole").value("CITY_HALL"));
+        mvc.perform(put("/api/users/{id}",admin.getId()).header("Authorization",adminToken).contentType(MediaType.APPLICATION_JSON).content(update)).andExpect(status().isConflict());
+        mvc.perform(delete("/api/users/{id}",admin.getId()).header("Authorization",adminToken)).andExpect(status().isConflict());
+        mvc.perform(delete("/api/users/{id}",partner.getId()).header("Authorization",adminToken)).andExpect(status().isNoContent());
+        mvc.perform(get("/api/users/me").header("Authorization",partnerToken)).andExpect(status().isUnauthorized());
+    }
+    private final java.util.Map<String,UUID> tokenOrganizations=new java.util.HashMap<>();
     private User account(UserRole role) {
-        return users.saveAndFlush(User.builder().email(UUID.randomUUID() + "@example.test").fullName("Fixture")
+        User user=users.saveAndFlush(User.builder().email(UUID.randomUUID() + "@example.test").fullName("Fixture")
             .passwordHash(encryption.encrypt("fixture-password")).userRole(role).build());
+        jdbc.update("INSERT INTO organization(id,name,organization_type,created_by) VALUES (?,'Fixture','Association',?)",user.getId(),user.getId());
+        jdbc.update("INSERT INTO organization_membership(organization_id,user_id,role,granted_by) VALUES (?,?,'MEMBER',?)",user.getId(),user.getId(),user.getId());
+        return user;
     }
     private String token(User user) {
-        return "Bearer " + tokens.createToken(Session.builder().id(user.getId()).email(user.getEmail()).userRole(user.getUserRole()).build());
+        String bearer="Bearer " + tokens.createToken(Session.builder().id(user.getId()).email(user.getEmail()).userRole(user.getUserRole()).build());
+        tokenOrganizations.put(bearer,user.getId());
+        return bearer;
     }
     private String partner(String email, UserRole role) throws Exception {
         return json.writeValueAsString(Map.of("fullName", "Partner", "email", email, "password", "fixture-password", "userRole", role));
     }
     private MockMultipartFile pdf() { return new MockMultipartFile("documento", "receipt.pdf", "application/octet-stream", PDF); }
     private UUID upload(String actor) throws Exception {
-        var response = mvc.perform(multipart("/api/documents").file(pdf()).header("Authorization", actor))
+        var response = mvc.perform(multipart("/api/documents").file(pdf()).header("Authorization", actor).header("X-Organization-Id", tokenOrganizations.get(actor)))
             .andExpect(status().isCreated()).andExpect(jsonPath("contentType").value("application/pdf"))
             .andExpect(jsonPath("creator").doesNotExist()).andExpect(jsonPath("storageUrl").doesNotExist())
             .andExpect(jsonPath("passwordHash").doesNotExist()).andReturn().getResponse();
@@ -256,6 +290,9 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
     private String stored(UUID id) { return jdbc.queryForObject("SELECT storage_url FROM attachment WHERE id=?", String.class, id); }
     private int queueCount(String path) { return jdbc.queryForObject("SELECT count(*) FROM attachment_file_deletion WHERE storage_path=?", Integer.class, path); }
     private void identify(User user) {
+        var request=new org.springframework.mock.web.MockHttpServletRequest();
+        request.addHeader("X-Organization-Id",user.getId().toString());
+        org.springframework.web.context.request.RequestContextHolder.setRequestAttributes(new org.springframework.web.context.request.ServletRequestAttributes(request));
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user.getId(), null,
             List.of(new SimpleGrantedAuthority("ROLE_" + user.getUserRole().name()))));
     }

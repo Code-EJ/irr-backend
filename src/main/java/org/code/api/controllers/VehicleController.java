@@ -39,7 +39,7 @@ import java.util.UUID;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/vehicles")
+@RequestMapping({"/api/vehicles", "/api/v1/vehicles"})
 public class VehicleController {
 
     private final VehiclePort vehiclePort;
@@ -47,7 +47,7 @@ public class VehicleController {
     // ── Criação ──────────────────────────────────────────────────────────────
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'ORGANIZATION', 'CITY_HALL')")
+    @PreAuthorize("@organizationScope.manager()")
     public ResponseEntity<VehicleResponseDTO> create(
         @Valid @RequestBody VehicleCreateRequestDTO data
     ) {
@@ -62,7 +62,7 @@ public class VehicleController {
     }
 
     @PostMapping("/batch")
-    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'ORGANIZATION', 'CITY_HALL')")
+    @PreAuthorize("@organizationScope.manager()")
     public ResponseEntity<List<VehicleResponseDTO>> bulkCreate(
         @Valid @RequestBody VehicleBulkCreateRequestDTO data
     ) {
@@ -93,7 +93,7 @@ public class VehicleController {
     // ── Atualização ──────────────────────────────────────────────────────────
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'ORGANIZATION', 'CITY_HALL')")
+    @PreAuthorize("@organizationScope.manager()")
     public ResponseEntity<VehicleResponseDTO> update(
         @PathVariable UUID id,
         @Valid @RequestBody VehicleUpdateRequestDTO data
@@ -102,7 +102,7 @@ public class VehicleController {
     }
 
     @PutMapping("/batch")
-    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'ORGANIZATION', 'CITY_HALL')")
+    @PreAuthorize("@organizationScope.manager()")
     public ResponseEntity<List<VehicleResponseDTO>> bulkUpdate(
         @Valid @RequestBody VehicleBulkUpdateRequestDTO data
     ) {
@@ -112,7 +112,7 @@ public class VehicleController {
     // ── Exclusão (Soft Delete) ───────────────────────────────────────────────
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'ORGANIZATION', 'CITY_HALL')")
+    @PreAuthorize("@organizationScope.manager()")
     public ResponseEntity<Void> deactivate(
         @PathVariable UUID id
     ) {

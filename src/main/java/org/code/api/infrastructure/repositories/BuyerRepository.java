@@ -11,6 +11,6 @@ import java.util.UUID;
 
 @Repository
 public interface BuyerRepository extends JpaRepository<Buyer, UUID> {
-    Optional<Buyer> findByIdAndCreatorId(UUID id, UUID creatorId);
-    Page<Buyer> findAllByCreatorId(UUID creatorId, Pageable pageable);
+    Optional<Buyer> findByIdAndOrganizationId(UUID id, UUID organizationId);
+    Page<Buyer> findAllByOrganizationId(UUID organizationId, Pageable pageable);
 }

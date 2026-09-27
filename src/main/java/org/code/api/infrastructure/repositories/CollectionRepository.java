@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Repository
 public interface CollectionRepository extends JpaRepository<Collection, UUID> {
-    Optional<Collection> findByIdAndCreatorId(UUID id, UUID creatorId);
-    Page<Collection> findAllByCreatorId(UUID creatorId, Pageable pageable);
+    Optional<Collection> findByIdAndOrganizationId(UUID id, UUID organizationId);
+    Page<Collection> findAllByOrganizationId(UUID organizationId, Pageable pageable);
     boolean existsByVehicleId(UUID vehicleId);
 }

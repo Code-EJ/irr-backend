@@ -25,6 +25,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -35,28 +36,33 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Slf4j
 @Service
+@PreAuthorize("isAuthenticated()")
 @RequiredArgsConstructor
 public class VehicleService implements VehiclePort {
+    private final ReferenceLifecycleGuard lifecycle;
 
     private final VehicleRepository vehicleRepository;
     private final CollectionRepository collectionRepository;
     private final UserRepository userRepository;
     private final AuthenticatedUserProvider userProvider;
+    private final org.code.api.domain.ports.OrganizationScope scope;
 
     // ═══════════════════════════════════════════════════════════════════════════
     // Operações Unitárias
     // ═══════════════════════════════════════════════════════════════════════════
 
     @Override
+    @PreAuthorize("@organizationScope.manager()")
     @Transactional
     public VehicleResponseDTO create(VehicleCreateRequestDTO data) {
-        UUID userId = userProvider.getCurrentUserId();
-        User creator = userRepository.getReferenceById(userId);
+        UUID organizationId = scope.organizationId();
+        if (!scope.manager()) throw new org.springframework.security.access.AccessDeniedException("Organization manager permission is required");
+        User creator = userRepository.getReferenceById(userProvider.getCurrentUserId());
 
         String licensePlate = normalizePlate(data.licensePlate());
         String model = data.model() != null ? data.model().trim() : null;
 
-        if (vehicleRepository.existsByLicensePlate(licensePlate)) {
+        if (vehicleRepository.existsByLicensePlateAndOrganizationId(licensePlate, organizationId)) {
             throw new VehicleError.PlateAlreadyExists(licensePlate);
         }
 
@@ -66,7 +72,7 @@ public class VehicleService implements VehiclePort {
                             .licensePlate(licensePlate)
                             .model(model)
                             .isActive(true)
-                            .creator(creator)
+                            .creator(creator).organizationId(organizationId)
                             .build()
             );
 
@@ -79,22 +85,24 @@ public class VehicleService implements VehiclePort {
     @Override
     @Transactional(readOnly = true)
     public VehicleResponseDTO getById(UUID id) {
-        UUID userId = userProvider.getCurrentUserId();
+        UUID organizationId = scope.organizationId();
 
         Vehicle vehicle = vehicleRepository
-                .findByIdAndCreatorId(id, userId)
+                .findByIdAndOrganizationId(id, organizationId)
                 .orElseThrow(() -> new VehicleError.NotFound(id));
 
         return toResponse(vehicle);
     }
 
     @Override
+    @PreAuthorize("@organizationScope.manager()")
     @Transactional
     public VehicleResponseDTO update(UUID id, VehicleUpdateRequestDTO data) {
-        UUID userId = userProvider.getCurrentUserId();
+        UUID organizationId = scope.organizationId();
+        if (!scope.manager()) throw new org.springframework.security.access.AccessDeniedException("Organization manager permission is required");
 
         Vehicle vehicle = vehicleRepository
-                .findByIdAndCreatorId(id, userId)
+                .findByIdAndOrganizationId(id, organizationId)
                 .orElseThrow(() -> new VehicleError.NotFound(id));
 
         if (!vehicle.getIsActive()) {
@@ -105,13 +113,14 @@ public class VehicleService implements VehiclePort {
         String newModel = data.model() != null ? data.model().trim() : null;
 
         if (!vehicle.getLicensePlate().equals(newPlate)) {
-            vehicleRepository.findByLicensePlate(newPlate).ifPresent(found -> {
+            vehicleRepository.findByLicensePlateAndOrganizationId(newPlate, organizationId).ifPresent(found -> {
                 throw new VehicleError.PlateAlreadyExists(newPlate);
             });
         }
 
         vehicle.setLicensePlate(newPlate);
         vehicle.setModel(newModel);
+        if (Boolean.FALSE.equals(data.isActive())) lifecycle.vehicle(id);
         vehicle.setIsActive(data.isActive());
 
         try {
@@ -123,15 +132,18 @@ public class VehicleService implements VehiclePort {
     }
 
     @Override
+    @PreAuthorize("@organizationScope.manager()")
     @Transactional
     public void deactivate(UUID id) {
-        UUID userId = userProvider.getCurrentUserId();
+        UUID organizationId = scope.organizationId();
+        if (!scope.manager()) throw new org.springframework.security.access.AccessDeniedException("Organization manager permission is required");
         List<UserRole> roles = userProvider.getCurrentUserRoles();
         boolean isAdmin = roles.contains(UserRole.ADMINISTRATOR);
 
         Vehicle vehicle = vehicleRepository
-                .findByIdAndCreatorId(id, userId)
+                .findByIdAndOrganizationId(id, organizationId)
                 .orElseThrow(() -> new VehicleError.NotFound(id));
+        lifecycle.vehicle(id);
 
         if (!vehicle.getIsActive()) {
             throw new VehicleError.InactiveVehicle(id);
@@ -139,7 +151,7 @@ public class VehicleService implements VehiclePort {
 
         // Critério 3: não-admin bloqueado se houver coletas vinculadas
         boolean hasCollections = collectionRepository.existsByVehicleId(id);
-        if (hasCollections && !isAdmin) {
+        if (hasCollections) {
             throw new VehicleError.HasCollectionBinding(id);
         }
 
@@ -157,10 +169,10 @@ public class VehicleService implements VehiclePort {
     @Override
     @Transactional(readOnly = true)
     public Page<VehicleResponseDTO> list(String licensePlate, String model, Pageable pageable) {
-        UUID userId = userProvider.getCurrentUserId();
+        UUID organizationId = scope.organizationId();
 
         // Base: sempre filtra pelo criador (isolamento multilocatário)
-        Specification<Vehicle> spec = VehicleSpecification.withCreatorId(userId);
+        Specification<Vehicle> spec = VehicleSpecification.withOrganizationId(organizationId);
 
         // Filtros opcionais — composição dinâmica
         if (licensePlate != null && !licensePlate.isBlank()) {
@@ -178,10 +190,12 @@ public class VehicleService implements VehiclePort {
     // ═══════════════════════════════════════════════════════════════════════════
 
     @Override
+    @PreAuthorize("@organizationScope.manager()")
     @Transactional
     public List<VehicleResponseDTO> bulkCreate(VehicleBulkCreateRequestDTO data) {
-        UUID userId = userProvider.getCurrentUserId();
-        User creator = userRepository.getReferenceById(userId);
+        UUID organizationId = scope.organizationId();
+        if (!scope.manager()) throw new org.springframework.security.access.AccessDeniedException("Organization manager permission is required");
+        User creator = userRepository.getReferenceById(userProvider.getCurrentUserId());
 
         // Validação prévia: detectar placas duplicadas dentro do próprio lote
         Set<String> plateBatch = new HashSet<>();
@@ -194,7 +208,7 @@ public class VehicleService implements VehiclePort {
 
         // Validação prévia: detectar placas que já existem no banco
         for (String plate : plateBatch) {
-            if (vehicleRepository.existsByLicensePlate(plate)) {
+            if (vehicleRepository.existsByLicensePlateAndOrganizationId(plate, organizationId)) {
                 throw new VehicleError.PlateAlreadyExists(plate);
             }
         }
@@ -207,7 +221,7 @@ public class VehicleService implements VehiclePort {
                     .licensePlate(normalizePlate(item.licensePlate()))
                     .model(item.model() != null ? item.model().trim() : null)
                     .isActive(true)
-                    .creator(creator)
+                    .creator(creator).organizationId(organizationId)
                     .build()
             );
         }
@@ -222,9 +236,11 @@ public class VehicleService implements VehiclePort {
     }
 
     @Override
+    @PreAuthorize("@organizationScope.manager()")
     @Transactional
     public List<VehicleResponseDTO> bulkUpdate(VehicleBulkUpdateRequestDTO data) {
-        UUID userId = userProvider.getCurrentUserId();
+        UUID organizationId = scope.organizationId();
+        if (!scope.manager()) throw new org.springframework.security.access.AccessDeniedException("Organization manager permission is required");
 
         // Validação prévia: detectar IDs duplicados no lote
         Set<UUID> idBatch = new HashSet<>();
@@ -247,7 +263,7 @@ public class VehicleService implements VehiclePort {
 
         for (VehicleBulkUpdateItemDTO item : data.vehicles()) {
             Vehicle vehicle = vehicleRepository
-                    .findByIdAndCreatorId(item.id(), userId)
+                    .findByIdAndOrganizationId(item.id(), organizationId)
                     .orElseThrow(() -> new VehicleError.NotFound(item.id()));
 
             if (!vehicle.getIsActive()) {
@@ -259,7 +275,7 @@ public class VehicleService implements VehiclePort {
 
             // Verificar conflito de placa somente se mudou
             if (!vehicle.getLicensePlate().equals(newPlate)) {
-                vehicleRepository.findByLicensePlate(newPlate).ifPresent(found -> {
+                vehicleRepository.findByLicensePlateAndOrganizationId(newPlate, organizationId).ifPresent(found -> {
                     if (!found.getId().equals(item.id())) {
                         throw new VehicleError.PlateAlreadyExists(newPlate);
                     }
@@ -268,6 +284,7 @@ public class VehicleService implements VehiclePort {
 
             vehicle.setLicensePlate(newPlate);
             vehicle.setModel(newModel);
+            if (Boolean.FALSE.equals(item.isActive())) lifecycle.vehicle(vehicle.getId());
             vehicle.setIsActive(item.isActive());
 
             results.add(toResponse(vehicleRepository.save(vehicle)));
@@ -281,7 +298,7 @@ public class VehicleService implements VehiclePort {
     // ═══════════════════════════════════════════════════════════════════════════
 
     private String normalizePlate(String plate) {
-        return plate.trim().toUpperCase();
+        return plate.trim().toUpperCase(java.util.Locale.ROOT);
     }
 
     private VehicleResponseDTO toResponse(Vehicle vehicle) {

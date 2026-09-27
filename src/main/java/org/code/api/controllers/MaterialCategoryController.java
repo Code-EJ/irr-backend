@@ -1,5 +1,6 @@
 package org.code.api.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.code.api.domain.ports.MaterialCategoryPort;
@@ -25,14 +26,14 @@ import java.util.UUID;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/materials/categories")
+@RequestMapping({"/api/materials/categories", "/api/v1/materials/categories"})
 public class MaterialCategoryController {
 
     private final MaterialCategoryPort categoryPort;
 
     /** Creates a material for the current administrator. */
     @PostMapping
-    @PreAuthorize("hasRole('ADMINISTRATOR')")
+    @PreAuthorize("@organizationScope.manager()")
     public ResponseEntity<MaterialCategoryResponseDTO> create(
         @Valid @RequestBody MaterialCategoryCreateRequestDTO data
     ) {
@@ -47,7 +48,7 @@ public class MaterialCategoryController {
     }
 
     /** Lists matching active materials; name and parent filters precede pagination. */
-    @io.swagger.v3.oas.annotations.Operation(description = "Lists only the authenticated creator's active materials. The optional name filter is a trimmed, case-insensitive literal substring; percent and underscore are not wildcards. Filtering precedes pagination and total counts.")
+    @Operation(description = "Lists only the authenticated creator's active materials. The optional name filter is a trimmed, case-insensitive literal substring; percent and underscore are not wildcards. Filtering precedes pagination and total counts.")
     @GetMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Page<MaterialCategoryResponseDTO>> list(
@@ -65,9 +66,9 @@ public class MaterialCategoryController {
     }
 
     /** Updates an owned material using the expected version. */
-    @io.swagger.v3.oas.annotations.Operation(description = "Administrator-only update in the authenticated creator scope. Send the last returned version. Stale versions return 409; refresh the record before retrying. Successful responses include the flushed server-managed version.")
+    @Operation(description = "Administrator-only update in the authenticated creator scope. Send the last returned version. Stale versions return 409; refresh the record before retrying. Successful responses include the flushed server-managed version.")
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMINISTRATOR')")
+    @PreAuthorize("@organizationScope.manager()")
     public ResponseEntity<MaterialCategoryResponseDTO> update(
         @PathVariable UUID id,
         @Valid @RequestBody MaterialCategoryUpdateRequestDTO data
@@ -77,7 +78,7 @@ public class MaterialCategoryController {
 
     /** Applies the existing owned-material deactivation policy. */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMINISTRATOR')")
+    @PreAuthorize("@organizationScope.manager()")
     public ResponseEntity<Void> deactivate(@PathVariable UUID id) {
         categoryPort.deactivate(id);
         return ResponseEntity.noContent().build();

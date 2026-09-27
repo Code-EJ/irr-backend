@@ -12,6 +12,7 @@ import java.util.UUID;
  */
 @Repository
 public interface InputItemRepository extends JpaRepository<InputItem, UUID> {
+    java.util.Optional<org.code.api.domain.models.collection.InputItem> findByIdAndOrganizationId(java.util.UUID id, java.util.UUID organizationId);
     List<InputItem> findAllByCollectionId(UUID collectionId);
     List<InputItem> findAllByDonationId(UUID donationId);
 }

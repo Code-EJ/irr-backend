@@ -40,6 +40,7 @@ import java.util.UUID;
 @PreAuthorize("isAuthenticated()")
 @RequiredArgsConstructor
 public class MaterialCategoryService implements MaterialCategoryPort {
+    private final ReferenceLifecycleGuard lifecycle;
 
     private static final String LEVEL = "CATEGORY";
 
@@ -49,18 +50,20 @@ public class MaterialCategoryService implements MaterialCategoryPort {
     private final InventoryBalanceRepository inventoryBalanceRepository;
     private final UserRepository userRepository;
     private final AuthenticatedUserProvider userProvider;
+    private final org.code.api.domain.ports.OrganizationScope scope;
 
     /** {@inheritDoc} */
     @Override
-    @PreAuthorize("hasRole('ADMINISTRATOR')")
+    @PreAuthorize("@organizationScope.manager()")
     @Transactional
     public MaterialCategoryResponseDTO create(MaterialCategoryCreateRequestDTO data) {
-        UUID userId = userProvider.getCurrentUserId();
-        User creator = userRepository.getReferenceById(userId);
+        UUID organizationId = scope.organizationId();
+        if (!scope.manager()) throw new org.springframework.security.access.AccessDeniedException("Organization manager permission is required");
+        User creator = userRepository.getReferenceById(userProvider.getCurrentUserId());
 
         String name = data.name().trim();
 
-        if (categoryRepository.existsByNameAndCreatorId(name, userId)) {
+        if (categoryRepository.existsByNameAndOrganizationId(name, organizationId)) {
             throw new MaterialError.NameAlreadyExists(name, LEVEL);
         }
 
@@ -68,7 +71,7 @@ public class MaterialCategoryService implements MaterialCategoryPort {
             MaterialCategory.builder()
                 .name(name)
                 .isActive(true)
-                .creator(creator)
+                .creator(creator).organizationId(organizationId)
                 .build()
         );
 
@@ -79,8 +82,8 @@ public class MaterialCategoryService implements MaterialCategoryPort {
     @Override
     @Transactional(readOnly = true)
     public Page<MaterialCategoryResponseDTO> list(String name, Pageable pageable) {
-        UUID userId = userProvider.getCurrentUserId();
-        return categoryRepository.findAll(MaterialSearch.matching(userId, null, null, name), pageable)
+        UUID organizationId = scope.organizationId();
+        return categoryRepository.findAll(MaterialSearch.matching(organizationId, null, null, name), pageable)
             .map(this::toResponse);
     }
 
@@ -88,10 +91,10 @@ public class MaterialCategoryService implements MaterialCategoryPort {
     @Override
     @Transactional(readOnly = true)
     public MaterialCategoryResponseDTO getById(UUID id) {
-        UUID userId = userProvider.getCurrentUserId();
+        UUID organizationId = scope.organizationId();
 
         MaterialCategory category = categoryRepository
-            .findByIdAndCreatorId(id, userId)
+            .findByIdAndOrganizationId(id, organizationId)
             .orElseThrow(() -> new MaterialError.NotFound(id, LEVEL));
 
         return toResponse(category);
@@ -99,13 +102,14 @@ public class MaterialCategoryService implements MaterialCategoryPort {
 
     /** {@inheritDoc} */
     @Override
-    @PreAuthorize("hasRole('ADMINISTRATOR')")
+    @PreAuthorize("@organizationScope.manager()")
     @Transactional
     public MaterialCategoryResponseDTO update(UUID id, MaterialCategoryUpdateRequestDTO data) {
-        UUID userId = userProvider.getCurrentUserId();
+        UUID organizationId = scope.organizationId();
+        if (!scope.manager()) throw new org.springframework.security.access.AccessDeniedException("Organization manager permission is required");
 
         MaterialCategory category = categoryRepository
-            .findByIdAndCreatorId(id, userId)
+            .findByIdAndOrganizationId(id, organizationId)
             .orElseThrow(() -> new MaterialError.NotFound(id, LEVEL));
 
         if (!category.getIsActive()) {
@@ -120,7 +124,7 @@ public class MaterialCategoryService implements MaterialCategoryPort {
         String newName = data.name().trim();
 
         if (!category.getName().equals(newName)
-                && categoryRepository.existsByNameAndCreatorId(newName, userId)) {
+                && categoryRepository.existsByNameAndOrganizationId(newName, organizationId)) {
             throw new MaterialError.NameAlreadyExists(newName, LEVEL);
         }
 
@@ -136,16 +140,18 @@ public class MaterialCategoryService implements MaterialCategoryPort {
 
     /** {@inheritDoc} */
     @Override
-    @PreAuthorize("hasRole('ADMINISTRATOR')")
+    @PreAuthorize("@organizationScope.manager()")
     @Transactional
     public void deactivate(UUID id) {
-        UUID userId = userProvider.getCurrentUserId();
+        UUID organizationId = scope.organizationId();
+        if (!scope.manager()) throw new org.springframework.security.access.AccessDeniedException("Organization manager permission is required");
         List<UserRole> roles = userProvider.getCurrentUserRoles();
         boolean isAdmin = roles.contains(UserRole.ADMINISTRATOR);
 
         MaterialCategory category = categoryRepository
-            .findByIdAndCreatorId(id, userId)
+            .findByIdAndOrganizationId(id, organizationId)
             .orElseThrow(() -> new MaterialError.NotFound(id, LEVEL));
+        lifecycle.material(id, LEVEL);
 
         if (!category.getIsActive()) {
             throw new MaterialError.InactiveMaterial(id, LEVEL);
@@ -162,7 +168,7 @@ public class MaterialCategoryService implements MaterialCategoryPort {
                 .anyMatch(st -> inventoryBalanceRepository.existsByMaterialSubtypeId(st.getId()));
         }
 
-        if (hasInventoryBinding && !isAdmin) {
+        if (hasInventoryBinding) {
             throw new MaterialError.HasInventoryBinding(id, LEVEL);
         }
 

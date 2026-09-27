@@ -12,5 +12,6 @@ import java.util.UUID;
  */
 @Repository
 public interface SortedItemRepository extends JpaRepository<SortedItem, UUID> {
+    java.util.Optional<org.code.api.domain.models.sorting.SortedItem> findByIdAndOrganizationId(java.util.UUID id, java.util.UUID organizationId);
     List<SortedItem> findAllBySortingId(UUID sortingId);
 }

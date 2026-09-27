@@ -9,19 +9,28 @@ import org.code.api.domain.enums.DestinationType;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+/**
+ * Sorting quantities allocated from one intake item.
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
+ */
 public record SortedItemRequestDTO(
+    @NotNull(message = "Source item ID is required")
     UUID inputItemId,
     @NotNull(message = "Material subtype ID is required")
     UUID materialSubtypeId,
     @NotNull(message = "Weight is required")
     @Positive(message = "Weight must be positive")
+    @jakarta.validation.constraints.Digits(integer = 11, fraction = 4)
     BigDecimal weightKg,
     @NotNull(message = "Volume is required")
     @Positive(message = "Volume must be positive")
+    @jakarta.validation.constraints.Digits(integer = 11, fraction = 4)
     BigDecimal volumeM3,
     @PositiveOrZero(message = "Reject weight must be zero or positive")
+    @jakarta.validation.constraints.Digits(integer = 11, fraction = 4)
     BigDecimal rejectWeightKg,
     @PositiveOrZero(message = "Reject volume must be zero or positive")
+    @jakarta.validation.constraints.Digits(integer = 11, fraction = 4)
     BigDecimal rejectVolumeM3,
     DestinationType destinationType,
     UUID destinationId

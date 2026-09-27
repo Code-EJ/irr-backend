@@ -2,11 +2,8 @@ package org.code.api.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.code.api.domain.enums.OperationType;
 import org.code.api.domain.exception.MaterialError;
 import org.code.api.domain.exception.PressingError;
-import org.code.api.domain.models.inventory.InventoryBalance;
-import org.code.api.domain.models.inventory.InventoryLog;
 import org.code.api.domain.models.material.MaterialSubtype;
 import org.code.api.domain.models.pressing.PressedBale;
 import org.code.api.domain.models.pressing.Pressing;
@@ -22,6 +19,7 @@ import org.code.api.infrastructure.repositories.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -31,18 +29,13 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Serviço para gestão do processo de Prensagem de Materiais.
- *
- * <p>Regras de negócio e ACID:</p>
- * <ul>
- *   <li>Registro de fardos prensados com a transformação de volume (compactação)</li>
- *   <li>Atualização automática do volume ocupado no estoque (InventoryBalance)</li>
- *   <li>Registro de movimentação no livro razão de inventário (InventoryLog com PRESSING_OUTPUT)</li>
- *   <li>Garantia transacional de integridade (rollback total em caso de erro)</li>
- * </ul>
+ * Posts organization-owned pressing with conserved quantities and traceable stock lots.
+ * Business effects and idempotency receipts commit in one transaction.
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 @Slf4j
 @Service
+@PreAuthorize("isAuthenticated()")
 @RequiredArgsConstructor
 public class PressingService implements PressingPort {
 
@@ -50,16 +43,24 @@ public class PressingService implements PressingPort {
     private final PressedBaleRepository pressedBaleRepository;
     private final SortedItemRepository sortedItemRepository;
     private final MaterialSubtypeRepository subtypeRepository;
-    private final InventoryBalanceRepository inventoryBalanceRepository;
-    private final InventoryLogRepository inventoryLogRepository;
+    private final org.code.api.inventory.application.StockLedger ledger;
+    private final org.code.api.inventory.application.IdempotentCommands commands;
+    private final org.springframework.jdbc.core.JdbcTemplate jdbc;
+    private final jakarta.persistence.EntityManager entityManager;
     private final UserRepository userRepository;
     private final AuthenticatedUserProvider userProvider;
+    private final org.code.api.domain.ports.OrganizationScope scope;
 
     @Override
     @Transactional
     public PressingResponseDTO create(PressingCreateRequestDTO data) {
-        UUID userId = userProvider.getCurrentUserId();
-        User creator = userRepository.getReferenceById(userId);
+        return commands.execute("CREATE_PRESSING", data, PressingResponseDTO.class, () -> post(data));
+    }
+
+    /** Posts a validated command after the organization lock and replay check. */
+    private PressingResponseDTO post(PressingCreateRequestDTO data) {
+        UUID organizationId = scope.organizationId();
+        User creator = userRepository.getReferenceById(userProvider.getCurrentUserId());
 
         OffsetDateTime date = data.pressingDate() != null ? data.pressingDate() : OffsetDateTime.now();
 
@@ -67,9 +68,12 @@ public class PressingService implements PressingPort {
             Pressing.builder()
                 .pressingDate(date)
                 .isActive(true)
-                .creator(creator)
+                .creator(creator).organizationId(organizationId)
                 .build()
         );
+
+        entityManager.flush();
+        UUID operation = ledger.begin("PRESSING", pressing.getId(), date);
 
         List<PressedBale> savedBales = new ArrayList<>();
 
@@ -79,24 +83,36 @@ public class PressingService implements PressingPort {
                     throw new PressingError.InvalidCompaction(baleDto.initialVolumeM3(), baleDto.finalVolumeM3());
                 }
 
-                MaterialSubtype subtype = subtypeRepository.findById(baleDto.materialSubtypeId())
+                MaterialSubtype subtype = subtypeRepository.findByIdAndOrganizationId(baleDto.materialSubtypeId(), organizationId)
                     .filter(MaterialSubtype::getIsActive)
                     .orElseThrow(() -> new MaterialError.NotFound(baleDto.materialSubtypeId(), "SUBTYPE"));
 
-                SortedItem sortedItem = null;
-                if (baleDto.sortedItemId() != null) {
-                    sortedItem = sortedItemRepository.findById(baleDto.sortedItemId())
-                        .orElseThrow(() -> new PressingError.SortedItemNotFound(baleDto.sortedItemId()));
+                SortedItem sortedItem = sortedItemRepository.findByIdAndOrganizationId(baleDto.sortedItemId(), organizationId)
+                    .orElseThrow(() -> new PressingError.SortedItemNotFound(baleDto.sortedItemId()));
+                if (!sortedItem.getMaterialSubtype().getId().equals(subtype.getId())) {
+                    throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST,
+                        "Pressing must preserve the source material subtype");
                 }
+                if (baleDto.destinationId() != null || (baleDto.destinationType() != null
+                        && baleDto.destinationType() != org.code.api.domain.enums.DestinationType.STOCK)) {
+                    throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST,
+                        "Pressing creates stock; use a separate sale command to sell it");
+                }
+                var lots = jdbc.queryForList("SELECT id FROM stock_lot WHERE organization_id=? AND sorted_item_id=? AND is_active", UUID.class, organizationId, sortedItem.getId());
+                if (lots.isEmpty()) {
+                    throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.CONFLICT,
+                        "The sorting output has no available stock lot");
+                }
+                ledger.consume(lots.getFirst(), subtype.getId(), baleDto.weightKg(), baleDto.initialVolumeM3());
 
                 PressedBale bale = PressedBale.builder()
                     .pressing(pressing)
                     .sortedItem(sortedItem)
-                    .materialSubtype(subtype)
+                    .materialSubtype(subtype).organizationId(organizationId)
                     .weightKg(baleDto.weightKg())
                     .initialVolumeM3(baleDto.initialVolumeM3())
                     .finalVolumeM3(baleDto.finalVolumeM3())
-                    .destinationType(baleDto.destinationType())
+                    .destinationType(org.code.api.domain.enums.DestinationType.STOCK)
                     .destinationId(baleDto.destinationId())
                     .isActive(true)
                     .build();
@@ -104,57 +120,32 @@ public class PressingService implements PressingPort {
                 bale = pressedBaleRepository.save(bale);
                 savedBales.add(bale);
 
-                // 1. Atualizar volume de compacto no saldo real do estoque (InventoryBalance)
-                // Delta de volume = finalVolumeM3 - initialVolumeM3 (compactação reduz o espaço ocupado)
+                entityManager.flush();
                 BigDecimal volumeDelta = baleDto.finalVolumeM3().subtract(baleDto.initialVolumeM3());
-
-                InventoryBalance balance = inventoryBalanceRepository.findByMaterialSubtypeId(subtype.getId())
-                    .orElseGet(() -> InventoryBalance.builder()
-                        .materialSubtype(subtype)
-                        .currentWeightKg(BigDecimal.ZERO)
-                        .currentVolumeM3(BigDecimal.ZERO)
-                        .build());
-
-                BigDecimal newVolume = balance.getCurrentVolumeM3().add(volumeDelta);
-                if (newVolume.compareTo(BigDecimal.ZERO) < 0) {
-                    newVolume = BigDecimal.ZERO;
-                }
-
-                balance.setCurrentVolumeM3(newVolume);
-                inventoryBalanceRepository.save(balance);
-
-                // 2. Registrar log de movimentação no livro razão de inventário
-                InventoryLog inventoryLog = InventoryLog.builder()
-                    .materialSubtype(subtype)
-                    .quantityKg(baleDto.weightKg())
-                    .quantityM3(volumeDelta)
-                    .operationType(OperationType.PRESSING_OUTPUT)
-                    .isActive(true)
-                    .build();
-
-                inventoryLogRepository.save(inventoryLog);
+                ledger.move(operation, subtype.getId(), BigDecimal.ZERO, volumeDelta);
+                ledger.lot(subtype.getId(), null, bale.getId(), baleDto.weightKg(), baleDto.finalVolumeM3());
             }
         }
 
         pressing.setPressedBales(savedBales);
-        log.info("Pressing record created successfully with ID: {} and {} bales by user {}", pressing.getId(), savedBales.size(), userId);
+        log.info("Pressing record created successfully with ID: {} and {} bales in organization {}", pressing.getId(), savedBales.size(), organizationId);
         return toResponse(pressing);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<PressingResponseDTO> list(Pageable pageable) {
-        UUID userId = userProvider.getCurrentUserId();
-        Page<Pressing> page = pressingRepository.findAllByCreatorId(userId, pageable);
+        UUID organizationId = scope.organizationId();
+        Page<Pressing> page = pressingRepository.findAllByOrganizationId(organizationId, pageable);
         return page.map(this::toResponse);
     }
 
     @Override
     @Transactional(readOnly = true)
     public PressingResponseDTO getById(UUID id) {
-        UUID userId = userProvider.getCurrentUserId();
+        UUID organizationId = scope.organizationId();
 
-        Pressing pressing = pressingRepository.findByIdAndCreatorId(id, userId)
+        Pressing pressing = pressingRepository.findByIdAndOrganizationId(id, organizationId)
             .orElseThrow(() -> new PressingError.NotFound(id));
 
         return toResponse(pressing);
@@ -183,7 +174,8 @@ public class PressingService implements PressingPort {
             pressing.getIsActive(),
             baleDTOs,
             pressing.getCreatedAt(),
-            pressing.getUpdatedAt()
+            pressing.getUpdatedAt(),
+            pressing.getStatus()
         );
     }
 }

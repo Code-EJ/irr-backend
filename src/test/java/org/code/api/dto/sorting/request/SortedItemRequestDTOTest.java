@@ -75,7 +75,7 @@ class SortedItemRequestDTOTest {
     private static SortedItemRequestDTO dto(BigDecimal weight, BigDecimal volume,
                                             BigDecimal rejectWeight, BigDecimal rejectVolume) {
         return new SortedItemRequestDTO(
-            null,
+            UUID.randomUUID(),
             UUID.randomUUID(),
             weight,
             volume,

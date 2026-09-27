@@ -18,10 +18,10 @@ import java.util.UUID;
  */
 @Repository
 public interface MaterialSubtypeRepository extends JpaRepository<MaterialSubtype, UUID>, JpaSpecificationExecutor<MaterialSubtype> {
-    Optional<MaterialSubtype> findByIdAndCreatorId(UUID id, UUID creatorId);
-    Page<MaterialSubtype> findAllByCreatorId(UUID creatorId, Pageable pageable);
-    Page<MaterialSubtype> findAllByTypeIdAndCreatorId(UUID typeId, UUID creatorId, Pageable pageable);
-    boolean existsByNameAndTypeIdAndCreatorId(String name, UUID typeId, UUID creatorId);
+    Optional<MaterialSubtype> findByIdAndOrganizationId(UUID id, UUID organizationId);
+    Page<MaterialSubtype> findAllByOrganizationId(UUID organizationId, Pageable pageable);
+    Page<MaterialSubtype> findAllByTypeIdAndOrganizationId(UUID typeId, UUID organizationId, Pageable pageable);
+    boolean existsByNameAndTypeIdAndOrganizationId(String name, UUID typeId, UUID organizationId);
     List<MaterialSubtype> findAllByTypeId(UUID typeId);
     List<MaterialSubtype> findAllByTypeIdIn(List<UUID> typeIds);
 }

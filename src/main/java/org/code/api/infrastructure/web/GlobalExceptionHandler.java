@@ -24,5 +24,19 @@ public class GlobalExceptionHandler {
     }
 
 
-    ///  TODO: ADICIONAR OUTROS HANDLERS
+    /** @return a safe status response for rejected request scope */
+    @ExceptionHandler(org.springframework.web.server.ResponseStatusException.class)
+    public ResponseEntity<?> requestRejected(org.springframework.web.server.ResponseStatusException error) {
+        return ResponseEntity.status(error.getStatusCode()).body(Map.of("error","request_rejected","message",error.getReason()==null?"Request rejected":error.getReason()));
+    }
+    /** @return the same result for missing and inaccessible organizational scope */
+    @ExceptionHandler(org.code.api.organizations.domain.OrganizationAccessDenied.class)
+    public ResponseEntity<?> scopeNotFound(org.code.api.organizations.domain.OrganizationAccessDenied error) {
+        return ResponseEntity.status(404).body(Map.of("error","organization_not_found","message","Organization or active membership not found"));
+    }
+    /** @return a generic relational conflict without internal database details */
+    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+    public ResponseEntity<?> integrityConflict(org.springframework.dao.DataIntegrityViolationException error) {
+        return ResponseEntity.status(409).body(Map.of("error","record_conflict","message","The operation conflicts with an existing or referenced record"));
+    }
 }

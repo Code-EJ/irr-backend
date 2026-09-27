@@ -60,6 +60,11 @@ public class OpenApiConfiguration {
             String resource = resources.getOrDefault(handler.getBeanType().getSimpleName(), "Operations");
             String method = handler.getMethod().getName();
             operation.setTags(List.of(resource));
+            if (!List.of("SessionController", "UserController", "OrganizationController").contains(handler.getBeanType().getSimpleName())) {
+                operation.addParametersItem(new io.swagger.v3.oas.models.parameters.Parameter().name("X-Organization-Id").in("header").required(true)
+                    .description("Explicit active organization membership; platform administrator status is not a bypass")
+                    .schema(new io.swagger.v3.oas.models.media.StringSchema().format("uuid")));
+            }
             if (operation.getSummary() == null) operation.setSummary(actions.getOrDefault(method, "Process request") + " — " + resource);
             PreAuthorize rule = handler.getMethodAnnotation(PreAuthorize.class);
             if (operation.getDescription() == null) operation.setDescription(rule == null

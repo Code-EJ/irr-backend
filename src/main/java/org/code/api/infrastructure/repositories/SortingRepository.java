@@ -11,8 +11,8 @@ import java.util.UUID;
 
 @Repository
 public interface SortingRepository extends JpaRepository<Sorting, UUID> {
-    Optional<Sorting> findByIdAndCreatorId(UUID id, UUID creatorId);
-    Page<Sorting> findAllByCreatorId(UUID creatorId, Pageable pageable);
-    Page<Sorting> findAllByCreatorIdAndSortingType(UUID creatorId, org.code.api.domain.enums.SortingType sortingType, Pageable pageable);
+    Optional<Sorting> findByIdAndOrganizationId(UUID id, UUID organizationId);
+    Page<Sorting> findAllByOrganizationId(UUID organizationId, Pageable pageable);
+    Page<Sorting> findAllByOrganizationIdAndSortingType(UUID organizationId, org.code.api.domain.enums.SortingType sortingType, Pageable pageable);
 }
 

@@ -22,13 +22,13 @@ import java.util.UUID;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/sortings")
+@RequestMapping({"/api/sortings", "/api/v1/sortings"})
 public class SortingController {
 
     private final SortingPort sortingPort;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'ORGANIZATION', 'CITY_HALL')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<SortingResponseDTO> create(
         @Valid @RequestBody SortingCreateRequestDTO data
     ) {

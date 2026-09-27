@@ -12,8 +12,8 @@ public final class MaterialCategorySpecification {
 
     private MaterialCategorySpecification() {}
 
-    public static Specification<MaterialCategory> withCreatorId(UUID creatorId) {
-        return (root, query, cb) -> cb.equal(root.get("creator").get("id"), creatorId);
+    public static Specification<MaterialCategory> withOrganizationId(UUID organizationId) {
+        return (root, query, cb) -> cb.equal(root.get("organizationId"), organizationId);
     }
 
     public static Specification<MaterialCategory> nameContains(String name) {

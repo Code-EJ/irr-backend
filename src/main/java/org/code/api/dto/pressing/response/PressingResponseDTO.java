@@ -10,5 +10,6 @@ public record PressingResponseDTO(
     Boolean isActive,
     List<PressedBaleResponseDTO> pressedBales,
     OffsetDateTime createdAt,
-    OffsetDateTime updatedAt
+    OffsetDateTime updatedAt,
+    String status
 ) {}

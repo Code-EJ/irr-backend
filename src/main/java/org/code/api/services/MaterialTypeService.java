@@ -40,6 +40,7 @@ import java.util.UUID;
 @PreAuthorize("isAuthenticated()")
 @RequiredArgsConstructor
 public class MaterialTypeService implements MaterialTypePort {
+    private final ReferenceLifecycleGuard lifecycle;
 
     private static final String LEVEL = "TYPE";
 
@@ -49,18 +50,20 @@ public class MaterialTypeService implements MaterialTypePort {
     private final InventoryBalanceRepository inventoryBalanceRepository;
     private final UserRepository userRepository;
     private final AuthenticatedUserProvider userProvider;
+    private final org.code.api.domain.ports.OrganizationScope scope;
 
     /** {@inheritDoc} */
     @Override
-    @PreAuthorize("hasRole('ADMINISTRATOR')")
+    @PreAuthorize("@organizationScope.manager()")
     @Transactional
     public MaterialTypeResponseDTO create(MaterialTypeCreateRequestDTO data) {
-        UUID userId = userProvider.getCurrentUserId();
-        User creator = userRepository.getReferenceById(userId);
+        UUID organizationId = scope.organizationId();
+        if (!scope.manager()) throw new org.springframework.security.access.AccessDeniedException("Organization manager permission is required");
+        User creator = userRepository.getReferenceById(userProvider.getCurrentUserId());
 
         // Validate that the parent category belongs to the authenticated creator.
         MaterialCategory category = categoryRepository
-            .findByIdAndCreatorId(data.categoryId(), userId)
+            .findByIdAndOrganizationId(data.categoryId(), organizationId)
             .orElseThrow(() -> new MaterialError.ParentNotFound(data.categoryId(), "CATEGORY"));
 
         if (!category.getIsActive()) {
@@ -69,7 +72,7 @@ public class MaterialTypeService implements MaterialTypePort {
 
         String name = data.name().trim();
 
-        if (typeRepository.existsByNameAndCategoryIdAndCreatorId(name, data.categoryId(), userId)) {
+        if (typeRepository.existsByNameAndCategoryIdAndOrganizationId(name, data.categoryId(), organizationId)) {
             throw new MaterialError.NameAlreadyExists(name, LEVEL);
         }
 
@@ -78,7 +81,7 @@ public class MaterialTypeService implements MaterialTypePort {
                 .name(name)
                 .category(category)
                 .isActive(true)
-                .creator(creator)
+                .creator(creator).organizationId(organizationId)
                 .build()
         );
 
@@ -89,8 +92,8 @@ public class MaterialTypeService implements MaterialTypePort {
     @Override
     @Transactional(readOnly = true)
     public Page<MaterialTypeResponseDTO> list(UUID categoryId, String name, Pageable pageable) {
-        UUID userId = userProvider.getCurrentUserId();
-        return typeRepository.findAll(MaterialSearch.matching(userId, "category", categoryId, name), pageable)
+        UUID organizationId = scope.organizationId();
+        return typeRepository.findAll(MaterialSearch.matching(organizationId, "category", categoryId, name), pageable)
             .map(this::toResponse);
     }
 
@@ -98,10 +101,10 @@ public class MaterialTypeService implements MaterialTypePort {
     @Override
     @Transactional(readOnly = true)
     public MaterialTypeResponseDTO getById(UUID id) {
-        UUID userId = userProvider.getCurrentUserId();
+        UUID organizationId = scope.organizationId();
 
         MaterialType type = typeRepository
-            .findByIdAndCreatorId(id, userId)
+            .findByIdAndOrganizationId(id, organizationId)
             .orElseThrow(() -> new MaterialError.NotFound(id, LEVEL));
 
         return toResponse(type);
@@ -109,13 +112,14 @@ public class MaterialTypeService implements MaterialTypePort {
 
     /** {@inheritDoc} */
     @Override
-    @PreAuthorize("hasRole('ADMINISTRATOR')")
+    @PreAuthorize("@organizationScope.manager()")
     @Transactional
     public MaterialTypeResponseDTO update(UUID id, MaterialTypeUpdateRequestDTO data) {
-        UUID userId = userProvider.getCurrentUserId();
+        UUID organizationId = scope.organizationId();
+        if (!scope.manager()) throw new org.springframework.security.access.AccessDeniedException("Organization manager permission is required");
 
         MaterialType type = typeRepository
-            .findByIdAndCreatorId(id, userId)
+            .findByIdAndOrganizationId(id, organizationId)
             .orElseThrow(() -> new MaterialError.NotFound(id, LEVEL));
 
         if (!type.getIsActive()) {
@@ -129,8 +133,8 @@ public class MaterialTypeService implements MaterialTypePort {
         String newName = data.name().trim();
 
         if (!type.getName().equals(newName)
-                && typeRepository.existsByNameAndCategoryIdAndCreatorId(
-                    newName, type.getCategory().getId(), userId)) {
+                && typeRepository.existsByNameAndCategoryIdAndOrganizationId(
+                    newName, type.getCategory().getId(), organizationId)) {
             throw new MaterialError.NameAlreadyExists(newName, LEVEL);
         }
 
@@ -146,16 +150,18 @@ public class MaterialTypeService implements MaterialTypePort {
 
     /** {@inheritDoc} */
     @Override
-    @PreAuthorize("hasRole('ADMINISTRATOR')")
+    @PreAuthorize("@organizationScope.manager()")
     @Transactional
     public void deactivate(UUID id) {
-        UUID userId = userProvider.getCurrentUserId();
+        UUID organizationId = scope.organizationId();
+        if (!scope.manager()) throw new org.springframework.security.access.AccessDeniedException("Organization manager permission is required");
         List<UserRole> roles = userProvider.getCurrentUserRoles();
         boolean isAdmin = roles.contains(UserRole.ADMINISTRATOR);
 
         MaterialType type = typeRepository
-            .findByIdAndCreatorId(id, userId)
+            .findByIdAndOrganizationId(id, organizationId)
             .orElseThrow(() -> new MaterialError.NotFound(id, LEVEL));
+        lifecycle.material(id, LEVEL);
 
         if (!type.getIsActive()) {
             throw new MaterialError.InactiveMaterial(id, LEVEL);
@@ -166,7 +172,7 @@ public class MaterialTypeService implements MaterialTypePort {
         boolean hasInventoryBinding = subtypes.stream()
             .anyMatch(st -> inventoryBalanceRepository.existsByMaterialSubtypeId(st.getId()));
 
-        if (hasInventoryBinding && !isAdmin) {
+        if (hasInventoryBinding) {
             throw new MaterialError.HasInventoryBinding(id, LEVEL);
         }
 

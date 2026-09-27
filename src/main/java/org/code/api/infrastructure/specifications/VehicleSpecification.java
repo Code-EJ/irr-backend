@@ -13,7 +13,7 @@ import java.util.UUID;
  *
  * <p>Uso típico no Service:</p>
  * <pre>{@code
- * Specification<Vehicle> spec = VehicleSpecification.withCreatorId(userId)
+ * Specification<Vehicle> spec = VehicleSpecification.withOrganizationId(userId)
  *     .and(VehicleSpecification.licensePlateContains("ABC"))
  *     .and(VehicleSpecification.modelContains("Fiat"));
  * repository.findAll(spec, pageable);
@@ -28,8 +28,8 @@ public final class VehicleSpecification {
     /**
      * Filtra veículos por creator_id (isolamento multilocatário).
      */
-    public static Specification<Vehicle> withCreatorId(UUID creatorId) {
-        return (root, query, cb) -> cb.equal(root.get("creator").get("id"), creatorId);
+    public static Specification<Vehicle> withOrganizationId(UUID organizationId) {
+        return (root, query, cb) -> cb.equal(root.get("organizationId"), organizationId);
     }
 
     /**

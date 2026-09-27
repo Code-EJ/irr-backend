@@ -11,6 +11,6 @@ import java.util.UUID;
 
 @Repository
 public interface PressingRepository extends JpaRepository<Pressing, UUID> {
-    Optional<Pressing> findByIdAndCreatorId(UUID id, UUID creatorId);
-    Page<Pressing> findAllByCreatorId(UUID creatorId, Pageable pageable);
+    Optional<Pressing> findByIdAndOrganizationId(UUID id, UUID organizationId);
+    Page<Pressing> findAllByOrganizationId(UUID organizationId, Pageable pageable);
 }

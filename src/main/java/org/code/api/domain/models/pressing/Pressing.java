@@ -24,6 +24,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @SuperBuilder
 public class Pressing extends TimeStampedEntity {
+    /** Posted records remain readable after an audited reversal. */
+    @Column(name="status",nullable=false) @Builder.Default
+    private String status="POSTED";
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

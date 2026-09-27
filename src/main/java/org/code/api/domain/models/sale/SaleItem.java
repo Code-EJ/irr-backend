@@ -27,6 +27,12 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class SaleItem {
+    @Column(name="stock_lot_id")
+    private UUID stockLotId;
+
+    /** Verified organization ownership; unmapped legacy rows remain null. */
+    @Column(name = "organization_id")
+    private java.util.UUID organizationId;
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -47,7 +53,7 @@ public class SaleItem {
     @Column(name = "volume_m3", nullable = false, precision = 15, scale = 4)
     private BigDecimal volumeM3;
 
-    @Column(name = "unit_price", nullable = false, precision = 15, scale = 2)
+    @Column(name = "unit_price", nullable = false, precision = 15, scale = 4)
     private BigDecimal unitPrice;
 
     @Column(name = "is_active", nullable = false)

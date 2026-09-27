@@ -11,6 +11,6 @@ import java.util.UUID;
 
 @Repository
 public interface SaleRepository extends JpaRepository<Sale, UUID> {
-    Optional<Sale> findByIdAndCreatorId(UUID id, UUID creatorId);
-    Page<Sale> findAllByCreatorId(UUID creatorId, Pageable pageable);
+    Optional<Sale> findByIdAndOrganizationId(UUID id, UUID organizationId);
+    Page<Sale> findAllByOrganizationId(UUID organizationId, Pageable pageable);
 }

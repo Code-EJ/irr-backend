@@ -25,6 +25,10 @@ import java.util.UUID;
 @Builder
 public class InventoryBalance {
 
+    /** Verified organization ownership; unmapped legacy rows remain null. */
+    @Column(name = "organization_id")
+    private java.util.UUID organizationId;
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", updatable = false, nullable = false)

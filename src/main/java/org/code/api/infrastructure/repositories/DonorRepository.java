@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Repository
 public interface DonorRepository extends JpaRepository<Donor, UUID> {
-    Optional<Donor> findByIdAndCreatorId(UUID id, UUID creatorId);
-    Page<Donor> findAllByCreatorId(UUID creatorId, Pageable pageable);
-    boolean existsByDocument(String document);
+    Optional<Donor> findByIdAndOrganizationId(UUID id, UUID organizationId);
+    Page<Donor> findAllByOrganizationId(UUID organizationId, Pageable pageable);
+    boolean existsByDocumentAndOrganizationId(String document, UUID organizationId);
 }

@@ -27,6 +27,10 @@ import java.time.OffsetDateTime;
 @NoArgsConstructor
 public abstract class TimeStampedEntity {
 
+    /** Organization ownership; null exists only for unmapped historical rows. */
+    @Column(name = "organization_id")
+    private java.util.UUID organizationId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator_id", nullable = false)
     private User creator;
