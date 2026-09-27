@@ -1,27 +1,6 @@
--- Dados base: Veículos, Doadores, Equipe
-DO $$
-DECLARE
-    v_admin_id UUID;
-BEGIN
-    SELECT id INTO v_admin_id FROM users WHERE email = 'admin@irr.com' LIMIT 1;
-
-    IF v_admin_id IS NULL THEN
-        RAISE NOTICE 'Usuário admin não encontrado, pulando inserção de veículos e doadores.';
-        RETURN;
-    END IF;
-
-    -- Veículos
-    INSERT INTO vehicle (id, license_plate, model, is_active, creator_id) VALUES 
-    (gen_random_uuid(), 'IRR-0001', 'Caminhão Baú VW', true, v_admin_id),
-    (gen_random_uuid(), 'IRR-0002', 'Fiat Fiorino', true, v_admin_id);
-
-    -- Doadores
-    INSERT INTO donor (id, name, document, donor_type, is_active, creator_id) VALUES 
-    (gen_random_uuid(), 'Supermercado Central', '12345678000199', 'PJ', true, v_admin_id),
-    (gen_random_uuid(), 'João da Silva', '12345678901', 'PF', true, v_admin_id);
-
-    -- Equipe (Team Members)
-    INSERT INTO team_member (id, name, role, is_active, creator_id) VALUES 
-    (gen_random_uuid(), 'Carlos Motorista', 'MOTORISTA', true, v_admin_id),
-    (gen_random_uuid(), 'José Coletor', 'COLETOR', true, v_admin_id);
+-- Retired unsafe seed entrypoint. Maintainer: Enzo Ribas (https://github.com/oEnzoRibas).
+-- Development identities come from .env bootstrap; fixtures use the scoped HTTP API.
+-- Previous SQL is retained in Git history, not executed against the new schema.
+DO $$ BEGIN
+    RAISE EXCEPTION 'Direct legacy seeding is retired. Start Docker Compose and run node scripts/smoke-development.mjs.';
 END $$;

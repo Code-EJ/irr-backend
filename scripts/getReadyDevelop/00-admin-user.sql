@@ -1,4 +1,6 @@
--- Insere um administrador padrao com a senha '123456' ($2a$10$wMx4v6kD6YgqyQZeIXbCg.mozjTEA4ZWTHs5Ekluh8Ez.6fATOXWq)
-INSERT INTO users (id, email, password_hash, full_name, user_role, is_active, created_at, updated_at)
-VALUES (gen_random_uuid(), 'admin@irr.com', '$2a$10$wMx4v6kD6YgqyQZeIXbCg.mozjTEA4ZWTHs5Ekluh8Ez.6fATOXWq', 'Administrador Root', 'ADMINISTRATOR', true, NOW(), NOW())
-ON CONFLICT (email) DO NOTHING;
+-- Retired unsafe seed entrypoint. Maintainer: Enzo Ribas (https://github.com/oEnzoRibas).
+-- Development identities come from .env bootstrap; fixtures use the scoped HTTP API.
+-- Previous SQL is retained in Git history, not executed against the new schema.
+DO $$ BEGIN
+    RAISE EXCEPTION 'Direct legacy seeding is retired. Start Docker Compose and run node scripts/smoke-development.mjs.';
+END $$;

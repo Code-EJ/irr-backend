@@ -23,6 +23,8 @@ jobs:
         run: |
           bash mvnw --batch-mode --no-transfer-progress dependency:tree -DoutputType=json -DoutputFile=.local/audit/dependency-tree.json
           node scripts/audit-dependencies.mjs
+      - name: Validate documentation links and Java source inventory
+        run: node scripts/verify-documentation.mjs
       - name: Validate container build
         run: docker build -t irr-backend:ci .
       - name: Publish test reports
