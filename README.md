@@ -24,7 +24,7 @@ If .env already exists, keep it. Do not overwrite working credentials with the e
 Copy-Item .env.example .env
 ~~~
 
-On Linux/macOS use `cp .env.example .env`. Edit DB_PASSWORD and DEV_ADMIN_PASSWORD and replace both placeholders with different random local passwords. DEV_ADMIN_PASSWORD must contain 12-72 UTF-8 bytes. Your local .env contains the actual database and application login credentials; .env.example contains no usable shared credentials. Required/default variables:
+On Linux/macOS use `cp .env.example .env`. Edit DB_PASSWORD, DEV_ADMIN_PASSWORD and REDIS_PASSWORD and replace all three placeholders with different random local passwords. DEV_ADMIN_PASSWORD must contain at least 12 and fewer than 72 UTF-8 bytes. Your local .env contains the actual database, Redis and application login credentials; .env.example contains no usable shared credentials. Required/default variables:
 
 | Variable | Meaning |
 | --- | --- |
@@ -34,6 +34,7 @@ On Linux/macOS use `cp .env.example .env`. Edit DB_PASSWORD and DEV_ADMIN_PASSWO
 | DEV_BOOTSTRAP_ENABLED | true provisions the administrator only in the development profile |
 | DB_USER | Database login; example irr_app |
 | DB_PASSWORD | Required database password; never commit or publish it |
+| REDIS_PASSWORD | Required independent Redis password; internal Docker network only |
 | DB_NAME | Database name; example irr |
 | API_PORT | Host port; default 9191, bound to 127.0.0.1 |
 | API_DOCS_ENABLED | true enables Swagger/OpenAPI; false disables both |
@@ -72,7 +73,7 @@ The first build downloads dependencies/images and takes longer. Both database an
 - **Official OpenAPI JSON:** http://localhost:9191/v3/api-docs
 - OpenAPI YAML: http://localhost:9191/v3/api-docs.yaml
 
-The API runs as UID 10001 with a read-only root filesystem. Database data and uploaded files use separate named volumes. This local stack is not configured for public internet deployment.
+The API runs as UID 10001 with a read-only root filesystem. PostgreSQL, Redis AOF data and uploaded files use separate named volumes. Redis uses internal port 6379 with no host publication. This local stack is not configured for public internet deployment.
 
 ## 5. Exercise the API with Swagger
 
@@ -117,7 +118,7 @@ Linux/macOS:
 ./mvnw clean verify
 ~~~
 
-The first command runs unit tests with generated ephemeral RSA keys and no database. The second packages the application and adds PostgreSQL integration tests through Testcontainers. Docker must be running, but docker compose up is not required. Integration tests create their own database and keys and never use your .env database credentials. They fail explicitly if Docker is unavailable.
+The first command runs unit tests with generated ephemeral RSA keys and no database. The second packages the application and adds PostgreSQL and Redis integration tests through Testcontainers. Docker must be running, but docker compose up is not required. Integration tests create their own PostgreSQL/Redis services and keys and never use your .env credentials. They fail explicitly if Docker is unavailable.
 
 Reports are in target/surefire-reports (unit) and target/failsafe-reports (integration). Tests cover authentication, token signing, storage containment, migration integrity, fresh baseline, incremental upgrade/rollback, competing balance insertion, stale updates, health and Swagger access/configuration. Full workflow acceptance is still being implemented.
 
@@ -168,3 +169,29 @@ Stopping preserves named volumes. The new database_data volume is separate from 
 - [Execution evidence](docs/adrs/0006-backend-foundation-execution.md)
 
 The foundation is implemented; the module/domain rewrite remains staged. Administrator provisioning and creator-scoped attachment lifecycle are implemented in ADR-0008. Organization scoping, stock ledger/allocation, remaining business workflows, dependency upgrades and frontend contract migration remain explicit work. New/modified code and all maintained documentation use English, with Enzo Ribas attribution for this refactor. Preserve previous contributor credits.
+
+## Organization membership workflow
+
+1. Authenticate as the development administrator through Swagger.
+2. Under Organizations, POST /api/organizations with name and organizationType, for example an association name and the descriptive value ASSOCIATION. Record the returned id.
+3. Under Partners, create an account if needed and record its id.
+4. PUT /api/organizations/{id}/members/{userId} with {"role":"MEMBER"} or {"role":"MANAGER"}. Both are local membership roles; management of associations still requires a platform administrator.
+5. Authenticate as that member. GET /api/organizations lists only active associations; GET /api/organizations/{id} returns the selected organization. The creating administrator also needs explicit membership for these read routes.
+6. As administrator, DELETE the membership. The existing member token immediately loses access to organization reads. Missing/foreign/inactive scopes return 404.
+
+Existing catalog, intake, processing and attachment APIs retain their previous creator-scoped behavior. This foundation does not yet move their records into organizations or revoke legacy creator-owned access when a membership is revoked. [ADR-0009](docs/adrs/0009-organization-scope-and-catalog-integrity.md) defines the next migration gates.
+
+## Redis: start, check and test
+
+The existing docker compose up --build -d --wait command starts all three services. The ignored .env contains REDIS_PASSWORD; .env.example contains only a placeholder. The backend uses redis:6379 internally. Do not publish 6379 to use local development tools; execute redis-cli inside its container:
+
+~~~powershell
+docker compose ps
+docker compose exec redis sh -c 'REDISCLI_AUTH="$REDIS_PASSWORD" redis-cli PING'
+~~~
+
+The authenticated command must print PONG. An unauthenticated docker compose exec redis redis-cli PING returns NOAUTH. To inspect persistence, use the same authenticated command prefix with INFO persistence; appendonly must be enabled. Do not print resolved Compose configuration or credentials in bug reports. Redis uses append-only persistence in redis_data, with one-second fsync policy, a 128-MiB data limit and noeviction. Readiness includes Redis; a stopped/unreachable Redis makes /actuator/health/readiness report unavailable. Liveness is independent.
+
+For routine restarts, run docker compose restart redis, then check PING and readiness. For a password change, update .env and run docker compose up -d --force-recreate redis backend so both services receive the new credential. Preserve volumes; do not use down -v. No separate .env.docker is required.
+
+Run .\mvnw.cmd clean verify (PowerShell) or ./mvnw clean verify (Linux/macOS). Docker must be running: integration tests launch isolated PostgreSQL and authenticated Redis with random ports and fixture credentials. RedisInfrastructureIT checks connection, authentication and TTL expiry; it never connects to your development Redis. The backend currently configures Redis infrastructure and health, not an automatic business cache. [ADR-0010](docs/adrs/0010-containerized-redis.md) defines its limits and future key policy.

@@ -11,17 +11,20 @@ flowchart LR
     Browser[Frontend browser] -->|HTTP 127.0.0.1:9191| API[Spring Boot API / non-root JRE]
     API -->|JDBC / internal network| DB[(PostgreSQL 16)]
     DB --> Data[(Database volume)]
+    API -->|Authenticated internal connection| Redis[(Redis 8.2)]
+    Redis --> RedisData[(Redis AOF volume)]
     API --> Uploads[(Attachment volume)]
     Keys[Local RSA keys / read-only mount] --> API
-    CI[CI / Maven verify] --> Tests[Disposable PostgreSQL / test keys]
+    CI[CI / Maven verify] --> Tests[Disposable PostgreSQL and Redis / test keys]
 ~~~
 
-The browser never talks to PostgreSQL or the file volume directly. The API owns transactions and authorization. PostgreSQL owns constraints; Hibernate validates, Flyway migrates. File writes are outside DB transactions. ADR-0008 implements upload rollback compensation and a PostgreSQL-backed post-commit deletion queue; crash-orphan reconciliation remains open. Container readiness includes DB connectivity and does not certify business correctness.
+The browser never talks to PostgreSQL or the file volume directly. The API owns transactions and authorization. PostgreSQL owns constraints; Hibernate validates, Flyway migrates. File writes are outside DB transactions. ADR-0008 implements upload rollback compensation and a PostgreSQL-backed post-commit deletion queue; crash-orphan reconciliation remains open. Container readiness includes PostgreSQL and Redis connectivity and does not certify business correctness.
 
 ## Repository map
 
 | Path | Responsibility | Documentation / verification |
 | --- | --- | --- |
+| src/main/java/org/code/api/organizations | First feature module: api/application/domain/infrastructure, explicit audited membership | [ADR-0009](../adrs/0009-organization-scope-and-catalog-integrity.md) |
 | src/main/java/org/code/api/controllers | Existing HTTP entrypoints | [Operation map](../api_documentation.md) |
 | src/main/java/org/code/api/dto | Request/response records and validation | Same contract inventory |
 | src/main/java/org/code/api/services | Current use cases and transaction boundaries | [Source inventory](../source-inventory.md), unit tests |

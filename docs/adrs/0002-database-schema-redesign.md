@@ -1,5 +1,7 @@
 # ADR-0002: PostgreSQL integrity, scoped inventory and safe schema evolution
 
+> Accepted ownership decision (2026-09-27): the owner selected separate catalogs and stock per organization. [ADR-0009](0009-organization-scope-and-catalog-integrity.md) implements the explicit membership foundation and catalog integrity corrections. Full organization-scoped business-data migration remains pending. [ADR-0010](0010-containerized-redis.md) adds authenticated Docker Redis without moving authorization or inventory truth out of PostgreSQL.
+
 > Database execution update: [ADR-0007](0007-fresh-database-baseline.md) replaces the active historical migration chain with one fresh English V1. Old databases are preserved, not automatically upgraded or deleted.
 
 > Execution update (2026-09-26): the owner confirmed no production deployment and authorized backend/database refactoring. [ADR-0005](0005-preproduction-docker-foundation.md) governs Docker Compose, pre-production compatibility, closed legacy PRs and staged implementation. Historical audit tables below remain dated evidence.
@@ -61,7 +63,7 @@ Keep PostgreSQL. Use UUIDs for new persistent identities and preserve existing U
 
 Add `organization(id, name, organization_type, is_active, created_at, updated_at)` and `organization_membership(organization_id, user_id, role, is_active)` with a composite membership key. Preserve `creator_id` as the actor/audit field; never silently reinterpret it as the organization. Add `organization_id` to owned operational records, attachments, parties, inventory operations and balances. Administrative cross-organization access must be explicit and audited, not a missing filter.
 
-Proposed default: each organization owns its catalog and stock, with an administrator-managed template used when initializing a catalog. This resolves current creator-only restrictions while avoiding an accidental global catalog. Product owners must accept this scope in M0; if a shared catalog is required, amend the model before DDL. Add `(organization_id,id)` unique keys and matching composite FKs where a child references an owned parent, preventing cross-organization links even if an application query forgets a scope filter. Derive scope from verified membership, never trust a request's organization ID alone.
+Proposed default: each organization owns its catalog and stock, with an administrator-managed template used when initializing a catalog. This resolves current creator-only restrictions while avoiding an accidental global catalog. The owner accepted this scope on 2026-09-27 in ADR-0009; detailed scoped actions and legacy mapping remain implementation gates. Add `(organization_id,id)` unique keys and matching composite FKs where a child references an owned parent, preventing cross-organization links even if an application query forgets a scope filter. Derive scope from verified membership, never trust a request's organization ID alone.
 
 Do not create an organization per historical user automatically. Obtain an explicit mapping, quarantine ambiguous rows, and backfill in bounded batches with reconciliation counts. Existing deployment scope remains unknown until this is done.
 

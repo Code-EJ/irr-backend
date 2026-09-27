@@ -65,3 +65,9 @@ ORDER BY created_at;
 ~~~
 
 Repeated failures require checking the attachment volume mount, storage availability and UID 10001 permissions. The worker retries idempotently; do not manually delete queue rows to conceal a storage error. A crash during upload can leave unreferenced bytes. Automated orphan reconciliation is not yet implemented: inspect metadata and backups before any manual cleanup, and never infer that a recently created file is an orphan while uploads are active. Backups must include both committed metadata and attachment content.
+
+## Organizations and Redis execution update
+
+Current relational migrations are V1, V2 and V3; fresh startup creates 25 application tables. V3 adds only the organization/membership/audit foundation and performs no inferred ownership backfill. Administrative effects and audit records commit together. Example incremental test migrations now use V4 outside the runtime image.
+
+Compose now starts PostgreSQL, authenticated Redis and the API. Redis uses the internal network, a separate persistent volume and no host port. Both data services must pass health checks before API startup; readiness includes both. Redis credentials are required in the ignored .env and should be rotated together on Redis/backend recreation. The [README Redis workflow](../README.md#redis-start-check-and-test) provides commands. Redis AOF is neither a PostgreSQL backup nor a stock/authorization authority.

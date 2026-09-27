@@ -1,5 +1,7 @@
 # ADR-0001: IRR architecture overhaul and delivery master plan
 
+> Accepted ownership decision (2026-09-27): the owner selected separate catalogs and stock per organization. [ADR-0009](0009-organization-scope-and-catalog-integrity.md) implements the explicit membership foundation and catalog integrity corrections. Full organization-scoped business-data migration remains pending. [ADR-0010](0010-containerized-redis.md) adds authenticated Docker Redis without moving authorization or inventory truth out of PostgreSQL.
+
 > Identity/attachment update: [ADR-0008](0008-identity-and-attachment-boundaries.md) implements administrator provisioning, exact public routes, creator-scoped attachment DTOs and durable physical deletion. V2 evolves the already-applied V1 without resetting data. Organization and inventory work remains open.
 
 > Database execution update: [ADR-0007](0007-fresh-database-baseline.md) replaces the active historical migration chain with one fresh English V1. Old databases are preserved, not automatically upgraded or deleted.
@@ -148,7 +150,7 @@ Risks: historical records may not support exact provenance; an active production
 
 ## Unresolved inputs and acceptance
 
-Confirm organization membership and material catalog sharing, actual deployed release/database, retained historical schemas and their migration histories, invoice/document requirements, production storage and identity policies, project-board URL/access, and responsible owners. Accept this ADR only after those decisions are assigned and M0 exit evidence is linked. New evidence must amend the proposed record; after acceptance, superseding decisions receive a new ADR number.
+Organization-specific catalog and stock ownership is accepted in ADR-0009. Confirm the remaining scoped membership action matrix, actual deployed release/database, retained historical schemas and their migration histories, invoice/document requirements, production storage and identity policies, project-board URL/access, and responsible owners. Accept this ADR only after those decisions are assigned and M0 exit evidence is linked. New evidence must amend the proposed record; after acceptance, superseding decisions receive a new ADR number.
 
 ## Appendix A: Backlog reconciliation
 

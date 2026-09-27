@@ -2,7 +2,7 @@
 
 - Documentation maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
-The current relational schema is defined by versioned SQL, not Hibernate auto-DDL. Fresh V1 creates the initial 21-table operational schema, including versions, destinations and unique/nonnegative balances. Runtime V2 adds the attachment_file_deletion queue, bringing the current schema to 22 application tables. Historical migrations are archived outside the runtime path; ADR-0007 defines incremental evolution. See [target topology and ERD](adrs/0002-database-schema-redesign.md) for the planned redesign and [operations](operations.md) for upgrade preflight.
+The current relational schema is defined by versioned SQL, not Hibernate auto-DDL. Fresh V1 creates the initial 21-table operational schema, including versions, destinations and unique/nonnegative balances. Runtime V2 adds the attachment_file_deletion queue, followed by V3 organization/membership/audit tables, bringing the current schema to 25 application tables. Historical migrations are archived outside the runtime path; ADR-0007 defines incremental evolution. See [target topology and ERD](adrs/0002-database-schema-redesign.md) for the planned redesign and [operations](operations.md) for upgrade preflight.
 
 ## JPA entity mapping
 
@@ -285,3 +285,7 @@ CREATE TABLE inventory_balance (
 ## Attachment cleanup queue (runtime V2)
 
 [SQL migration](../src/main/resources/db/migrations/V2__attachment_deletion_queue.sql) defines attachment_file_deletion. This technical table is accessed transactionally through JdbcTemplate rather than a JPA entity. Columns: id UUID primary key, storage_path TEXT unique/non-null, created_at TIMESTAMPTZ, attempts INTEGER with a nonnegative check, next_attempt_at TIMESTAMPTZ and last_error VARCHAR(300). The due-time/creation-time index supports bounded retries. It intentionally has no foreign key to attachment: metadata has already been removed when the job is committed. See [ADR-0008](adrs/0008-identity-and-attachment-boundaries.md).
+
+## Organization foundation (runtime V3)
+
+[SQL migration](../src/main/resources/db/migrations/V3__organization_membership_foundation.sql) adds organization, organization_membership and organization_access_audit: 25 application tables in total. JdbcOrganizationStore implements transactional access without JPA entities for this feature. Memberships use the composite key (organization_id, user_id), active status, MEMBER/MANAGER role, grant actor and timestamp. Audit entries record committed CREATE/GRANT/REVOKE effects with actor, subject, previous/assigned role and time. Existing creator-owned records are not backfilled or linked automatically. See [ADR-0009](adrs/0009-organization-scope-and-catalog-integrity.md).

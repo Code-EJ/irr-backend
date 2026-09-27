@@ -2,7 +2,7 @@
 
 - Documentation maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
-Complete current Java path index. Presence does not imply feature completeness. Update alongside architectural changes.
+Complete current Java path index. Presence does not imply feature completeness.
 
 ## src/main/java
 
@@ -154,9 +154,19 @@ Complete current Java path index. Presence does not imply feature completeness. 
 - [src/main/java/org/code/api/infrastructure/security/SecurityConfig.java](../src/main/java/org/code/api/infrastructure/security/SecurityConfig.java)
 - [src/main/java/org/code/api/infrastructure/security/SpringSecurityUserProvider.java](../src/main/java/org/code/api/infrastructure/security/SpringSecurityUserProvider.java)
 - [src/main/java/org/code/api/infrastructure/specifications/MaterialCategorySpecification.java](../src/main/java/org/code/api/infrastructure/specifications/MaterialCategorySpecification.java)
+- [src/main/java/org/code/api/infrastructure/specifications/MaterialSearch.java](../src/main/java/org/code/api/infrastructure/specifications/MaterialSearch.java)
 - [src/main/java/org/code/api/infrastructure/specifications/VehicleSpecification.java](../src/main/java/org/code/api/infrastructure/specifications/VehicleSpecification.java)
 - [src/main/java/org/code/api/infrastructure/storage/AttachmentCleanupScheduler.java](../src/main/java/org/code/api/infrastructure/storage/AttachmentCleanupScheduler.java)
 - [src/main/java/org/code/api/infrastructure/web/GlobalExceptionHandler.java](../src/main/java/org/code/api/infrastructure/web/GlobalExceptionHandler.java)
+- [src/main/java/org/code/api/organizations/api/OrganizationController.java](../src/main/java/org/code/api/organizations/api/OrganizationController.java)
+- [src/main/java/org/code/api/organizations/api/OrganizationErrorHandler.java](../src/main/java/org/code/api/organizations/api/OrganizationErrorHandler.java)
+- [src/main/java/org/code/api/organizations/application/OrganizationService.java](../src/main/java/org/code/api/organizations/application/OrganizationService.java)
+- [src/main/java/org/code/api/organizations/domain/Membership.java](../src/main/java/org/code/api/organizations/domain/Membership.java)
+- [src/main/java/org/code/api/organizations/domain/MembershipRole.java](../src/main/java/org/code/api/organizations/domain/MembershipRole.java)
+- [src/main/java/org/code/api/organizations/domain/Organization.java](../src/main/java/org/code/api/organizations/domain/Organization.java)
+- [src/main/java/org/code/api/organizations/domain/OrganizationAccessDenied.java](../src/main/java/org/code/api/organizations/domain/OrganizationAccessDenied.java)
+- [src/main/java/org/code/api/organizations/domain/OrganizationStore.java](../src/main/java/org/code/api/organizations/domain/OrganizationStore.java)
+- [src/main/java/org/code/api/organizations/infrastructure/JdbcOrganizationStore.java](../src/main/java/org/code/api/organizations/infrastructure/JdbcOrganizationStore.java)
 - [src/main/java/org/code/api/services/AttachmentCleanupService.java](../src/main/java/org/code/api/services/AttachmentCleanupService.java)
 - [src/main/java/org/code/api/services/AuthService.java](../src/main/java/org/code/api/services/AuthService.java)
 - [src/main/java/org/code/api/services/DocumentService.java](../src/main/java/org/code/api/services/DocumentService.java)
@@ -184,6 +194,9 @@ Complete current Java path index. Presence does not imply feature completeness. 
 - [src/test/java/org/code/api/infrastructure/IdentityAttachmentIT.java](../src/test/java/org/code/api/infrastructure/IdentityAttachmentIT.java)
 - [src/test/java/org/code/api/infrastructure/InventoryBalanceSchemaIT.java](../src/test/java/org/code/api/infrastructure/InventoryBalanceSchemaIT.java)
 - [src/test/java/org/code/api/infrastructure/InventoryMigrationIT.java](../src/test/java/org/code/api/infrastructure/InventoryMigrationIT.java)
+- [src/test/java/org/code/api/infrastructure/MaterialCatalogIT.java](../src/test/java/org/code/api/infrastructure/MaterialCatalogIT.java)
+- [src/test/java/org/code/api/infrastructure/OrganizationMembershipIT.java](../src/test/java/org/code/api/infrastructure/OrganizationMembershipIT.java)
+- [src/test/java/org/code/api/infrastructure/RedisInfrastructureIT.java](../src/test/java/org/code/api/infrastructure/RedisInfrastructureIT.java)
 - [src/test/java/org/code/api/infrastructure/TokenPortTests.java](../src/test/java/org/code/api/infrastructure/TokenPortTests.java)
 - [src/test/java/org/code/api/infrastructure/repository/MockedUserRepository.java](../src/test/java/org/code/api/infrastructure/repository/MockedUserRepository.java)
 - [src/test/java/org/code/api/services/AuthServiceTests.java](../src/test/java/org/code/api/services/AuthServiceTests.java)

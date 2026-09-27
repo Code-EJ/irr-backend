@@ -917,3 +917,7 @@ public record TeamMemberResponseDTO(
 - GET /api/documents/{id}/download: creator only.
 - DELETE /api/documents/{id}: creator only; 202 queued deletion; 409 if referenced.
 - The generated Swagger/OpenAPI document is authoritative for current request/response schemas.
+
+## Organization and catalog update (2026-09-27)
+
+Swagger now includes organization creation, current membership list/read and administrator grant/revoke endpoints from OrganizationController. Catalog lists apply creator/parent/name filters before paging and counting; updates require the last returned version and return 409 for stale submissions. These fixes do not change legacy creator ownership into organization ownership. Redis has no public HTTP endpoint; its connectivity contributes to readiness. See ADR-0009 and ADR-0010 for transition rules.

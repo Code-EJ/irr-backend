@@ -40,3 +40,9 @@ Swagger/OpenAPI is the official API reference, per owner instruction. Keep JavaD
 ## Identity and attachment slice
 
 ADR-0008 adds no dependency. It uses existing Spring Security, validation, BCrypt, JDBC transactions, PostgreSQL and scheduling. Enzo Ribas (https://github.com/oEnzoRibas) maintains these decisions. The dependency advisory/upgrade backlog in ADR-0003 remains open; passing functional tests is not a new vulnerability scan.
+
+## Redis integration (2026-09-27)
+
+Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas). Added spring-boot-starter-data-redis with Boot BOM-managed Spring Data Redis and Lettuce; no manually overridden Redis client version. Redis repository scanning is disabled. Docker uses the inspected Redis 8.2.10 image pinned by digest in Compose and isolated test fixtures. See [ADR-0010](adrs/0010-containerized-redis.md) for official references, memory/persistence settings and accepted operational limits. This is an integration decision, not a completed vulnerability rescan of the full dependency tree.
+
+Resolved Maven graph verified for this change: Spring Data Redis 3.5.4 and Lettuce 6.6.0.RELEASE (compile scope), managed by the existing Boot BOM.
