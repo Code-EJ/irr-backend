@@ -47,7 +47,7 @@
         <testcontainers.version>1.21.4</testcontainers.version>
         <springdoc.version>2.9.1</springdoc.version>
         <!-- Enzo Ribas (https://github.com/oEnzoRibas): patched families verified by the dependency audit. -->
-        <jackson-bom.version>2.21.5</jackson-bom.version>
+        <jackson-bom.version>2.21.7</jackson-bom.version>
         <netty.version>4.1.137.Final</netty.version>
         <tomcat.version>10.1.60</tomcat.version>
         <postgresql.version>42.7.12</postgresql.version>
