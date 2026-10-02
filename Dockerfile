@@ -2,7 +2,7 @@ FROM maven:3.9.14-eclipse-temurin-21 AS build
 WORKDIR /build
 COPY pom.xml .
 COPY src ./src
-RUN --mount=type=cache,id=maven-cache,target=/root/.m2 mvn --batch-mode -DskipTests package
+RUN --mount=type=cache,id=s/efda17ad-6783-409e-ba81-73a30c459906-/root/.m2,target=/root/.m2 mvn --batch-mode -DskipTests package
 
 FROM eclipse-temurin:21-jre-jammy AS runtime
 RUN apt-get update && apt-get install -y --no-install-recommends curl \
