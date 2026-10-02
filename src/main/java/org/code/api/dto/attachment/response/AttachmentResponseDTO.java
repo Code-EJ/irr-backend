@@ -1,0 +1,18 @@
+package org.code.api.dto.attachment.response;
+
+import java.time.OffsetDateTime;
+import java.util.UUID;
+
+/**
+ * Typed Attachment Response API value.
+ *
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
+ */
+public record AttachmentResponseDTO(
+    UUID id,
+    String fileName,
+    String fileType,
+    String storageUrl,
+    Boolean isActive,
+    OffsetDateTime createdAt,
+    OffsetDateTime updatedAt) {}

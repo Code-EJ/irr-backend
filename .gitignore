@@ -3,6 +3,11 @@ target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+.agents/
+backend_log.txt
+
+# jwt keys
+*.key
 
 ### STS ###
 .apt_generated
@@ -12,6 +17,9 @@ target/
 .settings
 .springBeans
 .sts4-cache
+
+
+.env
 
 ### IntelliJ IDEA ###
 .idea
@@ -31,3 +39,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Local credentials, keys and uploaded files
+.local/
+*.pem

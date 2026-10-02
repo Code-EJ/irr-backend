@@ -1,0 +1,39 @@
+name: Backend verification
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Unit tests, disposable PostgreSQL and Redis integration tests and package
+        run: bash mvnw --batch-mode --no-transfer-progress verify
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Audit resolved Maven dependency coordinates
+        run: |
+          bash mvnw --batch-mode --no-transfer-progress dependency:tree -DoutputType=json -DoutputFile=.local/audit/dependency-tree.json
+          node scripts/audit-dependencies.mjs
+      - name: Validate documentation links and Java source inventory
+        run: node scripts/verify-documentation.mjs
+      - name: Validate container build
+        run: docker build -t irr-backend:ci .
+      - name: Publish test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-test-reports
+          path: |
+            target/surefire-reports
+            target/failsafe-reports
+            .local/audit/osv-audit.json
+          include-hidden-files: true

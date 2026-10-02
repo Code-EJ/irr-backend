@@ -1,0 +1,113 @@
+package org.code.api.infrastructure.security;
+
+import java.time.Instant;
+import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.code.api.domain.enums.UserRole;
+import org.code.api.domain.exception.AuthError;
+import org.code.api.domain.models.user.Session;
+import org.code.api.domain.ports.TokenPort;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.security.oauth2.jwt.JwtEncodingException;
+import org.springframework.security.oauth2.jwt.JwtException;
+import org.springframework.stereotype.Component;
+
+/**
+ * JWTToken Provider boundary for the IRR application.
+ *
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
+ */
+@Component
+@AllArgsConstructor
+@Slf4j
+public class JWTTokenProvider implements TokenPort {
+
+  private JwtEncoder jwtEncoder;
+  private JwtDecoder jwtDecoder;
+
+  @Override
+  public String createToken(Session session) {
+    try {
+      Instant issuedAt = Instant.now();
+      Instant expiresAt = issuedAt.plusSeconds(60 * 60 * 72);
+
+      log.debug(
+          "Creating token for user {} that expires at {}, issued at {}",
+          session.getEmail(),
+          expiresAt,
+          issuedAt);
+
+      JwtClaimsSet claims =
+          JwtClaimsSet.builder()
+              .issuer("self")
+              .issuedAt(issuedAt)
+              .expiresAt(expiresAt)
+              .subject(session.getEmail())
+              .claim("email", session.getEmail())
+              .claim("id", session.getId().toString())
+              .claim("userRole", session.getUserRole())
+              .build();
+
+      String token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+
+      return token;
+    } catch (JwtEncodingException exception) {
+      log.error("Error encoding JWT token: {}", exception.getMessage());
+      throw new AuthError.TokenCreationError("Error creating JWT token", exception);
+    } catch (Exception exception) {
+      throw exception;
+    }
+  }
+
+  @Override
+  public Session decodeToken(String token) {
+    try {
+      Jwt jwt = jwtDecoder.decode(token);
+
+      return Session.builder()
+          .id(UUID.fromString(jwt.getClaimAsString("id")))
+          .email(jwt.getClaimAsString("email"))
+          .userRole(UserRole.valueOf(jwt.getClaimAsString("userRole")))
+          .issuedAt(jwt.getIssuedAt())
+          .expiresAt(jwt.getExpiresAt())
+          .build();
+    } catch (JwtException jwtException) {
+      log.error("Invalid JWT token: {}", jwtException.getMessage());
+      throw new AuthError.InvalidToken(token, jwtException);
+    } catch (Exception e) {
+      throw e;
+    }
+  }
+
+  @Override
+  public String renewToken(String token) {
+    try {
+      Session session = decodeToken(token);
+      return createToken(session);
+    } catch (Exception e) {
+      throw e;
+    }
+  }
+
+  /**
+   * Retained internal renewal helper using the session grace policy; no HTTP refresh endpoint is
+   * exposed.
+   */
+  @Override
+  public String renewToken(Session session) {
+    try {
+      if (session.isOnRenewalGrace()) {
+        return createToken(session);
+      }
+
+      throw new AuthError.ExpiredToken(session, session.getExpiresAt(), session.getIssuedAt());
+    } catch (Exception e) {
+      throw e;
+    }
+  }
+}

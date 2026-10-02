@@ -1,0 +1,91 @@
+name: irr-development
+services:
+  database:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${DB_USER:-irr_app}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      POSTGRES_DB: ${DB_NAME:-irr}
+    volumes:
+      - database_final_v1:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+  redis:
+    image: redis:8.2-alpine@sha256:b51665e66f00759be7c3152ad5ac3c66fb2f619c13ef62dea7cc1f9914524635
+    user: redis
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}
+    command: ["sh", "-ec", 'exec redis-server --appendonly yes --appendfsync everysec --requirepass "$REDIS_PASSWORD" --maxmemory 128mb --maxmemory-policy noeviction']
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", 'REDISCLI_AUTH="$REDIS_PASSWORD" redis-cli ping | grep -qx PONG']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    mem_limit: 384m
+    restart: unless-stopped
+  backend:
+    build: .
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-irr}
+      DB_USER: ${DB_USER:-irr_app}
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      RSA_PUBLIC_KEY: file:/run/irr-keys/public.pem
+      RSA_PRIVATE_KEY: file:/run/irr-keys/private.pem
+      STORAGE_DIRECTORY: /data/uploads
+      API_DOCS_ENABLED: ${API_DOCS_ENABLED:-true}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173}
+      SPRING_PROFILES_ACTIVE: development
+      DEV_BOOTSTRAP_ENABLED: ${DEV_BOOTSTRAP_ENABLED:-true}
+      DEV_ORGANIZATION_ID: ${DEV_ORGANIZATION_ID:-11111111-1111-4111-8111-111111111111}
+      DEV_ORGANIZATION_NAME: ${DEV_ORGANIZATION_NAME:-IRR Development}
+      DEV_ADMIN_NAME: ${DEV_ADMIN_NAME:-Development Administrator}
+      DEV_ADMIN_EMAIL: ${DEV_ADMIN_EMAIL:?Set DEV_ADMIN_EMAIL in .env}
+      DEV_ADMIN_PASSWORD: ${DEV_ADMIN_PASSWORD:?Set DEV_ADMIN_PASSWORD in .env}
+    ports:
+      - "127.0.0.1:${API_PORT:-9191}:9191"
+    volumes:
+      - type: bind
+        source: ./.local/keys
+        target: /run/irr-keys
+        read_only: true
+        bind:
+          create_host_path: false
+      - attachment_final_v1:/data/uploads
+    depends_on:
+      redis:
+        condition: service_healthy
+      database:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:9191/actuator/health/readiness"]
+      interval: 10s
+      timeout: 5s
+      start_period: 60s
+      retries: 12
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+volumes:
+  # ADR-0014: new volumes preserve the earlier unreleased schema and attachment snapshots.
+  database_final_v1:
+  attachment_final_v1:
+  redis_data:

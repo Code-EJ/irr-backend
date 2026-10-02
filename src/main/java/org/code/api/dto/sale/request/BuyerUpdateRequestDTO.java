@@ -1,0 +1,15 @@
+package org.code.api.dto.sale.request;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+/**
+ * Typed Buyer Update Request API value.
+ *
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
+ */
+public record BuyerUpdateRequestDTO(
+    @NotBlank(message = "Name is required")
+        @Size(max = 255, message = "Name must be at most 255 characters")
+        String name,
+    @Size(max = 20, message = "Document must be at most 20 characters") String document) {}

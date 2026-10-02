@@ -1,38 +1,24 @@
-name: ✅ Task
-description: Nova Task
-labels: ["task"]
+name: Task
+description: Track a technical or operational task
 title: "[TASK]: "
+labels: ["task"]
 body:
-  - type: input
-    id: user-story
+  - type: textarea
+    id: description
     attributes:
-      label: User Story relacionada
-      placeholder: ex. #42
+      label: Description
+      description: What needs to change and why?
     validations:
       required: true
-
   - type: textarea
-    id: descricao
+    id: acceptance
     attributes:
-      label: Descrição
-      description: O que precisa ser feito?
-      placeholder: ex. Implementar endpoint POST /auth/sso
+      label: Acceptance criteria
+      description: State observable behavior and completion checks.
     validations:
       required: true
-
   - type: textarea
-    id: observacoes
+    id: context
     attributes:
-      label: Observações Técnicas
-      description: Contexto, restrições ou referências relevantes. Deixe em branco se não houver.
-
-  - type: checkboxes
-    id: dod
-    attributes:
-      label: Definition of Done
-      options:
-        - label: Código commitado na branch correta, seguindo a convenção de nomenclatura
-        - label: Commit message segue o padrão (Conventional Commits)
-        - label: Code review feito por ao menos 1 desenvolvedor ou Tech Lead
-        - label: Build passando, sem erros de compilação
-        - label: Card atualizado com comentário resumindo o que foi feito
+      label: Context and dependencies
+      description: Link related issues, ADRs and contract implications.
