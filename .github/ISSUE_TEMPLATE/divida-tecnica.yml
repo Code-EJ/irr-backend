@@ -1,0 +1,34 @@
+name: 🔧 Dívida Técnica
+description: Registrar uma dívida técnica
+labels: ["divida-tecnica"]
+body:
+  - type: textarea
+    id: descricao
+    attributes:
+      label: Descrição
+      description: O que foi deixado para trás e por quê?
+      placeholder: ex. Hash de senha implementado sem BCrypt por limitação de tempo na sprint 2.
+    validations:
+      required: true
+
+  - type: textarea
+    id: impacto
+    attributes:
+      label: Impacto
+      description: Qual o risco ou consequência de não resolver?
+      placeholder: ex. Senhas armazenadas em texto plano, risco de segurança crítico.
+    validations:
+      required: true
+
+  - type: input
+    id: origem
+    attributes:
+      label: Origem
+      description: Sprint, task ou US que gerou a dívida.
+      placeholder: ex. Sprint 2 / US-001
+
+  - type: textarea
+    id: observacoes
+    attributes:
+      label: Observações Técnicas
+      description: Sugestão de solução, referências ou contexto adicional.
