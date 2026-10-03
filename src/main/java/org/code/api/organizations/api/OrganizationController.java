@@ -46,6 +46,27 @@ public class OrganizationController {
     return organizations.list(page, size);
   }
 
+  /** Lists administrative organization metadata independently of personal memberships. */
+  @GetMapping("/admin")
+  @Operation(
+      summary = "List organizations for administration",
+      description =
+          "ADMINISTRATOR only. Metadata access does not confer organization membership or business data access.")
+  public OrganizationService.OrganizationPage administrativeList(
+      @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
+    return organizations.administrativeList(page, size);
+  }
+
+  /** Reads an association for explicit grant/revoke administration; missing association is 404. */
+  @GetMapping("/{id}/members/{userId}")
+  @Operation(
+      summary = "Inspect user membership",
+      description =
+          "ADMINISTRATOR only. Includes previously revoked membership state; missing organization, account or association returns 404.")
+  public Membership administrativeMembership(@PathVariable UUID id, @PathVariable UUID userId) {
+    return organizations.administrativeMembership(id, userId);
+  }
+
   /**
    * @return the organization when visible through current membership
    */

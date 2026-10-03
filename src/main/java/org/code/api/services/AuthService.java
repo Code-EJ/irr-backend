@@ -49,6 +49,7 @@ public class AuthService implements AuthPort {
             .id(user.getId())
             .email(user.getEmail())
             .userRole(user.getUserRole())
+            .credentialVersion(user.getCredentialVersion())
             .build());
   }
 
@@ -58,12 +59,8 @@ public class AuthService implements AuthPort {
   public Session getSessionDetails(String token) {
     Session session = tokenPort.decodeToken(token);
     Optional<User> userOptional = userRepository.findById(session.getId());
-
-    log.debug(
-        "Decoded session token:\nUser email: {}\nExpiresAt: {}, IssuedAt: {}",
-        userOptional.map(User::getEmail).orElse("UNKNOWN"),
-        session.getExpiresAt(),
-        session.getIssuedAt());
+    userOptional =
+        userOptional.filter(user -> user.getCredentialVersion() == session.getCredentialVersion());
 
     return userOptional
         .map(
@@ -72,6 +69,8 @@ public class AuthService implements AuthPort {
                     .id(user.getId())
                     .email(user.getEmail())
                     .userRole(user.getUserRole())
+                    .credentialVersion(user.getCredentialVersion())
+                    .mustChangePassword(user.isMustChangePassword())
                     .issuedAt(session.getIssuedAt())
                     .expiresAt(session.getExpiresAt())
                     .build())

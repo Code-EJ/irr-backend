@@ -4,7 +4,11 @@ import java.util.UUID;
 import org.code.api.domain.enums.UserRole;
 import org.code.api.domain.models.user.User;
 import org.code.api.domain.ports.AuthenticatedUserProvider;
+import org.code.api.domain.ports.EncryptionPort;
+import org.code.api.dto.user.ChangePasswordRequest;
+import org.code.api.dto.user.ResetPasswordRequest;
 import org.code.api.dto.user.UpdatePartnerRequest;
+import org.code.api.dto.user.UpdateProfileRequest;
 import org.code.api.dto.user.UserResponse;
 import org.code.api.infrastructure.repositories.UserRepository;
 import org.springframework.data.domain.Page;
@@ -26,6 +30,52 @@ import org.springframework.web.server.ResponseStatusException;
 public class AccountLifecycleService {
   private final UserRepository users;
   private final AuthenticatedUserProvider actor;
+  private final EncryptionPort encryption;
+
+  /** Updates only the authenticated user's name and email, preserving administrative state. */
+  @Transactional
+  @PreAuthorize("isAuthenticated()")
+  public UserResponse updateMe(UpdateProfileRequest request) {
+    User user = locked(actor.getCurrentUserId());
+    user.setFullName(request.fullName().strip());
+    user.setEmail(request.email());
+    return response(users.saveAndFlush(user));
+  }
+
+  /** Changes credentials atomically; all existing bearer tokens become invalid after commit. */
+  @Transactional
+  @PreAuthorize("isAuthenticated()")
+  public void changePassword(ChangePasswordRequest request) {
+    User user = locked(actor.getCurrentUserId());
+    if (!encryption.compare(user.getPasswordHash(), request.currentPassword()))
+      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Current password is incorrect");
+    replacePassword(user, request.newPassword(), false);
+  }
+
+  /**
+   * Resets a partner to a temporary credential without exposing a password or impersonation token.
+   */
+  @Transactional
+  @PreAuthorize("hasRole('ADMINISTRATOR')")
+  public void resetPassword(UUID id, ResetPasswordRequest request) {
+    replacePassword(partner(id), request.temporaryPassword(), true);
+  }
+
+  private void replacePassword(User user, String password, boolean mandatory) {
+    PasswordPolicy.validate(password);
+    if (encryption.compare(user.getPasswordHash(), password))
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Choose a different password");
+    user.setPasswordHash(encryption.encrypt(password));
+    user.setCredentialVersion(Math.incrementExact(user.getCredentialVersion()));
+    user.setMustChangePassword(mandatory);
+    users.saveAndFlush(user);
+  }
+
+  private User locked(UUID id) {
+    return users
+        .lockById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
+  }
 
   /** Returns the current active account without requiring organization selection. */
   @Transactional(readOnly = true)
@@ -78,7 +128,7 @@ public class AccountLifecycleService {
   }
 
   private User partner(UUID id) {
-    User user = owned(id);
+    User user = locked(id);
     if (user.getUserRole() == UserRole.ADMINISTRATOR)
       throw new ResponseStatusException(
           HttpStatus.CONFLICT, "Administrator accounts are outside partner lifecycle operations");
@@ -86,6 +136,11 @@ public class AccountLifecycleService {
   }
 
   private UserResponse response(User user) {
-    return new UserResponse(user.getId(), user.getFullName(), user.getEmail(), user.getUserRole());
+    return new UserResponse(
+        user.getId(),
+        user.getFullName(),
+        user.getEmail(),
+        user.getUserRole(),
+        user.isMustChangePassword());
   }
 }

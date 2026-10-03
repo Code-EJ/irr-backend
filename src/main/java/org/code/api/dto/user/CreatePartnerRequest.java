@@ -23,4 +23,9 @@ public record CreatePartnerRequest(
     @NotNull
         @io.swagger.v3.oas.annotations.media.Schema(
             allowableValues = {"REPRESENTATIVE", "ORGANIZATION", "CITY_HALL"})
-        UserRole userRole) {}
+        UserRole userRole) {
+  @Override
+  public String toString() {
+    return "CreatePartnerRequest[REDACTED]";
+  }
+}

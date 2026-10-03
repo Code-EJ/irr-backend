@@ -5,4 +5,4 @@ package org.code.api.dto.session.response;
  *
  * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
-public record LoginResponseDTO(String token) {}
+public record LoginResponseDTO(String token, boolean mustChangePassword) {}

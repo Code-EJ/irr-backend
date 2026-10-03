@@ -91,6 +91,23 @@ public class BearerFilter extends OncePerRequestFilter {
       reject(response);
       return;
     }
+    String path = request.getServletPath();
+    if (path.isEmpty()) path = request.getRequestURI();
+    if (session.isMustChangePassword()
+        && !("GET".equals(request.getMethod()) && path.equals("/api/v1/users/me"))
+        && !("PUT".equals(request.getMethod()) && path.equals("/api/v1/users/me/password"))) {
+      SecurityContextHolder.clearContext();
+      response.setStatus(403);
+      response.setContentType("application/json");
+      json.writeValue(
+          response.getOutputStream(),
+          Map.of(
+              "error",
+              "password_change_required",
+              "message",
+              "Change your password before continuing"));
+      return;
+    }
     var identity =
         new UsernamePasswordAuthenticationToken(
             session.getId(),

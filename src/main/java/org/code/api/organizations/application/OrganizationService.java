@@ -29,6 +29,28 @@ public class OrganizationService {
     this.actor = actor;
   }
 
+  /** Lists administrative metadata; never grants organizational business access. */
+  @Transactional(readOnly = true)
+  @PreAuthorize("hasRole('ADMINISTRATOR')")
+  public OrganizationPage administrativeList(int page, int size) {
+    if (page < 0 || size < 1 || size > 100)
+      throw new IllegalArgumentException("Invalid page or size");
+    return new OrganizationPage(
+        store.administrativeList(size, (long) page * size),
+        page,
+        size,
+        store.administrativeCount());
+  }
+
+  /** Returns one association, including revoked state, without exposing other user attributes. */
+  @Transactional
+  @PreAuthorize("hasRole('ADMINISTRATOR')")
+  public Membership administrativeMembership(UUID organization, UUID user) {
+    store.lock(organization);
+    if (!store.activeUser(user)) throw new OrganizationAccessDenied();
+    return store.membership(organization, user).orElseThrow(OrganizationAccessDenied::new);
+  }
+
   /**
    * Lists current memberships without an implicit administrator bypass.
    *

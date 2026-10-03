@@ -48,6 +48,12 @@ public class User {
   @Builder.Default
   private Boolean isActive = true;
 
+  @Column(name = "credential_version", nullable = false)
+  private long credentialVersion;
+
+  @Column(name = "must_change_password", nullable = false)
+  private boolean mustChangePassword;
+
   @CreationTimestamp
   @Column(name = "created_at", updatable = false)
   private OffsetDateTime createdAt;

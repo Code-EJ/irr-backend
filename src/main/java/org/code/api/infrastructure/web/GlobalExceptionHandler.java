@@ -8,6 +8,8 @@ import org.code.api.organizations.domain.OrganizationAccessDenied;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
@@ -19,6 +21,13 @@ import org.springframework.web.server.ResponseStatusException;
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+  /** Prevents validation diagnostics from serializing rejected credential values. */
+  @ExceptionHandler({MethodArgumentNotValidException.class, HttpMessageNotReadableException.class})
+  public ResponseEntity<?> invalidInput(Exception error) {
+    return ResponseEntity.badRequest()
+        .body(Map.of("error", "invalid_request", "message", "Check the submitted fields"));
+  }
+
   @ExceptionHandler(AuthError.Unauthorized.class)
   public ResponseEntity<Object> handleUnauthorized(AuthError.Unauthorized ex) {
     Map<String, Object> body = new LinkedHashMap<>();

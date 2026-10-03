@@ -43,6 +43,20 @@ public class JdbcOrganizationStore implements OrganizationStore {
   }
 
   /** {@inheritDoc} */
+  public List<Organization> administrativeList(int limit, long offset) {
+    return jdbc.query(
+        "SELECT * FROM organization WHERE is_active ORDER BY name,id LIMIT ? OFFSET ?",
+        ORGANIZATION,
+        limit,
+        offset);
+  }
+
+  /** {@inheritDoc} */
+  public long administrativeCount() {
+    return jdbc.queryForObject("SELECT count(*) FROM organization WHERE is_active", Long.class);
+  }
+
+  /** {@inheritDoc} */
   public List<Organization> list(UUID actor, int limit, long offset) {
     return jdbc.query(
         "SELECT o.*" + VISIBLE + " ORDER BY o.name,o.id LIMIT ? OFFSET ?",

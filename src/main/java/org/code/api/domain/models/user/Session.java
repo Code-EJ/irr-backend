@@ -20,6 +20,8 @@ public class Session {
   private UUID id;
   private String email;
   private UserRole userRole;
+  private long credentialVersion;
+  private boolean mustChangePassword;
   private Instant issuedAt;
   private Instant expiresAt;
 

@@ -14,6 +14,11 @@ import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuer
 
 public class MockedUserRepository implements UserRepository {
   @Override
+  public Optional<User> lockById(UUID id) {
+    return findById(id);
+  }
+
+  @Override
   public void flush() {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'flush'");
