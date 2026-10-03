@@ -55,10 +55,10 @@ class DevelopmentAdministratorInitializerTest {
     User existing =
         User.builder().userRole(UserRole.ADMINISTRATOR).passwordHash("existing-hash").build();
     when(users.findByEmail("developer@irr.local")).thenReturn(Optional.of(existing));
-    when(encryption.compare("existing-hash", "development-password")).thenReturn(true);
     initializer("development-password").run(null);
     verify(encryption, never()).encrypt(any());
     assertThat(existing.getPasswordHash()).isEqualTo("existing-hash");
+    verifyNoInteractions(encryption);
   }
 
   /** Verifies example placeholders fail before any database operation. */

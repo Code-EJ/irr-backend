@@ -55,8 +55,8 @@ public class DevelopmentAdministratorInitializer implements ApplicationRunner {
   }
 
   /**
-   * Creates or synchronizes the configured development administrator on startup. A changed
-   * development password is rehashed; an unchanged hash is retained.
+   * Creates the configured development administrator on startup. Existing credentials are
+   * preserved; normal password changes must not be undone by a restart.
    *
    * @param arguments application startup arguments (unused)
    * @throws IllegalStateException if configuration is invalid or an existing role conflicts
@@ -90,8 +90,9 @@ public class DevelopmentAdministratorInitializer implements ApplicationRunner {
       throw new IllegalStateException(
           "The development bootstrap email belongs to a non-administrator");
     }
+    if (user.getId() != null) return;
     user.setFullName(name);
-    if (user.getPasswordHash() == null || !encryption.compare(user.getPasswordHash(), password)) {
+    if (user.getPasswordHash() == null) {
       user.setPasswordHash(encryption.encrypt(password));
     }
     users.save(user);
