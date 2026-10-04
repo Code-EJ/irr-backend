@@ -6,7 +6,7 @@ Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas). Reviewed 
 
 S1: Documento Visão_Requisitos IRR, 24 pages, supplied by the owner. Text requirements are on pages 1–9; identity diagrams on pages 10–11 were visually inspected. S2: Plataforma IRR de Gestão da Coleta Seletiva, 3 pages, supplied by the owner. S3: owner's consolidated Identity & Access direction dated 2026-10-04. Source titles retain their original spelling for identification; requirements below are interpreted, not copied as technical contracts. The PDFs remain owner-supplied reference material and are not republished in the repository.
 
-Status vocabulary: IMPLEMENTED, IN_PROGRESS, PLANNED_CURRENT_MILESTONE, PLANNED_POST_DEPLOY, DEFERRED, REINTERPRETED, PRODUCT_DECISION_REQUIRED, SUPERSEDED. PRODUCT DEFINITION REQUIRED is a product-decision subtype for metric semantics. A historical request does not independently authorize new implementation.
+Status vocabulary: IMPLEMENTED, IN_PROGRESS, PLANNED_CURRENT_MILESTONE, PLANNED_POST_DEPLOY, PLANNED_AFTER_ROUTES, ARCHITECTURAL_DIRECTION, OPERATIONAL_CONFIGURATION_PENDING, DEFERRED, REINTERPRETED, PRODUCT_DECISION_REQUIRED, SUPERSEDED. PRODUCT DEFINITION REQUIRED is a product-decision subtype for metric semantics. A historical request does not independently authorize new implementation.
 
 | ID / source | Current architectural interpretation | Status | Implementation / decision / roadmap |
 | --- | --- | --- | --- |
@@ -21,11 +21,11 @@ Status vocabulary: IMPLEMENTED, IN_PROGRESS, PLANNED_CURRENT_MILESTONE, PLANNED_
 | R09 — S1 FF-3 pp.2–4; S2 §2 p.2 | Scoped collections/donations, team/vehicle links, attachments and material intake | IMPLEMENTED | Existing backend intake/fleet/document modules and integrated frontend; not a claim that every historical field is implemented |
 | R10 — S1 FF-5 pp.5–6; S2 §5 p.3 | Tenant material hierarchy with protected deletion/references | IMPLEMENTED | Existing catalog; current global authorization applies; historical physical-delete language does not override invariants |
 | R11 — S1 FF-6/7/8 pp.6–9; S2 §§5–7 p.3 | Transactional processing, ledger and commercial records | IN_PROGRESS | Backend workflows exist; frontend processing/stock/sales remain gated; further module evolution after approved priority sequence |
-| R12 — S1 FF-4 p.5; S2 §3 p.2; S3 | Internal routes, execution/history, coverage, tenant ownership and municipality context | PLANNED_POST_DEPLOY | NEXT MODULE after Identity + first homologation; routeDescription is not a completed Route model |
+| R12 — S1 FF-4 p.5; S2 §3 p.2; S3 | Internal routes, execution/history, coverage, tenant ownership and municipality context | IN_PROGRESS | CURRENT DEVELOPMENT after functional Identity closure; routeDescription is not a completed Route model |
 | R13 — S1 FF-4.b p.5; S2 integrations p.2; S3 | Provider-neutral tracking/GPS boundary | PLANNED_POST_DEPLOY | After initial Routes; no provider selection or integration now |
-| R14 — S1 FF-9 p.9; S2 §8 p.3; S3 | Native monthly reports and filters, backend aggregates, frontend presentation | PLANNED_POST_DEPLOY | After Routes; preserve existing backend summary capabilities, do not introduce mandatory BI |
-| R15 — S2 purpose/differentials pp.1,3; S3 | Multi-municipality separation and consolidated IRR comparison | PLANNED_POST_DEPLOY | Municipality-to-organization mapping requires domain definition before schema; no duplicate entity now |
-| R16 — S2 dashboard §4 p.2; S3 | Native route/vehicle/period/municipality indicators | PLANNED_POST_DEPLOY | After Routes; formulas and units require product definition |
+| R14 — S1 FF-9 p.9; S2 §8 p.3; S3 | Native monthly reports and filters, backend aggregates, frontend presentation | PLANNED_AFTER_ROUTES | After Routes; preserve existing backend summary capabilities, do not introduce mandatory BI |
+| R15 — S2 purpose/differentials pp.1,3; S3 | Multi-municipality separation and consolidated IRR comparison | ARCHITECTURAL_DIRECTION | Municipality-to-organization mapping requires domain definition before schema; no duplicate entity now |
+| R16 — S2 dashboard §4 p.2; S3 | Native route/vehicle/period/municipality indicators | PLANNED_AFTER_ROUTES | After Routes; formulas and units require product definition |
 | R17 — S2 §8 p.3 | Embedded external BI as optional extension | DEFERRED | Main reporting remains native; no external BI dependency |
 | R18 — old technical policies | No admin creation, mandatory membership for global users, bootstrap password overwrite, legacy client adapters | SUPERSEDED | ADR-0017 and current v1-only policy; supersession markers retain history |
 
@@ -45,3 +45,7 @@ Do not create issues, required milestones or functional implementations from the
 ## Current delivery evidence — 2026-10-04
 
 R01/R05/R06/R07/R08 are implemented and locally verified, including real PostgreSQL/Redis/Mailpit integration. R02 is realized by the explicit Organization → User → Membership onboarding with safe partial retries. IMPLEMENTED does not assert external email delivery or deployed homologation. See [verification and release gates](../identity-verification.md). R11 and later module priorities remain unchanged.
+
+## Owner-authorized Routes phase
+
+Identity is IMPLEMENTED / READY FOR HOMOLOGATION. Email provider configuration is OPERATIONAL CONFIGURATION_PENDING / EXTERNAL CONFIGURATION REQUIRED; it no longer blocks Routes development. Routes is IN_PROGRESS under the new architecture decision, not IMPLEMENTED merely because an ADR exists. Analytics/reports/filters/indicators/dashboards are PLANNED_AFTER_ROUTES. Multi-municipality is ARCHITECTURAL_DIRECTION. See [the data dictionary](../data/README.md); every unapproved metric formula is PRODUCT DEFINITION REQUIRED. GPS remains PLANNED_POST_DEPLOY.
