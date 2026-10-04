@@ -83,7 +83,7 @@ The API runs as UID 10001 with a read-only root filesystem. PostgreSQL, Redis AO
 3. Expand Partners and call POST /api/v1/users with the example below. Only an administrator may create CITY_HALL, ORGANIZATION or REPRESENTATIVE partners. Passwords require at least eight characters and fewer than 72 UTF-8 bytes. The response contains safe metadata and does not log you in as the new partner.
 4. To test partner access, authenticate separately using that partner's email/password and replace the Swagger authorization token. Missing/invalid authentication returns 401; insufficient roles return 403.
 5. Call GET /api/v1/organizations and select the development organization from .env. Supply its UUID as X-Organization-Id on business operations, for example GET /api/v1/vehicles. New partners need an explicit association through PUT /api/v1/organizations/{id}/members/{userId}. Page lists use page/size/sort and return content/totalElements.
-6. For attachments, upload a small PDF, PNG or JPEG with POST /api/v1/documents using the documento multipart field. Record the returned id. Active organization members can download it; its uploader or an organization manager can rename or delete unreferenced metadata. Platform administrator status does not bypass membership. Unsupported signatures/names return 400; foreign IDs return 404; referenced documents return 409. Deletion returns 202 after metadata removal and queues physical cleanup, normally processed within the next minute.
+6. For attachments, upload a small PDF, PNG or JPEG with POST /api/v1/documents using the documento multipart field. Record the returned id. Active organization members can download it; its uploader or an organization manager can rename or delete unreferenced metadata. Global administrators can access any active organization without membership. Unsupported signatures/names return 400; foreign IDs return 404; referenced documents return 409. Deletion returns 202 after metadata removal and queues physical cleanup, normally processed within the next minute.
 7. Log out using Authorize when finished. Swagger does not persist authorization across page reloads.
 
 Example partner body for local testing only:
@@ -182,7 +182,7 @@ The backend supports the documented pre-production workflow. ADR-0014 freezes th
 5. Authenticate as that member. GET /api/v1/organizations lists only active associations; GET /api/v1/organizations/{id} returns the selected organization. The creating administrator also needs explicit membership for these read routes.
 6. As administrator, DELETE the membership. The existing member token immediately loses access to organization reads. Missing/foreign/inactive scopes return 404.
 
-Catalog, intake, processing, sales and attachments require the explicit organization header and current membership. Creator identity is audit metadata, not ownership. Revocation takes effect immediately; no platform administrator bypass exists.
+Catalog, intake, processing, sales and attachments require the explicit organization header and global authority or current membership. Creator identity is audit metadata, not ownership. Local membership revocation takes effect immediately.
 
 ## Redis: start, check and test
 

@@ -1,5 +1,8 @@
 # ADR-0016: Account self-service and credential lifecycle
 
+> **PARTIALLY SUPERSEDED BY ADR-0017 / ADR-0018 (2026-10-04).** Global administrator creation and cross-organization authority, final BOOTSTRAP_ADMIN_* names and public email recovery now follow those backend decisions. Historical contrary statements below are retained as decision history, not current policy. Unrelated decisions remain applicable.
+
+
 - Status: Accepted; implementation and verification in progress.
 - Date: 2026-10-03.
 - Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).

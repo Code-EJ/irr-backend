@@ -41,7 +41,7 @@ Unchecked items are operator release gates, not claims of remote verification.
 
 ## New empty environments only
 
-- [ ] Explicit INITIAL_ADMIN_* provided without development profile or default credentials.
+- [ ] Explicit BOOTSTRAP_ADMIN_* provided without development profile or default credentials.
 - [ ] First administrator changes temporary password and signs in again.
 - [ ] Bootstrap disabled and temporary bootstrap secret removed afterward.
 - [ ] Restart does not recreate accounts, reset passwords or overwrite edited profile data.

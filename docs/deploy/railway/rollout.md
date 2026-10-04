@@ -42,4 +42,4 @@ Frontend rollback is safe for ordinary accounts only; accounts awaiting forced c
 
 ## Infrastructure exceptions
 
-For an existing correctly configured environment: Railway infrastructure changes required: NONE. New empty environments optionally require INITIAL_ADMIN_* as documented. RSA rotation, new secrets, CORS/domains, network/ports, persistent storage and database recreation/restoration always require a separately listed infrastructure action. No remote changes were performed for local verification.
+For an existing correctly configured environment: Railway infrastructure changes required: NONE. New empty environments optionally require BOOTSTRAP_ADMIN_* as documented. RSA rotation, new secrets, CORS/domains, network/ports, persistent storage and database recreation/restoration always require a separately listed infrastructure action. No remote changes were performed for local verification.

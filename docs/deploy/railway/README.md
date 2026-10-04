@@ -25,11 +25,11 @@ The operational baseline is V1 + V2. Once operational data must be retained, eve
 
 ## First administrator
 
-For an empty environment only, supply INITIAL_ADMIN_ENABLED=true and explicit INITIAL_ADMIN_NAME, INITIAL_ADMIN_EMAIL, INITIAL_ADMIN_PASSWORD. Use a secret generated for that environment, at least eight characters and fewer than 72 UTF-8 bytes. Do not enable the development profile.
+For an empty environment only, supply BOOTSTRAP_ADMIN_ENABLED=true and explicit BOOTSTRAP_ADMIN_NAME, BOOTSTRAP_ADMIN_EMAIL, BOOTSTRAP_ADMIN_PASSWORD. Use a secret generated for that environment, at least eight characters and fewer than 72 UTF-8 bytes. Do not enable the development profile.
 
 Startup takes a PostgreSQL transaction advisory lock and creates one administrator only when no administrator, including inactive history, exists. An existing email belonging to another account is rejected; it is never promoted. Existing administrators are never reset or recreated. The new administrator must change the temporary password before using business or administrative endpoints. No organization membership is inferred.
 
-Deploy the identity-capable frontend before using this temporary account. After the first successful change, disable INITIAL_ADMIN_ENABLED and remove the initial password from service configuration. Removing optional bootstrap inputs is an operator action, not a normal per-release step. Existing environments with administrators need none of these new variables.
+Deploy the identity-capable frontend before using this temporary account. After the first successful change, disable BOOTSTRAP_ADMIN_ENABLED and remove the initial password from service configuration. Removing optional bootstrap inputs is an operator action, not a normal per-release step. Existing environments with administrators need none of these new variables.
 
 ## Runbooks
 
