@@ -6,8 +6,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
 import org.code.api.domain.enums.UserRole;
 import org.code.api.domain.models.user.User;
@@ -42,6 +47,38 @@ class AccountLifecycleIT extends PostgresIntegrationTest {
   @Autowired JdbcTemplate jdbc;
   @Autowired DataSource dataSource;
   @Autowired JwtEncoder encoder;
+
+  /** Concurrent changes cannot both accept the same previous password or lose a generation. */
+  @Test
+  void concurrentPasswordChangesHaveOneWinner() throws Exception {
+    User user = account(UserRole.REPRESENTATIVE);
+    String token = login(user, INITIAL);
+    var start = new CountDownLatch(1);
+    try (var executor = Executors.newFixedThreadPool(2)) {
+      var tasks = new ArrayList<Future<Integer>>();
+      for (int i = 0; i < 2; i++) {
+        final String replacement = REPLACEMENT + i;
+        tasks.add(
+            executor.submit(
+                () -> {
+                  start.await();
+                  return mvc.perform(
+                          body(
+                              put("/api/v1/users/me/password").header("Authorization", token),
+                              Map.of("currentPassword", INITIAL, "newPassword", replacement)))
+                      .andReturn()
+                      .getResponse()
+                      .getStatus();
+                }));
+      }
+      start.countDown();
+      var statuses = new ArrayList<Integer>();
+      for (var task : tasks) statuses.add(task.get(20, TimeUnit.SECONDS));
+      assertThat(statuses).allMatch(value -> value == 204 || value == 401 || value == 403);
+      assertThat(statuses.stream().filter(value -> value == 204).count()).isEqualTo(1);
+      assertThat(users.findById(user.getId()).orElseThrow().getCredentialVersion()).isEqualTo(1);
+    }
+  }
 
   /** Pre-upgrade official v1 tokens stay valid at generation zero and are revoked by reset. */
   @Test
