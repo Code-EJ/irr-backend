@@ -46,9 +46,7 @@ public class GeographyController {
   public ResponseEntity<GeographyContract.MunicipalityResponse> municipality(
       @Valid @RequestBody GeographyContract.MunicipalityRequest request) {
     var result = service.createMunicipality(request);
-    return ResponseEntity.created(
-            URI.create("/api/v1/municipalities?ibgeCode=" + result.ibgeCode()))
-        .body(result);
+    return ResponseEntity.created(URI.create("/api/v1/municipalities/" + result.id())).body(result);
   }
 
   /** Lists neighborhoods belonging to one stable municipality. */
@@ -63,8 +61,6 @@ public class GeographyController {
   public ResponseEntity<GeographyContract.NeighborhoodResponse> neighborhood(
       @Valid @RequestBody GeographyContract.NeighborhoodRequest request) {
     var result = service.createNeighborhood(request);
-    return ResponseEntity.created(
-            URI.create("/api/v1/neighborhoods?municipalityId=" + result.municipalityId()))
-        .body(result);
+    return ResponseEntity.created(URI.create("/api/v1/neighborhoods/" + result.id())).body(result);
   }
 }

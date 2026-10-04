@@ -343,13 +343,16 @@ class RoutesIT extends PostgresIntegrationTest {
             .header("X-Organization-Id", f.org());
     if (body != null)
       request.contentType(MediaType.APPLICATION_JSON).content(json.writeValueAsString(body));
-    String result =
-        mvc.perform(request)
-            .andExpect(status().is(expected))
-            .andReturn()
-            .getResponse()
-            .getContentAsString();
-    return result.isBlank() ? json.createObjectNode() : json.readTree(result);
+    var response = mvc.perform(request).andExpect(status().is(expected)).andReturn().getResponse();
+    String result = response.getContentAsString();
+    JsonNode payload = result.isBlank() ? json.createObjectNode() : json.readTree(result);
+    if (expected == 201 && List.of("/municipalities", "/neighborhoods").contains(path)) {
+      String location = "/api/v1" + path + "/" + payload.path("id").asText();
+      assertThat(response.getHeader("Location")).isEqualTo(location);
+      assertThat(call(f, "GET", path + "/" + payload.path("id").asText(), null, 200))
+          .isEqualTo(payload);
+    }
+    return payload;
   }
 
   private String token(Fixture f) {
