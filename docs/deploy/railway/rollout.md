@@ -47,6 +47,8 @@ Current Identity completion requires mail configuration and sender verification;
 
 ## Expanded identity release gate
 
+The frontend repository's `npm run verify:homologation` checks the supplied public frontend/backend pair without authenticating or mutating records: backend health, canonical pinned OpenAPI (root server origins excluded), exact CORS, frontend health/direct SPA routes and served API origin. Set public IRR_API_URL/IRR_FRONTEND_URL and the verified frontend image source IRR_FRONTEND_COMMIT. Its ignored deployed-candidate report is partial evidence, not a release approval or automatic v1 freeze. See frontend docs/homologation-verification.md. Actual source/image provenance, migrations/storage and authenticated/email smoke remain operator gates below.
+
 Deploy backend V1/V2/V3 and a frontend pinned to that OpenAPI. Verify global administrator creation/edit/succession, last-admin rejection, local MANAGER isolation, organization CRUD/membership/revocation, recovery external delivery/expiry/replay and create-only BOOTSTRAP_ADMIN_* restart behavior. Do not freeze v1 or start Routes until this homologation gate passes. Local evidence does not certify a Railway deployment.
 
 Rollback must retain V3 and preserve credential-generation enforcement. A pre-recovery frontend/backend pair disables recovery, so use coordinated release manifests. Do not restore a pre-generation binary that can revive revoked bearer tokens. See [recovery rollback](../../email-recovery.md#rollout-and-rollback).

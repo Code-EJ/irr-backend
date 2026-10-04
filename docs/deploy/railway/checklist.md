@@ -9,7 +9,7 @@ Unchecked items are operator release gates, not claims of remote verification.
 - [ ] Feature branches reviewed; unrelated local changes preserved; no automatic merge.
 - [ ] Java 21 ./mvnw clean verify, real PostgreSQL/Testcontainers and documentation checks pass.
 - [ ] Backend advisory audit recorded and Docker image builds.
-- [ ] V1 checksum unchanged; V2 upgrade and fresh V1 + V2 verified.
+- [ ] V1 checksum unchanged; additive V2/V3 upgrade and fresh V1 + V2 + V3 verified.
 - [ ] npm ci, lint, typecheck, test, build, api:check and real-backend contract tests pass.
 - [ ] Frontend dependency findings reviewed; no unapproved forced major upgrade.
 - [ ] Both images build from tracked source; no secrets or local-only source dependencies.
@@ -21,7 +21,7 @@ Unchecked items are operator release gates, not claims of remote verification.
 ## Backend first
 
 - [ ] Merge backend reviewed PR, then verify Railway rebuilt that exact commit.
-- [ ] Flyway versions 1 and 2 successful; Hibernate schema validation succeeds.
+- [ ] Flyway versions 1, 2 and 3 successful; Hibernate schema validation succeeds.
 - [ ] Health, liveness and readiness return 200/UP.
 - [ ] RSA, Redis and PostgreSQL load without credential exposure.
 - [ ] Existing frontend ordinary-account login, organization and business workflow work.
@@ -49,7 +49,7 @@ Unchecked items are operator release gates, not claims of remote verification.
 ## Data and completion
 
 - [ ] Existing users, organizations, documents and Flyway history preserved.
-- [ ] Operational V1 + V2 boundary recorded; future changes require new migrations.
+- [ ] Operational V1 + V2 + V3 boundary recorded; future changes require new migrations.
 - [ ] No Railway reset, manual SQL patch, source patch or secret disclosure occurred.
 - [ ] Actual remote smoke results recorded separately from local evidence.
 
