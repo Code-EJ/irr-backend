@@ -21,10 +21,10 @@ public class HttpEmailSender implements EmailSenderPort {
   private final String provider, key, from, name;
   private final URI endpoint;
   private final ObjectMapper json;
-  private final HttpClient client =
-      HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(3)).build();
+  private final HttpClient client;
 
   /** Validates selected delivery configuration at startup without printing secrets. */
+  @org.springframework.beans.factory.annotation.Autowired
   public HttpEmailSender(
       ObjectMapper json,
       @Value("${irr.mail.provider}") String provider,
@@ -32,6 +32,26 @@ public class HttpEmailSender implements EmailSenderPort {
       @Value("${irr.mail.from}") String from,
       @Value("${irr.mail.from-name}") String name,
       @Value("${irr.mail.mailpit-url}") String mailpit) {
+    this(
+        json,
+        provider,
+        key,
+        from,
+        name,
+        mailpit,
+        HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(3)).build());
+  }
+
+  /** Allows isolated transport verification without changing the production provider endpoint. */
+  HttpEmailSender(
+      ObjectMapper json,
+      String provider,
+      String key,
+      String from,
+      String name,
+      String mailpit,
+      HttpClient client) {
+    this.client = client;
     this.json = json;
     this.provider = provider;
     this.key = key;
