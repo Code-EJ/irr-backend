@@ -88,7 +88,10 @@ public class OpenApiConfiguration {
             Map.entry("DonationController", "Donations"),
             Map.entry("SortingController", "Sorting"),
             Map.entry("PressingController", "Pressing"),
-            Map.entry("DocumentController", "Attachments"));
+            Map.entry("DocumentController", "Attachments"),
+            Map.entry("GeographyController", "Territory"),
+            Map.entry("RouteController", "Routes"),
+            Map.entry("RouteExecutionController", "Route executions"));
     Map<String, String> actions =
         Map.ofEntries(
             Map.entry("register", "Register a user"),
@@ -98,6 +101,16 @@ public class OpenApiConfiguration {
             Map.entry("getById", "Get by ID"),
             Map.entry("update", "Update"),
             Map.entry("deactivate", "Deactivate"),
+            Map.entry("get", "Get by ID"),
+            Map.entry("events", "List history"),
+            Map.entry("start", "Start execution"),
+            Map.entry("complete", "Complete execution"),
+            Map.entry("cancel", "Cancel execution"),
+            Map.entry("coverage", "Record declared coverage"),
+            Map.entry("municipalities", "List municipalities"),
+            Map.entry("neighborhoods", "List neighborhoods"),
+            Map.entry("municipality", "Resolve or register municipality"),
+            Map.entry("neighborhood", "Resolve or register neighborhood"),
             Map.entry("bulkCreate", "Create a batch"),
             Map.entry("bulkUpdate", "Update a batch"),
             Map.entry("uploadDocumento", "Upload an attachment"),
