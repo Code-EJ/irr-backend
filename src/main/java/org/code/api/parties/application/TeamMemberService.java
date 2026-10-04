@@ -1,5 +1,6 @@
 package org.code.api.parties.application;
 
+import java.util.Objects;
 import java.util.UUID;
 import org.code.api.domain.models.base.TeamMember;
 import org.code.api.domain.ports.AuthenticatedUserProvider;
@@ -64,7 +65,7 @@ public class TeamMemberService {
   @Transactional
   public Response update(UUID id, Request request) {
     var record = owned(id, manager());
-    if (!record.getRole().equals(request.role()))
+    if (!Objects.equals(record.getRole(), request.role()))
       requireUnreferenced(id, record.getOrganizationId());
     apply(record, request);
     return response(records.saveAndFlush(record));
@@ -99,8 +100,12 @@ public class TeamMemberService {
         jdbc.queryForObject(
             "SELECT EXISTS(SELECT 1 FROM collection WHERE driver_id=? AND organization_id=? UNION"
                 + " ALL SELECT 1 FROM collection_team ct JOIN collection c ON c.id=ct.collection_id"
-                + " WHERE ct.team_member_id=? AND c.organization_id=?)",
+                + " WHERE ct.team_member_id=? AND c.organization_id=? UNION ALL SELECT 1 FROM route_execution WHERE driver_id=? AND organization_id=? UNION ALL SELECT 1 FROM route_execution_team WHERE team_member_id=? AND organization_id=?)",
             Boolean.class,
+            id,
+            org,
+            id,
+            org,
             id,
             org,
             id,
