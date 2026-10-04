@@ -67,7 +67,13 @@ public class SecurityConfig {
         .authorizeHttpRequests(
             access -> {
               access.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
-              access.requestMatchers(HttpMethod.POST, "/api/v1/session/authenticate").permitAll();
+              access
+                  .requestMatchers(
+                      HttpMethod.POST,
+                      "/api/v1/session/authenticate",
+                      "/api/v1/session/password-recovery/request",
+                      "/api/v1/session/password-recovery/confirm")
+                  .permitAll();
               access
                   .requestMatchers(
                       HttpMethod.GET,

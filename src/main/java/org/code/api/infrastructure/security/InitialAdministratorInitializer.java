@@ -55,6 +55,13 @@ public class InitialAdministratorInitializer implements ApplicationRunner {
   @Transactional
   public void run(ApplicationArguments arguments) {
     jdbc.execute("SELECT pg_advisory_xact_lock(724991603)");
+    if (!email.isBlank()
+        && jdbc.queryForObject(
+                "SELECT count(*) FROM users WHERE email=? AND user_role<>'ADMINISTRATOR'",
+                Long.class,
+                email)
+            > 0)
+      throw new IllegalStateException("Bootstrap address belongs to a non-administrator account");
     if (jdbc.queryForObject(
             "SELECT count(*) FROM users WHERE user_role='ADMINISTRATOR'", Long.class)
         > 0) return;

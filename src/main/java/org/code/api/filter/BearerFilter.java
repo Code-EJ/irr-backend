@@ -53,7 +53,12 @@ public class BearerFilter extends OncePerRequestFilter {
     String path = request.getServletPath();
     if (path.isEmpty()) path = request.getRequestURI();
     return "OPTIONS".equals(request.getMethod())
-        || ("POST".equals(request.getMethod()) && path.equals("/api/v1/session/authenticate"))
+        || ("POST".equals(request.getMethod())
+            && List.of(
+                    "/api/v1/session/authenticate",
+                    "/api/v1/session/password-recovery/request",
+                    "/api/v1/session/password-recovery/confirm")
+                .contains(path))
         || ("GET".equals(request.getMethod())
             && (path.equals("/actuator/health")
                 || path.equals("/actuator/health/liveness")

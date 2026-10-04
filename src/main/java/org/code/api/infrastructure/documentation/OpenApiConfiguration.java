@@ -79,6 +79,7 @@ public class OpenApiConfiguration {
             Map.entry("OrganizationController", "Organizations"),
             Map.entry("UserController", "Accounts"),
             Map.entry("SessionController", "Sessions"),
+            Map.entry("PasswordRecoveryController", "Password recovery"),
             Map.entry("VehicleController", "Vehicles"),
             Map.entry("MaterialCategoryController", "Material categories"),
             Map.entry("MaterialTypeController", "Material types"),
@@ -106,7 +107,11 @@ public class OpenApiConfiguration {
       String resource = resources.getOrDefault(handler.getBeanType().getSimpleName(), "Operations");
       String method = handler.getMethod().getName();
       operation.setTags(List.of(resource));
-      if (!List.of("SessionController", "UserController", "OrganizationController")
+      if (!List.of(
+              "SessionController",
+              "PasswordRecoveryController",
+              "UserController",
+              "OrganizationController")
           .contains(handler.getBeanType().getSimpleName())) {
         operation.addParametersItem(
             new Parameter()
@@ -157,7 +162,11 @@ public class OpenApiConfiguration {
   public OpenApiCustomizer sessionSecurityDocumentation() {
     return api -> {
       if (api.getPaths() == null) return;
-      for (String path : List.of("/api/v1/session/authenticate")) {
+      for (String path :
+          List.of(
+              "/api/v1/session/authenticate",
+              "/api/v1/session/password-recovery/request",
+              "/api/v1/session/password-recovery/confirm")) {
         var item = api.getPaths().get(path);
         if (item != null)
           item.readOperations().forEach(operation -> operation.setSecurity(List.of()));

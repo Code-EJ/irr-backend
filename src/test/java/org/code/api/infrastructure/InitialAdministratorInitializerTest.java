@@ -43,6 +43,11 @@ class InitialAdministratorInitializerTest {
     when(jdbc.queryForObject(
             "SELECT count(*) FROM users WHERE email=?", Long.class, "bootstrap@example.test"))
         .thenReturn(0L);
+    when(jdbc.queryForObject(
+            "SELECT count(*) FROM users WHERE email=? AND user_role<>'ADMINISTRATOR'",
+            Long.class,
+            "bootstrap@example.test"))
+        .thenReturn(0L);
     when(encryption.encrypt("isolated-bootstrap-input")).thenReturn("encoded");
     new InitialAdministratorInitializer(
             users,
@@ -69,7 +74,9 @@ class InitialAdministratorInitializerTest {
             "SELECT count(*) FROM users WHERE user_role='ADMINISTRATOR'", Long.class))
         .thenReturn(0L);
     when(jdbc.queryForObject(
-            "SELECT count(*) FROM users WHERE email=?", Long.class, "bootstrap@example.test"))
+            "SELECT count(*) FROM users WHERE email=? AND user_role<>'ADMINISTRATOR'",
+            Long.class,
+            "bootstrap@example.test"))
         .thenReturn(1L);
     assertThatThrownBy(
             () ->

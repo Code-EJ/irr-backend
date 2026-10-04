@@ -60,7 +60,7 @@ public class OrganizationController {
    */
   @GetMapping("/{id}")
   @Operation(
-      summary = "Get my organization",
+      summary = "Get an accessible organization",
       description = "Missing, inactive and foreign organizations all return 404.")
   public Organization get(@PathVariable UUID id) {
     return organizations.get(id);
@@ -113,7 +113,7 @@ public class OrganizationController {
       description =
           "ADMINISTRATOR only. Retains the membership row and writes an audit event. Further"
               + " organization reads fail immediately. Business APIs require the organization"
-              + " header and current membership.")
+              + " header and global authority or current membership.")
   public ResponseEntity<Void> revoke(@PathVariable UUID id, @PathVariable UUID userId) {
     organizations.revoke(id, userId);
     return ResponseEntity.noContent().build();

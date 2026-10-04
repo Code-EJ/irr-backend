@@ -15,7 +15,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * Verifies fresh baseline creation, incremental upgrade and transactional migration failure.
- * Example V3 migrations live only in test resources and never enter the runtime image.
+ * Example V4 migrations live only in test resources and never enter the runtime image.
  *
  * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
@@ -53,7 +53,7 @@ class InventoryMigrationIT extends PostgresIntegrationTest {
             jdbc.queryForObject(
                 "SELECT count(*) FROM "
                     + schema
-                    + ".flyway_schema_history WHERE version='3' AND success",
+                    + ".flyway_schema_history WHERE version='4' AND success",
                 Integer.class))
         .isEqualTo(1);
     assertThat(upgrade.migrate().migrationsExecuted).isZero();
@@ -74,7 +74,7 @@ class InventoryMigrationIT extends PostgresIntegrationTest {
         .isEqualTo(1);
     assertThat(
             jdbc.queryForObject(
-                "SELECT count(*) FROM " + schema + ".flyway_schema_history WHERE version='3'",
+                "SELECT count(*) FROM " + schema + ".flyway_schema_history WHERE version='4'",
                 Integer.class))
         .isZero();
     assertThat(
@@ -96,7 +96,7 @@ class InventoryMigrationIT extends PostgresIntegrationTest {
                     + " table_type='BASE TABLE' AND table_name <> 'flyway_schema_history'",
                 Integer.class,
                 schema))
-        .isEqualTo(29);
+        .isEqualTo(30);
     assertThat(flyway(schema).validateWithResult().validationSuccessful).isTrue();
     assertThat(flyway(schema).migrate().migrationsExecuted).isZero();
   }
