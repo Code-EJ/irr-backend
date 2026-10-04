@@ -101,7 +101,7 @@ Public self-registration and all unversioned application routes have been remove
 
 Swagger is generated from running controllers/DTOs and documents bearer authentication and current method role rules. Runtime authorization and business invariants are independently verified by integration tests. The [source API inventory](docs/api_documentation.md) is supporting audit material; it is not a second official specification.
 
-The development initializer updates the configured administrator password on restart if DEV_ADMIN_PASSWORD changes. It refuses to elevate an existing non-administrator with the same email. Set DEV_BOOTSTRAP_ENABLED=false to disable this initializer; it is never active outside the development profile. This initializer supplies local administrator access; partner creation uses the administrator-only endpoint.
+The development initializer creates an administrator once; it never overwrites an existing profile or changed password on restart. Changing DEV_ADMIN_PASSWORD does not reset that account. It refuses to elevate an existing non-administrator with the same email. Set DEV_BOOTSTRAP_ENABLED=false to disable this initializer; it is never active outside the development profile. This initializer supplies local administrator access; partner creation uses the administrator-only endpoint.
 
 ## 6. Run automated tests
 
@@ -214,3 +214,9 @@ The smoke script reads login and organization values from .env, creates retained
 The backup script briefly stops API writes, snapshots PostgreSQL and attachments, includes .env and RSA keys, then restarts the API. Backups contain secrets: keep .local/recovery private and do not commit/upload it. Restore rehearsal verifies checksums in an isolated container and removes only that labeled disposable container. It does not overwrite the live database or its volumes. See [operations](docs/operations.md).
 
 Posted sorting/pressing/sales use explicit reversal commands, not destructive CRUD. Each posting command needs an Idempotency-Key; retries retain that same key and payload. Quantities and money are JSON strings. Swagger is the official field-level reference. [ADR-0014](docs/adrs/0014-final-preproduction-contract-and-baseline.md) records the final consolidation and supersedes the transitional portions of ADR-0013; frontend integration and a compatible release pair remain separate gates.
+
+## Identity delivery and Railway
+
+Own profile editing and password change, administrator partner CRUD/reset, and explicit memberships use only /api/v1. See [ADR-0016](docs/adrs/0016-account-and-credential-lifecycle.md). Password changes revoke all previous sessions. The current schema is unchanged V1 plus additive V2; no database reset is required.
+
+For Git-driven deployment, first-administrator provisioning, variables and rollout/rollback gates, use the [Railway runbook](docs/deploy/railway/README.md). Swagger remains the official executable API specification.

@@ -7,7 +7,7 @@
 
 ## Context and audit
 
-ADR-0003's pragmatic modular monolith, ADR-0008's controlled partner provisioning and ADR-0009's explicit organization memberships remain authoritative. ADR-0014 removed obsolete routes and established V1. Frontend ADR-0015 integrated identity reads, fleet, materials and intake. The owner now confirms persistent Railway deployment; the historical permission to replace an unreleased database baseline no longer applies. V1 must remain byte-for-byte unchanged.
+ADR-0003's pragmatic modular monolith, ADR-0008's controlled partner provisioning and ADR-0009's explicit organization memberships remain authoritative. ADR-0014 removed obsolete routes and established V1. Frontend ADR-0015 integrated identity reads, fleet, materials and intake. The owner confirms Railway is still pre-production and permits considering a deliberate disposable reset, without authorizing automatic destruction. We choose **OPTION A — INCREMENTAL**: these two durable credential fields require no domain restructuring, and an additive V2 avoids infrastructure recreation, checksum divergence and a coordinated deployment outage. This is a deliberate choice, not an assumption that all pre-production data is immutable. V1 remains byte-for-byte unchanged.
 
 Current identity supports login, current-account reads, administrator partner CRUD and membership grant/revoke. Password changes/resets and self-service updates are absent. JWTs reload active identity/role but have no credential revocation generation. Organization reads are correctly membership-scoped, leaving administrative organization/membership discovery missing. The active frontend profile is read-only; unreachable legacy account pages still depend on incompatible services. Original backend Railway documentation edits are preserved in their existing worktree; this implementation uses an isolated checkout.
 
@@ -39,6 +39,8 @@ First-administrator bootstrap is separate, disabled by default, and uses explici
 | Reuse development bootstrap in Railway | Existing code | Rewrites credentials and couples production to local settings; rejected |
 
 ## Migration, rollout and rollback
+
+The operational baseline boundary is now V1 plus V2 for this delivery. Once a deployment must retain data, every later change uses a new Flyway version. A future disposable pre-production consolidation would require another explicit reset decision, an inventory of lost data, aligned local/CI/Railway schema and operator authorization before any destruction; it is not required or performed here. Never rewrite an applied migration in a database that will remain in use.
 
 V2 adds non-null credential_version default 0 with a nonnegative constraint and must_change_password default false. PostgreSQL applies constant-default additive DDL transactionally; it still takes an ALTER TABLE lock, so validate against a representative restored database and monitor lock contention. No data removal, backfill based on guessed ownership, Flyway clean/repair or V1 edits. Fresh databases execute V1 then V2; existing V1 databases execute only V2 during normal startup.
 

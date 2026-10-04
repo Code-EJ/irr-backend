@@ -1,5 +1,11 @@
 # ADR-0001: IRR architecture overhaul and delivery master plan
 
+## Identity delivery update — 2026-10-03
+
+The owner requests complete account self-service and administration before operational rollout. [ADR-0016](0016-account-and-credential-lifecycle.md) closes the password lifecycle gap in ADR-0008 and extends M1/M5 without changing ADR-0003's architecture. Implementation adds self profile/password updates, administrative reset, credential generation/restriction state and administrative membership discovery. Frontend consumes additive `/api/v1` operations and retires obsolete identity code. Existing partner role and organization boundaries remain enforced.
+
+Database strategy: **OPTION A — INCREMENTAL**. V1 is unchanged; V2 adds durable state required by token revocation and mandatory password change. Pre-production disposability was considered; a reset offers no benefit for this small additive change and would require infrastructure recreation. The operational baseline is V1 + V2. Subsequent changes after data retention is required use new Flyway versions. Test evidence and remaining delivery gates are recorded in ADR-0016 and the [Railway rollout](../deploy/railway/rollout.md). Implementation is in progress until the complete backend/frontend verification passes. No remote rollout or database reset is performed by this work.
+
 > Final pre-production contract: [ADR-0014](0014-final-preproduction-contract-and-baseline.md) supersedes transitional HTTP aliases and the unreleased migration chain. Earlier evidence remains historical; the supported application API is /api/v1 and the final runtime schema starts at one fresh V1.
 
 

@@ -58,3 +58,7 @@ Official references: [Spring Boot 3.5 documentation](https://docs.spring.io/spri
 ## Build formatting policy
 
 Spotless Maven plugin 3.10.3 is intentional project tooling and runs check in the validate phase. Its configured Java steps shorten qualified types, organize/remove unused imports, apply Google Java Format, trim trailing whitespace and ensure a final newline. Use ./mvnw spotless:apply before ./mvnw clean verify. The Docker Maven build runs the same validation; it skips tests only after CI/local verification, not formatting. Application-coordinate OSV evidence does not claim to audit Maven plugin implementation dependencies.
+
+## Identity delivery audit — 2026-10-03
+
+Enzo Ribas (https://github.com/oEnzoRibas): no new backend library or version override was required for identity. Re-ran the resolved Maven graph audit: 156 coordinates, zero OSV matches at audit time. Existing Maven/Spotless and Docker changes were retained. This does not substitute for an image OS scan or future advisory monitoring.
