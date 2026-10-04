@@ -340,7 +340,7 @@ class AccountLifecycleIT extends PostgresIntegrationTest {
         id,
         id + "@example.test");
     var upgrade = configuration.target("latest").load();
-    assertThat(upgrade.migrate().migrationsExecuted).isEqualTo(2);
+    assertThat(upgrade.migrate().migrationsExecuted).isEqualTo(3);
     var row = jdbc.queryForMap("SELECT * FROM " + schema + ".users WHERE id=?", id);
     assertThat(row.get("credential_version")).isEqualTo(0L);
     assertThat(row.get("must_change_password")).isEqualTo(false);
