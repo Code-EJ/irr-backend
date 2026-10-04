@@ -10,6 +10,9 @@ import java.util.UUID;
  * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 public interface OrganizationStore {
+  /** Looks up active metadata after the caller establishes global authority. */
+  Optional<Organization> active(UUID organization);
+
   /** Returns organization metadata for administration without business access. */
   List<Organization> administrativeList(int limit, long offset);
 

@@ -85,7 +85,11 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
   void administratorProvisionsSelectedPartnerRoles() throws Exception {
     String admin = token(account(UserRole.ADMINISTRATOR));
     for (UserRole role :
-        List.of(UserRole.CITY_HALL, UserRole.ORGANIZATION, UserRole.REPRESENTATIVE)) {
+        List.of(
+            UserRole.ADMINISTRATOR,
+            UserRole.CITY_HALL,
+            UserRole.ORGANIZATION,
+            UserRole.REPRESENTATIVE)) {
       String email = UUID.randomUUID() + "@example.test";
       mvc.perform(
               post("/api/v1/users")
@@ -106,7 +110,7 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
 
   /** Verifies anonymous and nonadministrator actors cannot create partners or elevate a role. */
   @Test
-  void provisioningRejectsUnauthorizedAndAdministratorTargets() throws Exception {
+  void provisioningRequiresGlobalAuthorityForEveryRole() throws Exception {
     String body = partner(UUID.randomUUID() + "@example.test", UserRole.REPRESENTATIVE);
     mvc.perform(post("/api/v1/users").contentType(MediaType.APPLICATION_JSON).content(body))
         .andExpect(status().isUnauthorized());
@@ -123,7 +127,8 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
                 .header("Authorization", token(account(UserRole.ADMINISTRATOR)))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(partner(UUID.randomUUID() + "@example.test", UserRole.ADMINISTRATOR)))
-        .andExpect(status().isBadRequest());
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("userRole").value("ADMINISTRATOR"));
   }
 
   /** Verifies duplicates and BCrypt byte boundaries fail without creating records. */
@@ -506,9 +511,7 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
         .andExpect(status().isAccepted());
   }
 
-  /**
-   * Partner CRUD does not expose secrets or allow administrator creation, modification or lockout.
-   */
+  /** Global account administration preserves safe metadata and revokes disabled access. */
   @Test
   void partnerLifecyclePreservesAdministratorBoundaryAndRevokesDisabledAccess() throws Exception {
     User admin = account(UserRole.ADMINISTRATOR), partner = account(UserRole.REPRESENTATIVE);
@@ -541,10 +544,17 @@ class IdentityAttachmentIT extends PostgresIntegrationTest {
             put("/api/v1/users/{id}", admin.getId())
                 .header("Authorization", adminToken)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(update))
-        .andExpect(status().isConflict());
-    mvc.perform(delete("/api/v1/users/{id}", admin.getId()).header("Authorization", adminToken))
-        .andExpect(status().isConflict());
+                .content(
+                    json.writeValueAsString(
+                        Map.of(
+                            "fullName",
+                            "Updated Administrator",
+                            "email",
+                            admin.getEmail(),
+                            "userRole",
+                            "ADMINISTRATOR"))))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("userRole").value("ADMINISTRATOR"));
     mvc.perform(delete("/api/v1/users/{id}", partner.getId()).header("Authorization", adminToken))
         .andExpect(status().isNoContent());
     mvc.perform(get("/api/v1/users/me").header("Authorization", partnerToken))

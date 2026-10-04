@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.UUID;
 import org.code.api.domain.ports.OrganizationScope;
 import org.code.api.organizations.application.OrganizationService;
-import org.code.api.organizations.domain.MembershipRole;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -12,8 +11,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * Verifies the explicit organization header for every scoped use case. Platform administrator
- * status never substitutes for current organization membership.
+ * Verifies explicit organization selection and global or organization-local authority per use case.
  *
  * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
@@ -50,14 +48,14 @@ public class RequestOrganizationScope implements OrganizationScope {
   public UUID organizationId() {
     UUID id = requested();
     lockWritingScope(id);
-    return organizations.requireMembership(id).organizationId();
+    return organizations.requireAccess(id);
   }
 
   /** {@inheritDoc} */
   public boolean manager() {
     UUID id = requested();
     lockWritingScope(id);
-    return organizations.requireMembership(id).role() == MembershipRole.MANAGER;
+    return organizations.canManage(id);
   }
 
   private void lockWritingScope(UUID id) {

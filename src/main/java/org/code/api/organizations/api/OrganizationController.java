@@ -37,24 +37,12 @@ public class OrganizationController {
    */
   @GetMapping
   @Operation(
-      summary = "List my organizations",
+      summary = "List accessible organizations",
       description =
-          "Returns only organizations with an active membership for the current active user."
-              + " Platform administrators have no automatic membership bypass.")
+          "Global administrators see all active organizations. Other accounts require active membership.")
   public OrganizationService.OrganizationPage list(
       @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
     return organizations.list(page, size);
-  }
-
-  /** Lists administrative organization metadata independently of personal memberships. */
-  @GetMapping("/admin")
-  @Operation(
-      summary = "List organizations for administration",
-      description =
-          "ADMINISTRATOR only. Metadata access does not confer organization membership or business data access.")
-  public OrganizationService.OrganizationPage administrativeList(
-      @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
-    return organizations.administrativeList(page, size);
   }
 
   /** Reads an association for explicit grant/revoke administration; missing association is 404. */

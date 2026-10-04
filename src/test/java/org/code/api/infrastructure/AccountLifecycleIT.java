@@ -215,18 +215,22 @@ class AccountLifecycleIT extends PostgresIntegrationTest {
     assertThat(encryption.compare(persisted.getPasswordHash(), REPLACEMENT)).isTrue();
   }
 
-  /** Administrative resets cannot be used by partners or against administrators. */
+  /** Administrative resets require global authority for all account roles. */
   @Test
   void resetRequiresMandatoryChangeAndBlocksEveryBusinessSurface() throws Exception {
     User admin = account(UserRole.ADMINISTRATOR), user = account(UserRole.REPRESENTATIVE);
     String administrator = login(admin, INITIAL), previous = login(user, INITIAL);
+    User secondAdmin = account(UserRole.ADMINISTRATOR);
+    String oldAdminToken = login(secondAdmin, INITIAL);
     var input = Map.of("temporaryPassword", REPLACEMENT);
     mvc.perform(
             body(
-                put("/api/v1/users/" + admin.getId() + "/password")
+                put("/api/v1/users/" + secondAdmin.getId() + "/password")
                     .header("Authorization", administrator),
                 input))
-        .andExpect(status().isConflict());
+        .andExpect(status().isNoContent());
+    mvc.perform(get("/api/v1/users/me").header("Authorization", oldAdminToken))
+        .andExpect(status().isUnauthorized());
     mvc.perform(
             body(
                 put("/api/v1/users/" + user.getId() + "/password")
@@ -245,13 +249,7 @@ class AccountLifecycleIT extends PostgresIntegrationTest {
     mvc.perform(get("/api/v1/users/me").header("Authorization", temporary))
         .andExpect(status().isOk())
         .andExpect(jsonPath("mustChangePassword").value(true));
-    for (String path :
-        new String[] {
-          "/api/v1/organizations",
-          "/api/v1/vehicles",
-          "/api/v1/users",
-          "/api/v1/organizations/admin"
-        })
+    for (String path : new String[] {"/api/v1/organizations", "/api/v1/vehicles", "/api/v1/users"})
       mvc.perform(get(path).header("Authorization", temporary))
           .andExpect(status().isForbidden())
           .andExpect(jsonPath("error").value("password_change_required"));
@@ -272,7 +270,7 @@ class AccountLifecycleIT extends PostgresIntegrationTest {
         .andExpect(jsonPath("mustChangePassword").value(false));
   }
 
-  /** Platform administration sees metadata but never gains implicit business membership. */
+  /** Global administrators have organization access without a fabricated membership. */
   @Test
   void administrativeMembershipDiscoveryPreservesScopeAndRevocation() throws Exception {
     User admin = account(UserRole.ADMINISTRATOR), user = account(UserRole.REPRESENTATIVE);
@@ -285,11 +283,16 @@ class AccountLifecycleIT extends PostgresIntegrationTest {
             .andExpect(status().isCreated())
             .andReturn();
     String org = json.readTree(created.getResponse().getContentAsString()).get("id").asText();
-    mvc.perform(get("/api/v1/organizations/admin").header("Authorization", administrator))
+    mvc.perform(get("/api/v1/organizations").header("Authorization", administrator))
         .andExpect(status().isOk());
-    mvc.perform(get("/api/v1/organizations/admin").header("Authorization", partner))
-        .andExpect(status().isForbidden());
+    mvc.perform(get("/api/v1/organizations").header("Authorization", partner))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("totalElements").value(0));
     mvc.perform(get("/api/v1/organizations/" + org).header("Authorization", administrator))
+        .andExpect(status().isOk());
+    mvc.perform(
+            get("/api/v1/organizations/" + org + "/membership")
+                .header("Authorization", administrator))
         .andExpect(status().isNotFound());
     String member = "/api/v1/organizations/" + org + "/members/" + user.getId();
     mvc.perform(get(member).header("Authorization", administrator))

@@ -10,7 +10,7 @@ import org.code.api.domain.enums.UserRole;
  * @param fullName display name
  * @param email unique login address
  * @param password initial partner password
- * @param userRole one of the supported partner roles
+ * @param userRole one of the four supported platform roles
  * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 public record CreatePartnerRequest(
@@ -22,7 +22,7 @@ public record CreatePartnerRequest(
         String password,
     @NotNull
         @io.swagger.v3.oas.annotations.media.Schema(
-            allowableValues = {"REPRESENTATIVE", "ORGANIZATION", "CITY_HALL"})
+            allowableValues = {"ADMINISTRATOR", "REPRESENTATIVE", "ORGANIZATION", "CITY_HALL"})
         UserRole userRole) {
   @Override
   public String toString() {

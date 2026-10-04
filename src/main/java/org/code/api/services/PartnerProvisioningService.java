@@ -1,6 +1,5 @@
 package org.code.api.services;
 
-import org.code.api.domain.enums.UserRole;
 import org.code.api.domain.models.user.User;
 import org.code.api.domain.ports.EncryptionPort;
 import org.code.api.dto.user.CreatePartnerRequest;
@@ -14,8 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * Provisions partners through a method-secured administrator boundary. Existing exact email
- * identity semantics are retained until a dedicated normalization migration.
+ * Provisions accounts of every role through a method-secured administrator boundary. Existing exact
+ * email identity semantics are retained until a dedicated normalization migration.
  *
  * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
@@ -23,20 +22,24 @@ import org.springframework.web.server.ResponseStatusException;
 public class PartnerProvisioningService {
   private final UserRepository users;
   private final EncryptionPort encryption;
+  private final GlobalAdministratorGuard administrators;
 
   /**
    * Configures partner persistence and credential hashing.
    *
    * @param users account repository
    * @param encryption password hashing adapter
+   * @param administrators serialized global authority boundary
    */
-  public PartnerProvisioningService(UserRepository users, EncryptionPort encryption) {
+  public PartnerProvisioningService(
+      UserRepository users, EncryptionPort encryption, GlobalAdministratorGuard administrators) {
     this.users = users;
     this.encryption = encryption;
+    this.administrators = administrators;
   }
 
   /**
-   * Creates a partner with a selected role and a hashed initial password.
+   * Creates an account with a selected role and a hashed initial password.
    *
    * @param request validated partner fields
    * @return safe metadata, never a token for the created account
@@ -44,9 +47,7 @@ public class PartnerProvisioningService {
   @PreAuthorize("hasRole('ADMINISTRATOR')")
   @Transactional
   public UserResponse create(CreatePartnerRequest request) {
-    if (request.userRole() == UserRole.ADMINISTRATOR)
-      throw new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, "Administrator creation is not part of partner provisioning");
+    administrators.lock();
     PasswordPolicy.validate(request.password());
     if (users.existsByEmail(request.email()))
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Email is already registered");

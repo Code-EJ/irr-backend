@@ -43,6 +43,14 @@ public class JdbcOrganizationStore implements OrganizationStore {
   }
 
   /** {@inheritDoc} */
+  public Optional<Organization> active(UUID organization) {
+    return jdbc
+        .query("SELECT * FROM organization WHERE id=? AND is_active", ORGANIZATION, organization)
+        .stream()
+        .findFirst();
+  }
+
+  /** {@inheritDoc} */
   public List<Organization> administrativeList(int limit, long offset) {
     return jdbc.query(
         "SELECT * FROM organization WHERE is_active ORDER BY name,id LIMIT ? OFFSET ?",

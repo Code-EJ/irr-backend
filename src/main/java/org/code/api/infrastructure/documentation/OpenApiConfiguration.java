@@ -45,7 +45,7 @@ public class OpenApiConfiguration {
                 .version("0.0.1-SNAPSHOT")
                 .description(
                     "Pre-production waste management API. This specification documents the current"
-                        + " contract; business operations require explicit organization membership."
+                        + " contract; business operations require global authority or explicit organization membership."
                         + " Decimal quantities and money are JSON strings. Posted operations are"
                         + " corrected through audited reversals.")
                 .contact(new Contact().name("Enzo Ribas").url("https://github.com/oEnzoRibas")))
@@ -77,7 +77,7 @@ public class OpenApiConfiguration {
             Map.entry("ProcessingReversalController", "Processing reversals"),
             Map.entry("ReportController", "Reports"),
             Map.entry("OrganizationController", "Organizations"),
-            Map.entry("UserController", "Partners"),
+            Map.entry("UserController", "Accounts"),
             Map.entry("SessionController", "Sessions"),
             Map.entry("VehicleController", "Vehicles"),
             Map.entry("MaterialCategoryController", "Material categories"),
@@ -114,8 +114,7 @@ public class OpenApiConfiguration {
                 .in("header")
                 .required(true)
                 .description(
-                    "Explicit active organization membership; platform administrator status is not"
-                        + " a bypass")
+                    "Active organization selection; global authority or an active membership is required")
                 .schema(new StringSchema().format("uuid")));
       }
       String controller = handler.getBeanType().getSimpleName();
@@ -140,7 +139,7 @@ public class OpenApiConfiguration {
         operation.setDescription(
             rule == null
                 ? "Authenticated access is checked by the application service. Business records"
-                    + " require current organization membership; platform administration uses the"
+                    + " require global authority or current organization membership; platform administration uses the"
                     + " administrator role."
                 : "Declared method authorization: "
                     + rule.value()

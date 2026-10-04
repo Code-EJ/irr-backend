@@ -17,7 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Administrator-only partner provisioning; it does not grant self-service role changes.
+ * Global administrator-only account provisioning; it does not grant self-service role changes.
  *
  * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
@@ -86,7 +86,7 @@ public class UserController {
   @io.swagger.v3.oas.annotations.Operation(
       summary = "Reset partner password",
       description =
-          "ADMINISTRATOR only. Rejects administrator targets. Revokes existing tokens and requires a different password before business access. No credential is returned.")
+          "ADMINISTRATOR only. Revokes existing tokens and requires a different password before business access. No credential is returned.")
   @io.swagger.v3.oas.annotations.responses.ApiResponse(
       responseCode = "204",
       description = "Temporary credential set; mandatory change required")

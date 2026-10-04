@@ -20,8 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * Safe platform account reads and administrator-controlled partner lifecycle. Deactivation retains
- * audit identities and is enforced on subsequent bearer-token requests.
+ * Safe platform account reads and global administrator-controlled account lifecycle. Deactivation
+ * retains audit identities and is enforced on subsequent bearer-token requests.
  *
  * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
@@ -31,6 +31,7 @@ public class AccountLifecycleService {
   private final UserRepository users;
   private final AuthenticatedUserProvider actor;
   private final EncryptionPort encryption;
+  private final GlobalAdministratorGuard administrators;
 
   /** Updates only the authenticated user's name and email, preserving administrative state. */
   @Transactional
@@ -53,12 +54,13 @@ public class AccountLifecycleService {
   }
 
   /**
-   * Resets a partner to a temporary credential without exposing a password or impersonation token.
+   * Resets an account to a temporary credential without exposing a password or impersonation token.
    */
   @Transactional
   @PreAuthorize("hasRole('ADMINISTRATOR')")
   public void resetPassword(UUID id, ResetPasswordRequest request) {
-    replacePassword(partner(id), request.temporaryPassword(), true);
+    administrators.lock();
+    replacePassword(locked(id), request.temporaryPassword(), true);
   }
 
   private void replacePassword(User user, String password, boolean mandatory) {
@@ -98,25 +100,27 @@ public class AccountLifecycleService {
     return response(owned(id));
   }
 
-  /** Replaces partner metadata and role, without granting administrator privileges. */
+  /** Replaces account metadata and role while preserving the last active administrator. */
   @Transactional
   @PreAuthorize("hasRole('ADMINISTRATOR')")
   public UserResponse update(UUID id, UpdatePartnerRequest request) {
-    User user = partner(id);
-    if (request.userRole() == UserRole.ADMINISTRATOR)
-      throw new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, "Partner updates cannot grant administrator privileges");
+    administrators.lock();
+    User user = locked(id);
+    if (user.getUserRole() == UserRole.ADMINISTRATOR
+        && request.userRole() != UserRole.ADMINISTRATOR) administrators.requireSuccessor();
     user.setFullName(request.fullName().strip());
     user.setEmail(request.email());
     user.setUserRole(request.userRole());
     return response(users.saveAndFlush(user));
   }
 
-  /** Deactivates a partner while preserving its historical creator and membership references. */
+  /** Deactivates an account while preserving its historical creator and membership references. */
   @Transactional
   @PreAuthorize("hasRole('ADMINISTRATOR')")
   public void deactivate(UUID id) {
-    User user = partner(id);
+    administrators.lock();
+    User user = locked(id);
+    if (user.getUserRole() == UserRole.ADMINISTRATOR) administrators.requireSuccessor();
     user.setIsActive(false);
     users.saveAndFlush(user);
   }
@@ -125,14 +129,6 @@ public class AccountLifecycleService {
     return users
         .findById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
-  }
-
-  private User partner(UUID id) {
-    User user = locked(id);
-    if (user.getUserRole() == UserRole.ADMINISTRATOR)
-      throw new ResponseStatusException(
-          HttpStatus.CONFLICT, "Administrator accounts are outside partner lifecycle operations");
-    return user;
   }
 
   private UserResponse response(User user) {
