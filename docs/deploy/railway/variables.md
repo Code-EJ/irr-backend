@@ -40,3 +40,7 @@ Recovery requires the mail configuration listed below. Optional first-administra
 | MAILPIT_URL / MAILPIT_PORT | Local catcher only | Development; not needed for Brevo |
 
 Sender account/domain approval and DNS authentication are operator prerequisites. No Railway secrets were modified locally. See [email setup](../../email-recovery.md).
+
+## Identity closure and external delivery
+
+Identity is IMPLEMENTED / READY FOR HOMOLOGATION. Email provider deployment is OPERATIONAL CONFIGURATION PENDING / EXTERNAL CONFIGURATION REQUIRED: approved Brevo account, sender/domain DNS verification, backend-only API key and public reset URL. Follow [the implemented email runbook](../../email-recovery.md) for exact variables, local no-internet tests, real-inbox smoke and troubleshooting. This operational configuration does not block owner-authorized Routes development. No external credentials or Railway changes were performed locally.

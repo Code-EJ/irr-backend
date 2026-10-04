@@ -2,27 +2,22 @@
 
 ## Current executive milestone order — 2026-10-04
 
-This section supersedes the sequencing and authorization assumptions of the historical audit below. It adapts M1/M5 identity work and the prior integration slices; it is the single active executive roadmap.
+The owner's Routes phase decision explicitly supersedes the prior requirement to finish external homologation before developing Routes. Identity policy and security remain unchanged. External deployment remains an operator gate, not a blocker for the next functional development milestone.
 
 | Order | Milestone | Status / gate |
 | --- | --- | --- |
-| NOW | Identity & Access completion | IMPLEMENTED / LOCALLY VERIFIED: global administrator lifecycle, local MANAGER boundaries, organizations, memberships, email recovery, frontend and tests; external homologation remains the next gate |
-| NEXT | First deploy / homologation | PLANNED_CURRENT_MILESTONE gate after identity: both images, OpenAPI, recovery mail configuration, health/readiness, CORS and deployed smoke; no automatic merge or remote mutation |
-| THEN | Routes | PLANNED_POST_DEPLOY: only after the homologation gate; internal planning/execution/history, organization ownership and municipality context |
-| AFTER ROUTES | Native reports / filters / indicators / dashboards | PLANNED_POST_DEPLOY: backend aggregation and frontend presentation; external BI is optional |
-| PLANNED | GPS / advanced route integration | PLANNED_POST_DEPLOY: provider boundary, coordinates and trajectories; never blocks initial Routes |
-| FUTURE | Further modules, optional BI and advanced analytics | DEFERRED until separately prioritized |
+| COMPLETED | Identity & Access | IMPLEMENTED / READY FOR HOMOLOGATION: current backend/frontend, profile, credential revocation, recovery, global/local administration and bootstrap; no functional reopening |
+| PARALLEL OPERATIONS | Email provider configuration / first deployment | OPERATIONAL CONFIGURATION PENDING: external sender/domain/key and public deployment; EXTERNAL CONFIGURATION REQUIRED; no automatic merge, secrets update or database reset |
+| CURRENT DEVELOPMENT | Routes | IN_PROGRESS: explicit territory, organization-owned reusable planning, dated execution, preserved collection history and frontend integration |
+| NEXT / AFTER ROUTES | Analytics, reports, filters, indicators and dashboards | PLANNED_AFTER_ROUTES: native PostgreSQL/query/API/frontend path; data definitions before formulas; no dashboard implementation now |
+| INCREMENTAL EVOLUTION | GPS / route telemetry / mapping | PLANNED_POST_DEPLOY: extension at execution/geometry boundaries; no provider, hardware or advanced map now |
+| FUTURE | Optional BI and advanced analytics | DEFERRED until demonstrated need and separate product authorization |
 
-The owner confirms ADMINISTRATOR is global authority (UI: Administrador Geral), can create administrators and access every active organization. MANAGER remains organization-local administration; MEMBER retains normal scoped permissions. No additional global enum or speculative permission matrix. Backend ADR-0017 supersedes earlier restrictions; ADR-0018 defines current email recovery. The expanded identity slice is implemented and locally verified; [current evidence](../identity-verification.md) records the external provider, build-tool risk review and deployed homologation gates still open.
+ADMINISTRATOR remains global, MANAGER remains local, and MEMBER keeps permitted organization operations. No new Identity architecture, role enum or credential policy is introduced. V1–V3 stay immutable; Routes uses additive V4. No data reset. Exclusively /api/v1 is retained; the first approved release manifest freezes that contract, not an ADR or local compilation.
 
-API freeze: before the first release/homologation baseline, explicitly documented v1 corrections are permitted. The first release manifest freezes /api/v1; compatible changes continue in v1, real breaking changes require an ADR and evaluation of v2. No preventive /api/v2 or legacy aliases.
+The new Routes and Analytics decisions interpret the historical client requirements without treating all historical extras as current implementation authority. Organization classification and account CITY_HALL are not territorial identities. Municipality/Neighborhood are added only for the demonstrated Routes requirement; no external dataset is imported. Stable IDs, exact kg/km, actor/timestamp history and immutable execution context prepare future analytics. Metrics, alerts, exports and GPS remain planned, with unresolved formulas marked PRODUCT DEFINITION REQUIRED.
 
-Database: OPTION A — INCREMENTAL. Preserve V1 and V2; only necessary persisted recovery state receives V3. No database reset. All future operational changes require new Flyway migrations. Git/Docker/Flyway/configuration remain deployment truth.
-
-Multi-municipality is permanent product direction. Current Organization name/type and account CITY_HALL classification do not encode municipality geography or organization-to-municipality relationships. Collection currently has routeDescription, not a Route aggregate. Audit/define that mapping during Routes before adding Municipality; do not equate account classifications with geographic identity. Plan neighborhood/street coverage, vehicle/team, date/period, status, execution history and collection association. A future tracking port must keep providers outside the Route domain. Indicators require approved formulas and available data, never fabricated measurements.
-
-See [requirements traceability](../requirements/traceability.md) for client sources, reinterpretations, implementation evidence and product decisions. Current evidence is in the identity execution record; historical counts below remain dated and do not certify the expanded milestone.
-
+Historical sequencing and test counts below remain dated evidence. Current statuses follow [requirements traceability](../requirements/traceability.md) and the Routes execution record added with verified implementation.
 
 ## Identity delivery update — 2026-10-03
 

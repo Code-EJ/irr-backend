@@ -114,3 +114,7 @@ Development bootstrap no longer resets existing credentials or profiles. Use aut
 ADR-0017 supersedes earlier no-bypass administrator rules. Global administrators access any active organization through an explicit organization header; local accounts require current memberships. Actual membership discovery never fabricates a global association. Preserve the last active global administrator.
 
 ADR-0018 adds V3__password_recovery.sql without resetting V1/V2 or existing accounts. The current runtime baseline is V1 + V2 + V3; earlier one-version restoration counts above are dated predecessor evidence. Recovery is enabled explicitly, throttled through Redis and atomically consumed in PostgreSQL. Follow [email recovery operations](email-recovery.md) and the Railway mail checklist. Backend readiness does not test sender verification or inbox arrival. Test-only V4 examples demonstrate future upgrades; they are not runtime migrations.
+
+## Identity closure and external delivery
+
+Identity is IMPLEMENTED / READY FOR HOMOLOGATION. Email provider deployment is OPERATIONAL CONFIGURATION PENDING / EXTERNAL CONFIGURATION REQUIRED: approved Brevo account, sender/domain DNS verification, backend-only API key and public reset URL. Follow [the implemented email runbook](email-recovery.md) for exact variables, local no-internet tests, real-inbox smoke and troubleshooting. This operational configuration does not block owner-authorized Routes development. No external credentials or Railway changes were performed locally.

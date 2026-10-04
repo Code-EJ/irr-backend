@@ -63,3 +63,7 @@ Unchecked items are operator release gates, not claims of remote verification.
 - [ ] Brevo account/sender/domain approved; mail settings and public recovery URL configured.
 - [ ] Real inbox recovery, expiry/replay and old-password/session rejection verified.
 - [ ] Current frontend/backend release manifests recorded before freezing v1.
+
+## Identity closure and external delivery
+
+Identity is IMPLEMENTED / READY FOR HOMOLOGATION. Email provider deployment is OPERATIONAL CONFIGURATION PENDING / EXTERNAL CONFIGURATION REQUIRED: approved Brevo account, sender/domain DNS verification, backend-only API key and public reset URL. Follow [the implemented email runbook](../../email-recovery.md) for exact variables, local no-internet tests, real-inbox smoke and troubleshooting. This operational configuration does not block owner-authorized Routes development. No external credentials or Railway changes were performed locally.

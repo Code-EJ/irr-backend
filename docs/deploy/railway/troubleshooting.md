@@ -24,3 +24,7 @@ Normal releases use Git → Docker build → startup → Flyway → health. Neve
 ## Recovery and global access
 
 Recovery 503 for every account: check explicit MAIL_PROVIDER and Redis readiness. Startup fails with mail configuration errors: verify sender, API key and HTTPS public reset URL without exposing their values. Request 202 without a message: check spam/provider quotas, aggregate delivery/queue-full logs and cooldown; never log raw token/email/provider error bodies. A stale link requires a new request after credential/email changes. A 409 when demoting/deactivating an administrator can mean no active successor exists. Global authority does not bypass inactive organizations or domain/reference constraints.
+
+## Identity closure and external delivery
+
+Identity is IMPLEMENTED / READY FOR HOMOLOGATION. Email provider deployment is OPERATIONAL CONFIGURATION PENDING / EXTERNAL CONFIGURATION REQUIRED: approved Brevo account, sender/domain DNS verification, backend-only API key and public reset URL. Follow [the implemented email runbook](../../email-recovery.md) for exact variables, local no-internet tests, real-inbox smoke and troubleshooting. This operational configuration does not block owner-authorized Routes development. No external credentials or Railway changes were performed locally.
