@@ -68,7 +68,7 @@ Repeated failures require checking the attachment volume mount, storage availabi
 
 ## Organizations and Redis execution update
 
-The final V1 creates 29 application tables. Organization membership and access audit are part of that baseline, and no ownership is inferred from the creator. Administrative effects and audit records commit together. ADR-0016 adds the runtime V2 credential fields; test-only incremental V3 examples remain outside the runtime image.
+The final V1 creates 29 application tables. Organization membership and access audit are part of that baseline, and no ownership is inferred from the creator. Administrative effects and audit records commit together. ADR-0016 adds the runtime V2 credential fields; V3 adds runtime password recovery authorization. Test-only incremental V4 examples remain outside the runtime image.
 
 Compose now starts PostgreSQL, authenticated Redis and the API. Redis uses the internal network, a separate persistent volume and no host port. Both data services must pass health checks before API startup; readiness includes both. Redis credentials are required in the ignored .env and should be rotated together on Redis/backend recreation. The [README Redis workflow](../README.md#redis-start-check-and-test) provides commands. Redis AOF is neither a PostgreSQL backup nor a stock/authorization authority.
 
@@ -96,7 +96,7 @@ Reports are uncached UTC operational summaries; reversals change the current-sta
 
 ## Final pre-production consolidation
 
-ADR-0014 supersedes the active V1–V6 chain and compatibility API. All application requests now use /api/v1, including session authentication, account administration and organizations. Documentation and actuator infrastructure retain their framework URLs. Current restore evidence must contain one successful baseline version, not the historical six-row sequence.
+ADR-0014 supersedes the active V1–V6 chain and compatibility API. All application requests now use /api/v1, including session authentication, account administration and organizations. Documentation and actuator infrastructure retain their framework URLs. The ADR-0014 restoration below verified the one-version predecessor baseline. Current restore evidence must include successful V1/V2/V3 after Identity upgrades, not the historical six-row sequence.
 
 The independent schema fixture records 560 column/default/nullability, constraint, index, trigger and domain-function definitions from the verified predecessor. FinalBaselineSchemaIT compares the fresh schema exactly after removing schema qualification and whitespace. Test-only V4 examples prove future upgrades and transactional failure rollback. Production migration discipline begins with this final shared baseline.
 
@@ -104,7 +104,7 @@ Final ADR-0014 rehearsal on 2026-09-27 restored V1 checksum 583196656, 30 public
 
 ## Identity operational baseline (ADR-0016)
 
-OPTION A — INCREMENTAL: preserve V1 and apply V2__account_credential_lifecycle.sql automatically. V2 adds credential_version and must_change_password for token revocation and restricted temporary credentials. A fresh database runs both migrations. After operational data must be retained, never rewrite applied migrations, erase history, use clean or reset PostgreSQL as normal maintenance. Future changes use new versions.
+OPTION A — INCREMENTAL: preserve V1 and apply V2__account_credential_lifecycle.sql automatically. V2 adds credential_version and must_change_password for token revocation and restricted temporary credentials. A fresh database runs V1/V2 and the current V3 recovery migration. After operational data must be retained, never rewrite applied migrations, erase history, use clean or reset PostgreSQL as normal maintenance. Future changes use new versions.
 
 Development bootstrap no longer resets existing credentials or profiles. Use authenticated password change; editing a local .env is not a password reset mechanism. Optional BOOTSTRAP_ADMIN_* provisioning is separate and disabled by default. See [Railway deployment](deploy/railway/README.md) for the first-account process and security-aware rollback. No remote database recreation is part of this delivery.
 

@@ -1,6 +1,6 @@
 # ADR-0017: Global administration and the Identity release boundary
 
-- Status: Accepted; implementation in progress.
+- Status: Accepted; implemented and locally verified. External homologation pending.
 - Date: 2026-10-04.
 - Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
@@ -39,3 +39,7 @@ V1 and applied V2 stay unchanged. Global administration requires no schema chang
 Global compromise has platform-wide impact; password revocation and mandatory reset remain enforced before authorization. UI guards complement server checks. Audit every OrganizationScope use and historical negative test: replace obsolete global denial assertions with positive global access plus explicit non-global cross-tenant denial tests. Verify administrator creation/edit/deactivation, self-removal and concurrent last-admin protection, local manager boundaries, inactive organizations, real contract tests, frontend workflows and both images.
 
 Identity & Access is NOW; first deployment/homologation is NEXT; Routes follows that gate; native reporting/filters/indicators/dashboards follows Routes; GPS remains planned post-deploy; optional BI/advanced integrations are future work. The Master Plan and requirement traceability are the central progress records. No Routes, Municipality entity, GPS provider or analytical formula is implemented here.
+
+## Verification closure — 2026-10-04
+
+The locally executed checks and remaining release gates are recorded in [the identity verification record](../identity-verification.md). Backend executable baseline: 18f4891825821dae931ab7f3d44a2d0cd48c311f. No production reset, remote secret change or external delivery was performed.

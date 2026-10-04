@@ -2,7 +2,7 @@
 
 - Documentation maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
-Verified runtime: PostgreSQL 16, the final Flyway V1, 29 application tables plus flyway_schema_history. The schema inventory below is generated from information_schema; authoritative checks, indexes and foreign keys are the immutable SQL under src/main/resources/db/migrations.
+Verified runtime: PostgreSQL 16, Flyway V1/V2/V3, 30 application tables plus flyway_schema_history. The schema inventory below is generated from information_schema; authoritative checks, indexes and foreign keys are the immutable SQL under src/main/resources/db/migrations.
 
 ## Domain relationships
 
@@ -10,6 +10,7 @@ Verified runtime: PostgreSQL 16, the final Flyway V1, 29 application tables plus
 erDiagram
     organization ||--o{ organization_membership : grants
     users ||--o{ organization_membership : belongs
+    users ||--o{ password_recovery_token : authorizes
     organization ||--o{ material_category : owns
     material_category ||--o{ material_type : classifies
     material_type ||--o{ material_subtype : classifies
@@ -31,7 +32,9 @@ The diagram summarizes relationships; it does not show every ownership/audit key
 ## Invariants and migration sequence
 
 - Final V1 creates all 29 application tables with the complete verified constraints, indexes, functions and triggers.
-- Future shared changes start at V2; applied versions are immutable.
+- V2 adds nonnegative users.credential_version and users.must_change_password without changing existing hashes or data.
+- V3 adds password_recovery_token with expiry validation, user foreign key and expiry/user indexes. Only token digests are stored.
+- V1/V2/V3 are immutable once applied. Future shared changes start at V4; no database reset is required.
 - The unreleased predecessor chain is retained in Git and private backups, not replayed on fresh setup.
 - FinalBaselineSchemaIT independently checks all 560 schema definitions against the predecessor.
 
@@ -441,6 +444,8 @@ Shared JPA models remain in domain/models; new application modules may use JDBC 
 | is_active | boolean | NO |
 | created_at | timestamp with time zone | YES |
 | updated_at | timestamp with time zone | YES |
+| credential_version | bigint | NO |
+| must_change_password | boolean | NO |
 
 ## vehicle
 
@@ -455,3 +460,17 @@ Shared JPA models remain in domain/models; new application modules may use JDBC 
 | updated_at | timestamp with time zone | YES |
 | organization_id | uuid | YES |
 
+
+## password_recovery_token
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| token_hash | character(64), primary key | NO |
+| user_id | uuid, users foreign key | NO |
+| issued_email | character varying(255) | NO |
+| credential_version | bigint, nonnegative | NO |
+| created_at | timestamp with time zone | NO |
+| expires_at | timestamp with time zone | NO |
+| used_at | timestamp with time zone | YES |
+
+Expiry must follow creation. Account then token row locks serialize confirmation with password changes; generation/address checks revoke outstanding authorization. Consumption and password replacement commit atomically. Hourly bounded cleanup removes sufficiently old expired authorization; tokens are not an audit ledger. [ADR-0018](adrs/0018-password-recovery-and-transactional-email.md) explains this boundary.

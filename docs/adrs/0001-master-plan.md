@@ -6,14 +6,14 @@ This section supersedes the sequencing and authorization assumptions of the hist
 
 | Order | Milestone | Status / gate |
 | --- | --- | --- |
-| NOW | Identity & Access completion | IN_PROGRESS: global administrator lifecycle, local MANAGER boundaries, organizations, memberships, email recovery, frontend, tests and documentation |
+| NOW | Identity & Access completion | IMPLEMENTED / LOCALLY VERIFIED: global administrator lifecycle, local MANAGER boundaries, organizations, memberships, email recovery, frontend and tests; external homologation remains the next gate |
 | NEXT | First deploy / homologation | PLANNED_CURRENT_MILESTONE gate after identity: both images, OpenAPI, recovery mail configuration, health/readiness, CORS and deployed smoke; no automatic merge or remote mutation |
 | THEN | Routes | PLANNED_POST_DEPLOY: only after the homologation gate; internal planning/execution/history, organization ownership and municipality context |
 | AFTER ROUTES | Native reports / filters / indicators / dashboards | PLANNED_POST_DEPLOY: backend aggregation and frontend presentation; external BI is optional |
 | PLANNED | GPS / advanced route integration | PLANNED_POST_DEPLOY: provider boundary, coordinates and trajectories; never blocks initial Routes |
 | FUTURE | Further modules, optional BI and advanced analytics | DEFERRED until separately prioritized |
 
-The owner confirms ADMINISTRATOR is global authority (UI: Administrador Geral), can create administrators and access every active organization. MANAGER remains organization-local administration; MEMBER retains normal scoped permissions. No additional global enum or speculative permission matrix. Backend ADR-0017 supersedes earlier restrictions; ADR-0018 defines current email recovery. The prior identity slice is implemented and locally verified, but does not close these expanded gates.
+The owner confirms ADMINISTRATOR is global authority (UI: Administrador Geral), can create administrators and access every active organization. MANAGER remains organization-local administration; MEMBER retains normal scoped permissions. No additional global enum or speculative permission matrix. Backend ADR-0017 supersedes earlier restrictions; ADR-0018 defines current email recovery. The expanded identity slice is implemented and locally verified; [current evidence](../identity-verification.md) records the external provider, build-tool risk review and deployed homologation gates still open.
 
 API freeze: before the first release/homologation baseline, explicitly documented v1 corrections are permitted. The first release manifest freezes /api/v1; compatible changes continue in v1, real breaking changes require an ADR and evaluation of v2. No preventive /api/v2 or legacy aliases.
 

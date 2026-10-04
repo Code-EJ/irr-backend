@@ -19,7 +19,7 @@ Keep the intentional Maven/Spotless and Docker cache changes already present on 
 
 ## Database strategy — OPTION A: INCREMENTAL
 
-[ADR-0016](../../adrs/0016-account-and-credential-lifecycle.md) deliberately keeps ADR-0014's V1 byte-for-byte unchanged and adds V2__account_credential_lifecycle.sql. Existing V1 databases upgrade during startup; empty databases apply V1 then V2. No Railway recreation, Flyway clean/repair or manual SQL is required.
+[ADR-0016](../../adrs/0016-account-and-credential-lifecycle.md) deliberately keeps ADR-0014's V1 byte-for-byte unchanged and adds V2__account_credential_lifecycle.sql. Existing V1 databases upgrade during startup; empty databases apply V1, V2 and V3. ADR-0018 adds the recovery table after the credential upgrade. No Railway recreation, Flyway clean/repair or manual SQL is required.
 
 The operational baseline is V1 + V2 + V3 (password recovery). Once operational data must be retained, every change requires a new migration. Never rewrite V1, erase flyway_schema_history or reset PostgreSQL as normal maintenance. The owner still considers pre-production data disposable, but a future consolidation needs its own explicit reset decision and operator authorization. This delivery does not authorize or perform that reset.
 

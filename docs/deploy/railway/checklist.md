@@ -14,7 +14,7 @@ Unchecked items are operator release gates, not claims of remote verification.
 - [ ] Frontend dependency findings reviewed; no unapproved forced major upgrade.
 - [ ] Both images build from tracked source; no secrets or local-only source dependencies.
 - [ ] Public HTTPS VITE_API_BASE_URL present at build time; no backend credentials in bundle.
-- [ ] Railway infrastructure changes listed (NONE for normal upgrade).
+- [ ] Railway configuration changes listed: BOOTSTRAP_ADMIN_* for first provisioning only, MAIL_* and PASSWORD_RESET_* for public recovery. Existing PostgreSQL/Redis infrastructure is retained; no additional Railway service is required for Brevo HTTPS.
 - [ ] Database and upload storage persistence confirmed; no reset planned.
 - [ ] Security-compatible rollback artifact or forward-fix procedure available.
 

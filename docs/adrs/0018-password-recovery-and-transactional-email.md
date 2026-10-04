@@ -1,6 +1,6 @@
 # ADR-0018: Password recovery and transactional email
 
-- Status: Accepted; implementation in progress.
+- Status: Accepted; implemented and locally verified. External homologation pending.
 - Date: 2026-10-04.
 - Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
@@ -38,3 +38,7 @@ EmailSenderPort separates recovery policy from the Brevo HTTPS adapter. Use exis
 V3 is additive, no reset required. Existing login and ordinary account operations keep working before mail is configured. The Identity homologation gate requires recovery enabled and verified. Operators must create/verify a provider account, authenticate sender/domain DNS, add mail Variables/Secret and set the public frontend link URL. Those are explicit Railway infrastructure changes, unlike the earlier identity slice's NONE statement. Local code and contract completion cannot prove external inbox delivery without that configuration.
 
 Local tests must cover request neutrality, captured email, expiry, single-use/races, generation/email invalidation, inactive users, malformed tokens, throttling, provider failure and actual changed login. Test the local catcher end to end; use an HTTP stub for the provider adapter, with no actual third-party email. Switching providers requires a new adapter and reviewed configuration, not rewriting recovery policy. Reporting email may reuse the port later under a separate domain workflow.
+
+## Verification closure — 2026-10-04
+
+The locally executed checks and remaining release gates are recorded in [the identity verification record](../identity-verification.md). Backend executable baseline: 18f4891825821dae931ab7f3d44a2d0cd48c311f. No production reset, remote secret change or external delivery was performed.

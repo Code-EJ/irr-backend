@@ -10,14 +10,14 @@ Status vocabulary: IMPLEMENTED, IN_PROGRESS, PLANNED_CURRENT_MILESTONE, PLANNED_
 
 | ID / source | Current architectural interpretation | Status | Implementation / decision / roadmap |
 | --- | --- | --- | --- |
-| R01 — S1 FF-1, pp.1–2; S2 §1 p.2; S3 | Global IRR administration and tenant-local operations | IN_PROGRESS | Backend ADR-0017, AccountLifecycleService, OrganizationService, RequestOrganizationScope; frontend identity and organization controls; NOW |
+| R01 — S1 FF-1, pp.1–2; S2 §1 p.2; S3 | Global IRR administration and tenant-local operations | IMPLEMENTED | Backend ADR-0017, AccountLifecycleService, OrganizationService, RequestOrganizationScope; frontend identity and organization controls; NOW |
 | R02 — S1 FF-1.a, p.1 | Organization login becomes Organization + User + explicit Membership; no credentials on tenant | REINTERPRETED | ADR-0009/0017; organization onboarding UX; NOW |
 | R03 — S1 FF-1.b and diagrams pp.10–11 | Creator-only access replaced by explicit tenant scope; global ADMINISTRATOR oversight | REINTERPRETED | ADR-0017; MANAGER and MEMBER only, no role inference from CITY_HALL |
 | R04 — S1 FF-2.a p.2 | Unified login/logout, protected navigation, current identity | IMPLEMENTED | SessionController, bearer filter, frontend Login/SessionProvider/Router; regression gate remains current |
-| R05 — S1 FF-2.b p.2; S2 §1 p.2 | Expiring one-use recovery link and confirmed new password | IN_PROGRESS | ADR-0018, PostgreSQL recovery authorization and mail port; NOW |
-| R06 — S3 | Profile, password changes, administrative reset and token revocation | IMPLEMENTED | ADR-0016 core, UserController and identity forms; expanded global target tests pending |
-| R07 — S3 | Global admin creates/administers all account roles; last active global admin protected | IN_PROGRESS | ADR-0017, transaction guard and concurrent PostgreSQL test; NOW |
-| R08 — S3 | First administrator created once via BOOTSTRAP_ADMIN_*; no SQL or redeploy reset | IN_PROGRESS | Existing initializer adapted to final configuration names; NOW |
+| R05 — S1 FF-2.b p.2; S2 §1 p.2 | Expiring one-use recovery link and confirmed new password | IMPLEMENTED | ADR-0018, PostgreSQL recovery authorization and mail port; NOW |
+| R06 — S3 | Profile, password changes, administrative reset and token revocation | IMPLEMENTED | ADR-0016 core, UserController and identity forms; global target, revocation and concurrency tests passed |
+| R07 — S3 | Global admin creates/administers all account roles; last active global admin protected | IMPLEMENTED | ADR-0017, transaction guard and concurrent PostgreSQL test; NOW |
+| R08 — S3 | First administrator created once via BOOTSTRAP_ADMIN_*; no SQL or redeploy reset | IMPLEMENTED | Existing initializer adapted to final configuration names; NOW |
 | R09 — S1 FF-3 pp.2–4; S2 §2 p.2 | Scoped collections/donations, team/vehicle links, attachments and material intake | IMPLEMENTED | Existing backend intake/fleet/document modules and integrated frontend; not a claim that every historical field is implemented |
 | R10 — S1 FF-5 pp.5–6; S2 §5 p.3 | Tenant material hierarchy with protected deletion/references | IMPLEMENTED | Existing catalog; current global authorization applies; historical physical-delete language does not override invariants |
 | R11 — S1 FF-6/7/8 pp.6–9; S2 §§5–7 p.3 | Transactional processing, ledger and commercial records | IN_PROGRESS | Backend workflows exist; frontend processing/stock/sales remain gated; further module evolution after approved priority sequence |
@@ -41,3 +41,7 @@ Status vocabulary: IMPLEMENTED, IN_PROGRESS, PLANNED_CURRENT_MILESTONE, PLANNED_
 | Bulk market price tree editor — S1 FF-8.e p.9 | PRODUCT_DECISION_REQUIRED: reconcile tenant-local pricing and global administration | Currency, effective dates, concurrency and audit policy | Further module evolution |
 
 Do not create issues, required milestones or functional implementations from these rows until the Product Owner approves them. The authoritative current order is the [Master Plan](../adrs/0001-master-plan.md). Evidence and statuses must be updated at each delivered slice rather than declaring completion from compilation alone.
+
+## Current delivery evidence — 2026-10-04
+
+R01/R05/R06/R07/R08 are implemented and locally verified, including real PostgreSQL/Redis/Mailpit integration. R02 is realized by the explicit Organization → User → Membership onboarding with safe partial retries. IMPLEMENTED does not assert external email delivery or deployed homologation. See [verification and release gates](../identity-verification.md). R11 and later module priorities remain unchanged.

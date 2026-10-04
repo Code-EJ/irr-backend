@@ -2,18 +2,21 @@
 
 - Documentation maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
-The official documentation is the running [Swagger UI](http://localhost:9191/swagger-ui/index.html) and [OpenAPI JSON](http://localhost:9191/v3/api-docs). This supporting map was generated from the verified container on 2026-09-27: 89 supported operations, all under /api/v1. Request schemas and response examples must be read from Swagger, not copied from historical issue descriptions.
+The official documentation is the running [Swagger UI](http://localhost:9191/swagger-ui/index.html) and [OpenAPI JSON](http://localhost:9191/v3/api-docs). This supporting map was generated from the verified container on 2026-10-04 at backend commit 18f4891825821dae931ab7f3d44a2d0cd48c311f: 95 supported operations, all under /api/v1. Request schemas and response examples must be read from Swagger, not copied from historical issue descriptions.
 
 ## Contract rules
 
-- POST /api/v1/session/authenticate accepts email/password and returns token. Current account metadata is GET /api/v1/users/me. Platform administrators manage partner accounts and organization associations.
-- Business routes require Authorization: Bearer and X-Organization-Id. A platform administrator needs an explicit association too. GET /api/v1/organizations lists current memberships; GET /api/v1/organizations/{id}/membership returns the selected role.
+- POST /api/v1/session/authenticate accepts email/password and returns token. Current account metadata is GET /api/v1/users/me. Global administrators manage all four account roles, organizations and organization associations. Concurrent demotion/deactivation cannot remove the last active global administrator.
+- Business routes require Authorization: Bearer and X-Organization-Id. Global administrators may select any active organization without membership; all other users need an active membership. GET /api/v1/organizations lists effective visibility; GET /api/v1/organizations/{id}/membership returns the selected role.
 - All quantities and monetary amounts are exact JSON decimal strings. UUID identities, English fields, PUT replacements and Spring Page content/totalElements replace old client assumptions. Default pages contain 20 items, with a maximum of 200.
-- Reference-data writes require organization MANAGER. Active MEMBER and MANAGER associations may operate intake, processing and sales. Attachments can be read by members; uploader or manager may change unreferenced metadata.
+- Reference-data writes require global ADMINISTRATOR or organization MANAGER. Active MEMBER and MANAGER associations may operate intake, processing and sales. Attachments can be read by members; uploader or manager may change unreferenced metadata.
 - Missing/invalid authentication returns 401; insufficient role returns 403; absent/foreign resources return 404; missing organization and invalid input return 400; stale versions, depleted stock and retained references return 409. Payload limits return 413. Read the structured error response; do not infer field validation from an HTTP status alone.
 - Idempotency-Key is mandatory for processing creation and post/reverse transitions. Retry the same command and payload with the same key. Editing the command requires a new key. Draft replacement uses the last returned version.
 - POST /api/v1/documents accepts multipart documento, retaining that legacy wire name. Maximum size is 10 MiB. PDF/PNG/JPEG signatures are checked; this is not malware scanning.
 - Every application route uses /api/v1, including session, account and organization operations. Unversioned aliases and the self-registration stub have been removed. Framework Swagger and actuator URLs are unchanged.
+
+
+Public recovery uses POST `/api/v1/session/password-recovery/request` (neutral 202) and POST `/api/v1/session/password-recovery/confirm` (single-use 204). Both exclude bearer credentials and organization headers. Disabled recovery/Redis failure returns 503 independently of account existence; confirmation abuse returns 429. Profile and password changes remain authenticated. See [email recovery operations](email-recovery.md) and [verified identity delivery](identity-verification.md).
 
 ## Operation inventory
 
@@ -69,6 +72,7 @@ The official documentation is the running [Swagger UI](http://localhost:9191/swa
 | GET | `/api/v1/organizations/{id}` | Organizations |
 | PUT | `/api/v1/organizations/{id}` | Organizations |
 | DELETE | `/api/v1/organizations/{id}` | Organizations |
+| GET | `/api/v1/organizations/{id}/members/{userId}` | Organizations |
 | PUT | `/api/v1/organizations/{id}/members/{userId}` | Organizations |
 | DELETE | `/api/v1/organizations/{id}/members/{userId}` | Organizations |
 | GET | `/api/v1/organizations/{id}/membership` | Organizations |
@@ -86,6 +90,8 @@ The official documentation is the running [Swagger UI](http://localhost:9191/swa
 | POST | `/api/v1/sales/{id}/post` | Sales |
 | POST | `/api/v1/sales/{id}/reverse` | Sales |
 | POST | `/api/v1/session/authenticate` | Sessions |
+| POST | `/api/v1/session/password-recovery/confirm` | Password recovery |
+| POST | `/api/v1/session/password-recovery/request` | Password recovery |
 | GET | `/api/v1/sortings` | Sorting |
 | POST | `/api/v1/sortings` | Sorting |
 | GET | `/api/v1/sortings/{id}` | Sorting |
@@ -95,12 +101,15 @@ The official documentation is the running [Swagger UI](http://localhost:9191/swa
 | GET | `/api/v1/team-members/{id}` | Team members |
 | PUT | `/api/v1/team-members/{id}` | Team members |
 | DELETE | `/api/v1/team-members/{id}` | Team members |
-| GET | `/api/v1/users` | Partners |
-| POST | `/api/v1/users` | Partners |
-| GET | `/api/v1/users/me` | Partners |
-| GET | `/api/v1/users/{id}` | Partners |
-| PUT | `/api/v1/users/{id}` | Partners |
-| DELETE | `/api/v1/users/{id}` | Partners |
+| GET | `/api/v1/users` | Accounts |
+| POST | `/api/v1/users` | Accounts |
+| GET | `/api/v1/users/me` | Accounts |
+| PUT | `/api/v1/users/me` | Accounts |
+| PUT | `/api/v1/users/me/password` | Accounts |
+| GET | `/api/v1/users/{id}` | Accounts |
+| PUT | `/api/v1/users/{id}` | Accounts |
+| DELETE | `/api/v1/users/{id}` | Accounts |
+| PUT | `/api/v1/users/{id}/password` | Accounts |
 | GET | `/api/v1/vehicles` | Vehicles |
 | POST | `/api/v1/vehicles` | Vehicles |
 | PUT | `/api/v1/vehicles/batch` | Vehicles |
@@ -108,9 +117,3 @@ The official documentation is the running [Swagger UI](http://localhost:9191/swa
 | GET | `/api/v1/vehicles/{id}` | Vehicles |
 | PUT | `/api/v1/vehicles/{id}` | Vehicles |
 | DELETE | `/api/v1/vehicles/{id}` | Vehicles |
-
-## Lifecycle examples
-
-Create catalog and parties, then collection/donation inputs. Sorting allocates gross input and credits net output after rejects. Pressing consumes a sorted lot and creates compacted output with identical mass. A sale draft allocates available lots without reserving them. Add fiscal evidence, then post using the current version and an idempotency key. Reverse downstream sales before pressing and sorting. Posted history cannot be overwritten or deleted.
-
-Run node scripts/smoke-development.mjs for the executable development example. It reads the ignored .env, adds clearly named fixtures, performs the full workflow and reversals, checks foreign-organization denial and writes sanitized evidence under .local/release. It deliberately retains historical records and fiscal attachment fixtures.

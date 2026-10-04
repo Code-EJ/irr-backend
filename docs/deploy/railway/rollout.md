@@ -12,7 +12,7 @@ Backend gates: ./mvnw clean verify with Java 21 and Docker; dependency audit; do
 
 1. Finalize and review the backend branch and PR.
 2. Merge backend to monitored main; Railway builds the existing Dockerfile and starts Spring Boot.
-3. Flyway automatically applies V2 after V1; Hibernate validates the result. Watch for lock waits and startup failures. No migration file copying, SQL patching or shell access is needed.
+3. Flyway automatically applies V2 and V3 after V1; Hibernate validates the result. Watch for lock waits and startup failures. No migration file copying, SQL patching or shell access is needed.
 4. Verify GET /actuator/health, /actuator/health/liveness and /actuator/health/readiness: HTTP 200 and status UP. Verify Swagger/OpenAPI when enabled.
 5. Smoke the currently published frontend with an ordinary existing account: login, GET /api/v1/users/me, organization selection and a supported business workflow. Existing generation-zero v1 tokens remain accepted until credentials change.
 6. Finalize and review the frontend branch and PR. Build with the public HTTPS backend /api/v1 URL.
@@ -24,15 +24,15 @@ Do not initiate administrative resets before the new frontend is available. An o
 
 ## Identity smoke
 
-Use designated disposable test accounts, never an unrelated real account. Verify own profile edit and email-conflict feedback; wrong-current-password rejection; successful change, old-token rejection and new login; administrator list/detail/create/edit/deactivate; non-administrator denial; reset with mandatory change; and explicit MEMBER/MANAGER grant and revocation. Administrator organization discovery does not grant business membership. Recheck user access after revocation and deactivation.
+Use designated disposable test accounts, never an unrelated real account. Verify own profile edit and email-conflict feedback; wrong-current-password rejection; successful change, old-token rejection and new login; administrator list/detail/create/edit/deactivate; non-administrator denial; reset with mandatory change; and explicit MEMBER/MANAGER grant and revocation. Global administrator access does not create business membership; global authority itself permits active-organization access. Local accounts require actual active associations. Recheck user access after revocation and deactivation.
 
 All application routes use /api/v1. Credential endpoints return no password or hash. Reset sets mustChangePassword; restricted sessions can only GET /users/me and PUT /users/me/password under that prefix.
 
 ## Flyway confirmation and baseline boundary
 
-Use startup migration/validation results and the versioned PostgreSQL tests. If operators inspect history, a read-only query such as SELECT version, description, success FROM flyway_schema_history ORDER BY installed_rank; should show successful versions 1 and 2. This is diagnosis, not an installation step.
+Use startup migration/validation results and the versioned PostgreSQL tests. If operators inspect history, a read-only query such as SELECT version, description, success FROM flyway_schema_history ORDER BY installed_rank; must show successful versions 1, 2 and 3. This is diagnosis, not an installation step.
 
-OPTION A — INCREMENTAL: V1 unchanged, V2 additive, existing database upgraded in place. Preserve Flyway history and attachment storage. After operational data must be retained, every schema change uses a new version. No clean, erased history, rewritten applied migration or automatic reset. A future deliberate pre-production reset needs a separate reviewed runbook and operator authorization.
+OPTION A — INCREMENTAL: V1 unchanged, V2 credential fields and V3 recovery table additive, existing database upgraded in place. Preserve Flyway history and attachment storage. After operational data must be retained, every schema change uses a new version. No clean, erased history, rewritten applied migration or automatic reset. A future deliberate pre-production reset needs a separate reviewed runbook and operator authorization.
 
 ## Rollback
 

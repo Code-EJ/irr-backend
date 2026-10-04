@@ -97,7 +97,7 @@ Example partner body for local testing only:
 }
 ~~~
 
-Public self-registration and all unversioned application routes have been removed under ADR-0014. Create partners only through the administrator operation POST /api/v1/users. No redirect or retirement stub is supported.
+Public self-registration and all unversioned application routes have been removed under ADR-0014. Create accounts of all four supported roles only through the global administrator operation POST /api/v1/users. No redirect or retirement stub is supported.
 
 Swagger is generated from running controllers/DTOs and documents bearer authentication and current method role rules. Runtime authorization and business invariants are independently verified by integration tests. The [source API inventory](docs/api_documentation.md) is supporting audit material; it is not a second official specification.
 
@@ -179,7 +179,7 @@ The backend supports the documented pre-production workflow. ADR-0014 freezes th
 2. Under Organizations, POST /api/v1/organizations with name and organizationType, for example an association name and the descriptive value ASSOCIATION. Record the returned id.
 3. Under Partners, create an account if needed and record its id.
 4. PUT /api/v1/organizations/{id}/members/{userId} with {"role":"MEMBER"} or {"role":"MANAGER"}. Both are local membership roles; management of associations still requires a platform administrator.
-5. Authenticate as that member. GET /api/v1/organizations lists only active associations; GET /api/v1/organizations/{id} returns the selected organization. The creating administrator also needs explicit membership for these read routes.
+5. Authenticate as that member. GET /api/v1/organizations lists only active associations; GET /api/v1/organizations/{id} returns the selected organization. A global administrator can read every active organization without a membership; the member can read only its active associations.
 6. As administrator, DELETE the membership. The existing member token immediately loses access to organization reads. Missing/foreign/inactive scopes return 404.
 
 Catalog, intake, processing, sales and attachments require the explicit organization header and global authority or current membership. Creator identity is audit metadata, not ownership. Local membership revocation takes effect immediately.
@@ -217,7 +217,7 @@ Posted sorting/pressing/sales use explicit reversal commands, not destructive CR
 
 ## Identity delivery and Railway
 
-Own profile editing and password change, administrator partner CRUD/reset, and explicit memberships use only /api/v1. See [ADR-0016](docs/adrs/0016-account-and-credential-lifecycle.md). Password changes revoke all previous sessions. The current schema is unchanged V1 plus additive V2; no database reset is required.
+Own profile editing and password change, global administrator account CRUD/reset, and organization memberships use only /api/v1. See [ADR-0016](docs/adrs/0016-account-and-credential-lifecycle.md). Password changes revoke all previous sessions. The current schema preserves V1 and adds V2 credential fields and V3 recovery authorization; no database reset is required.
 
 For Git-driven deployment, first-administrator provisioning, variables and rollout/rollback gates, use the [Railway runbook](docs/deploy/railway/README.md). Swagger remains the official executable API specification.
 
