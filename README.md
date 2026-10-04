@@ -220,3 +220,12 @@ Posted sorting/pressing/sales use explicit reversal commands, not destructive CR
 Own profile editing and password change, administrator partner CRUD/reset, and explicit memberships use only /api/v1. See [ADR-0016](docs/adrs/0016-account-and-credential-lifecycle.md). Password changes revoke all previous sessions. The current schema is unchanged V1 plus additive V2; no database reset is required.
 
 For Git-driven deployment, first-administrator provisioning, variables and rollout/rollback gates, use the [Railway runbook](docs/deploy/railway/README.md). Swagger remains the official executable API specification.
+
+
+## Global identity and email recovery (ADR-0017 / ADR-0018)
+
+ADMINISTRATOR is global platform authority (UI: Administrador Geral). It can create all four account roles, administer active organizations and business data without membership, and manage local MEMBER/MANAGER associations. MANAGER is organization administration, not global authority. Removing or demoting the last active global administrator returns 409, including concurrent attempts. No public registration exists.
+
+The runtime schema is V1 + V2 + V3. V3 adds one password recovery table; existing users and business data are retained. No reset is required. See [password recovery operations](docs/email-recovery.md) for local Mailpit, Brevo setup, variables, quotas, security and a complete test procedure. The application defaults to disabled mail; local Compose enables Mailpit. Disabled recovery returns 503 uniformly and does not meet the homologation gate.
+
+The frontend adds organization administration and responsible-user onboarding as three separate resources (organization, user, membership), with retryable partial progress. All official application endpoints remain /api/v1. The unreleased /organizations/admin duplicate is removed; global discovery uses GET /api/v1/organizations. Swagger remains the executable API reference.

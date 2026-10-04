@@ -52,3 +52,14 @@ Unchecked items are operator release gates, not claims of remote verification.
 - [ ] Operational V1 + V2 boundary recorded; future changes require new migrations.
 - [ ] No Railway reset, manual SQL patch, source patch or secret disclosure occurred.
 - [ ] Actual remote smoke results recorded separately from local evidence.
+
+
+## Expanded Identity gate
+
+- [ ] Global administrator lifecycle and last-administrator race protection verified.
+- [ ] Global organization access and local MANAGER isolation verified.
+- [ ] Organization CRUD and responsible-user onboarding verified, including partial-failure retry.
+- [ ] V3 applied with V1/V2 unchanged; no database reset.
+- [ ] Brevo account/sender/domain approved; mail settings and public recovery URL configured.
+- [ ] Real inbox recovery, expiry/replay and old-password/session rejection verified.
+- [ ] Current frontend/backend release manifests recorded before freezing v1.

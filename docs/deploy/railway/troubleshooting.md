@@ -19,3 +19,8 @@ Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 | Uploaded document disappears after release | Check persistent volume and STORAGE_DIRECTORY; image filesystems are not persistent storage. |
 
 Normal releases use Git → Docker build → startup → Flyway → health. Never patch source inside a running container. See [rollout](rollout.md) before rollback: old credential-unaware binaries are unsafe after password changes.
+
+
+## Recovery and global access
+
+Recovery 503 for every account: check explicit MAIL_PROVIDER and Redis readiness. Startup fails with mail configuration errors: verify sender, API key and HTTPS public reset URL without exposing their values. Request 202 without a message: check spam/provider quotas, aggregate delivery/queue-full logs and cooldown; never log raw token/email/provider error bodies. A stale link requires a new request after credential/email changes. A 409 when demoting/deactivating an administrator can mean no active successor exists. Global authority does not bypass inactive organizations or domain/reference constraints.

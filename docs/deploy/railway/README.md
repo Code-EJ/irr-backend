@@ -21,7 +21,7 @@ Keep the intentional Maven/Spotless and Docker cache changes already present on 
 
 [ADR-0016](../../adrs/0016-account-and-credential-lifecycle.md) deliberately keeps ADR-0014's V1 byte-for-byte unchanged and adds V2__account_credential_lifecycle.sql. Existing V1 databases upgrade during startup; empty databases apply V1 then V2. No Railway recreation, Flyway clean/repair or manual SQL is required.
 
-The operational baseline is V1 + V2. Once operational data must be retained, every change requires a new migration. Never rewrite V1, erase flyway_schema_history or reset PostgreSQL as normal maintenance. The owner still considers pre-production data disposable, but a future consolidation needs its own explicit reset decision and operator authorization. This delivery does not authorize or perform that reset.
+The operational baseline is V1 + V2 + V3 (password recovery). Once operational data must be retained, every change requires a new migration. Never rewrite V1, erase flyway_schema_history or reset PostgreSQL as normal maintenance. The owner still considers pre-production data disposable, but a future consolidation needs its own explicit reset decision and operator authorization. This delivery does not authorize or perform that reset.
 
 ## First administrator
 
@@ -39,4 +39,4 @@ Deploy the identity-capable frontend before using this temporary account. After 
 - [Deployment checklist](checklist.md)
 - [Development operations](../../operations.md)
 
-Normal upgrade: **Railway infrastructure changes required: NONE**, assuming the existing documented database, Redis, RSA, CORS and persistent storage are already configured. New environments still need their normal infrastructure and optional first-administrator provisioning. No remote settings, secrets, deployments or merges were changed by the local implementation.
+Identity completion: **Railway configuration changes required: mail provider, sender, API key, public recovery URL and TTL**. Existing database/Redis/storage services remain; V3 applies automatically without reset. Follow [email recovery operations](../../email-recovery.md). New environments still need their normal infrastructure and optional first-administrator provisioning. No remote settings, secrets, deployments or merges were changed by the local implementation.

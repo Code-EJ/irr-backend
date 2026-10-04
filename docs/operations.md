@@ -98,7 +98,7 @@ Reports are uncached UTC operational summaries; reversals change the current-sta
 
 ADR-0014 supersedes the active V1–V6 chain and compatibility API. All application requests now use /api/v1, including session authentication, account administration and organizations. Documentation and actuator infrastructure retain their framework URLs. Current restore evidence must contain one successful baseline version, not the historical six-row sequence.
 
-The independent schema fixture records 560 column/default/nullability, constraint, index, trigger and domain-function definitions from the verified predecessor. FinalBaselineSchemaIT compares the fresh schema exactly after removing schema qualification and whitespace. Test-only V2 examples prove future upgrades and transactional failure rollback. Production migration discipline begins with this final shared baseline.
+The independent schema fixture records 560 column/default/nullability, constraint, index, trigger and domain-function definitions from the verified predecessor. FinalBaselineSchemaIT compares the fresh schema exactly after removing schema qualification and whitespace. Test-only V4 examples prove future upgrades and transactional failure rollback. Production migration discipline begins with this final shared baseline.
 
 Final ADR-0014 rehearsal on 2026-09-27 restored V1 checksum 583196656, 30 public tables including Flyway history, one uploaded evidence file and zero stock differences. The script also verifies that every restored attachment metadata reference resolves to a canonical file in the archive. Earlier six-migration results above are historical only.
 
@@ -107,3 +107,10 @@ Final ADR-0014 rehearsal on 2026-09-27 restored V1 checksum 583196656, 30 public
 OPTION A — INCREMENTAL: preserve V1 and apply V2__account_credential_lifecycle.sql automatically. V2 adds credential_version and must_change_password for token revocation and restricted temporary credentials. A fresh database runs both migrations. After operational data must be retained, never rewrite applied migrations, erase history, use clean or reset PostgreSQL as normal maintenance. Future changes use new versions.
 
 Development bootstrap no longer resets existing credentials or profiles. Use authenticated password change; editing a local .env is not a password reset mechanism. Optional BOOTSTRAP_ADMIN_* provisioning is separate and disabled by default. See [Railway deployment](deploy/railway/README.md) for the first-account process and security-aware rollback. No remote database recreation is part of this delivery.
+
+
+## Current Identity & Access operations
+
+ADR-0017 supersedes earlier no-bypass administrator rules. Global administrators access any active organization through an explicit organization header; local accounts require current memberships. Actual membership discovery never fabricates a global association. Preserve the last active global administrator.
+
+ADR-0018 adds V3__password_recovery.sql without resetting V1/V2 or existing accounts. The current runtime baseline is V1 + V2 + V3; earlier one-version restoration counts above are dated predecessor evidence. Recovery is enabled explicitly, throttled through Redis and atomically consumed in PostgreSQL. Follow [email recovery operations](email-recovery.md) and the Railway mail checklist. Backend readiness does not test sender verification or inbox arrival. Test-only V4 examples demonstrate future upgrades; they are not runtime migrations.

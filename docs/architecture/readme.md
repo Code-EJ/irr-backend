@@ -18,13 +18,13 @@ flowchart LR
     Tests[Maven integration suites] --> Ephemeral[Disposable PostgreSQL and Redis]
 ~~~
 
-Only the API loopback port is published. The API runs non-root with a read-only root filesystem. PostgreSQL owns authorization associations, business truth, receipts, immutable stock movements and cleanup jobs. Redis participates in readiness but is not a correctness dependency for stock or membership decisions. Upload bytes use a separate volume. Kubernetes is deferred until deployment demand justifies it.
+The API and local Mailpit UI use loopback-only published ports. The API runs non-root with a read-only root filesystem. PostgreSQL owns authorization associations, business truth, receipts, immutable stock movements and cleanup jobs. Redis participates in readiness but is not a correctness dependency for stock or membership decisions. Upload bytes use a separate volume. Kubernetes is deferred until deployment demand justifies it.
 
 ## Repository responsibilities
 
 | Path under src/main/java/org/code/api | Responsibility | Boundary |
 | --- | --- | --- |
-| organizations | Organization metadata, memberships, audit and request scope | Explicit associations; no creator inference |
+| organizations | Organization metadata, memberships, audit and request scope | Global authority or explicit local associations; no creator inference |
 | parties | Buyers and team staff | Scoped reference CRUD and retained-history guards |
 | intake | Collection orchestration and logistics | Validated raw inputs; no saleable stock credit |
 | inventory | Ledger, lots, receipts, reversals and queries | Sole stock writer; immutable history |
@@ -61,3 +61,10 @@ New features belong to a feature package with an explicit request/response contr
 ## Final contract and schema
 
 Every application controller uses /api/v1. Unversioned mappings and the signup retirement stub are removed; no compatibility adapter remains. The final fresh V1 reproduces the verified schema in new database/attachment volumes. Spotless is enforced by Maven and preserved in the Docker build. ADR-0003 remains the pragmatic modular-monolith direction; this consolidation adds no strict Clean Architecture layer or package-only rewrite.
+
+
+## Identity & Access completion
+
+[ADR-0017](../adrs/0017-global-administration-and-identity-release.md) makes ADMINISTRATOR global authority without inventing memberships. MANAGER remains organization-local administration. Global account lifecycle uses a PostgreSQL advisory transaction lock, then account row locks; competing removal/demotion cannot remove the last active administrator. Requests reload active identity and current role; the account guard rechecks authority after waiting.
+
+The feature-owned identity/recovery package contains public request/confirmation adapters, bounded asynchronous orchestration, shared Redis throttling and an EmailSenderPort with Brevo/Mailpit HTTP delivery. PostgreSQL owns token digests and atomic consumption alongside credentials. Redis owns abuse limits, not authorization. Existing Java HTTP/Jackson facilities suffice; no vendor SDK or architecture rewrite. See [ADR-0018](../adrs/0018-password-recovery-and-transactional-email.md) and [operations](../email-recovery.md). Future reporting mail may reuse delivery through a separate use case; no reporting/Routes/GPS implementation is added here.

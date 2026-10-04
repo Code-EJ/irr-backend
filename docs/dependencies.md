@@ -62,3 +62,8 @@ Spotless Maven plugin 3.10.3 is intentional project tooling and runs check in th
 ## Identity delivery audit — 2026-10-03
 
 Enzo Ribas (https://github.com/oEnzoRibas): no new backend library or version override was required for identity. Re-ran the resolved Maven graph audit: 156 coordinates, zero OSV matches at audit time. Existing Maven/Spotless and Docker changes were retained. This does not substitute for an image OS scan or future advisory monitoring.
+
+
+## Identity completion — 2026-10-04
+
+Maintainer: Enzo Ribas (https://github.com/oEnzoRibas). Recovery uses existing Java 21 HttpClient, Jackson, Spring transactions/task execution and Redis dependencies; no runtime library or provider SDK added. Local Mailpit is pinned to v1.31.3 and an image digest in Compose; no external email is sent in automated tests. Application package scans do not establish container OS vulnerability status.

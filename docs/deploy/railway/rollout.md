@@ -42,4 +42,11 @@ Frontend rollback is safe for ordinary accounts only; accounts awaiting forced c
 
 ## Infrastructure exceptions
 
-For an existing correctly configured environment: Railway infrastructure changes required: NONE. New empty environments optionally require BOOTSTRAP_ADMIN_* as documented. RSA rotation, new secrets, CORS/domains, network/ports, persistent storage and database recreation/restoration always require a separately listed infrastructure action. No remote changes were performed for local verification.
+Current Identity completion requires mail configuration and sender verification; no new database/Redis service or reset. New empty environments optionally require BOOTSTRAP_ADMIN_* as documented. RSA rotation, new secrets, CORS/domains, network/ports, persistent storage and database recreation/restoration always require a separately listed infrastructure action. No remote changes were performed for local verification.
+
+
+## Expanded identity release gate
+
+Deploy backend V1/V2/V3 and a frontend pinned to that OpenAPI. Verify global administrator creation/edit/succession, last-admin rejection, local MANAGER isolation, organization CRUD/membership/revocation, recovery external delivery/expiry/replay and create-only BOOTSTRAP_ADMIN_* restart behavior. Do not freeze v1 or start Routes until this homologation gate passes. Local evidence does not certify a Railway deployment.
+
+Rollback must retain V3 and preserve credential-generation enforcement. A pre-recovery frontend/backend pair disables recovery, so use coordinated release manifests. Do not restore a pre-generation binary that can revive revoked bearer tokens. See [recovery rollback](../../email-recovery.md#rollout-and-rollback).
