@@ -1,6 +1,6 @@
 # ADR-0001: IRR architecture overhaul and delivery master plan
 
-## Current executive milestone order — 2026-10-04
+## Current executive milestone order — 2026-10-05
 
 The owner's Routes phase decision explicitly supersedes the prior requirement to finish external homologation before developing Routes. Identity policy and security remain unchanged. External deployment remains an operator gate, not a blocker for the next functional development milestone.
 
@@ -8,7 +8,7 @@ The owner's Routes phase decision explicitly supersedes the prior requirement to
 | --- | --- | --- |
 | COMPLETED | Identity & Access | IMPLEMENTED / READY FOR HOMOLOGATION: current backend/frontend, profile, credential revocation, recovery, global/local administration and bootstrap; no functional reopening |
 | PARALLEL OPERATIONS | Email provider configuration / first deployment | OPERATIONAL CONFIGURATION PENDING: external sender/domain/key and public deployment; EXTERNAL CONFIGURATION REQUIRED; no automatic merge, secrets update or database reset |
-| CURRENT DEVELOPMENT | Routes | IN_PROGRESS: explicit territory, organization-owned reusable planning, dated execution, preserved collection history and frontend integration |
+| CURRENT DEVELOPMENT | Routes | IMPLEMENTED / READY FOR HOMOLOGATION: explicit territory, organization-owned reusable planning, dated execution, preserved collection history and verified frontend integration |
 | NEXT / AFTER ROUTES | Analytics, reports, filters, indicators and dashboards | PLANNED_AFTER_ROUTES: native PostgreSQL/query/API/frontend path; data definitions before formulas; no dashboard implementation now |
 | INCREMENTAL EVOLUTION | GPS / route telemetry / mapping | PLANNED_POST_DEPLOY: extension at execution/geometry boundaries; no provider, hardware or advanced map now |
 | FUTURE | Optional BI and advanced analytics | DEFERRED until demonstrated need and separate product authorization |
@@ -276,3 +276,11 @@ Backend acceptance evidence: 40 unit tests plus 59 real PostgreSQL/Redis integra
 ## Final pre-production consolidation — ADR-0014
 
 The backend contract is now exclusively /api/v1, with 89 operations and no transitional aliases or signup stub. The final fresh V1 preserves all 560 captured schema definitions. Spotless and 102 tests pass; Docker smoke and isolated restoration pass. Old development volumes are retained. Backend M1–M4 and local M6 recovery gates are complete for the documented scope. Frontend integration and a compatible release pair are next; prior V1–V6 and alias statements above are historical.
+
+## Routes operational implementation checkpoint (2026-10-04)
+
+CURRENT DEVELOPMENT MILESTONE: Routes. Scoped planning, normalized territory, dated execution snapshots/lifecycle/coverage and completed collection linkage are implemented. Local PostgreSQL, frontend/API and browser workflow gates pass. Routes is IMPLEMENTED / READY FOR HOMOLOGATION; public deployment/operator acceptance remains separate. Identity remains IMPLEMENTED / READY FOR HOMOLOGATION. External email configuration is a parallel operational dependency. NEXT: native Analytics, Reports, Filters, Indicators and Dashboards after approved metric/period definitions. PLANNED: GPS/telemetry/maps. No analytics or external tracking code is authorized by this checkpoint.
+
+## Routes delivery closure — 2026-10-05
+
+Identity remains functionally complete. Routes is IMPLEMENTED / READY FOR HOMOLOGATION after additive V4, scoped API, frontend integration, real PostgreSQL/API tests and browser plan/execution/collection verification. See [delivery evidence and remaining gates](../routes-verification.md). The next functional milestone is native Analytics, Reports, Filters, Indicators and Dashboards; approve metric/period definitions before implementation. GPS remains PLANNED_POST_DEPLOY. External email configuration is a parallel operational dependency, not a Routes development blocker.

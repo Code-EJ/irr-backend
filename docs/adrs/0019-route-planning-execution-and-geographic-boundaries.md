@@ -1,6 +1,6 @@
 # ADR-0019: Route planning, execution and geographic boundaries
 
-- Status: Accepted for incremental implementation; verification pending.
+- Status: Accepted; implemented and locally verified; remote homologation remains pending.
 - Date: 2026-10-04.
 - Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
@@ -75,7 +75,7 @@ ADMINISTRATOR globally or local MANAGER may create/edit/inactivate plans and sch
 
 ## API contract
 
-All new operations use /api/v1 and current bearer/X-Organization-Id conventions. Municipality and neighborhood list/create support bounded selection and explicit shared-reference registration. Routes support list/get/create/PUT/versioned soft DELETE. Route-executions support list/get/create, start/complete/cancel commands and versioned area coverage replacement. Use typed UUIDs, OffsetDateTime, English fields, exact decimal strings and generated Swagger. No unversioned endpoint, external tracking endpoint or empty analytics API is added.
+All new operations use /api/v1 and current bearer/X-Organization-Id conventions. Municipality and neighborhood list/get/create support bounded selection and explicit shared-reference registration. Routes support list/get/create/PUT/versioned soft DELETE. Route-executions support list/get/create, start/complete/cancel commands and versioned area coverage replacement. Use typed UUIDs, OffsetDateTime, English fields, exact decimal strings and generated Swagger. No unversioned endpoint, external tracking endpoint or empty analytics API is added.
 
 ## Frontend responsibilities
 
@@ -106,3 +106,7 @@ Advantages: reusable planning, substitutable fleet/team, stable territory, histo
 Review ADR first; add schema/domain/contract/tests; capture OpenAPI; incrementally integrate frontend/Collection; document actual evidence. Deploy backend V4 before the matched frontend; confirm migrations/history, references, health and retained storage. Old clients omit the optional execution reference and remain valid. Rollback retains V4/history; prefer a matched security-compatible pair and forward correction. No remote merge/reset is automatic.
 
 Accept when scoped CRUD and typed geography work; global/local/member policies hold; execution lifecycle and version conflicts are verified; historical snapshots survive plan/reference edits; collection linkage retains matching terminal facts; frontend flows work against the running API; Identity regressions pass; documentation/traceability/data dictionary/operations agree. External email configuration is tracked separately and does not block development. Status is updated only with executed evidence.
+
+## Delivery evidence — 2026-10-05
+
+The operational phase is IMPLEMENTED / READY FOR HOMOLOGATION. See [the Routes verification record](../routes-verification.md) for the tested image/contract pair, PostgreSQL upgrade, browser workflow, limitations and release gates. Analytics remains planning only.

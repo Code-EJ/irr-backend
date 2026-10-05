@@ -14,3 +14,7 @@ Audit evidence: Collection model/DTO/service/repository/controller and collectio
 Identity regression closure: clean Maven verify 48 unit + 75 integration tests, zero failures/errors/skips; frontend lint/typecheck/build, 59 unit/component and 18 real-backend tests; current Swagger 95 v1 operations; six read-only pair checks. Source audit confirms EmailSenderPort/HttpEmailSender and local Mailpit work without external traffic. Provider deployment remains explicitly external; the email runbook contains configuration/DNS/secrets/test/troubleshooting/replacement steps.
 
 Accepted decisions: [Route planning/execution](../adrs/0019-route-planning-execution-and-geographic-boundaries.md) and [Analytics & Data](../adrs/0020-analytics-reporting-and-data-architecture.md). Planned schema V4 adds normalized territory/planning/execution/snapshot/audit records and optional Collection association; no reset. Runtime/API/permission/collection-history and frontend acceptance remain pending until implementation and real verification are recorded. No dataset import, GPS, map or analytics feature is claimed.
+
+## Delivered implementation
+
+The pending status above is the pre-implementation audit. Routes is now IMPLEMENTED / READY FOR HOMOLOGATION; [the verification record](../routes-verification.md) documents V4, actual source/contract checks and release limitations.

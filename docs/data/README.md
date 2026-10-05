@@ -22,3 +22,7 @@ Operational features should produce analytics-ready data. PostgreSQL remains the
 Before reports, define time zone/interval boundaries, null versus zero, cancellation/reversal, stale/reference labels, actual-versus-planned denominators, currency, completeness, corrections and publication versions. Required filters: period, Municipality, Organization, Route, Vehicle, Neighborhood, Material and Buyer. Retain source IDs and actor timestamps; never include credentials or recovery links in analytics.
 
 Start with bounded PostgreSQL queries/indexes and application aggregates. Measure latency/volume before read models, materialized views, caching or scheduled aggregation. Document freshness/reconciliation and access boundaries before any replica/warehouse. Optional BI is a separate future adapter. Reporting delivery stays outside Identity even if it later reuses an email transport.
+
+## Operational source readiness — 2026-10-05
+
+Routes V4 and its API/frontend now produce the plan, execution, coverage, team and optional collection provenance described above. These are implemented source facts, not implemented analytics. Municipality is attached through Route and immutable execution context; an organization may operate in multiple municipalities without deriving territory from its type or postal text. [Verification](../routes-verification.md) records exact-history and authorization checks. Formulas, period policy, targets, publication and export semantics remain PRODUCT DEFINITION REQUIRED.
