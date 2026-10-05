@@ -2,7 +2,7 @@
 
 - Documentation maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
-The official documentation is the running [Swagger UI](http://localhost:9191/swagger-ui/index.html) and [OpenAPI JSON](http://localhost:9191/v3/api-docs). This supporting map was generated from the verified container on 2026-10-04 at backend commit 18f4891825821dae931ab7f3d44a2d0cd48c311f: 95 supported operations, all under /api/v1. Request schemas and response examples must be read from Swagger, not copied from historical issue descriptions.
+The official documentation is the running [Swagger UI](http://localhost:9191/swagger-ui/index.html) and [OpenAPI JSON](http://localhost:9191/v3/api-docs). This supporting map was generated from the verified container on 2026-10-04 at backend commit 6bb0a830a9778b16994a83f87e25b3eaad462c4b: 114 supported operations, all under /api/v1. Request schemas and response examples must be read from Swagger, not copied from historical issue descriptions.
 
 ## Contract rules
 
@@ -17,6 +17,10 @@ The official documentation is the running [Swagger UI](http://localhost:9191/swa
 
 
 Public recovery uses POST `/api/v1/session/password-recovery/request` (neutral 202) and POST `/api/v1/session/password-recovery/confirm` (single-use 204). Both exclude bearer credentials and organization headers. Disabled recovery/Redis failure returns 503 independently of account existence; confirmation abuse returns 429. Profile and password changes remain authenticated. See [email recovery operations](email-recovery.md) and [verified identity delivery](identity-verification.md).
+
+## Routes contract additions
+
+Territory is paginated shared reference data: authenticated scoped list/get; global-only POST. Route create/update/deactivate and execution schedule/cancel require effective management. Active members may read, start, record coverage and complete existing executions. Commands require current versions; stale/lifecycle conflicts return 409. Route municipality is fixed; complete ordered coverage is validated within it. DELETE is soft and rejects open executions. Terminal execution context is immutable. Collection optionally selects a same-organization completed execution and retains matching fleet/team/actual facts. See [Routes architecture](architecture/routes.md). No deprecated aliases or new analytics/GPS endpoints are added.
 
 ## Operation inventory
 
@@ -67,6 +71,12 @@ Public recovery uses POST `/api/v1/session/password-recovery/request` (neutral 2
 | GET | `/api/v1/materials/types/{id}` | Material types |
 | PUT | `/api/v1/materials/types/{id}` | Material types |
 | DELETE | `/api/v1/materials/types/{id}` | Material types |
+| GET | `/api/v1/municipalities` | Territory |
+| POST | `/api/v1/municipalities` | Territory |
+| GET | `/api/v1/municipalities/{id}` | Territory |
+| GET | `/api/v1/neighborhoods` | Territory |
+| POST | `/api/v1/neighborhoods` | Territory |
+| GET | `/api/v1/neighborhoods/{id}` | Territory |
 | GET | `/api/v1/organizations` | Organizations |
 | POST | `/api/v1/organizations` | Organizations |
 | GET | `/api/v1/organizations/{id}` | Organizations |
@@ -82,6 +92,19 @@ Public recovery uses POST `/api/v1/session/password-recovery/request` (neutral 2
 | POST | `/api/v1/pressings/{id}/reverse` | Processing reversals |
 | GET | `/api/v1/reports/summary` | Reports |
 | GET | `/api/v1/reports/summary.csv` | Reports |
+| GET | `/api/v1/route-executions` | Route executions |
+| POST | `/api/v1/route-executions` | Route executions |
+| GET | `/api/v1/route-executions/{id}` | Route executions |
+| PUT | `/api/v1/route-executions/{id}/areas/{areaId}` | Route executions |
+| POST | `/api/v1/route-executions/{id}/cancel` | Route executions |
+| POST | `/api/v1/route-executions/{id}/complete` | Route executions |
+| POST | `/api/v1/route-executions/{id}/start` | Route executions |
+| GET | `/api/v1/routes` | Routes |
+| POST | `/api/v1/routes` | Routes |
+| GET | `/api/v1/routes/{id}` | Routes |
+| PUT | `/api/v1/routes/{id}` | Routes |
+| DELETE | `/api/v1/routes/{id}` | Routes |
+| GET | `/api/v1/routes/{id}/events` | Routes |
 | GET | `/api/v1/sales` | Sales |
 | POST | `/api/v1/sales` | Sales |
 | GET | `/api/v1/sales/{id}` | Sales |

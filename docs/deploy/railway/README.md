@@ -21,7 +21,7 @@ Keep the intentional Maven/Spotless and Docker cache changes already present on 
 
 [ADR-0016](../../adrs/0016-account-and-credential-lifecycle.md) deliberately keeps ADR-0014's V1 byte-for-byte unchanged and adds V2__account_credential_lifecycle.sql. Existing V1 databases upgrade during startup; empty databases apply V1, V2 and V3. ADR-0018 adds the recovery table after the credential upgrade. No Railway recreation, Flyway clean/repair or manual SQL is required.
 
-The operational baseline is V1 + V2 + V3 (password recovery). Once operational data must be retained, every change requires a new migration. Never rewrite V1, erase flyway_schema_history or reset PostgreSQL as normal maintenance. The owner still considers pre-production data disposable, but a future consolidation needs its own explicit reset decision and operator authorization. This delivery does not authorize or perform that reset.
+The operational baseline is V1 + V2 + V3 (password recovery) + V4 (Routes/execution history). Once operational data must be retained, every change requires a new migration. Never rewrite V1, erase flyway_schema_history or reset PostgreSQL as normal maintenance. The owner still considers pre-production data disposable, but a future consolidation needs its own explicit reset decision and operator authorization. This delivery does not authorize or perform that reset.
 
 ## First administrator
 
@@ -44,3 +44,7 @@ Identity completion: **Railway configuration changes required: mail provider, se
 ## Identity closure and external delivery
 
 Identity is IMPLEMENTED / READY FOR HOMOLOGATION. Email provider deployment is OPERATIONAL CONFIGURATION PENDING / EXTERNAL CONFIGURATION REQUIRED: approved Brevo account, sender/domain DNS verification, backend-only API key and public reset URL. Follow [the implemented email runbook](../../email-recovery.md) for exact variables, local no-internet tests, real-inbox smoke and troubleshooting. This operational configuration does not block owner-authorized Routes development. No external credentials or Railway changes were performed locally.
+
+## Routes candidate deployment
+
+Apply the Routes backend before the matching frontend and verify successful Flyway V4, retained V1/V2/V3 checksums and repeated startup. Preserve database/Redis/upload volumes and RSA keys; no reset or new Routes-specific variable is required. Verify scoped planning -> execution start/coverage/completion -> linked collection. The [Routes runbook](../../architecture/routes.md) records rollback/history limitations. External email sender/domain/API-key verification remains operationally pending until actually executed.

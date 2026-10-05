@@ -67,3 +67,7 @@ Unchecked items are operator release gates, not claims of remote verification.
 ## Identity closure and external delivery
 
 Identity is IMPLEMENTED / READY FOR HOMOLOGATION. Email provider deployment is OPERATIONAL CONFIGURATION PENDING / EXTERNAL CONFIGURATION REQUIRED: approved Brevo account, sender/domain DNS verification, backend-only API key and public reset URL. Follow [the implemented email runbook](../../email-recovery.md) for exact variables, local no-internet tests, real-inbox smoke and troubleshooting. This operational configuration does not block owner-authorized Routes development. No external credentials or Railway changes were performed locally.
+
+## Routes candidate deployment
+
+Apply the Routes backend before the matching frontend and verify successful Flyway V4, retained V1/V2/V3 checksums and repeated startup. Preserve database/Redis/upload volumes and RSA keys; no reset or new Routes-specific variable is required. Verify scoped planning -> execution start/coverage/completion -> linked collection. The [Routes runbook](../../architecture/routes.md) records rollback/history limitations. External email sender/domain/API-key verification remains operationally pending until actually executed.

@@ -2,7 +2,7 @@
 
 - Documentation maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
-Verified runtime: PostgreSQL 16, Flyway V1/V2/V3, 30 application tables plus flyway_schema_history. The schema inventory below is generated from information_schema; authoritative checks, indexes and foreign keys are the immutable SQL under src/main/resources/db/migrations.
+Verified runtime: PostgreSQL 16, Flyway V1/V2/V3/V4, 38 application tables plus flyway_schema_history. The schema inventory below is generated from information_schema; authoritative checks, indexes and foreign keys are the immutable SQL under src/main/resources/db/migrations.
 
 ## Domain relationships
 
@@ -34,7 +34,7 @@ The diagram summarizes relationships; it does not show every ownership/audit key
 - Final V1 creates all 29 application tables with the complete verified constraints, indexes, functions and triggers.
 - V2 adds nonnegative users.credential_version and users.must_change_password without changing existing hashes or data.
 - V3 adds password_recovery_token with expiry validation, user foreign key and expiry/user indexes. Only token digests are stored.
-- V1/V2/V3 are immutable once applied. Future shared changes start at V4; no database reset is required.
+- V1/V2/V3 remain immutable. V4 adds Routes and execution history without resetting data. Further shared changes start at V5.
 - The unreleased predecessor chain is retained in Git and private backups, not replayed on fresh setup.
 - FinalBaselineSchemaIT independently checks all 560 schema definitions against the predecessor.
 
@@ -474,3 +474,131 @@ Shared JPA models remain in domain/models; new application modules may use JDBC 
 | used_at | timestamp with time zone | YES |
 
 Expiry must follow creation. Account then token row locks serialize confirmation with password changes; generation/address checks revoke outstanding authorization. Consumption and password replacement commit atomically. Hourly bounded cleanup removes sufficiently old expired authorization; tokens are not an audit ledger. [ADR-0018](adrs/0018-password-recovery-and-transactional-email.md) explains this boundary.
+
+## Routes V4 operational schema
+
+The additive [V4 migration](../src/main/resources/db/migrations/V4__routes_and_execution_history.sql) creates the following eight normalized tables. Column inventory was captured from the running PostgreSQL after V4 on 2026-10-04. Constraints/triggers, numeric precision and ownership are authoritative in SQL. Existing collection adds nullable UUID route_execution_id with a composite ownership FK and completed-execution/logistics/crew validation. No historical collection territory was guessed.
+
+### municipality
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| ibge_code | varchar | NO |
+| name | varchar | NO |
+| state_code | varchar | NO |
+| created_by | uuid | NO |
+| created_at | timestamptz | NO |
+
+### neighborhood
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| municipality_id | uuid | NO |
+| name | varchar | NO |
+| created_by | uuid | NO |
+| created_at | timestamptz | NO |
+
+### route
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| organization_id | uuid | NO |
+| municipality_id | uuid | NO |
+| name | varchar | NO |
+| status | varchar | NO |
+| is_active | bool | NO |
+| version | int8 | NO |
+| planned_distance_km | numeric | YES |
+| planned_duration_minutes | int4 | YES |
+| created_by | uuid | NO |
+| updated_by | uuid | NO |
+| created_at | timestamptz | NO |
+| updated_at | timestamptz | NO |
+
+### route_area
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| organization_id | uuid | NO |
+| route_id | uuid | NO |
+| municipality_id | uuid | NO |
+| neighborhood_id | uuid | NO |
+| sequence | int4 | NO |
+| street | varchar | YES |
+| is_active | bool | NO |
+
+### route_event
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| organization_id | uuid | NO |
+| route_id | uuid | NO |
+| execution_id | uuid | YES |
+| actor_id | uuid | NO |
+| action | varchar | NO |
+| version | int8 | NO |
+| recorded_at | timestamptz | NO |
+
+### route_execution
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| organization_id | uuid | NO |
+| route_id | uuid | NO |
+| route_version | int8 | NO |
+| route_name | varchar | NO |
+| municipality_id | uuid | NO |
+| municipality_name | varchar | NO |
+| municipality_ibge_code | varchar | NO |
+| municipality_state_code | varchar | NO |
+| planned_distance_km | numeric | YES |
+| planned_duration_minutes | int4 | YES |
+| planned_start_at | timestamptz | NO |
+| status | varchar | NO |
+| version | int8 | NO |
+| vehicle_id | uuid | NO |
+| vehicle_license_plate | varchar | NO |
+| driver_id | uuid | NO |
+| driver_name | varchar | NO |
+| started_at | timestamptz | YES |
+| finished_at | timestamptz | YES |
+| cancelled_at | timestamptz | YES |
+| cancellation_reason | varchar | YES |
+| distance_km | numeric | YES |
+| created_by | uuid | NO |
+| updated_by | uuid | NO |
+| created_at | timestamptz | NO |
+| updated_at | timestamptz | NO |
+
+### route_execution_area
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| id | uuid | NO |
+| organization_id | uuid | NO |
+| execution_id | uuid | NO |
+| route_id | uuid | NO |
+| source_area_id | uuid | NO |
+| neighborhood_id | uuid | NO |
+| neighborhood_name | varchar | NO |
+| sequence | int4 | NO |
+| street | varchar | YES |
+| covered | bool | NO |
+
+### route_execution_team
+
+| Column | PostgreSQL type | Nullable |
+| --- | --- | --- |
+| organization_id | uuid | NO |
+| execution_id | uuid | NO |
+| team_member_id | uuid | NO |
+| member_name | varchar | NO |
+| member_role | varchar | YES |
+
+See [Routes architecture](architecture/routes.md) for grains, scope, snapshots, lifecycle and collection linkage. Exact declared km has three fractional digits; raw input kg/m3 remains the existing four-digit contract. Missing distance is null. Geometry/GPS and metric formulas are not introduced.

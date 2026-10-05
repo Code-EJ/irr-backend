@@ -68,3 +68,7 @@ Every application controller uses /api/v1. Unversioned mappings and the signup r
 [ADR-0017](../adrs/0017-global-administration-and-identity-release.md) makes ADMINISTRATOR global authority without inventing memberships. MANAGER remains organization-local administration. Global account lifecycle uses a PostgreSQL advisory transaction lock, then account row locks; competing removal/demotion cannot remove the last active administrator. Requests reload active identity and current role; the account guard rechecks authority after waiting.
 
 The feature-owned identity/recovery package contains public request/confirmation adapters, bounded asynchronous orchestration, shared Redis throttling and an EmailSenderPort with Brevo/Mailpit HTTP delivery. PostgreSQL owns token digests and atomic consumption alongside credentials. Redis owns abuse limits, not authorization. Existing Java HTTP/Jackson facilities suffice; no vendor SDK or architecture rewrite. See [ADR-0018](../adrs/0018-password-recovery-and-transactional-email.md) and [operations](../email-recovery.md). Future reporting mail may reuse delivery through a separate use case; no reporting/Routes/GPS implementation is added here.
+
+## Routes operational module
+
+[Routes architecture](routes.md) documents the implemented transaction boundary, normalized planning/execution model, geography, lifecycle, collection linkage and V4 rollout. [Analytics decision](../adrs/0020-analytics-reporting-and-data-architecture.md) plans the next milestone without implementing reporting now.

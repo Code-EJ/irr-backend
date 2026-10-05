@@ -74,3 +74,7 @@ public enum UserRole {
 PF means an individual donor and PJ means a legal-entity donor. These existing stored/wire codes remain unchanged; all maintained explanations are English. DestinationType retains SALE/PRESSING for historical compatibility, but new sorting/pressing requests accept only STOCK without destinationId. Typed downstream commands create real links.
 
 Membership roles are MEMBER and MANAGER, independent of platform UserRole. Team roles are DRIVER, HELPER and OPERATOR. Sales use DRAFT/POSTED/REVERSED; processing uses POSTED/REVERSED. Stock operations use SORTING/PRESSING/SALE/REVERSAL. These states are database-checked strings in their owning modules and are documented in Swagger and ADR-0012.
+
+## Routes vocabulary
+
+[RouteContract](../src/main/java/org/code/api/routes/api/RouteContract.java): RouteStatus is DRAFT or ACTIVE; isActive is a separate soft lifecycle flag. [RouteExecutionContract](../src/main/java/org/code/api/routes/api/RouteExecutionContract.java): ExecutionStatus is PLANNED, IN_PROGRESS, COMPLETED or CANCELLED. Terminal states cannot be reopened. Shared territory uses the 27 Brazilian UF codes and matching seven-digit IBGE prefixes, not a new organization role.
