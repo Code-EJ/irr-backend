@@ -15,8 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * Aggregates independent facts in one PostgreSQL statement, avoiding join fan-out. @author Enzo
- * Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
+ * Aggregates independent facts in one PostgreSQL statement, avoiding join fan-out.
+ *
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 @Service
 @RequiredArgsConstructor

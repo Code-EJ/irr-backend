@@ -144,7 +144,7 @@ class OperationalReportIT extends PostgresIntegrationTest {
     UUID e = execution(f, "2026-10-07T12:00:00Z", "7");
     for (String kg : new String[] {"1.0001", "2.0002"}) {
       jdbc.update(
-          "INSERT INTO collection(id,organization_id,realization_date,total_weight_kg,vehicle_id,driver_id,creator_id,route_execution_id,departure_time,finish_time,distance_km) SELECT ?,organization_id,'2026-10-08T12:00:00Z'::timestamptz,?::numeric,vehicle_id,driver_id,?,id,started_at,finished_at,distance_km FROM route_execution WHERE id=?",
+          "INSERT INTO collection(id,organization_id,realization_date,total_weight_kg,vehicle_id,driver_id,creator_id,route_execution_id,departure_at,arrival_at,distance_km) SELECT ?,organization_id,'2026-10-08T12:00:00Z'::timestamptz,?::numeric,vehicle_id,driver_id,?,id,started_at,finished_at,distance_km FROM route_execution WHERE id=?",
           UUID.randomUUID(),
           kg,
           f.actor(),

@@ -10,8 +10,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Serves the approved operational definition through the versioned contract. @author Enzo Ribas <a
- * href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
+ * Serves the approved operational definition through the versioned contract.
+ *
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 @RestController
 @RequiredArgsConstructor
