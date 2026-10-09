@@ -21,9 +21,12 @@ public record OperationalReport(
     OffsetDateTime endExclusive,
     String definitionVersion,
     OffsetDateTime generatedAt,
-    UUID municipalityId,
-    UUID routeId,
-    UUID vehicleId,
+    @Schema(nullable = true, description = "Applied municipality filter; null when unrestricted")
+        UUID municipalityId,
+    @Schema(nullable = true, description = "Applied route filter; null when unrestricted")
+        UUID routeId,
+    @Schema(nullable = true, description = "Applied vehicle filter; null when unrestricted")
+        UUID vehicleId,
     long completedExecutions,
     long measuredExecutions,
     long missingDistanceExecutions,
