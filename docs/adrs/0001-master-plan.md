@@ -284,3 +284,7 @@ CURRENT DEVELOPMENT MILESTONE: Routes. Scoped planning, normalized territory, da
 ## Routes delivery closure — 2026-10-05
 
 Identity remains functionally complete. Routes is IMPLEMENTED / READY FOR HOMOLOGATION after additive V4, scoped API, frontend integration, real PostgreSQL/API tests and browser plan/execution/collection verification. See [delivery evidence and remaining gates](../routes-verification.md). The next functional milestone is native Analytics, Reports, Filters, Indicators and Dashboards; approve metric/period definitions before implementation. GPS remains PLANNED_POST_DEPLOY. External email configuration is a parallel operational dependency, not a Routes development blocker.
+
+## Approved operational reporting slice — 2026-10-09
+
+The owner approved completed execution count, reported km/completeness, actual duration and active collected kg, using America/Sao_Paulo and independent execution-completion/collection-realization periods. The reporting execution ADR records the exact semantics. Implementation is IN_PROGRESS; remaining indicators stay PRODUCT DEFINITION REQUIRED. Routes remains implemented, external homologation pending.

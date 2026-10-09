@@ -235,3 +235,7 @@ The frontend adds organization administration and responsible-user onboarding as
 The current milestone adds organization-scoped reusable plans, explicit municipality/neighborhood coverage and dated vehicle/team assignments. Use Swagger for `/api/v1/routes`, `/api/v1/route-executions`, `/api/v1/municipalities` and `/api/v1/neighborhoods`. V4 applies additively during normal startup; do not reset existing data. Follow the [Routes runbook](docs/architecture/routes.md) for authority, lifecycle, collection association, Docker/Railway rollout and tests. Analytics/filters/indicators/dashboards are the next milestone; GPS/maps remain planned.
 
 Final local acceptance and remaining release gates: [Routes verification record](docs/routes-verification.md).
+
+## Java code quality
+
+Spotless is configured in Maven and bound to validate, so `./mvnw verify` enforces formatting. Run `./mvnw spotless:check` to inspect or `./mvnw spotless:apply` for deliberate formatting, using Java 21. Existing Google Java Format, imports and whitespace configuration is preserved. Maintainer: Enzo Ribas (https://github.com/oEnzoRibas).
