@@ -1,6 +1,6 @@
 # ADR-0001: IRR architecture overhaul and delivery master plan
 
-## Current executive milestone order — 2026-10-05
+## Current executive milestone order — 2026-10-09
 
 The owner's Routes phase decision explicitly supersedes the prior requirement to finish external homologation before developing Routes. Identity policy and security remain unchanged. External deployment remains an operator gate, not a blocker for the next functional development milestone.
 
@@ -8,8 +8,9 @@ The owner's Routes phase decision explicitly supersedes the prior requirement to
 | --- | --- | --- |
 | COMPLETED | Identity & Access | IMPLEMENTED / READY FOR HOMOLOGATION: current backend/frontend, profile, credential revocation, recovery, global/local administration and bootstrap; no functional reopening |
 | PARALLEL OPERATIONS | Email provider configuration / first deployment | OPERATIONAL CONFIGURATION PENDING: external sender/domain/key and public deployment; EXTERNAL CONFIGURATION REQUIRED; no automatic merge, secrets update or database reset |
-| CURRENT DEVELOPMENT | Routes | IMPLEMENTED / READY FOR HOMOLOGATION: explicit territory, organization-owned reusable planning, dated execution, preserved collection history and verified frontend integration |
-| NEXT / AFTER ROUTES | Analytics, reports, filters, indicators and dashboards | PLANNED_AFTER_ROUTES: native PostgreSQL/query/API/frontend path; data definitions before formulas; no dashboard implementation now |
+| COMPLETED DEVELOPMENT | Routes | IMPLEMENTED / READY FOR HOMOLOGATION: explicit territory, organization-owned reusable planning, dated execution, preserved collection history and verified frontend integration |
+| COMPLETED DEVELOPMENT | First native operational report | IMPLEMENTED / LOCALLY VERIFIED: backend ADR-0021 / frontend ADR-0018; exact execution and collection facts, Brazilian periods and organization filters; see reporting verification |
+| NEXT | Additional analytics, reports, indicators and dashboards | PRODUCT DEFINITION REQUIRED for unapproved metrics; continue the existing sequence after operations-1 acceptance |
 | INCREMENTAL EVOLUTION | GPS / route telemetry / mapping | PLANNED_POST_DEPLOY: extension at execution/geometry boundaries; no provider, hardware or advanced map now |
 | FUTURE | Optional BI and advanced analytics | DEFERRED until demonstrated need and separate product authorization |
 

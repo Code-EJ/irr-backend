@@ -1,6 +1,6 @@
 # ADR-0021: Native operational reporting first slice
 
-- Status: Accepted; implementation in progress.
+- Status: Accepted; first slice implemented and locally verified.
 - Date: 2026-10-09.
 - Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
@@ -23,5 +23,7 @@ Add GET /api/v1/reports/operations with required from/to ISO calendar dates (inc
 Backend first: scoped query/API plus PostgreSQL tests for day boundaries, exact quantities, multiple crew/receipts, null versus zero, foreign/inactive filters and live edits. Build/run backend, capture actual Swagger, regenerate frontend types, integrate the report with Portuguese content and test loading/error/empty/filter states. Run Spotless, ESLint, type/build/component/real-backend tests and Docker checks; compilation alone is insufficient. The report is operational, not a published fiscal statement. Exports, additional dimensions, consolidated comparisons, targets and GPS remain subsequent decisions.
 
 ## Consequences and remaining risks
+
+[Verification evidence](../reporting-verification.md) records backend source 20a03c7, five report integration tests, the full 48 unit/89 integration test suite, actual Swagger capture and frontend acceptance. Broader Analytics remains pending.
 
 Benefits: auditable facts, exact sums, no double counting and incremental delivery. Costs: live totals change after edits; ad-hoc receipts lack municipal provenance; manual km completeness must remain visible. External email/homologation and existing build-chain advisories remain separate release gates. Unapproved metric families in the register retain PRODUCT DEFINITION REQUIRED. Record actual acceptance evidence before marking implementation complete.

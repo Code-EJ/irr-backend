@@ -29,7 +29,7 @@ The API and local Mailpit UI use loopback-only published ports. The API runs non
 | intake | Collection orchestration and logistics | Validated raw inputs; no saleable stock credit |
 | inventory | Ledger, lots, receipts, reversals and queries | Sole stock writer; immutable history |
 | sales | Draft/post/reverse use cases | Optimistic drafts, fiscal evidence, transactional lots |
-| reporting | Operational summaries and CSV | PostgreSQL repeatable-read snapshot |
+| reporting | Existing commercial summaries/CSV and approved operational totals | Existing snapshot services; one-statement exact operational aggregates |
 | controllers / dto | Established HTTP adapters and safe value contracts | No persistence entities or secrets serialized |
 | services | Existing identity, materials, fleet, donation, processing and attachment use cases | Transactions and domain validation |
 | domain/models / domain/ports | Shared JPA mappings and application/infrastructure ports | Persistence annotations retained deliberately |
@@ -55,6 +55,8 @@ Upload bytes cannot join PostgreSQL's transaction. Rollback compensation handles
 Reports use live data, inclusive UTC ranges and current POSTED status. Stock is a current snapshot. Historical closing balances and external fiscal validation are not claimed. See [operations](../operations.md) for recovery and [schema](../entities_documentation.md) for constraints.
 
 ## Extension rules
+
+[Operational reporting](reporting.md) documents operations-1, its independent fact grains, inclusive Brazilian dates, nullable measurement semantics and selected organization scope. Existing commercial summaries retain their distinct UTC/status rules.
 
 New features belong to a feature package with an explicit request/response contract and service transaction. Reuse OrganizationScope and StockLedger; never update balances directly or infer ownership from creator_id. Avoid moving every old class merely for package symmetry. Introduce an ADR when changing ownership, lifecycle, accounting or infrastructure semantics. JavaDoc, tests, Swagger, migrations and maintained documentation are English and credit the maintainer.
 

@@ -1,5 +1,7 @@
 # IRR backend
 
+The first approved native operational report now uses GET /api/v1/reports/operations. See [module architecture](docs/architecture/reporting.md) and [verification evidence](docs/reporting-verification.md). Swagger remains the executable API reference. Engineering documentation and JavaDoc are English; frontend interface content is Brazilian Portuguese.
+
 - Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
 IRR manages waste intake, materials, processing, inventory and sales. This is a pre-production Java 21 / Spring Boot / PostgreSQL application. Docker Compose is the supported local runtime. Swagger UI and its generated OpenAPI document are the official HTTP API documentation. ADRs document architecture and staged implementation.
