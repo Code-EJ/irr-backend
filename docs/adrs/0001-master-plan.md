@@ -293,3 +293,7 @@ The owner approved completed execution count, reported km/completeness, actual d
 ## Local completion execution — 2026-10-09
 
 The owner now prioritizes completion and validation of all applicable local requirements before any Railway configuration/deployment. [The central execution register](../MASTER_PLAN_PROGRESS.md) records the source-based audit, dependency-ordered tasks and actual evidence. This changes release sequencing only; existing domain decisions and pending product definitions remain explicit.
+
+## Owner-approved MVP Analytics — 2026-10-10
+
+The owner approved matched planned/actual comparisons, unique declared-section coverage, weighted linked-collection productivity and live posted-sale revenue. [0022-approved-mvp-analytics.md](0022-approved-mvp-analytics.md) records exact cohorts, integrity and verification. Implement locally before any deployment; remaining metric families retain their explicit product dependencies.
