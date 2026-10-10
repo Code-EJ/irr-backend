@@ -289,3 +289,7 @@ Identity remains functionally complete. Routes is IMPLEMENTED / READY FOR HOMOLO
 ## Approved operational reporting slice — 2026-10-09
 
 The owner approved completed execution count, reported km/completeness, actual duration and active collected kg, using America/Sao_Paulo and independent execution-completion/collection-realization periods. The reporting execution ADR records the exact semantics. Implementation is IN_PROGRESS; remaining indicators stay PRODUCT DEFINITION REQUIRED. Routes remains implemented, external homologation pending.
+
+## Local completion execution — 2026-10-09
+
+The owner now prioritizes completion and validation of all applicable local requirements before any Railway configuration/deployment. [The central execution register](../MASTER_PLAN_PROGRESS.md) records the source-based audit, dependency-ordered tasks and actual evidence. This changes release sequencing only; existing domain decisions and pending product definitions remain explicit.
