@@ -1,5 +1,7 @@
 # Synthetic report performance baseline
 
+> Follow-up: [ADR-0024](adrs/0024-analytics-execution-fact-aggregation.md) and [the query correction record](analytics-query-planning.md) continue L4.1. Measurements and statements below describe the original baseline and isolated configuration experiment; they are retained as before-change evidence.
+
 Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas). Decision: [ADR-0023](adrs/0023-reproducible-synthetic-report-benchmarks.md). Report semantics remain [ADR-0021](adrs/0021-native-operational-reporting.md) and [ADR-0022](adrs/0022-approved-mvp-analytics.md).
 
 ## Prepare, execute and clean up

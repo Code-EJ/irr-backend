@@ -242,7 +242,7 @@ Final local acceptance and remaining release gates: [Routes verification record]
 
 ## Synthetic performance benchmarks
 
-Local synthetic report performance checks use an isolated migrated database. Follow the [benchmark runbook](docs/reporting-benchmarks.md) for reproducible generation, real HTTP validation, SQL plans and guarded cleanup. These measurements do not certify production performance.
+Local synthetic report performance checks use an isolated migrated database. Follow the [benchmark runbook](docs/reporting-benchmarks.md) for reproducible generation, real HTTP validation, SQL plans and guarded cleanup. The [Analytics query planning correction](docs/analytics-query-planning.md) records the verified application fix and repeat measurements. These measurements do not certify production performance.
 
 ## Java code quality
 

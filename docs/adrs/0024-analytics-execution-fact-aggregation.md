@@ -1,6 +1,6 @@
 # ADR-0024: Aggregate Analytics receipt facts once per execution
 
-- Status: Proposed; candidate implementation and verification in progress.
+- Status: Accepted; implemented and locally verified. Production readiness remains a separate gate.
 - Date: 2026-10-10.
 - Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 - Authority: Master Plan L4.1, continuing [ADR-0022](0022-approved-mvp-analytics.md) and [ADR-0023](0023-reproducible-synthetic-report-benchmarks.md). ADR-0003's modular monolith and ADR-0014's `/api/v1` contract remain authoritative.
@@ -18,7 +18,7 @@ The isolated custom-plan experiment demonstrates that query planning matters, bu
 | Force custom plans across the datasource/database | Demonstrated local improvement | Global planner policy and additional planning cost for unrelated statements | Rejected as the default application remedy |
 | Add speculative indexes/cache | May help selected access paths | Existing linked-collection index already exists; stale reports and unmeasured write cost | Deferred |
 | Materialize the receipt aggregate only | Prevents repeated aggregate execution | Still permits a poorly estimated nested-loop join between two large populations | Considered, not selected initially |
-| Aggregate the scoped execution/collection left join directly at execution grain | Eliminates the repeatedly evaluated grouped subquery; existing index supports bounded receipt lookup | Grouping includes each execution snapshot field; compare both prepared modes | Selected candidate |
+| Aggregate the scoped execution/collection left join directly at execution grain | Eliminates the repeatedly evaluated grouped subquery; existing index supports bounded receipt lookup | Grouping includes each execution snapshot field; compare both prepared modes | Selected |
 
 ## Decision
 
@@ -33,3 +33,7 @@ The correction is limited to reporting SQL. It introduces no new dependency, mig
 - No failed/partial baseline is rewritten. Require no HTTP/correctness errors in the corrected workload and inspect actual aggregate loop counts under generic planning.
 - SQL grouping may use memory or temporary disk at large volumes; retain buffer plans and do not infer production capacity from local synthetic data.
 - Mark L4.1 complete only after real HTTP and prepared-plan evidence confirms the candidate. Record the resulting implementation and remaining release gates in the existing Master Plan register.
+
+## Implementation evidence
+
+Commit `ebea9f2` passed 51 unit and 96 PostgreSQL/Redis integration tests, Spotless and Docker image build. Normal `auto` HTTP runs at 1,000/10,000/50,000 validated 960 responses with zero errors and byte-identical seeded datasets. At 50,000 the broad generic SQL completed in 449 ms, and all tested aggregate nodes executed once under both prepared modes. The corrected image is running locally; frontend contract tests passed 26 cases and actual Swagger matches its pinned contract. Before contract fixture creation, all 39 public-table counts matched the selected backup. V1-V4 checksums and all 21 original attachment hashes remained unchanged after verification. See [the detailed correction record](../analytics-query-planning.md), including measurement limitations and remaining release gates.
