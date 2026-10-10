@@ -54,19 +54,21 @@ async function request(state,authorization,scenario,endpoint) {
 }
 
 /** Progressive volumes reload the same owned schema; named development resources cannot be selected. */
-export async function benchmark(directory,state,{volumes=[1000,10000,50000],seed=669850,samples=100,warmup=10,concurrencies=[1,4]}={}) {
+export async function benchmark(directory,state,{volumes=[1000,10000,50000],seed=669850,samples=100,warmup=10,concurrencies=[1,4],reuse=false}={}) {
     if (!Number.isSafeInteger(samples)||samples<20||samples>10000||!Number.isSafeInteger(warmup)||warmup<1||warmup>100||!concurrencies.every(c=>Number.isSafeInteger(c)&&c>=1&&c<=32)) throw new Error('Invalid sampling configuration.');
     guard(state);
+    if(reuse&&volumes.length!==1) throw new Error('Reuse requires exactly one loaded volume.');
     const info = JSON.parse(docker(['info','--format','{{json .}}']));
     const result = {scenarioVersion:'synthetic-reports-1',startedAt:new Date().toISOString(),sourceCommit:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),
         backendImageId:state.backendImageId,databaseImageId:state.databaseImageId,redisImageId:state.redisImageId,openapiSha256:state.openapiSha256,
         environment:{node:process.version,os:os.platform()+' '+os.release(),architecture:os.arch(),docker:info.ServerVersion,dockerCpus:info.NCPU,dockerMemoryBytes:info.MemTotal,
             backendCpus:2,backendMemory:'1GiB',heap:'256-512MiB',databaseCpus:2,databaseMemory:'1GiB',sharedBuffers:'128MB',workMem:'4MB',connectionPool:10},
-        configuration:{volumes,seed,samples,warmup,concurrencies,model:'closed-loop loopback HTTP, reused client, nearest-rank percentiles',period:'2026-06-01 through 2026-09-30 inclusive America/Sao_Paulo'},migrationHistory:sql(state,"SELECT version||':'||checksum FROM flyway_schema_history WHERE success ORDER BY installed_rank"),runs:[],status:'running'};
+        configuration:{volumes,seed,samples,warmup,concurrencies,reuse,planCacheMode:sql(state,'SHOW plan_cache_mode'),model:'closed-loop loopback HTTP, reused client, nearest-rank percentiles',period:'2026-06-01 through 2026-09-30 inclusive America/Sao_Paulo'},migrationHistory:sql(state,"SELECT version||':'||checksum FROM flyway_schema_history WHERE success ORDER BY installed_rank"),runs:[],status:'running'};
     const checkpoint = () => fs.writeFileSync(path.join(directory,'results.json'),JSON.stringify(result,null,2));
     try {
         for (const executions of volumes) {
-            const fixture = seedRun(directory,state,{seed,executions}), authorization = token(directory,fixture.actor);
+            const fixture = seedRun(directory,state,{seed,executions,reuse});
+            const authorization = token(directory,fixture.actor);
             result.runs.push({executions,sqlSha256:fixture.sqlSha256,counts:fixture.counts,seedMs:fixture.preparationMs,measurements:[],plans:[]});
             const run = result.runs.at(-1);
             checkpoint();
@@ -81,7 +83,7 @@ export async function benchmark(directory,state,{volumes=[1000,10000,50000],seed
                 for(const concurrency of concurrencies) {
                     let next=0,errors=0; const times=[],failures=[],started=performance.now();
                     await Promise.all(Array.from({length:concurrency},async()=>{
-                        while(next++<samples) try { times.push(await request(state,authorization,scenario,endpoint)); }
+                        while(errors===0&&next++<samples) try { times.push(await request(state,authorization,scenario,endpoint)); }
                         catch(error) { errors++; failures.push(error.message); }
                     }));
                     const metrics=statistics(times,performance.now()-started,errors);
@@ -99,7 +101,7 @@ export async function benchmark(directory,state,{volumes=[1000,10000,50000],seed
 }
 
 if(process.argv[1] && path.resolve(process.argv[1])===fileURLToPath(import.meta.url)) {
-    const {values,positionals}=parseArgs({allowPositionals:true,options:{volumes:{type:'string',default:'1000,10000,50000'},seed:{type:'string',default:'669850'},samples:{type:'string',default:'100'},warmup:{type:'string',default:'10'},concurrency:{type:'string',default:'1,4'}}});
+    const {values,positionals}=parseArgs({allowPositionals:true,options:{volumes:{type:'string',default:'1000,10000,50000'},seed:{type:'string',default:'669850'},samples:{type:'string',default:'100'},warmup:{type:'string',default:'10'},concurrency:{type:'string',default:'1,4'},reuse:{type:'boolean',default:false}}});
     const {directory,state}=readRun(positionals[0]);
-    await benchmark(directory,state,{volumes:values.volumes.split(',').map(Number),seed:Number(values.seed),samples:Number(values.samples),warmup:Number(values.warmup),concurrencies:values.concurrency.split(',').map(Number)});
+    await benchmark(directory,state,{volumes:values.volumes.split(',').map(Number),seed:Number(values.seed),samples:Number(values.samples),warmup:Number(values.warmup),concurrencies:values.concurrency.split(',').map(Number),reuse:values.reuse});
 }

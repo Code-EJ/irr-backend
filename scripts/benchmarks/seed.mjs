@@ -17,15 +17,23 @@ export function queries(data) {
     ];
 }
 /** Wipes only the generated benchmark's disposable business schema; Flyway remains intact. */
-export function seedRun(directory,state,{seed=669850,executions=1000}={}) {
+export function seedRun(directory,state,{seed=669850,executions=1000,reuse=false}={}) {
     guard(state);
     const started = performance.now(), fixture = generate({seed,executions});
     const tables = JSON.parse(sql(state,"SELECT coalesce(json_agg(tablename ORDER BY tablename),'[]') FROM pg_tables WHERE schemaname='public' AND tablename<>'flyway_schema_history'"));
     if (tables.some(name => !/^[a-z_][a-z0-9_]*$/.test(name))) throw new Error('Unexpected benchmark table.');
-    sql(state,'TRUNCATE ' + tables.map(table => '"' + table + '"').join(',') + ' CASCADE;');
     const artifact = path.join(directory,'dataset-' + executions + '.sql');
-    fs.writeFileSync(artifact,fixture.sql);
-    sql(state,fixture.sql);
+    if(reuse) {
+        if(crypto.createHash('sha256').update(fs.readFileSync(artifact)).digest('hex')!==fixture.digest) throw new Error('Loaded dataset does not match this seed/version.');
+        for(const table of tables) {
+            const count=Number(sql(state,'SELECT count(*) FROM "'+table+'"'));
+            if(count!==(fixture.counts[table]??0)) throw new Error('Loaded benchmark row counts do not match the scenario.');
+        }
+    } else {
+        sql(state,'TRUNCATE ' + tables.map(table => '"' + table + '"').join(',') + ' CASCADE;');
+        fs.writeFileSync(artifact,fixture.sql);
+        sql(state,fixture.sql);
+    }
     const pdf = fileURLToPath(new URL('./fixtures/verification.pdf',import.meta.url));
     for (const reference of fixture.data.refs) docker(['cp',pdf,state.backend+':/data/uploads/'+reference.attachment]);
     // Real constraints remain enabled. These independent conservation checks catch malformed seeds.
