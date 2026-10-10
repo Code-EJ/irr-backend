@@ -242,4 +242,6 @@ Final local acceptance and remaining release gates: [Routes verification record]
 
 ## Java code quality
 
+Local synthetic report performance checks use an isolated migrated database. Follow the [benchmark runbook](docs/reporting-benchmarks.md) for reproducible generation, real HTTP validation, SQL plans and guarded cleanup. These measurements do not certify production performance.
+
 Spotless is configured in Maven and bound to validate, so `./mvnw verify` enforces formatting. Run `./mvnw spotless:check` to inspect or `./mvnw spotless:apply` for deliberate formatting, using Java 21. Existing Google Java Format, imports and whitespace configuration is preserved. Maintainer: Enzo Ribas (https://github.com/oEnzoRibas).
