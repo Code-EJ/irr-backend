@@ -29,10 +29,15 @@ export function seedRun(directory,state,{seed=669850,executions=1000}={}) {
     const pdf = fileURLToPath(new URL('./fixtures/verification.pdf',import.meta.url));
     for (const reference of fixture.data.refs) docker(['cp',pdf,state.backend+':/data/uploads/'+reference.attachment]);
     // Real constraints remain enabled. These independent conservation checks catch malformed seeds.
-    const consistency = JSON.parse(sql(state,`SELECT json_build_object(
-      'inputMismatch',(SELECT count(*) FROM collection c WHERE c.total_weight_kg<>(SELECT sum(weight_kg) FROM input_item i WHERE i.collection_id=c.id)),
-      'saleMismatch',(SELECT count(*) FROM sale s WHERE s.total_value<>(SELECT sum(round(weight_kg*unit_price,2)) FROM sale_item i WHERE i.sale_id=s.id)),
-      'stockMismatch',(SELECT count(*) FROM inventory_balance b JOIN stock_lot l USING(organization_id,material_subtype_id) WHERE b.current_weight_kg<>l.available_weight_kg OR b.current_weight_kg<>(SELECT sum(weight_delta_kg) FROM stock_movement m WHERE m.organization_id=b.organization_id AND m.material_subtype_id=b.material_subtype_id))
+    const consistency = JSON.parse(sql(state,`WITH
+      inputs AS (SELECT collection_id,sum(weight_kg) kg FROM input_item WHERE collection_id IS NOT NULL GROUP BY collection_id),
+      lines AS (SELECT sale_id,sum(round(weight_kg*unit_price,2)) value FROM sale_item GROUP BY sale_id),
+      lots AS (SELECT organization_id,material_subtype_id,sum(available_weight_kg) kg FROM stock_lot GROUP BY organization_id,material_subtype_id),
+      ledger AS (SELECT organization_id,material_subtype_id,sum(weight_delta_kg) kg FROM stock_movement GROUP BY organization_id,material_subtype_id)
+      SELECT json_build_object(
+      'inputMismatch',(SELECT count(*) FROM collection c LEFT JOIN inputs i ON i.collection_id=c.id WHERE c.total_weight_kg IS DISTINCT FROM i.kg),
+      'saleMismatch',(SELECT count(*) FROM sale s LEFT JOIN lines i ON i.sale_id=s.id WHERE s.total_value IS DISTINCT FROM i.value),
+      'stockMismatch',(SELECT count(*) FROM inventory_balance b LEFT JOIN lots l USING(organization_id,material_subtype_id) LEFT JOIN ledger m USING(organization_id,material_subtype_id) WHERE b.current_weight_kg IS DISTINCT FROM l.kg OR b.current_weight_kg IS DISTINCT FROM m.kg)
     )`));
     if (Object.values(consistency).some(count => count !== 0)) throw new Error('Synthetic domain conservation failed.');
     const scenarios = queries(fixture.data).map(query => ({query,operations:expected(fixture.data,query,'operations'),analytics:expected(fixture.data,query,'analytics')}));
