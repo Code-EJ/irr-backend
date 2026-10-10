@@ -25,7 +25,7 @@ for(const filename of fs.readdirSync(directory).filter(f=>/^plan-modes-\d+\.json
             for(const child of node.Plans??[]) walk(child);
         };
         walk(item.observation.Plan);
-        preparedPlans.push({filename,scenario:item.scenario,mode:item.mode,executed:item.executed,error:item.error,executionMs:item.observation['Execution Time'],joins});
+        preparedPlans.push({filename,scenario:item.scenario,mode:item.mode,parameterBinding:item.parameterBinding??'shared named positions; diagnostic approximation, not repeated JDBC expansion',executed:item.executed,error:item.error,executionMs:item.observation['Execution Time'],joins});
     }
 }
 const result={description:'Local synthetic baseline, not production performance evidence.',summaries,preparedPlans};

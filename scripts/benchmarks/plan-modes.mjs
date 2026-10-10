@@ -10,15 +10,18 @@ if(!Number.isSafeInteger(volume)||volume<10||volume>1000000) throw new Error('Su
 guard(state);
 const fixture=JSON.parse(fs.readFileSync(path.join(directory,'scenario-'+volume+'.json'),'utf8'));
 if(Number(sql(state,'SELECT count(*) FROM route_execution'))!==volume) throw new Error('Load the matching scenario before explaining it.');
-const parameters={org:'$1',municipality:'$2',route:'$3',vehicle:'$4',start:'$5',end:'$6',salesAvailable:'$7'};
 const result=[];
 for(const scenario of fixture.scenarios) {
     const q=scenario.query;
     // All values originate from the deterministic generator, never user-provided SQL.
-    const values=[q.org,null,q.route??null,null,q.from+'T03:00:00Z',new Date(Date.parse(q.to+'T03:00:00Z')+86400000).toISOString(),!q.route];
+    const named={org:q.org,municipality:null,route:q.route??null,vehicle:null,start:q.from+'T03:00:00Z',end:new Date(Date.parse(q.to+'T03:00:00Z')+86400000).toISOString(),salesAvailable:!q.route};
+    const names=[];
+    const preparedSql=productionSql('analytics',q,name=>{names.push(name);return '$'+names.length;});
+    const types=names.map(name=>['org','municipality','route','vehicle'].includes(name)?'uuid':name==='salesAvailable'?'boolean':'timestamptz').join(',');
+    const values=names.map(name=>named[name]);
     const literals=values.map(v=>v===null?'NULL':typeof v==='boolean'?String(v):"'"+v.replaceAll("'","''")+"'").join(',');
     for(const mode of ['force_custom_plan','force_generic_plan']) {
-        const setup=`SET statement_timeout='30s'; SET plan_cache_mode=${mode}; PREPARE benchmark(uuid,uuid,uuid,uuid,timestamptz,timestamptz,boolean) AS ${productionSql('analytics',q,parameters)};`;
+        const setup=`SET statement_timeout='30s'; SET plan_cache_mode=${mode}; PREPARE benchmark(${types}) AS ${preparedSql};`;
         let raw,executed=true,error;
         try { raw=sql(state,setup+` EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON) EXECUTE benchmark(${literals});`); }
         catch(failure) {
@@ -27,7 +30,7 @@ for(const scenario of fixture.scenarios) {
             raw=sql(state,setup+` EXPLAIN (FORMAT JSON) EXECUTE benchmark(${literals});`);
         }
         const observation=JSON.parse(raw.slice(raw.indexOf('[\n')))[0];
-        result.push({scenario:q.name,mode,executed,error,observation});
+        result.push({scenario:q.name,mode,parameterBinding:'distinct positional occurrence, matching named JDBC expansion',executed,error,observation});
         fs.writeFileSync(path.join(directory,'plan-modes-'+volume+'.json'),JSON.stringify(result,null,2));
         console.log(JSON.stringify({executions:volume,scenario:q.name,mode,executed,error,executionMs:observation['Execution Time']}));
     }

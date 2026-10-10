@@ -66,4 +66,9 @@ test('prepared plan diagnostics preserve the maintained SQL with typed parameter
     assert.ok(prepared.includes('AND $7'));
     assert.ok(!prepared.includes(':org'));
     assert.ok(productionSql('analytics',q).includes("'2026-06-01T03:00:00Z'::timestamptz"));
+    const names=[];
+    const expanded=productionSql('analytics',q,name=>{names.push(name);return '$'+names.length;});
+    assert.ok(names.filter(name=>name==='org').length>1);
+    assert.equal([...expanded.matchAll(/\$\d+/g)].length,names.length);
+    assert.equal(new Set([...expanded.matchAll(/\$\d+/g)].map(match=>match[0])).size,names.length);
 });
