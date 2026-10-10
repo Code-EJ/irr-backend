@@ -30,11 +30,11 @@ ADR-0014 uses new database_final_v1 and attachment_final_v1 logical volumes, pre
 
 ## Fresh database and future upgrades
 
-The active Flyway path contains only the final V1__initial_schema.sql established by ADR-0014. It creates the verified final schema, including all organization, ledger, logistics and recovery constraints. Use a fresh database. Never run Flyway repair or baseline-on-migrate to conceal a mismatch with the unreleased predecessor.
+ADR-0014 established V1__initial_schema.sql as the fresh baseline. The active Flyway path now contains V1 plus additive V2 credential lifecycle, V3 password recovery and V4 Routes. Fresh databases apply all four; existing databases retain their checksums and apply only missing versions. Never run Flyway repair or baseline-on-migrate to conceal a mismatch with the unreleased predecessor.
 
 Earlier SQL is recoverable from Git history at commit 3ca0cab. Duplicate SQL archives were removed from the maintained tree. The private pre-consolidation backup and old volumes preserve actual local data. Existing creator identities are insufficient evidence for organization mapping.
 
-Future shared changes use V2+ after the highest applied version. Add new DDL, test a populated-baseline upgrade, verify failures roll back, and document any necessary preflight/backfill. Unique/nonnegative inventory constraints are already part of the baseline.
+Future shared changes use versions after the highest applied version (currently V5+). Add new DDL, test a populated-baseline upgrade, verify failures roll back, and document any necessary preflight/backfill. Unique/nonnegative inventory constraints are already part of the baseline.
 
 ## Recovery and backup
 
@@ -74,9 +74,9 @@ Compose now starts PostgreSQL, authenticated Redis and the API. Redis uses the i
 
 ## Current verified recovery procedure
 
-Use Node.js 22.6+ and run node scripts/backup-development.mjs from the checkout. It briefly stops the API, creates a custom-format pg_dump and attachment tarball, copies .env and RSA keys, and writes SHA-256 hashes plus the current Git commit and Flyway checksums. Its finally block restarts the API. Keep this directory private; filesystem permissions on Windows must be managed using the account ACL. If the command fails, inspect the partial snapshot and do not treat it as complete without manifest.json.
+Use Node.js 22.6+ and select the actual stack explicitly. The current worktree command is node scripts/backup-development.mjs --compose-file .local/identity/compose.json --project irr-identity-verification. For the standard root Compose stack, omit arguments; optional --env-file selects its interpolation environment. The script validates running service/configuration identity, stops the selected API, archives PostgreSQL, attachments, resolved private configuration and actual RSA keys, then restarts and waits for health. Format 2 records image IDs, table counts and individual attachment hashes. See [the current recovery runbook and evidence](recovery-verification.md). Keep the directory private; Windows account ACLs remain the operator's responsibility. A partial snapshot without a valid complete manifest is not accepted.
 
-Run node scripts/verify-recovery.mjs followed by the printed backup directory. The tool checks every manifest hash, creates a labeled PostgreSQL container with no network and no host ports, restores SQL with exit-on-error, compares migration checksums, extracts attachments and checks stock against both ledger and lots when those tables exist. It removes only its labeled disposable container and anonymous volume. The live stack and named volumes are untouched. This proves backup readability and database consistency; it does not automatically roll back the live application.
+Run node scripts/verify-recovery.mjs followed by the printed backup directory. The tool checks required hashes, creates a labeled PostgreSQL container from the archived local image with no network or host ports, restores SQL with exit-on-error, compares migration checksums and table counts, validates archive paths and file bytes, resolves attachment references and checks stock against ledger and lots. It removes only its labeled disposable container and anonymous volume. The 2026-10-10 V1-V4 rehearsal restored 39 tables, 20 attachment files/references and zero stock differences. This proves local recovery consistency; it does not automatically roll back the live application.
 
 Historical ADR-0013 verification on 2026-09-27: the pre-upgrade V1–V3 snapshot restored; the post-upgrade V1–V6 snapshot restored with 30 public tables (including Flyway history), two attachment fixture files and zero stock differences. Checksums are recorded in local manifests. Backup retention and off-machine encrypted storage remain the operator responsibility before any valuable deployment.
 
@@ -92,7 +92,7 @@ Check readiness for PostgreSQL and Redis, liveness for the process, and Docker h
 
 Attachment deletion queues persist in PostgreSQL. The existing worker retries failed physical deletion. The hourly orphan reconciler scans at most 500 eligible candidates per invocation after a 24-hour grace period, with a cursor and an exclusive database advisory lock that excludes upload transactions. Local directory sorting still traverses the directory; monitor volume growth and move to paged storage reconciliation if scale requires it. Do not manually delete referenced bytes.
 
-Reports are uncached UTC operational summaries; reversals change the current-status interpretation of older periods. Redis holds no recoverable business truth today. Readiness depends on Redis by explicit ADR-0010 policy; stop/start Redis only during a controlled local resilience test.
+Legacy operational summaries retain their UTC semantics. Native operations-1 and analytics-1 use explicitly documented America/Sao_Paulo periods and independent fact cohorts; see [reporting](architecture/reporting.md) and [Analytics](architecture/analytics.md). Reports remain uncached; reversals recalculate applicable historical contributions. Redis holds no recoverable business truth today. Readiness depends on Redis by ADR-0010 policy; stop/start Redis only during a controlled local resilience test.
 
 ## Final pre-production consolidation
 

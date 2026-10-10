@@ -2,6 +2,8 @@
 
 ## Current executive milestone order — 2026-10-10
 
+Local recovery gate update: the selected-stack V1-V4 backup restored in an isolated PostgreSQL container with 39 matching table counts, 20 matching attachment hashes/references and zero inventory reconciliation differences. The live API restarted healthy. Actual browser PDF upload/download and downloaded-byte rendering passed; in-app local-file viewer acceptance remains separately blocked by browser policy. Backend docs/recovery-verification.md and frontend docs/document-verification.md record the evidence. This completes L2, while broader local workload/browser checks remain in the progress register.
+
 The owner-approved analytics-1 block is implemented and locally verified: matched planned/actual comparisons, unique declared-section coverage, weighted linked-collection productivity and live posted-sale revenue. Backend ADR-0022 and frontend ADR-0021 define the formulas; source references are backend 996e36f / frontend 9e25e91. Validation includes 51 backend unit tests, 95 integration tests, 127 frontend tests, 26 real API tests and actual browser empty/populated/filtered journeys. Operator acceptance of this new screen and the remaining local completion gates are separate. See [the execution register](../MASTER_PLAN_PROGRESS.md).
 
 The owner's Routes phase decision explicitly supersedes the prior requirement to finish external homologation before developing Routes. Identity policy and security remain unchanged. External deployment remains an operator gate, not a blocker for the next functional development milestone.
