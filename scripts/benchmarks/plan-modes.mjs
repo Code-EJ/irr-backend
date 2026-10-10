@@ -18,11 +18,17 @@ for(const scenario of fixture.scenarios) {
     const values=[q.org,null,q.route??null,null,q.from+'T03:00:00Z',new Date(Date.parse(q.to+'T03:00:00Z')+86400000).toISOString(),!q.route];
     const literals=values.map(v=>v===null?'NULL':typeof v==='boolean'?String(v):"'"+v.replaceAll("'","''")+"'").join(',');
     for(const mode of ['force_custom_plan','force_generic_plan']) {
-        const query=`SET statement_timeout='120s'; SET plan_cache_mode=${mode}; PREPARE benchmark(uuid,uuid,uuid,uuid,timestamptz,timestamptz,boolean) AS ${productionSql('analytics',q,parameters)}; EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON) EXECUTE benchmark(${literals});`;
-        const raw=sql(state,query);
+        const setup=`SET statement_timeout='30s'; SET plan_cache_mode=${mode}; PREPARE benchmark(uuid,uuid,uuid,uuid,timestamptz,timestamptz,boolean) AS ${productionSql('analytics',q,parameters)};`;
+        let raw,executed=true,error;
+        try { raw=sql(state,setup+` EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON) EXECUTE benchmark(${literals});`); }
+        catch(failure) {
+            if(!failure.message.includes('statement timeout')) throw failure;
+            executed=false;error=failure.message;
+            raw=sql(state,setup+` EXPLAIN (FORMAT JSON) EXECUTE benchmark(${literals});`);
+        }
         const observation=JSON.parse(raw.slice(raw.indexOf('[\n')))[0];
-        result.push({scenario:q.name,mode,observation});
+        result.push({scenario:q.name,mode,executed,error,observation});
         fs.writeFileSync(path.join(directory,'plan-modes-'+volume+'.json'),JSON.stringify(result,null,2));
-        console.log(JSON.stringify({executions:volume,scenario:q.name,mode,executionMs:observation['Execution Time']}));
+        console.log(JSON.stringify({executions:volume,scenario:q.name,mode,executed,error,executionMs:observation['Execution Time']}));
     }
 }
