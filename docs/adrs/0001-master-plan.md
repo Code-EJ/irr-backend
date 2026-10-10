@@ -1,6 +1,8 @@
 # ADR-0001: IRR architecture overhaul and delivery master plan
 
-## Current executive milestone order — 2026-10-09
+## Current executive milestone order — 2026-10-10
+
+The owner-approved analytics-1 block is implemented and locally verified: matched planned/actual comparisons, unique declared-section coverage, weighted linked-collection productivity and live posted-sale revenue. Backend ADR-0022 and frontend ADR-0021 define the formulas; source references are backend 996e36f / frontend 9e25e91. Validation includes 51 backend unit tests, 95 integration tests, 127 frontend tests, 26 real API tests and actual browser empty/populated/filtered journeys. Operator acceptance of this new screen and the remaining local completion gates are separate. See [the execution register](../MASTER_PLAN_PROGRESS.md).
 
 The owner's Routes phase decision explicitly supersedes the prior requirement to finish external homologation before developing Routes. Identity policy and security remain unchanged. External deployment remains an operator gate, not a blocker for the next functional development milestone.
 
@@ -10,13 +12,14 @@ The owner's Routes phase decision explicitly supersedes the prior requirement to
 | PARALLEL OPERATIONS | Email provider configuration / first deployment | OPERATIONAL CONFIGURATION PENDING: external sender/domain/key and public deployment; EXTERNAL CONFIGURATION REQUIRED; no automatic merge, secrets update or database reset |
 | COMPLETED DEVELOPMENT | Routes | IMPLEMENTED / READY FOR HOMOLOGATION: explicit territory, organization-owned reusable planning, dated execution, preserved collection history and verified frontend integration |
 | COMPLETED DEVELOPMENT | First native operational report | IMPLEMENTED / LOCALLY VERIFIED: backend ADR-0021 / frontend ADR-0018; exact execution and collection facts, Brazilian periods and organization filters; see reporting verification |
-| NEXT | Additional analytics, reports, indicators and dashboards | PRODUCT DEFINITION REQUIRED for unapproved metrics; continue the existing sequence after operations-1 acceptance |
+| COMPLETED DEVELOPMENT | Approved MVP Analytics | IMPLEMENTED / LOCALLY VERIFIED: backend ADR-0022 / frontend ADR-0021; matched comparisons, unique section-count coverage, weighted productivity and live posted-sale revenue; operator acceptance pending |
+| PRODUCT DEFINITION | Remaining analytics, exports, indicators and dashboards | PRODUCT DEFINITION REQUIRED for unapproved metric families; approved analytics-1 is implemented in the milestone above |
 | INCREMENTAL EVOLUTION | GPS / route telemetry / mapping | PLANNED_POST_DEPLOY: extension at execution/geometry boundaries; no provider, hardware or advanced map now |
 | FUTURE | Optional BI and advanced analytics | DEFERRED until demonstrated need and separate product authorization |
 
 ADMINISTRATOR remains global, MANAGER remains local, and MEMBER keeps permitted organization operations. No new Identity architecture, role enum or credential policy is introduced. V1–V3 stay immutable; Routes uses additive V4. No data reset. Exclusively /api/v1 is retained; the first approved release manifest freezes that contract, not an ADR or local compilation.
 
-The new Routes and Analytics decisions interpret the historical client requirements without treating all historical extras as current implementation authority. Organization classification and account CITY_HALL are not territorial identities. Municipality/Neighborhood are added only for the demonstrated Routes requirement; no external dataset is imported. Stable IDs, exact kg/km, actor/timestamp history and immutable execution context prepare future analytics. Metrics, alerts, exports and GPS remain planned, with unresolved formulas marked PRODUCT DEFINITION REQUIRED.
+The new Routes and Analytics decisions interpret the historical client requirements without treating all historical extras as current implementation authority. Organization classification and account CITY_HALL are not territorial identities. Municipality/Neighborhood are added only for the demonstrated Routes requirement; no external dataset is imported. Stable IDs, exact kg/km, actor/timestamp history and immutable execution context support implemented analytics-1. Remaining metric families, alerts, exports and GPS retain their separate pending definitions and dependencies.
 
 Historical sequencing and test counts below remain dated evidence. Current statuses follow [requirements traceability](../requirements/traceability.md) and the Routes execution record added with verified implementation.
 

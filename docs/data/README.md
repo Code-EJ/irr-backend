@@ -1,6 +1,14 @@
 # Operational data and future analytics
 
-Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas). Status: planning; no analytics implementation in this milestone.
+Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas). Updated 2026-10-10. Status: operations-1 implemented; owner-approved analytics-1 implementation and verification recorded in the central progress register.
+
+## Current implemented reporting boundary
+
+PostgreSQL remains the source of truth. Operations-1 provides completed execution count, reported km/completeness, actual elapsed duration and active collection mass with independent receipt dates. Analytics-1 adds matched planned/actual distance and duration, unique declared-section coverage, weighted linked-receipt kg/h and kg/km, and live sale-date POSTED revenue. Formula approval is explicit on 2026-10-10. Dates use America/Sao_Paulo, with bounded inclusive calendar dates converted to half-open instants. Different cohorts are exposed rather than silently combined.
+
+Missing/zero denominators, absent declarations and unsupported geographic revenue attribution are unavailable, not estimated zero. Active linked collections aggregate once per execution; sales aggregate once per sale. Reversal recalculates historical revenue. Ratios round once on the backend to six decimal places; frontend presentation preserves authoritative strings. The metric register distinguishes these approved families from unresolved targets, alerts, recovery/stock closures and global comparisons.
+
+The planning sections and dated readiness checkpoint below retain architectural guidance and historical evidence. Their earlier statements that no analytics exists are superseded by this current boundary.
 
 Operational features should produce analytics-ready data. PostgreSQL remains the source of truth; no warehouse, lake, dimensional schema or mandatory BI is introduced. See [the metric register](metrics.md) for unapproved formulas. Native application/query aggregation, typed API and IRR frontend reports follow Routes. UI and future PDF/spreadsheet exports must share definitions.
 

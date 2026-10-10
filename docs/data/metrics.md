@@ -1,5 +1,18 @@
 # Metric register
 
+## Current approval — 2026-10-10
+
+The owner explicitly approved planned/actual comparison, section-count coverage, weighted kg/h and kg/km, and live posted-sale revenue under analytics-1. Backend ADR-0022 and frontend ADR-0021 specify the exact rules. These supersede the earlier PRODUCT DEFINITION REQUIRED cells for those families below. Operations-1 remains implemented. The historical entries for other formulas, dimensions, exports and alerts remain pending.
+
+| Approved analytics-1 indicator | Fact cohort / formula | Missing-data rule |
+| --- | --- | --- |
+| Planned/actual distance and duration | Completed executions in the Brazilian completion period with both snapshot planned and actual values; matched sums, signed delta, absolute magnitude, signed delta / planned * 100 | Exclude/report missing pairs; percent unavailable at planned zero |
+| Declared-section coverage | Unique execution/source-area pairs; covered / declared * 100 | No declarations or contradictory duplicate states: unavailable; identical duplicates counted once |
+| Weighted productivity | Active receipts grouped by considered execution; sum matched kg * 3600 / sum positive actual seconds, and sum matched kg / sum positive actual km | Separate matched cohorts; report missing receipts, missing/zero denominators; no average of ratios |
+| Revenue | Sum active POSTED sale header total once per sale, by sale_date; later reversal recalculates history | Drafts/reversed excluded; geographic/vehicle filters make revenue unavailable without execution provenance |
+
+These four families are implemented and locally tested through SQL/API and the generated frontend contract. Backend 996e36f and frontend 9e25e91 are the implementation references; final browser evidence is in the Analytics integration record. Ratios round HALF_UP to six decimal places after aggregation; exact sums retain precision. The pending classifications below are historical for these approved families only.
+
 Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas). The four operations-1 metrics below are owner-approved and implemented for local verification under backend ADR-0021 and frontend ADR-0018. Other entries remain planned; an available field alone is not an approved indicator.
 
 | Metric | Business meaning requiring confirmation | Required source data / grain | Unit | Dimensions / filters | Formula | Status |
@@ -18,4 +31,4 @@ Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas). The four 
 | Cross-municipality trends | Comparable units/periods and completeness | Above facts with explicit immutable municipality context | approved comparable units | organization, municipality, period | PRODUCT DEFINITION REQUIRED | PLANNED_AFTER_ROUTES |
 | Delay/variation alerts and targets | Thresholds, baselines and exclusions | Approved metric definitions + trustworthy route timing/history | approved units | organization, municipality, route, vehicle, period | PRODUCT DEFINITION REQUIRED | DEFERRED |
 
-Only the approved operations-1 query/API/frontend is implemented. No other metric, chart or export is authorized by this register. Do not replace null distance with zero, count joined crew/coverage rows as additional executions, infer historic municipality from free text, or equate raw mass with saleable inventory. GPS measurement, street geometry and authoritative neighborhood mapping remain future dependencies.
+The approved operations-1 and analytics-1 queries/APIs/frontend are implemented. The table above retains historical classifications; the current approval section supersedes the four approved families. Other metric families, charts and exports are not authorized by this register. Do not replace null distance with zero, count joined crew/coverage rows as additional executions, infer historic municipality from free text, or equate raw mass with saleable inventory. GPS measurement, street geometry and authoritative neighborhood mapping remain future dependencies.

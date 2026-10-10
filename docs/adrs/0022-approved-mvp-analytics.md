@@ -1,6 +1,6 @@
 # ADR-0022: Approved MVP analytics definitions and consistent fact cohorts
 
-- Status: Accepted business definitions; implementation and validation in progress.
+- Status: Accepted; implemented and locally verified. Operator acceptance and release readiness remain separate gates.
 - Date: 2026-10-10.
 - Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 - Authority: explicit owner approval on 2026-10-10. Continues ADR-0001, ADR-0020 and ADR-0021; ADR-0014 and the pragmatic modular monolith remain authoritative.

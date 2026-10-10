@@ -1,5 +1,7 @@
 # IRR backend
 
+Approved MVP Analytics is implemented at GET /api/v1/reports/analytics: matched planned/actual comparisons, declared-section coverage, weighted kg/h and kg/km, and reversal-aware posted-sale revenue. See [definitions and execution evidence](docs/architecture/analytics.md), [ADR-0022](docs/adrs/0022-approved-mvp-analytics.md) and [remaining local Master Plan gates](docs/MASTER_PLAN_PROGRESS.md). Missing inputs remain explicit; filtered revenue is unavailable where execution provenance is absent. This local milestone does not certify deployment readiness.
+
 The first approved native operational report now uses GET /api/v1/reports/operations. See [module architecture](docs/architecture/reporting.md) and [verification evidence](docs/reporting-verification.md). Swagger remains the executable API reference. Engineering documentation and JavaDoc are English; frontend interface content is Brazilian Portuguese.
 
 - Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
