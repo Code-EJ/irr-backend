@@ -10,5 +10,6 @@
 *.properties text eol=lf
 *.sql text eol=lf
 *.md text eol=lf
+*.pdf binary
 
 *.bat text eol=crlf

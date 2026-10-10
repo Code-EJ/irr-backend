@@ -3,7 +3,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
 import { fileURLToPath } from 'node:url';
-import { readRun,guard,sql } from './common.mjs';
+import crypto from 'node:crypto';
+import { readRun,guard,sql,docker } from './common.mjs';
 import { generate } from './generate.mjs';
 import { expected } from './oracle.mjs';
 
@@ -25,6 +26,8 @@ export function seedRun(directory,state,{seed=669850,executions=1000}={}) {
     const artifact = path.join(directory,'dataset-' + executions + '.sql');
     fs.writeFileSync(artifact,fixture.sql);
     sql(state,fixture.sql);
+    const pdf = fileURLToPath(new URL('./fixtures/verification.pdf',import.meta.url));
+    for (const reference of fixture.data.refs) docker(['cp',pdf,state.backend+':/data/uploads/'+reference.attachment]);
     // Real constraints remain enabled. These independent conservation checks catch malformed seeds.
     const consistency = JSON.parse(sql(state,`SELECT json_build_object(
       'inputMismatch',(SELECT count(*) FROM collection c WHERE c.total_weight_kg<>(SELECT sum(weight_kg) FROM input_item i WHERE i.collection_id=c.id)),
@@ -33,7 +36,7 @@ export function seedRun(directory,state,{seed=669850,executions=1000}={}) {
     )`));
     if (Object.values(consistency).some(count => count !== 0)) throw new Error('Synthetic domain conservation failed.');
     const scenarios = queries(fixture.data).map(query => ({query,operations:expected(fixture.data,query,'operations'),analytics:expected(fixture.data,query,'analytics')}));
-    const snapshot = {scenarioVersion:'synthetic-reports-1',seed,executions,sqlSha256:fixture.digest,counts:fixture.counts,consistency,preparationMs:performance.now()-started,actor:fixture.data.actor,scenarios};
+    const snapshot = {scenarioVersion:'synthetic-reports-1',seed,executions,sqlSha256:fixture.digest,attachmentSha256:crypto.createHash('sha256').update(fs.readFileSync(pdf)).digest('hex'),counts:fixture.counts,consistency,preparationMs:performance.now()-started,actor:fixture.data.actor,scenarios};
     fs.writeFileSync(path.join(directory,'scenario-' + executions + '.json'),JSON.stringify(snapshot,null,2));
     return snapshot;
 }

@@ -24,7 +24,7 @@ function token(directory,actor) {
     return content+'.'+crypto.sign('RSA-SHA256',Buffer.from(content),fs.readFileSync(path.join(directory,'private.pem'))).toString('base64url');
 }
 /** Reads the exact maintained production SQL; fails if the source block shape changes. */
-function productionSql(endpoint,query) {
+export function productionSql(endpoint,query) {
     const filename = endpoint==='analytics' ? 'AnalyticsReportService.java' : 'OperationalReportService.java';
     const content = fs.readFileSync(path.join(root,'src/main/java/org/code/api/reporting/application',filename),'utf8');
     const blocks = [...content.matchAll(/"""([\s\S]*?)"""/g)];
@@ -62,12 +62,14 @@ export async function benchmark(directory,state,{volumes=[1000,10000,50000],seed
         backendImageId:state.backendImageId,databaseImageId:state.databaseImageId,redisImageId:state.redisImageId,openapiSha256:state.openapiSha256,
         environment:{node:process.version,os:os.platform()+' '+os.release(),architecture:os.arch(),docker:info.ServerVersion,dockerCpus:info.NCPU,dockerMemoryBytes:info.MemTotal,
             backendCpus:2,backendMemory:'1GiB',heap:'256-512MiB',databaseCpus:2,databaseMemory:'1GiB',sharedBuffers:'128MB',workMem:'4MB',connectionPool:10},
-        configuration:{volumes,seed,samples,warmup,concurrencies,model:'closed-loop loopback HTTP, reused client, nearest-rank percentiles',period:'2026-06-01 through 2026-09-30 inclusive America/Sao_Paulo'},migrationHistory:sql(state,"SELECT version||':'||checksum FROM flyway_schema_history WHERE success ORDER BY installed_rank"),runs:[]};
+        configuration:{volumes,seed,samples,warmup,concurrencies,model:'closed-loop loopback HTTP, reused client, nearest-rank percentiles',period:'2026-06-01 through 2026-09-30 inclusive America/Sao_Paulo'},migrationHistory:sql(state,"SELECT version||':'||checksum FROM flyway_schema_history WHERE success ORDER BY installed_rank"),runs:[],status:'running'};
+    const checkpoint = () => fs.writeFileSync(path.join(directory,'results.json'),JSON.stringify(result,null,2));
     try {
         for (const executions of volumes) {
             const fixture = seedRun(directory,state,{seed,executions}), authorization = token(directory,fixture.actor);
             result.runs.push({executions,sqlSha256:fixture.sqlSha256,counts:fixture.counts,seedMs:fixture.preparationMs,measurements:[],plans:[]});
             const run = result.runs.at(-1);
+            checkpoint();
             for (const scenario of fixture.scenarios) for (const endpoint of ['operations','analytics']) {
                 // Validation before measurement is mandatory; incorrect totals abort the baseline.
                 await request(state,authorization,scenario,endpoint);
@@ -75,6 +77,7 @@ export async function benchmark(directory,state,{volumes=[1000,10000,50000],seed
                 const plans = [];
                 for(let i=0;i<3;i++) plans.push(JSON.parse(sql(state,'EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON) '+productionSql(endpoint,scenario.query)))[0]);
                 run.plans.push({scenario:scenario.query.name,endpoint,observations:plans});
+                checkpoint();
                 for(const concurrency of concurrencies) {
                     let next=0,errors=0; const times=[],failures=[],started=performance.now();
                     await Promise.all(Array.from({length:concurrency},async()=>{
@@ -83,6 +86,7 @@ export async function benchmark(directory,state,{volumes=[1000,10000,50000],seed
                     }));
                     const metrics=statistics(times,performance.now()-started,errors);
                     run.measurements.push({scenario:scenario.query.name,endpoint,concurrency,...metrics,failures});
+                    checkpoint();
                     console.log(JSON.stringify({executions,scenario:scenario.query.name,endpoint,concurrency,...metrics}));
                     if(errors) throw new Error('Benchmark recorded HTTP or correctness failures.');
                 }
