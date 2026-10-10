@@ -67,3 +67,7 @@ Enzo Ribas (https://github.com/oEnzoRibas): no new backend library or version ov
 ## Identity completion — 2026-10-04
 
 Maintainer: Enzo Ribas (https://github.com/oEnzoRibas). Recovery uses existing Java 21 HttpClient, Jackson, Spring transactions/task execution and Redis dependencies; no runtime library or provider SDK added. Local Mailpit is pinned to v1.31.3 and an image digest in Compose; no external email is sent in automated tests. Application package scans do not establish container OS vulnerability status.
+
+## Synthetic benchmark tooling
+
+Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas). The report benchmark uses Node 24 built-ins, the existing Docker CLI and immutable locally available backend/PostgreSQL 16/Redis 8.2 images. It adds no npm or Maven dependency and no runtime reporting cache. Versions/image IDs actually measured are recorded in [the benchmark evidence](reporting-benchmarks.md); preparation does not pull images. This inventory entry does not replace the pending full dependency and container security audit.
