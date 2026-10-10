@@ -19,13 +19,14 @@ const summaries=files.map(filename=>{
 const preparedPlans=[];
 for(const filename of fs.readdirSync(directory).filter(f=>/^plan-modes-\d+\.json$/.test(f))) {
     for(const item of JSON.parse(fs.readFileSync(path.join(directory,filename),'utf8'))) {
-        const joins=[];
+        const joins=[],aggregates=[];
         const walk=node=>{
             if(node['Node Type'].includes('Loop')) joins.push({type:node['Node Type'],estimatedRows:node['Plan Rows'],actualRows:node['Actual Rows'],loops:node['Actual Loops'],totalMs:node['Actual Total Time'],rowsRemoved:node['Rows Removed by Join Filter']});
+            if(node['Node Type'].includes('Aggregate')) aggregates.push({type:node['Node Type'],strategy:node.Strategy,actualRows:node['Actual Rows'],loops:node['Actual Loops'],totalMs:node['Actual Total Time']});
             for(const child of node.Plans??[]) walk(child);
         };
         walk(item.observation.Plan);
-        preparedPlans.push({filename,scenario:item.scenario,mode:item.mode,parameterBinding:item.parameterBinding??'shared named positions; diagnostic approximation, not repeated JDBC expansion',executed:item.executed,error:item.error,executionMs:item.observation['Execution Time'],joins});
+        preparedPlans.push({filename,scenario:item.scenario,mode:item.mode,parameterBinding:item.parameterBinding??'shared named positions; diagnostic approximation, not repeated JDBC expansion',executed:item.executed,error:item.error,executionMs:item.observation['Execution Time'],joins,aggregates});
     }
 }
 const result={description:'Local synthetic baseline, not production performance evidence.',summaries,preparedPlans};
