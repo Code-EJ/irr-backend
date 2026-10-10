@@ -76,6 +76,10 @@ jobs:
         with:
           node-version: '24'
       
+      - name: Verify recovery manifest guards
+        # Uses disposable local files; the selected-stack restore is a separate local gate.
+        run: node --test scripts/tests/recovery.test.mjs
+
       - name: Resolve Maven dependency tree
         run: |
           mkdir -p .local/audit
