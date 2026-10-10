@@ -1,18 +1,13 @@
 package org.code.api.reporting.application;
 
 import java.time.*;
-import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.code.api.domain.ports.OrganizationScope;
 import org.code.api.reporting.api.OperationalReport;
-import org.springframework.http.HttpStatus;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Aggregates independent facts in one PostgreSQL statement, avoiding join fan-out.
@@ -24,7 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 @PreAuthorize("isAuthenticated()")
 public class OperationalReportService {
   private static final ZoneId ZONE = ZoneId.of("America/Sao_Paulo");
-  private final OrganizationScope scope;
+  private final ReportQueryScope queryScope;
   private final NamedParameterJdbcTemplate jdbc;
 
   /**
@@ -34,40 +29,10 @@ public class OperationalReportService {
   @Transactional(readOnly = true)
   public OperationalReport get(
       LocalDate from, LocalDate to, UUID municipality, UUID route, UUID vehicle) {
-    UUID org = scope.organizationId();
-    if (from == null
-        || to == null
-        || to.isBefore(from)
-        || ChronoUnit.DAYS.between(from, to) > 365
-        || from.getYear() < 1
-        || to.getYear() > 9998)
-      throw new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, "Supply an ordered period of at most 366 calendar days");
-    var start = from.atStartOfDay(ZONE).toOffsetDateTime();
-    var end = to.plusDays(1).atStartOfDay(ZONE).toOffsetDateTime();
-    var p =
-        new MapSqlParameterSource()
-            .addValue("org", org)
-            .addValue("municipality", municipality)
-            .addValue("route", route)
-            .addValue("vehicle", vehicle)
-            .addValue("start", start)
-            .addValue("end", end);
-    if (municipality != null)
-      require("SELECT count(*) FROM municipality WHERE id=:municipality", p);
-    if (route != null)
-      require("SELECT count(*) FROM route WHERE id=:route AND organization_id=:org", p);
-    if (vehicle != null)
-      require("SELECT count(*) FROM vehicle WHERE id=:vehicle AND organization_id=:org", p);
-    if (route != null
-        && municipality != null
-        && jdbc.queryForObject(
-                "SELECT count(*) FROM route WHERE id=:route AND municipality_id=:municipality",
-                p,
-                Long.class)
-            == 0)
-      throw new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, "Route and municipality filters do not match");
+    var p = queryScope.parameters(from, to, municipality, route, vehicle);
+    UUID org = (UUID) p.getValue("org");
+    var start = (OffsetDateTime) p.getValue("start");
+    var end = (OffsetDateTime) p.getValue("end");
     return jdbc.queryForObject(
         """
  WITH executions AS (
@@ -113,11 +78,5 @@ public class OperationalReportService {
                 r.getLong("receipts"),
                 r.getBigDecimal("kg"),
                 r.getLong("unlinked")));
-  }
-
-  /** Rejects absent or foreign historical dimensions without exposing another organization. */
-  private void require(String query, MapSqlParameterSource p) {
-    if (jdbc.queryForObject(query, p, Long.class) == 0)
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Report filter not found");
   }
 }
