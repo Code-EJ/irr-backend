@@ -68,6 +68,9 @@ export async function benchmark(directory,state,{volumes=[1000,10000,50000],seed
     try {
         for (const executions of volumes) {
             const fixture = seedRun(directory,state,{seed,executions,reuse});
+            // Synchronous Docker loading can outlive server keep-alive. Drain socket-close events
+            // before the next volume's warm-up; never retry a failed measured request silently.
+            await new Promise(resolve=>setTimeout(resolve,50));
             const authorization = token(directory,fixture.actor);
             result.runs.push({executions,sqlSha256:fixture.sqlSha256,counts:fixture.counts,seedMs:fixture.preparationMs,measurements:[],plans:[]});
             const run = result.runs.at(-1);
@@ -95,7 +98,7 @@ export async function benchmark(directory,state,{volumes=[1000,10000,50000],seed
             }
         }
         result.completedAt=new Date().toISOString(); result.status='passed';
-    } catch(error) { result.status='failed';result.error=error.message;throw error; }
+    } catch(error) { result.status='failed';result.error=error.message;result.causeCode=error.cause?.code;throw error; }
     finally { fs.writeFileSync(path.join(directory,'results.json'),JSON.stringify(result,null,2)); }
     return result;
 }

@@ -9,7 +9,7 @@ if(!files.length||files.some(f=>!/^[-a-z0-9]+\.json$/.test(f))) throw new Error(
 const summaries=files.map(filename=>{
     const r=JSON.parse(fs.readFileSync(path.join(directory,filename),'utf8'));
     if(r.scenarioVersion!=='synthetic-reports-1'||!Array.isArray(r.runs)) throw new Error('Not a benchmark result.');
-    return {filename,status:r.status,error:r.error,startedAt:r.startedAt,completedAt:r.completedAt,sourceCommit:r.sourceCommit,
+    return {filename,status:r.status,error:r.error,causeCode:r.causeCode,startedAt:r.startedAt,completedAt:r.completedAt,sourceCommit:r.sourceCommit,
         backendImageId:r.backendImageId,databaseImageId:r.databaseImageId,redisImageId:r.redisImageId,openapiSha256:r.openapiSha256,
         environment:r.environment,configuration:r.configuration,migrationHistory:r.migrationHistory,
         runs:r.runs.map(run=>({executions:run.executions,sqlSha256:run.sqlSha256,counts:run.counts,seedMs:run.seedMs,measurements:run.measurements,
