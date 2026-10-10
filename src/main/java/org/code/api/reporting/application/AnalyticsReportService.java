@@ -128,13 +128,11 @@ public class AnalyticsReportService {
           AND (CAST(:municipality AS uuid) IS NULL OR municipality_id=:municipality)
           AND (CAST(:route AS uuid) IS NULL OR route_id=:route)
           AND (CAST(:vehicle AS uuid) IS NULL OR vehicle_id=:vehicle)
-      ), receipts AS (
-        SELECT c.route_execution_id,count(*) receipts,sum(c.total_weight_kg) kg
-        FROM collection c JOIN executions e ON e.id=c.route_execution_id
-        WHERE c.organization_id=:org AND c.is_active GROUP BY c.route_execution_id
       ), facts AS (
-        SELECT e.*,coalesce(c.receipts,0) receipts,c.kg
-        FROM executions e LEFT JOIN receipts c ON c.route_execution_id=e.id
+        SELECT e.*,count(c.id) receipts,sum(c.total_weight_kg) kg
+        FROM executions e LEFT JOIN collection c
+          ON c.organization_id=:org AND c.is_active AND c.route_execution_id=e.id
+        GROUP BY e.id,e.planned_distance_km,e.planned_seconds,e.distance_km,e.seconds
       ), totals AS (
         SELECT count(*) completed,
           count(*) FILTER(WHERE planned_distance_km IS NOT NULL AND distance_km IS NOT NULL) distance_count,

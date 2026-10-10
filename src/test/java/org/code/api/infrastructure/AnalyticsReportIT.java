@@ -13,11 +13,14 @@ import org.code.api.domain.models.user.Session;
 import org.code.api.domain.ports.TokenPort;
 import org.code.api.support.PostgresIntegrationTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Exercises analytics fact grains, quality exclusions, Brazilian dates and live corrections.
@@ -53,16 +56,21 @@ class AnalyticsReportIT extends PostgresIntegrationTest {
         .isEqualTo(1);
   }
 
-  /** Weighted ratios use one denominator per execution even with multiple receipt facts. */
-  @Test
-  void usesWeightedMatchedCohortsAndLiveReceiptCorrections() throws Exception {
+  /** Verifies weighted facts and live corrections on one connection under both prepared modes. */
+  @ParameterizedTest
+  @ValueSource(strings = {"force_custom_plan", "force_generic_plan"})
+  @Transactional
+  void usesWeightedMatchedCohortsAndLiveReceiptCorrections(String planMode) throws Exception {
+    jdbc.queryForObject("SELECT set_config('plan_cache_mode', ?, true)", String.class, planMode);
     var f = fixture();
     var first = execution(f, "10", 60, "10", 3600, "2026-10-08T12:00:00Z", new boolean[] {true});
     var second = execution(f, "20", 60, "30", 7200, "2026-10-08T18:00:00Z", new boolean[] {false});
     var c = receipt(f, first, "10");
     receipt(f, first, "10");
     receipt(f, second, "100");
-    var r = report(f, "", 200);
+    JsonNode r = null;
+    // Cross JDBC's prepare threshold on the transaction-bound connection before assertions.
+    for (int i = 0; i < 7; i++) r = report(f, "", 200);
     decimal(r.path("distanceComparison"), "planned", "30");
     decimal(r.path("distanceComparison"), "actual", "40");
     decimal(r.path("distanceComparison"), "absoluteDeviation", "10");
