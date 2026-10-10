@@ -24,7 +24,7 @@ function token(directory,actor) {
     return content+'.'+crypto.sign('RSA-SHA256',Buffer.from(content),fs.readFileSync(path.join(directory,'private.pem'))).toString('base64url');
 }
 /** Reads the exact maintained production SQL; fails if the source block shape changes. */
-export function productionSql(endpoint,query) {
+export function productionSql(endpoint,query,parameters) {
     const filename = endpoint==='analytics' ? 'AnalyticsReportService.java' : 'OperationalReportService.java';
     const content = fs.readFileSync(path.join(root,'src/main/java/org/code/api/reporting/application',filename),'utf8');
     const blocks = [...content.matchAll(/"""([\s\S]*?)"""/g)];
@@ -33,7 +33,7 @@ export function productionSql(endpoint,query) {
     const args = {org:quoted(query.org),route:query.route?quoted(query.route):'NULL',municipality:'NULL',vehicle:'NULL',start:quoted(query.from+'T03:00:00Z')+'::timestamptz',end:quoted(new Date(Date.parse(query.to+'T03:00:00Z')+86400000).toISOString())+'::timestamptz',salesAvailable:query.route?'false':'true'};
     return blocks[0][1].replace(/(?<!:):([A-Za-z]\w*)/g,(_,name) => {
         if (!(name in args)) throw new Error('Unexpected SQL parameter: '+name);
-        return args[name];
+        return parameters ? parameters[name] : args[name];
     });
 }
 /** Benchmarks the actual HTTP response body; precision/scope validation happens after timing it. */

@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { generate,identity } from './generate.mjs';
 import { expected,ratio,assertReport } from './oracle.mjs';
-import { statistics } from './run.mjs';
+import { statistics,productionSql } from './run.mjs';
 
 test('same seed and volume reproduce byte-identical SQL and identities',()=>{
     const a=generate({seed:669850,executions:100}),b=generate({seed:669850,executions:100});
@@ -56,4 +56,14 @@ test('response checks reject incorrect totals and a null silently changed to zer
 test('nearest-rank percentiles and throughput include recorded failures',()=>{
     const r=statistics(Array.from({length:100},(_,i)=>i+1),2000,2);
     assert.equal(r.p50Ms,50);assert.equal(r.p95Ms,95);assert.equal(r.p99Ms,99);assert.equal(r.throughputRequestsPerSecond,51);assert.equal(r.errors,2);
+});
+test('prepared plan diagnostics preserve the maintained SQL with typed parameter positions',()=>{
+    const q={org:identity(669850,'org',0),from:'2026-06-01',to:'2026-09-30'};
+    const positions={org:'$1',municipality:'$2',route:'$3',vehicle:'$4',start:'$5',end:'$6',salesAvailable:'$7'};
+    const prepared=productionSql('analytics',q,positions);
+    assert.ok(prepared.includes('organization_id=$1'));
+    assert.ok(prepared.includes('CAST($3 AS uuid)'));
+    assert.ok(prepared.includes('AND $7'));
+    assert.ok(!prepared.includes(':org'));
+    assert.ok(productionSql('analytics',q).includes("'2026-06-01T03:00:00Z'::timestamptz"));
 });
