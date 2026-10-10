@@ -16,6 +16,18 @@ const summaries=files.map(filename=>{
             sql:run.plans.map(p=>({scenario:p.scenario,endpoint:p.endpoint,observations:p.observations.map(o=>({executionMs:o['Execution Time'],planningMs:o['Planning Time'],
                 sharedHits:o.Plan['Shared Hit Blocks'],sharedReads:o.Plan['Shared Read Blocks'],tempReads:o.Plan['Temp Read Blocks'],tempWrites:o.Plan['Temp Written Blocks']}))}))}))};
 });
-const result={description:'Local synthetic baseline, not production performance evidence.',summaries};
+const preparedPlans=[];
+for(const filename of fs.readdirSync(directory).filter(f=>/^plan-modes-\d+\.json$/.test(f))) {
+    for(const item of JSON.parse(fs.readFileSync(path.join(directory,filename),'utf8'))) {
+        const joins=[];
+        const walk=node=>{
+            if(node['Node Type'].includes('Loop')) joins.push({type:node['Node Type'],estimatedRows:node['Plan Rows'],actualRows:node['Actual Rows'],loops:node['Actual Loops'],totalMs:node['Actual Total Time'],rowsRemoved:node['Rows Removed by Join Filter']});
+            for(const child of node.Plans??[]) walk(child);
+        };
+        walk(item.observation.Plan);
+        preparedPlans.push({filename,scenario:item.scenario,mode:item.mode,executed:item.executed,error:item.error,executionMs:item.observation['Execution Time'],joins});
+    }
+}
+const result={description:'Local synthetic baseline, not production performance evidence.',summaries,preparedPlans};
 fs.writeFileSync(path.join(directory,'public-summary.json'),JSON.stringify(result,null,2));
 console.log('Wrote public-summary.json; review before copying to documentation.');

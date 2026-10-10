@@ -8,6 +8,8 @@ if(!['auto','force_custom_plan'].includes(mode)) throw new Error('Experiment mod
 guard(state);
 sql(state,'ALTER DATABASE irr_benchmark SET plan_cache_mode = '+mode);
 docker(['restart',state.backend]);
+guard(state);
+fs.writeFileSync(path.join(directory,'run.json'),JSON.stringify(state,null,2));
 const started=Date.now();
 while(true) {
     try {

@@ -33,6 +33,11 @@ export function guard(state) {
     for (const kind of ['database','backend','redis']) {
         const service = JSON.parse(docker(['inspect',state[kind]]))[0];
         if (service.Config.Labels['com.docker.compose.project'] !== state.project || service.Config.Labels['irr.purpose'] !== state.purpose) throw new Error('Refusing access to an unowned container.');
+        if(kind==='backend') {
+            const port=service.NetworkSettings.Ports['9191/tcp']?.[0];
+            if(!port||port.HostIp!=='127.0.0.1') throw new Error('Owned benchmark API must publish only to loopback.');
+            state.api='http://127.0.0.1:'+port.HostPort;
+        }
     }
 }
 export function sql(state, query) {
