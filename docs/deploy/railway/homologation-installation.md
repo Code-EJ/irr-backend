@@ -24,7 +24,7 @@ Do not deploy Mailpit or copy development data. Destination initial-data scope r
 
 ## 3. Backend
 
-Select the reviewed backend source commit/image, existing Dockerfile and disable automatic deploys. Keep target port 9191 and readiness healthcheck `/actuator/health/readiness`. Set restart-on-failure with a bounded retry count, then configure independent uptime/disk alerts; deployment healthchecks are not continuous monitoring.
+Select the reviewed backend source commit/image, existing Dockerfile and disable automatic deploys. Keep target port 9191, SERVER_PORT=9191, PORT=9191 and readiness healthcheck `/actuator/health/readiness`. PORT controls Railway's healthcheck destination even when the public target port is already correct. Set restart-on-failure with a bounded retry count, then configure independent uptime/disk alerts; deployment healthchecks are not continuous monitoring.
 
 Set DB/Redis references and environment-specific RSA keys using [the variable table](variables.md). No keys/passwords go into Git, chat, frontend variables or build arguments. Set `DEV_BOOTSTRAP_ENABLED=false` and do not activate the development profile. Mount the attachment volume at `/data/uploads`; set `STORAGE_DIRECTORY=/data/uploads`.
 

@@ -1,5 +1,18 @@
 # Isolated homologation execution — 2026-10-11
 
+## Current live checkpoint
+
+The separate synthetic environment is now running all four services. Backend deployment `ddfaec01-b072-44a2-8614-b064d48ff9a8` succeeded after PORT=9191 was aligned with SERVER_PORT and the public target. Backend source is `84fe4f1` with only its literal Maven cache namespace generated for service `70ac22d1-7f09-457e-a816-8631d84e6339`; the owner Dockerfile stays unchanged. The retained generator is `scripts/prepare-railway-dockerfile.mjs` in `b3077ef`. Source upload excludes ignored credentials and does not enable GitHub autodeploys. The earlier cloud failures and preparation-only statements below are historical.
+
+- PostgreSQL deployment `d078c812-d441-46f6-8783-52fd719dcf53`: PostgreSQL 16.15 ready; private network only.
+- Redis deployment `1b4a7869-2731-4a37-b580-6a6e88d8832d`: Redis 8.2.10 with authenticated AOF, 64 MB maxmemory and noeviction. A root-owned mount containing lost+found initially prevented upstream repair. The bounded mount-root fix in `84fe4f1` preserves that directory and passes the retained secret-safe startup test. Actual PID 1 UID is 999, with no capability bounds and no-new-privileges.
+- Frontend deployment `9563f266-6ee7-4682-a0d1-3854c77f0a26`: source `bdcafa3`, public API origin baked into the bundle; HTTPS and direct SPA routes verified.
+- Actual backend PID 1 UID/GID is 10001/10001, with zero capability bounds and no-new-privileges. All three 500 MB volumes now read back `us-east4-eqdc4a`; PostgreSQL runtime also reports Virginia. V1–V4 were applied normally, without reset or repair.
+
+The six actual public pair checks passed: health, semantic pinned OpenAPI, exact CORS, frontend health/direct routes and served bundle origin. Operator authentication, organization selection, six report/reconciliation reads and a real PDF upload/download passed. After replacing the backend with bootstrap disabled, operator login and the persisted PDF download passed with the same SHA-256. This is measured API/runtime evidence, not completed browser/operator acceptance. The initial admin password was rotated and bootstrap variables cleared. A synthetic MANAGER operator is scoped to **Homologação IRR — Dados Sintéticos**. Private owner/admin/operator credentials are in ignored `.local/railway-homologation/.env-homologation`, never documentation or Git. A dedicated personal Railway SSH key was registered for these checks; its private key remains ignored locally.
+
+[Client session instructions](client-homologation.md) describe the ready functional evaluation scope. Mail remains disabled and actual recovery delivery is pending approved provider configuration. Raw image findings, final risk review and client/operator acceptance remain open; no production deployment or main merge is claimed. The previous project was preserved. Backend CI at `cc25efe` completed successfully; later deployment-tooling commits require their own checks.
+
 Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
 Authority: [ADR-0028](../../adrs/0028-isolated-trial-homologation.md). This is a provisioning record, not a successful deployment or merge approval. The existing `lovely-wonder` project was not modified. No application image, GitHub source or automatic deployment was connected to the new services.

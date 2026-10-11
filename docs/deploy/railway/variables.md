@@ -16,13 +16,14 @@ Current remote configuration is recorded in [the isolated execution record](exec
 | RAILWAY_RUN_UID / IRR_INIT_STORAGE_PERMISSIONS | 0 / true only for reviewed root-owned volume initialization; Java still runs as 10001 | Railway backend bootstrap; see ADR-0026 |
 | API_DOCS_ENABLED | true for official pre-production Swagger; review exposure per environment | Backend runtime |
 | SERVER_PORT | 9191 (existing default and health-check target) | Backend runtime |
+| PORT | 9191 for backend; 8080 for frontend when explicitly fixing its listener | Railway routing/healthcheck configuration |
 | VITE_API_BASE_URL | https://your-backend-public-domain/api/v1 | Frontend build-time, public |
 | BOOTSTRAP_ADMIN_ENABLED | false by default; true only for first-environment provisioning | Optional backend runtime |
 | BOOTSTRAP_ADMIN_NAME / BOOTSTRAP_ADMIN_EMAIL / BOOTSTRAP_ADMIN_PASSWORD | Explicit operator-supplied first-account inputs | Optional bootstrap; password secret |
 
 Do not confuse PGPORT with PostgreSQL's password variable: a missing DB_PORT otherwise falls back to the local 5435 default. Railway internal networking should use the service reference value, normally 5432.
 
-The current application reads SERVER_PORT, not Railway PORT. Keep the existing backend target port 9191 and Nginx target 8080. Changing listeners also requires matching health checks/networking; this delivery makes no such change.
+The current application reads SERVER_PORT, while Railway uses PORT for its healthcheck. Set both to 9191 for the backend and retain its public target port 9191; a target-port setting alone does not set the healthcheck port. The initial cloud application started correctly but Railway rejected it because PORT was absent. Setting PORT=9191 corrected the deployment without disabling readiness or changing the listener. Keep Nginx's target 8080. See the [official healthcheck port guidance](https://docs.railway.com/deployments/healthchecks#configure-the-healthcheck-port).
 
 CORS accepts origins only, without /api/v1 or trailing paths. No wildcard workaround. Browser bearer authentication does not require credentialed cookies. Rebuild the frontend after a VITE_API_BASE_URL change: runtime environment edits cannot rewrite static JavaScript. Never use localhost or *.railway.internal in the deployed browser API URL.
 
