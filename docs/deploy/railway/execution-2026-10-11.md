@@ -60,3 +60,9 @@ The initial PowerShell loop incorrectly used a colon in the API-check log filena
 5. Push review branches, open PRs, review actual CI results and release gates before merging. Homologation provisioning neither changes main nor proves production readiness.
 
 The account usage snapshot was approximately USD 0.03765; it is not remaining-credit evidence or a forecast. Trial credits are shared with the preserved project. No payment method, paid plan, workspace-wide spending limit or production resource was changed. Monitor actual account usage during bounded homologation sessions; the Free plan cannot retain this three-volume topology.
+
+## GitHub and stateful candidate follow-up
+
+The branches were pushed and draft review PRs opened: [backend #79](https://github.com/Code-EJ/irr-backend/pull/79) and [frontend #67](https://github.com/Code-EJ/irr-frontend/pull/67). No main merge occurred. At backend commit `04454b2`, workflow run `38135252086` passed Java, documentation and container jobs but failed the dependency-audit step; its recovery, initial-data and benchmark guard tests passed. Frontend workflow run `38135253800` at `701ccc0` completed successfully. These are dated commit-specific results, not automatic proof for subsequent commits.
+
+[The stateful remediation evidence](../../security/README.md) now records PostgreSQL 16.15 and Redis 8.2.10 patched candidate images, each with zero critical/high scan matches and four residual findings requiring review. The retained stateful rehearsal checks authentication and persistent restart without published ports or development-volume changes. These candidates have not been deployed to Railway; the dependency/security and effective-region gates remain open. Docker Desktop was restarted locally and the existing backend/frontend/database/Redis/Mailpit containers returned healthy.

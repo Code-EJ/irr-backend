@@ -1,0 +1,94 @@
+{
+  "maintainer": "Enzo Ribas (https://github.com/oEnzoRibas)",
+  "scanner": "grype",
+  "scannerVersion": "0.120.1",
+  "databaseBuilt": "2026-10-10T06:30:01Z",
+  "rawReportSha256": "c5eefc46dd4f4e4dd6e20701fb762ef31ab4d257b891c7205c59f211d4cca7c8",
+  "source": {
+    "imageId": "sha256:4ec9ae58b9db79dfc73eb88e98f83a4cf4b8962304998add5594c47d9106e653",
+    "manifestDigest": "sha256:003a7c95cf1dbe6c322d2f4797e5b4873ff1191ca3526a8012044511f8e0cac9"
+  },
+  "distro": {
+    "name": "alpine",
+    "version": "3.22.6",
+    "idLike": []
+  },
+  "counts": {
+    "Medium": 3,
+    "Low": 1
+  },
+  "matchCount": 4,
+  "interpretation": "Matches are not unique exploitable defects. Pending findings require package/vendor/configuration review; no suppression or clean-release assertion.",
+  "matchedPackages": [
+    {
+      "name": "busybox",
+      "version": "1.37.0-r20",
+      "type": "apk"
+    },
+    {
+      "name": "busybox-binsh",
+      "version": "1.37.0-r20",
+      "type": "apk"
+    },
+    {
+      "name": "ssl_client",
+      "version": "1.37.0-r20",
+      "type": "apk"
+    },
+    {
+      "name": "redis",
+      "version": "8.2.10",
+      "type": "binary"
+    }
+  ],
+  "findings": [
+    {
+      "id": "CVE-2025-60876",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "busybox",
+      "version": "1.37.0-r20",
+      "type": "apk",
+      "fixState": "",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-60876",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-60876",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "busybox-binsh",
+      "version": "1.37.0-r20",
+      "type": "apk",
+      "fixState": "",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-60876",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-60876",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "ssl_client",
+      "version": "1.37.0-r20",
+      "type": "apk",
+      "fixState": "",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-60876",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-49112",
+      "namespace": "nvd:cpe",
+      "severity": "Low",
+      "package": "redis",
+      "version": "8.2.10",
+      "type": "binary",
+      "fixState": "",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-49112",
+      "disposition": "pending"
+    }
+  ]
+}
