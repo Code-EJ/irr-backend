@@ -1,5 +1,9 @@
 # Pre-release security review — 2026-10-10
 
+## Proposed portable ingress image
+
+ADR-0027 adds a **candidate**, not approved, Caddy 2 ingress for the portable VPS topology. [The sanitized scan](caddy-image-2026-10-10.json) records Caddy 2.11.7, pulled index digest `d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f`. Grype 0.120.1 completed with 49 raw matches: 3 critical, 20 high, 14 medium, 8 low and 4 unknown. Every disposition remains pending; syntax validation does not establish exploitability or remediation. Review compatible patches and vendor applicability before selecting the final ingress digest. No public ingress was installed. This additional infrastructure review is part of the production gate, not hidden by existing application checks.
+
 Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
 ## Application dependencies: individual dispositions
