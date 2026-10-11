@@ -58,13 +58,23 @@ You can use Railway reference variables such as `${{database.POSTGRES_PASSWORD}}
 
 ## 4. Prepare clean source archives
 
-Set absolute checkout paths and full reviewed SHAs. These examples do not choose a release for you. Use a **new** staging directory for each release so old files cannot leak into the upload.
+Set absolute checkout paths and full reviewed SHAs. The concrete SHAs below identify the published 2026-10-11 homologation snapshot, including the institutional footer; they are not a production approval or a moving latest release. For a later release replace them with its approved full SHAs. A marker such as `REPLACE_WITH_FULL_REVIEWED_BACKEND_SHA` is explanatory text, never a Git commit. Use a **new** staging directory for each release so old files cannot leak into the upload.
 
 ```powershell
 $BackendRepo = 'F:\Users\EHD\Github\CODEJR\irr-backend-identity'
 $FrontendRepo = 'F:\Users\EHD\Github\CODEJR\irr-frontend'
-$BackendCommit = 'REPLACE_WITH_FULL_REVIEWED_BACKEND_SHA'
-$FrontendCommit = 'REPLACE_WITH_FULL_REVIEWED_FRONTEND_SHA'
+$BackendCommit = '5779be077bce4d6e586fd8ddab555a7d58b45590'
+$FrontendCommit = 'a4dbac251d03a00afeec0299c9ca8733f1e3ed8b'
+foreach ($repo in @($BackendRepo,$FrontendRepo)) {
+  git -C $repo fetch origin
+  if ($LASTEXITCODE -ne 0) { throw 'Fetch failed; verify repository access' }
+}
+foreach ($selection in @(@{Repo=$BackendRepo;Commit=$BackendCommit},@{Repo=$FrontendRepo;Commit=$FrontendCommit})) {
+  if ($selection.Commit -notmatch '^[a-fA-F0-9]{40}$') { throw 'Use a real full 40-character commit SHA, not a placeholder' }
+  git -C $selection.Repo cat-file -e ($selection.Commit + '^{commit}')
+  if ($LASTEXITCODE -ne 0) { throw 'Selected commit is unavailable; verify the reviewed SHA and fetch' }
+}
+if ($Backend -notmatch '^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$') { throw 'Set the backend service UUID from step 1 first' }
 $Stage = Join-Path $BackendRepo ('.local/railway-release-' + [guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $Stage | Out-Null
 foreach ($name in @('backend','frontend','database','redis')) {
@@ -86,6 +96,8 @@ if ($LASTEXITCODE -ne 0) { throw 'Backend cache namespace preparation failed' }
 ```
 
 Run the retained helper from the backend checkout: it permits output only under that checkout's ignored `.local`. It changes only the staged Dockerfile's literal Maven cache service ID. Do not replace the owner's Dockerfile or remove its Maven/Spotless changes. Inspect the staged files: each infrastructure directory needs only the files copied above. Do not upload `$Stage` itself or use `--no-gitignore`; upload each explicit subdirectory with `--path-as-root`.
+
+If `git archive` says `not a valid object name`, stop before upload, replace the marker with the selected real SHA, run the fetch/validation above and rerun the **whole preparation block** with a new Stage. An empty directory created by the failed attempt is not a release. No checkout reset, volume deletion or secret replacement is necessary.
 
 ## 5. Deploy or resume, in dependency order
 
