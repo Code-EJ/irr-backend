@@ -1,5 +1,7 @@
 # Hostinger production plan — not purchased or deployed
 
+After procurement, follow [the step-by-step VPS operator manual](../vps-operator-guide.md). It covers hPanel/IP/DNS preparation, Docker installation prerequisites, image publishing, protected configuration, first administrator, validation and updates. Keep [backup/recovery](../backup-and-recovery.md) with the operational handoff. No AI or provider-specific application integration is required.
+
 Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
 Production target under [ADR-0027](../../adrs/0027-provider-independent-deployment.md): a Brazilian Hostinger KVM VPS, preferably São Paulo. Homologation remains Railway Virginia with synthetic data only. Application/deployment artifacts remain provider-independent; follow [the portable VPS procedure](../portable-vps.md). No Hostinger SDK, application patch, Kubernetes or hosting control panel is required.

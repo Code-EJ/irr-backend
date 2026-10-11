@@ -1,5 +1,7 @@
 # IRR backend
 
+**Manual deployment starts here:** [operator guide](docs/deploy/operator-guide.md), with copyable Railway and Hostinger/other VPS procedures, expected results, updates, pause/resume, backups and recovery. It can be followed without an AI session. Use the dated execution records for historical evidence, not as command sequences.
+
 Current architecture: [Mermaid runtime, module, transaction and Railway diagrams](docs/architecture/system-diagrams.md). Delivery status: [technical, deployment and client release gates](docs/release-readiness.md).
 
 Current hosting plan: [provider-independent deployment](docs/deploy/README.md), [Railway synthetic homologation](docs/deploy/railway/homologation-installation.md) and [Hostinger Brazil production planning](docs/deploy/hostinger/README.md). Portable Docker Compose and HTTPS ingress are in `deploy/`. Local verification does not imply remote deployment.

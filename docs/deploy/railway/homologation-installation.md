@@ -1,5 +1,7 @@
 # Fresh Railway homologation installation
 
+**For current step-by-step commands, use [the Railway operator manual](operator-guide.md).** It covers both a fresh installation and the existing paused environment, without an AI session. This older checklist preserves planning context; statements below about actions not yet performed are historical, not the current environment state. Backup and rollout boundaries are explicit in the manual.
+
 Current execution authority is [ADR-0028](../../adrs/0028-isolated-trial-homologation.md). [The dated provisioning record](execution-2026-10-11.md) identifies which steps have actually run and which remain open. Earlier preparation-only statements below are historical; reserved domains and configured secrets do not establish a successful installation.
 
 Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).

@@ -4,11 +4,12 @@ Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
 Never copy resolved secrets into source, issues, logs or this runbook. Reference the actual Railway service names configured in your project.
 
-Current remote configuration is recorded in [the isolated execution record](execution-2026-10-11.md). Historical statements below that no remote changes were made refer to earlier implementation deliveries. The new environment has fresh secrets and reserved origins, but no deployed workload or provisioned administrator yet.
+Current remote configuration is recorded in [the isolated execution record](execution-2026-10-11.md). The environment was deployed, accounts were provisioned and public checks passed before the owner paused all four services. Historical statements below that no remote changes were made refer to earlier deliveries. Use [the manual guide](operator-guide.md) for the actual service-specific variable names and restart order.
 
 | Variable | Source or example | Scope |
 | --- | --- | --- |
-| DB_HOST / DB_PORT / DB_NAME / DB_USER / DB_PASSWORD | Postgres PGHOST / PGPORT / PGDATABASE / PGUSER / PGPASSWORD reference variables | Backend runtime; password secret |
+| DB_HOST / DB_PORT / DB_NAME / DB_USER / DB_PASSWORD | Database private DNS / 5432 / database.POSTGRES_DB / database.POSTGRES_USER / database.POSTGRES_PASSWORD for the retained custom service | Backend runtime; password secret |
+| POSTGRES_DB / POSTGRES_USER / POSTGRES_PASSWORD / PGDATA | irr / irr_app / unique password / /var/lib/postgresql/data/pgdata | Database service only; password secret |
 | REDIS_HOST / REDIS_PORT / REDIS_PASSWORD | Redis reference variables | Backend runtime; password secret |
 | RSA_PUBLIC_KEY / RSA_PRIVATE_KEY | Matching inline PEM strings, with real line breaks, or mounted file: resource locations | Backend runtime; private key secret |
 | CORS_ALLOWED_ORIGINS | https://your-frontend-public-domain | Backend runtime; comma-separated exact origins |

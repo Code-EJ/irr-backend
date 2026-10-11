@@ -1,5 +1,7 @@
 # Portable Linux VPS installation candidate
 
+For an ordered installation with copyable commands, follow [the VPS operator manual](vps-operator-guide.md) and [backup/recovery procedure](backup-and-recovery.md). This page retains architectural constraints and earlier candidate verification; it is not the primary installation sequence.
+
 Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
 Use after reviewing [ADR-0027](../adrs/0027-provider-independent-deployment.md), [release gates](../release-readiness.md) and the provider's budget/region approval. This procedure is not evidence of an installed public environment.
