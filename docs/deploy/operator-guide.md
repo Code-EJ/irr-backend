@@ -15,7 +15,7 @@ This is the starting point for a human operator. No AI session, private chat his
 | Back up or recover a Docker host | [Backup and recovery](backup-and-recovery.md) |
 | Configure real recovery email | [Email procedure](../email-recovery.md) |
 
-Railway homologation is synthetic-only in Virginia. Production requires an approved Brazilian location, independent secrets and approved client data. As of this review the Railway deployments are stopped, while their volumes remain. Writing this guide does not start any workload. Hostinger is not installed. See [execution evidence](railway/execution-2026-10-11.md) for what was actually tested.
+Railway homologation is synthetic-only in Virginia. Production requires an approved Brazilian location, independent secrets and approved client data. After the documented pause the owner requested activation; [the resume record](railway/resume-2026-10-11.md) records all four SUCCESS deployments and fresh public checks. Hostinger is not installed. See [execution evidence](railway/execution-2026-10-11.md) for the historical sequence.
 
 For another provider, a Linux VPS can follow the same VPS commands unchanged except for account, firewall and DNS screens. A managed container platform must provide private PostgreSQL 16 and authenticated persistent Redis 8.2, writable persistent attachment storage, supported image entrypoints/UIDs, HTTPS routing to ports 9191/8080, secrets, healthchecks and backups. Map those capabilities explicitly before deploying; an ephemeral container or static-site-only plan cannot host the complete application. Do not silently substitute ephemeral disk or expose internal services to make an incompatible platform work.
 

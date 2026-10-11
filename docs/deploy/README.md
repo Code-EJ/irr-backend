@@ -9,7 +9,7 @@ Authority: [ADR-0027](../adrs/0027-provider-independent-deployment.md). The appl
 | Environment | Target | Data | Authorization |
 | --- | --- | --- | --- |
 | Local development | Existing Docker stacks | Retained local development records | Already running; do not reset |
-| Homologation | Railway US East Virginia | Synthetic records only; distinct credentials/volumes | Deployed and verified, then paused by owner; acceptance gates remain |
+| Homologation | Railway US East Virginia | Synthetic records only; distinct credentials/volumes | Resumed at owner request and verified; acceptance gates remain |
 | Production | Hostinger VPS in Brazil, preferably São Paulo | Approved client data only | Budget/procurement/installation pending; not deployed |
 
 - [Portable Linux VPS installation](portable-vps.md) uses `deploy/compose.yaml` and `deploy/Caddyfile` from this repository.

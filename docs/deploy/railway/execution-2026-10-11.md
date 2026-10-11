@@ -1,6 +1,10 @@
 # Isolated homologation execution — 2026-10-11
 
-## Current checkpoint: owner-requested pause
+## Current checkpoint: resumed by owner
+
+The owner subsequently requested activation. All four services were deployed successfully and the new frontend credits, public contract, administrator/operator login and retained PDF were verified. [The resume record](resume-2026-10-11.md) gives exact source SHAs, deployment/image IDs and remaining limitations. The pause text below is history, not the current service state.
+
+## Historical checkpoint: owner-requested pause
 
 The owner requested a temporary shutdown to preserve trial compute credit before scheduling the client session with Paulo. The official CLI `railway down --project <project-id> --environment <environment-id> --service <service-id> --yes` was executed sequentially for frontend, backend, Redis and PostgreSQL, using only the isolated project/environment/service identifiers below. A subsequent `railway deployment list` for each service confirmed its latest deployment is **REMOVED**. No volume, service definition, domain, variable or retained record was deleted. The existing `lovely-wonder` project was not stopped or modified.
 
