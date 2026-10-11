@@ -249,3 +249,9 @@ Local synthetic report performance checks use an isolated migrated database. Fol
 ## Java code quality
 
 Spotless is configured in Maven and bound to validate, so `./mvnw verify` enforces formatting. Run `./mvnw spotless:check` to inspect or `./mvnw spotless:apply` for deliberate formatting, using Java 21. Existing Google Java Format, imports and whitespace configuration is preserved. Maintainer: Enzo Ribas (https://github.com/oEnzoRibas).
+
+## Bounded container builds and final local candidate
+
+The Maven build stage defaults to `MAVEN_OPTS=-Xmx1024m -XX:ActiveProcessorCount=2`; override with `docker build --build-arg "MAVEN_OPTS=-Xmx1536m -XX:ActiveProcessorCount=2" -t irr-backend-candidate .` when the developer host has an appropriate budget. The existing Maven cache/goals and Spotless check remain. This build-only argument does not configure runtime JVM capacity. A successful package with skipped tests is not a replacement for the documented test gates.
+
+[The dated local candidate record](docs/deploy/railway/local-candidate-2026-10-10.json) captures tested image IDs, declared build sources and contract/migration hashes. [Final readiness](docs/release-readiness.md) records open browser/operator, security, client-data and Railway gates. No production installation is implied by the local candidate.

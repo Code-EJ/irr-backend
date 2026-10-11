@@ -580,7 +580,14 @@
         "7.84.0"
       ],
       "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-32207",
-      "disposition": "pending"
+      "disposition": "corrected-vendor-backport",
+      "review": {
+        "date": "2026-10-10",
+        "release": "Ubuntu 22.04 Jammy",
+        "installedPackageVersion": "7.81.0-1ubuntu1.29",
+        "vendorFixedVersion": "7.81.0-1ubuntu1.3",
+        "url": "https://ubuntu.com/security/CVE-2022-32207"
+      }
     },
     {
       "id": "CVE-2024-5535",
@@ -1237,7 +1244,14 @@
         "4.0.1"
       ],
       "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-34182",
-      "disposition": "pending"
+      "disposition": "corrected-vendor-backport",
+      "review": {
+        "date": "2026-10-10",
+        "release": "Ubuntu 22.04 Jammy",
+        "installedPackageVersion": "3.0.2-0ubuntu1.30",
+        "vendorFixedVersion": "3.0.2-0ubuntu1.25",
+        "url": "https://ubuntu.com/security/CVE-2026-34182"
+      }
     },
     {
       "id": "CVE-2022-3996",
@@ -1367,7 +1381,14 @@
         "7.88.0"
       ],
       "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-23914",
-      "disposition": "pending"
+      "disposition": "corrected-vendor-backport",
+      "review": {
+        "date": "2026-10-10",
+        "release": "Ubuntu 22.04 Jammy",
+        "installedPackageVersion": "7.81.0-1ubuntu1.29",
+        "vendorFixedVersion": "7.81.0-1ubuntu1.8",
+        "url": "https://ubuntu.com/security/CVE-2023-23914"
+      }
     },
     {
       "id": "CVE-2026-31790",
@@ -1457,7 +1478,14 @@
         "8.22.0"
       ],
       "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-19931",
-      "disposition": "pending"
+      "disposition": "not-applicable-vendor-evidence",
+      "review": {
+        "date": "2026-10-10",
+        "release": "Ubuntu 22.04 Jammy",
+        "installedPackageVersion": "7.81.0-1ubuntu1.29",
+        "vendorFixedVersion": null,
+        "url": "https://ubuntu.com/security/CVE-2026-19931"
+      }
     },
     {
       "id": "CVE-2026-63072",
@@ -1676,7 +1704,14 @@
         "8.21.0"
       ],
       "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-8924",
-      "disposition": "pending"
+      "disposition": "corrected-vendor-backport",
+      "review": {
+        "date": "2026-10-10",
+        "release": "Ubuntu 22.04 Jammy",
+        "installedPackageVersion": "7.81.0-1ubuntu1.29",
+        "vendorFixedVersion": "7.81.0-1ubuntu1.25",
+        "url": "https://ubuntu.com/security/CVE-2026-8924"
+      }
     },
     {
       "id": "CVE-2024-4603",
@@ -1800,7 +1835,14 @@
         "8.22.0"
       ],
       "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-18924",
-      "disposition": "pending"
+      "disposition": "corrected-vendor-backport",
+      "review": {
+        "date": "2026-10-10",
+        "release": "Ubuntu 22.04 Jammy",
+        "installedPackageVersion": "7.81.0-1ubuntu1.29",
+        "vendorFixedVersion": "7.81.0-1ubuntu1.29",
+        "url": "https://ubuntu.com/security/CVE-2026-18924"
+      }
     },
     {
       "id": "CVE-2026-45445",
@@ -1945,7 +1987,14 @@
         "8.21.0"
       ],
       "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-8927",
-      "disposition": "pending"
+      "disposition": "corrected-vendor-backport",
+      "review": {
+        "date": "2026-10-10",
+        "release": "Ubuntu 22.04 Jammy",
+        "installedPackageVersion": "7.81.0-1ubuntu1.29",
+        "vendorFixedVersion": "7.81.0-1ubuntu1.25",
+        "url": "https://ubuntu.com/security/CVE-2026-8927"
+      }
     },
     {
       "id": "CVE-2024-11053",
@@ -2603,7 +2652,14 @@
         "4.0.2"
       ],
       "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-75803",
-      "disposition": "pending"
+      "disposition": "corrected-vendor-backport",
+      "review": {
+        "date": "2026-10-10",
+        "release": "Ubuntu 22.04 Jammy",
+        "installedPackageVersion": "3.0.2-0ubuntu1.30",
+        "vendorFixedVersion": "3.0.2-0ubuntu1.29",
+        "url": "https://ubuntu.com/security/CVE-2026-75803"
+      }
     },
     {
       "id": "CVE-2026-31789",
@@ -2621,7 +2677,14 @@
         "3.6.2"
       ],
       "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-31789",
-      "disposition": "pending"
+      "disposition": "corrected-vendor-backport",
+      "review": {
+        "date": "2026-10-10",
+        "release": "Ubuntu 22.04 Jammy",
+        "installedPackageVersion": "3.0.2-0ubuntu1.30",
+        "vendorFixedVersion": "3.0.2-0ubuntu1.23",
+        "url": "https://ubuntu.com/security/CVE-2026-31789"
+      }
     },
     {
       "id": "CVE-2026-48961",

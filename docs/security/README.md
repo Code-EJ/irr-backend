@@ -77,3 +77,5 @@ The candidate installs curl/libcurl **7.81.0-1ubuntu1.29** and OpenSSL/libssl **
 | [CVE-2026-75803](https://ubuntu.com/security/CVE-2026-75803) | OpenSSL fixed 3.0.2-0ubuntu1.29 | CORRECTED by installed vendor backport |
 
 Remaining critical CPE entries CVE-2025-15467, CVE-2024-5535, CVE-2022-32221 and CVE-2026-11856 remain pending; exact vendor-page requests failed/timed out. No conclusion is extrapolated from other identifiers. Other high/severity findings also need individual review. Spring retains the conditional-feature mitigation and framework maintenance decision described above.
+
+Reviewed dispositions in the dated backend-patched JSON are manual annotations supported by the vendor table above. Re-running summarize-image-scan.mjs regenerates pending states; write a new scan file rather than overwrite an annotated inventory. Preserve the original scanner hash/counts and the reviewed record when comparing later candidates.

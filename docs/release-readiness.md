@@ -52,3 +52,21 @@ Docker Desktop repeatedly stopped during local work. A backend Jammy package-upd
 3. Close A with evidence, then approve the immutable release pair and B's domain/storage/email/backup/secrets inputs.
 4. Rehearse the reviewed initial-data batch in isolation; install only after explicit deployment authorization; validate public pair and real mail; obtain client acceptance C.
 5. Decide the bounded export/comparison proposal separately. GPS/maps/advanced BI remain deferred.
+
+## Latest closure checkpoint — 2026-10-10
+
+The backend package-update failure above is historical: the bounded Maven build subsequently succeeded in 8cadda5. Image 549937278a93 runs healthy on retained local volumes and passes six read-only pair checks plus the 116-operation contract check. Runtime scan 298 -> 290 and nine specific critical vendor-backport/not-affected dispositions are documented in the security register. Remaining findings are not waived. Node/Maven build-base scans have completed; their remediation remains open. The final operator/WCAG worksheet exists in the frontend repository and the initial-data preflight now passes eight tests. See the [local candidate record](deploy/railway/local-candidate-2026-10-10.json); it is not an approved deployment.
+
+| Area | Status | Evidence | Blocker | Next action |
+| --- | --- | --- | --- | --- |
+| Functional homologation | PARTIAL | Existing workflow/API tests and scoped processing owner acceptance | Broader operator journeys | Execute final frontend worksheet |
+| Accessibility | PENDING complete review | Shared UI/router tests and prior scoped browser check | Browser/assistive-technology evidence | Keyboard, contrast, reflow and announcement review |
+| PDF viewing | PARTIAL | Valid downloaded bytes, strict parse and render | Operator viewer acceptance | Open downloaded valid PDF and confirm usability |
+| Dependencies | MITIGATED / PENDING | Seven npm entries and two Spring dispositions | Compatible upstream/support decision | Resolve residual risks without forced architecture migration |
+| Containers | PARTIAL | Seven runtime/build scans; frontend/backend patches and actual pair checks | Remaining vendor findings and infrastructure image corrections | Review and patch each compatible image, then verify persisted services |
+| Traceability | UPDATED | Current requirement/test/evidence matrix and both registers | Open acceptance evidence | Maintain state per delivered/accepted scope |
+| Initial load | PREPARATION VERIFIED | Eight zero-write validation tests and documented batch gates | Actual client inputs and approval | Review dataset, reconcile and rehearse approved import |
+| Railway infrastructure | PREPARATION ONLY | Topology, variables, review artifact and local image manifest | Account/domains/budget/region/permissions | Configure only after explicit authorization |
+| Production security | PENDING | Non-root images, scoped API and secret boundaries | Final image risk acceptance, real secrets/monitoring/storage | Verify environment controls before public installation |
+| Backup/recovery | LOCAL VERIFIED | Prior isolated restore/reconciliation | External schedule/retention/RPO/RTO/remote drill | Approve policy and rehearse off-machine recovery |
+| Client acceptance | PENDING | Owner accepted one local workflow | Installed environment and complete client review | Formal acceptance after authorized installation/import |

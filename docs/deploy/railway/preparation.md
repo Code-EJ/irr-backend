@@ -32,4 +32,6 @@ Release sequence after approval: preserve backup → deploy backend → validate
 
 ## Blocking inputs
 
+The [dated local candidate record](local-candidate-2026-10-10.json) captures actual running image IDs, declared build-source revisions, matching OpenAPI hashes and V1–V4 Git-blob hashes. It is a local verification artifact, not an approved release or signed source attestation. Source-file SHA-256 is distinct from Flyway's database checksum. Preserve both during eventual promotion; do not assume the record grants deployment approval.
+
 Cloud account/project/service access; chosen domains/region/budget; public homologation URLs; secret provisioning; verified non-root storage; external email sender/inbox; approved backup/RPO/RTO policy; accepted security dispositions; unblocked browser/human homologation; client dataset/import scope. No production resources or secrets are needed to continue local reviews.
