@@ -1,0 +1,11 @@
+# Maintainer: Enzo Ribas (https://github.com/oEnzoRibas).
+{
+    email {$ACME_EMAIL}
+    admin off
+}
+{$FRONTEND_DOMAIN} {
+    reverse_proxy frontend:8080
+}
+{$BACKEND_DOMAIN} {
+    reverse_proxy backend:9191
+}

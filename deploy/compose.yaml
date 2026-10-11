@@ -1,0 +1,140 @@
+# Portable single-host candidate. Maintainer: Enzo Ribas (https://github.com/oEnzoRibas).
+name: irr-hosted
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+services:
+  edge:
+    image: ${IRR_EDGE_IMAGE:?Set a reviewed Caddy 2 image digest}
+    environment:
+      FRONTEND_DOMAIN: ${FRONTEND_DOMAIN:?Set the frontend DNS hostname}
+      BACKEND_DOMAIN: ${BACKEND_DOMAIN:?Set the backend DNS hostname}
+      ACME_EMAIL: ${ACME_EMAIL:?Set the certificate contact email}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - tls_data:/data
+      - tls_config:/config
+    networks: [edge]
+    depends_on:
+      backend: {condition: service_healthy}
+      frontend: {condition: service_healthy}
+    mem_limit: 256m
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    cap_add: [NET_BIND_SERVICE]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+    logging: *logging
+  frontend:
+    image: ${IRR_FRONTEND_IMAGE:?Set the reviewed frontend image digest}
+    networks: [edge]
+    mem_limit: 256m
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+    logging: *logging
+  backend:
+    image: ${IRR_BACKEND_IMAGE:?Set the reviewed backend image digest}
+    environment:
+      SERVER_PORT: 9191
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-irr}
+      DB_USER: ${DB_USER:-irr_app}
+      DB_PASSWORD: ${DB_PASSWORD:?Set a unique database password}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?Set a unique Redis password}
+      RSA_PUBLIC_KEY: file:/run/irr-keys/public.pem
+      RSA_PRIVATE_KEY: file:/run/irr-keys/private.pem
+      STORAGE_DIRECTORY: /data/uploads
+      DEV_BOOTSTRAP_ENABLED: "false"
+      BOOTSTRAP_ADMIN_ENABLED: ${BOOTSTRAP_ADMIN_ENABLED:-false}
+      BOOTSTRAP_ADMIN_NAME: ${BOOTSTRAP_ADMIN_NAME:-}
+      BOOTSTRAP_ADMIN_EMAIL: ${BOOTSTRAP_ADMIN_EMAIL:-}
+      BOOTSTRAP_ADMIN_PASSWORD: ${BOOTSTRAP_ADMIN_PASSWORD:-}
+      CORS_ALLOWED_ORIGINS: https://${FRONTEND_DOMAIN:?Set the frontend DNS hostname}
+      PASSWORD_RESET_BASE_URL: https://${FRONTEND_DOMAIN}/reset-password
+      MAIL_PROVIDER: ${MAIL_PROVIDER:-disabled}
+      MAIL_API_KEY: ${MAIL_API_KEY:-}
+      MAIL_FROM: ${MAIL_FROM:-}
+      MAIL_FROM_NAME: IRR
+      API_DOCS_ENABLED: ${API_DOCS_ENABLED:-false}
+      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=60.0 -XX:ActiveProcessorCount=2"
+    volumes:
+      - uploads:/data/uploads
+      - type: bind
+        source: ${IRR_KEYS_DIRECTORY:?Set an existing protected absolute key directory}
+        target: /run/irr-keys
+        read_only: true
+        bind: {create_host_path: false}
+    networks: [edge, data]
+    depends_on:
+      database: {condition: service_healthy}
+      redis: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, curl, --fail, --silent, "http://localhost:9191/actuator/health/readiness"]
+      interval: 10s
+      timeout: 5s
+      start_period: 60s
+      retries: 12
+    mem_limit: 2g
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+    logging: *logging
+  database:
+    image: ${IRR_POSTGRES_IMAGE:?Set a reviewed PostgreSQL 16 image digest}
+    environment:
+      POSTGRES_DB: ${DB_NAME:-irr}
+      POSTGRES_USER: ${DB_USER:-irr_app}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set a unique database password}
+    volumes: [database:/var/lib/postgresql/data]
+    networks: [data]
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    mem_limit: 1536m
+    restart: unless-stopped
+    logging: *logging
+  redis:
+    image: ${IRR_REDIS_IMAGE:?Set a reviewed Redis 8.2 image digest}
+    user: redis
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?Set a unique Redis password}
+    command: [sh, -ec, 'exec redis-server --appendonly yes --appendfsync everysec --requirepass "$REDIS_PASSWORD" --maxmemory 128mb --maxmemory-policy noeviction']
+    volumes: [redis:/data]
+    networks: [data]
+    healthcheck:
+      test: [CMD-SHELL, 'REDISCLI_AUTH="$REDIS_PASSWORD" redis-cli ping | grep -qx PONG']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    mem_limit: 384m
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+    logging: *logging
+networks:
+  edge:
+  data: {internal: true}
+volumes:
+  database:
+  redis:
+  uploads:
+  tls_data:
+  tls_config:
