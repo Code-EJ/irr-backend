@@ -1,5 +1,7 @@
 # Fresh Railway homologation installation
 
+Current execution authority is [ADR-0028](../../adrs/0028-isolated-trial-homologation.md). [The dated provisioning record](execution-2026-10-11.md) identifies which steps have actually run and which remain open. Earlier preparation-only statements below are historical; reserved domains and configured secrets do not establish a successful installation.
+
 Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
 Authority: [ADR-0027](../../adrs/0027-provider-independent-deployment.md), retaining ADR-0026 storage initialization. Owner clarification permits Railway Virginia only for synthetic homologation. Production is planned separately on Hostinger in Brazil. This is a concrete installation checklist; steps below have not been executed remotely. Refer to [release gates](../../release-readiness.md) before creating billable resources.

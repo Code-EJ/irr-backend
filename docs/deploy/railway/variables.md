@@ -4,6 +4,8 @@ Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
 Never copy resolved secrets into source, issues, logs or this runbook. Reference the actual Railway service names configured in your project.
 
+Current remote configuration is recorded in [the isolated execution record](execution-2026-10-11.md). Historical statements below that no remote changes were made refer to earlier implementation deliveries. The new environment has fresh secrets and reserved origins, but no deployed workload or provisioned administrator yet.
+
 | Variable | Source or example | Scope |
 | --- | --- | --- |
 | DB_HOST / DB_PORT / DB_NAME / DB_USER / DB_PASSWORD | Postgres PGHOST / PGPORT / PGDATABASE / PGUSER / PGPASSWORD reference variables | Backend runtime; password secret |

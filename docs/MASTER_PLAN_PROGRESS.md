@@ -1,5 +1,9 @@
 # Local Master Plan execution progress
 
+## Isolated remote provisioning — 2026-10-11
+
+[ADR-0028](adrs/0028-isolated-trial-homologation.md) authorizes execution in a new synthetic Railway project. [The execution record](deploy/railway/execution-2026-10-11.md) identifies four created services, three volumes, resource ceilings, fresh private credentials and reserved origins; the existing project remains untouched. Full local backend/frontend verification passes, while effective Virginia volume locality, final dependency/image review, deployed workflows, mail and reviewed merges remain pending. No workload, public application or main merge is claimed complete.
+
 ## Provider-independent hosting increment — 2026-10-10
 
 [ADR-0027](adrs/0027-provider-independent-deployment.md) records the final owner clarification: Railway US East homologation with synthetic data only; future production on Hostinger in Brazil after budget/procurement approval. This supersedes the preceding blanket foreign-region/provider blocker for homologation only. The BRL 130 ceiling remains; provider-specific costs and concurrent environments require a reviewed allocation.

@@ -1,5 +1,9 @@
 # ADR-0001: IRR architecture overhaul and delivery master plan
 
+## Isolated homologation execution — 2026-10-11
+
+[ADR-0028](0028-isolated-trial-homologation.md) authorizes a separate synthetic Railway environment while preserving the old project. [The execution record](../deploy/railway/execution-2026-10-11.md) records actual provisioning, local verification and unresolved effective region, security, mail, public acceptance and merge gates. Continue the existing delivery sequence; provisioning is not a completed release and does not replace the architecture.
+
 ## Current executive milestone order — 2026-10-10
 
 Local recovery gate update: the selected-stack V1-V4 backup restored in an isolated PostgreSQL container with 39 matching table counts, 20 matching attachment hashes/references and zero inventory reconciliation differences. The live API restarted healthy. Actual browser PDF upload/download and downloaded-byte rendering passed; in-app local-file viewer acceptance remains separately blocked by browser policy. Backend docs/recovery-verification.md and frontend docs/document-verification.md record the evidence. This completes L2, while broader local workload/browser checks remain in the progress register.

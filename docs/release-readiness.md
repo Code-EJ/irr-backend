@@ -1,5 +1,9 @@
 # Local release consolidation register
 
+## Current execution checkpoint — 2026-10-11
+
+[ADR-0028](adrs/0028-isolated-trial-homologation.md) now authorizes isolated synthetic Railway execution. [The provisioning record](deploy/railway/execution-2026-10-11.md) records a new project, four services, three volumes, limits, fresh private secrets and reserved domains. The previous project is preserved. No new workload has deployed; effective Virginia volume locality, final image security review, real public workflows, mail and merge CI remain open. References below to preparation-only authorization, missing cloud access or a blanket foreign-region prohibition are historical and superseded for this synthetic environment only.
+
 Current hosting authority is [ADR-0027](adrs/0027-provider-independent-deployment.md): Railway Virginia is explicitly permitted only for synthetic homologation; production requires a Brazilian Hostinger VPS and later budget/procurement approval. The earlier region blocker below is superseded for homologation. [Portable deployment](deploy/README.md) includes verified Compose boundaries and validated Caddy syntax, not remote acceptance. Caddy's 49 raw image findings require review before promotion; no added infrastructure finding is waived.
 
 ## Latest homologation preparation increment

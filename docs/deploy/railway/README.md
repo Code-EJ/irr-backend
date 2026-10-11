@@ -2,7 +2,7 @@
 
 Current target under [ADR-0027](../../adrs/0027-provider-independent-deployment.md): US East Virginia homologation with synthetic data only and independent secrets/volumes. Production is planned for [Hostinger Brazil](../hostinger/README.md) through the [portable deployment](../README.md). Historical region restrictions are superseded only for synthetic homologation; no client-data transfer is authorized.
 
-Current authorization is preparation only: no production resources, real secrets or publication. See [reviewed preparation](preparation.md), [proposed topology](../../architecture/system-diagrams.md) and [release gates](../../release-readiness.md) before executing rollout commands.
+Current authorization under [ADR-0028](../../adrs/0028-isolated-trial-homologation.md) permits a separate synthetic homologation, preserving the existing project and all production boundaries. [The current execution record](execution-2026-10-11.md) documents created services, limits, reserved domains and unresolved gates. Historical preparation-only statements below describe prior deliveries; they do not override this authorization or establish a running deployment. See [reviewed preparation](preparation.md), [proposed topology](../../architecture/system-diagrams.md) and [release gates](../../release-readiness.md) before executing rollout commands.
 
 Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
