@@ -61,6 +61,35 @@ class VersionedApiContractIT extends PostgresIntegrationTest {
             });
   }
 
+  /** Swagger retains numeric limits enforced by validation after platform upgrades. */
+  @Test
+  void generatedSchemasRetainRuntimeNumericBounds() throws Exception {
+    var specification =
+        json.readTree(
+            http.perform(get("/v3/api-docs"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString());
+    var schemas = specification.path("components").path("schemas");
+    for (String name :
+        List.of(
+            "SaleDraftRequest",
+            "RouteRequest",
+            "SaleTransitionRequest",
+            "RouteExecutionVersionCommand",
+            "RouteExecutionCompletionCommand",
+            "RouteExecutionCancellationCommand",
+            "RouteExecutionCoverageCommand")) {
+      var version = schemas.path(name).path("properties").path("version");
+      assertThat(version.has("minimum")).as(name).isTrue();
+      assertThat(version.path("minimum").asLong()).as(name).isZero();
+    }
+    var duration = schemas.path("RouteRequest").path("properties").path("plannedDurationMinutes");
+    assertThat(duration.has("exclusiveMinimum")).isTrue();
+    assertThat(duration.path("exclusiveMinimum").asLong()).isZero();
+  }
+
   /** Authenticated callers receive no alias or redirect; anonymous callers remain protected. */
   @Test
   void removedRoutesCannotBeUsed() throws Exception {

@@ -35,22 +35,24 @@ public final class RouteExecutionContract {
 
   /** Version precondition prevents stale lifecycle commands from overwriting current work. */
   @Schema(name = "RouteExecutionVersionCommand")
-  public record VersionCommand(@NotNull @PositiveOrZero Long version) {}
+  public record VersionCommand(@NotNull @PositiveOrZero @Schema(minimum = "0") Long version) {}
 
   /** An omitted manual measurement remains unavailable rather than becoming zero. */
   @Schema(name = "RouteExecutionCompletionCommand")
   public record CompletionCommand(
-      @NotNull @PositiveOrZero Long version,
+      @NotNull @PositiveOrZero @Schema(minimum = "0") Long version,
       @PositiveOrZero @Digits(integer = 9, fraction = 3) BigDecimal distanceKm) {}
 
   /** Cancellation requires an explicit reason and retains all previously recorded context. */
   @Schema(name = "RouteExecutionCancellationCommand")
   public record CancellationCommand(
-      @NotNull @PositiveOrZero Long version, @NotBlank @Size(max = 500) String reason) {}
+      @NotNull @PositiveOrZero @Schema(minimum = "0") Long version,
+      @NotBlank @Size(max = 500) String reason) {}
 
   /** Records operator-declared coverage only during actual execution. */
   @Schema(name = "RouteExecutionCoverageCommand")
-  public record CoverageCommand(@NotNull @PositiveOrZero Long version, @NotNull Boolean covered) {}
+  public record CoverageCommand(
+      @NotNull @PositiveOrZero @Schema(minimum = "0") Long version, @NotNull Boolean covered) {}
 
   /** Coverage labels are copied from the plan, not reread from mutable current geography. */
   @Schema(name = "RouteExecutionAreaResponse")

@@ -4,6 +4,7 @@ import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
@@ -183,6 +184,26 @@ public class OpenApiConfiguration {
         var item = api.getPaths().get(path);
         if (item != null)
           item.readOperations().forEach(operation -> operation.setSecurity(List.of()));
+      }
+    };
+  }
+
+  /**
+   * Preserves the OpenAPI 3.1 exclusive numeric zero bound enforced by {@code @Positive}. Swagger
+   * annotations cannot distinguish their default zero exclusive bound from an explicit one.
+   *
+   * @return the existing planned-duration constraint in its original executable schema form
+   */
+  @Bean
+  public OpenApiCustomizer plannedDurationDocumentation() {
+    return api -> {
+      var route = api.getComponents().getSchemas().get("RouteRequest");
+      if (route != null) {
+        Schema<?> duration = (Schema<?>) route.getProperties().get("plannedDurationMinutes");
+        if (duration != null) {
+          duration.setMinimum(null);
+          duration.setExclusiveMinimumValue(BigDecimal.ZERO);
+        }
       }
     };
   }

@@ -34,7 +34,7 @@ public final class RouteContract {
       @NotBlank @Size(max = 150) String name,
       @NotNull UUID municipalityId,
       @NotNull RouteStatus status,
-      @PositiveOrZero Long version,
+      @PositiveOrZero @Schema(minimum = "0") Long version,
       @PositiveOrZero @Digits(integer = 9, fraction = 3) BigDecimal plannedDistanceKm,
       @Positive Integer plannedDurationMinutes,
       @NotEmpty @Size(max = 200) List<@NotNull @Valid AreaRequest> areas) {}
