@@ -84,7 +84,16 @@ export function validateInitialData(manifest) {
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const file = process.argv[2];
   if (!file) throw new Error('Provide a private initial-data JSON manifest path.');
-  const report = validateInitialData(JSON.parse(fs.readFileSync(file, 'utf8').replace(/^\uFEFF/, '')));
-  console.log(JSON.stringify(report, null, 2));
-  if (!report.valid) process.exitCode = 1;
+  let manifest;
+  try {
+    manifest = JSON.parse(fs.readFileSync(file, 'utf8').replace(/^\uFEFF/, ''));
+  } catch {
+    console.error('Initial-data validation failed: unreadable or malformed JSON. No writes performed.');
+    process.exitCode = 1;
+  }
+  if (manifest !== undefined) {
+    const report = validateInitialData(manifest);
+    console.log(JSON.stringify(report, null, 2));
+    if (!report.valid) process.exitCode = 1;
+  }
 }

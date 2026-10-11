@@ -2,6 +2,11 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {validateInitialData} from '../validate-initial-data.mjs';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import {spawnSync} from 'node:child_process';
+import {fileURLToPath} from 'node:url';
 const fixture = () => ({version:1,sourceBatchId:'synthetic-validation-only',organizations:[{key:'org',name:'Synthetic unit',organizationType:'Synthetic fixture'}],users:[{key:'user',fullName:'Synthetic person',email:'fixture@example.invalid',userRole:'REPRESENTATIVE'}],memberships:[{organizationKey:'org',userKey:'user',role:'MEMBER'}],openingStock:{decision:'not-required'}});
 test('accepts linked foundation data without writes and produces a stable fingerprint', () => {
   const value=fixture(), report=validateInitialData(value);
@@ -38,5 +43,17 @@ test('rejects coerced keys, missing organization types and duplicate destination
   const linked=fixture();linked.users[0].existingId='abcdef01-1234-1234-1234-123456789abc';
   linked.users.push({...linked.users[0],key:'second',email:'second@example.invalid',existingId:linked.users[0].existingId.toUpperCase()});
   assert.ok(validateInitialData(linked).errors.some(e=>e.message==='Duplicate destination identity.'));
+});
+
+test('CLI rejects malformed private input without echoing its contents', () => {
+  const directory=fs.mkdtempSync(path.join(os.tmpdir(),'irr-data-validation-'));
+  try {
+    const file=path.join(directory,'invalid.json');
+    fs.writeFileSync(file,'private-client-value-not-json');
+    const result=spawnSync(process.execPath,[fileURLToPath(new URL('../validate-initial-data.mjs',import.meta.url)),file],{encoding:'utf8'});
+    assert.equal(result.status,1);
+    assert.ok(result.stderr.includes('No writes performed'));
+    assert.ok(!(result.stdout+result.stderr).includes('private-client-value'));
+  } finally { fs.rmSync(directory,{recursive:true,force:true}); }
 });
 
