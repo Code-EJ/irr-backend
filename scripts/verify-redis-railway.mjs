@@ -21,6 +21,7 @@ async function ready(){
 }
 docker(['volume','create','--label','irr.purpose=redis-railway-verification',volume]);
 try{
+  docker(['run','--rm','--user','0:0','--entrypoint','sh','--mount',`type=volume,src=${volume},dst=/data`,image,'-c','chown root:root /data; chmod 0700 /data; mkdir /data/lost+found; chmod 0700 /data/lost+found']);
   docker(['run','-d','--name',container,'--network','none','--memory','125m','--mount',`type=volume,src=${volume},dst=/data`,'-e','REDIS_PASSWORD',image],{REDIS_PASSWORD:password});
   await ready();
   assert.match(docker(['exec',container,'redis-cli','ping']),/NOAUTH/);
@@ -36,6 +37,7 @@ try{
   assert.equal(docker(['exec','-e','REDISCLI_AUTH',container,'redis-cli','get','irr:trial:probe'],{REDISCLI_AUTH:password}),'retained');
   const policy=docker(['exec','-e','REDISCLI_AUTH',container,'redis-cli','config','get','maxmemory-policy'],{REDISCLI_AUTH:password});
   assert.ok(policy.includes('noeviction'));
+  assert.equal(docker(['exec',container,'stat','-c','%u','/data/lost+found']),'0');
   console.log('PASS: default Redis startup, authentication, non-root PID 1, secret-safe arguments/environment, AOF restart and noeviction.');
 }finally{
   spawnSync('docker',['rm','-f',container],{stdio:'ignore'});
