@@ -15,6 +15,8 @@ RUN apt-get update && apt-get upgrade -y --no-install-recommends \
     && mkdir -p /app /data/uploads && chown -R irr:irr /app /data
 WORKDIR /app
 COPY --from=build --chown=irr:irr /build/target/api-0.0.1-SNAPSHOT.jar /app/irr.jar
+COPY --chmod=0555 docker/backend-entrypoint.sh /app/backend-entrypoint.sh
 USER 10001:10001
 EXPOSE 9191
-ENTRYPOINT ["java", "-jar", "/app/irr.jar"]
+ENTRYPOINT ["/app/backend-entrypoint.sh"]
+CMD ["java", "-jar", "/app/irr.jar"]
