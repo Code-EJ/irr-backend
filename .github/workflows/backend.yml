@@ -149,6 +149,14 @@ jobs:
 
       - name: Verify portable deployment boundaries without starting services
         run: node scripts/verify-hosted-compose.mjs
+
+      - name: Build patched stateful service candidates
+        run: |
+          docker build -t irr-postgres-patched:ci deploy/postgres
+          docker build -t irr-redis-patched:ci deploy/redis
+
+      - name: Verify stateful authentication and restart persistence
+        run: node scripts/verify-stateful-images.mjs irr-postgres-patched:ci irr-redis-patched:ci
       
       - name: Inspect image
         run: docker image inspect irr-backend:ci
