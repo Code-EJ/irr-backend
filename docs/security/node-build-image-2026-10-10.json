@@ -1,0 +1,741 @@
+{
+  "maintainer": "Enzo Ribas (https://github.com/oEnzoRibas)",
+  "scanner": "grype",
+  "scannerVersion": "0.120.1",
+  "databaseBuilt": "2026-10-10T06:30:01Z",
+  "rawReportSha256": "8725417b6de8cfe1e8a77aae4faf113a7ddae06fe44a8df7a555302d59c58542",
+  "source": {
+    "imageId": "sha256:c10884952bb8c37122fcc3fe6f97af3ab0a80e5eb02ee5df707406b4e11a7e3e",
+    "manifestDigest": "sha256:83f1c388c31fb2e51f7cbd4dea949b96260798c98f206e8e4696bc93bd964e3a"
+  },
+  "distro": {
+    "name": "alpine",
+    "version": "3.24.2",
+    "idLike": []
+  },
+  "counts": {
+    "High": 17,
+    "Medium": 25,
+    "Low": 9
+  },
+  "matchCount": 51,
+  "interpretation": "Matches are not unique exploitable defects. Pending findings require package/vendor/configuration review; no suppression or clean-release assertion.",
+  "matchedPackages": [
+    {
+      "name": "ip-address",
+      "version": "10.2.0",
+      "type": "npm"
+    },
+    {
+      "name": "brace-expansion",
+      "version": "5.0.7",
+      "type": "npm"
+    },
+    {
+      "name": "http-cache-semantics",
+      "version": "4.2.0",
+      "type": "npm"
+    },
+    {
+      "name": "tar",
+      "version": "7.5.19",
+      "type": "npm"
+    },
+    {
+      "name": "libcrypto3",
+      "version": "3.5.8-r0",
+      "type": "apk"
+    },
+    {
+      "name": "libssl3",
+      "version": "3.5.8-r0",
+      "type": "apk"
+    },
+    {
+      "name": "undici",
+      "version": "6.27.0",
+      "type": "npm"
+    },
+    {
+      "name": "zlib",
+      "version": "1.3.2-r0",
+      "type": "apk"
+    },
+    {
+      "name": "postcss-selector-parser",
+      "version": "7.1.4",
+      "type": "npm"
+    },
+    {
+      "name": "busybox",
+      "version": "1.37.0-r31",
+      "type": "apk"
+    },
+    {
+      "name": "busybox-binsh",
+      "version": "1.37.0-r31",
+      "type": "apk"
+    },
+    {
+      "name": "ssl_client",
+      "version": "1.37.0-r31",
+      "type": "apk"
+    }
+  ],
+  "findings": [
+    {
+      "id": "GHSA-mwp4-54f8-5fhr",
+      "namespace": "github:language:javascript",
+      "severity": "High",
+      "package": "ip-address",
+      "version": "10.2.0",
+      "type": "npm",
+      "fixState": "fixed",
+      "fixVersions": [
+        "10.3.1"
+      ],
+      "url": "https://github.com/advisories/GHSA-mwp4-54f8-5fhr",
+      "disposition": "pending"
+    },
+    {
+      "id": "GHSA-rgw5-rvv9-x895",
+      "namespace": "github:language:javascript",
+      "severity": "High",
+      "package": "brace-expansion",
+      "version": "5.0.7",
+      "type": "npm",
+      "fixState": "fixed",
+      "fixVersions": [
+        "5.0.9"
+      ],
+      "url": "https://github.com/advisories/GHSA-rgw5-rvv9-x895",
+      "disposition": "pending"
+    },
+    {
+      "id": "GHSA-mh99-v99m-4gvg",
+      "namespace": "github:language:javascript",
+      "severity": "High",
+      "package": "brace-expansion",
+      "version": "5.0.7",
+      "type": "npm",
+      "fixState": "fixed",
+      "fixVersions": [
+        "5.0.8"
+      ],
+      "url": "https://github.com/advisories/GHSA-mh99-v99m-4gvg",
+      "disposition": "pending"
+    },
+    {
+      "id": "GHSA-ch52-4w7c-c8xp",
+      "namespace": "github:language:javascript",
+      "severity": "High",
+      "package": "http-cache-semantics",
+      "version": "4.2.0",
+      "type": "npm",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://github.com/advisories/GHSA-ch52-4w7c-c8xp",
+      "disposition": "pending"
+    },
+    {
+      "id": "GHSA-r292-9mhp-454m",
+      "namespace": "github:language:javascript",
+      "severity": "High",
+      "package": "tar",
+      "version": "7.5.19",
+      "type": "npm",
+      "fixState": "fixed",
+      "fixVersions": [
+        "7.5.21"
+      ],
+      "url": "https://github.com/advisories/GHSA-r292-9mhp-454m",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-54873",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "libcrypto3",
+      "version": "3.5.8-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-54873",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-54873",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "libssl3",
+      "version": "3.5.8-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-54873",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-84782",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "libcrypto3",
+      "version": "3.5.8-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-84782",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-84782",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "libssl3",
+      "version": "3.5.8-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-84782",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-84784",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "libcrypto3",
+      "version": "3.5.8-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-84784",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-84784",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "libssl3",
+      "version": "3.5.8-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-84784",
+      "disposition": "pending"
+    },
+    {
+      "id": "GHSA-rfgv-xxqx-mfg5",
+      "namespace": "github:language:javascript",
+      "severity": "High",
+      "package": "undici",
+      "version": "6.27.0",
+      "type": "npm",
+      "fixState": "fixed",
+      "fixVersions": [
+        "6.28.1"
+      ],
+      "url": "https://github.com/advisories/GHSA-rfgv-xxqx-mfg5",
+      "disposition": "pending"
+    },
+    {
+      "id": "GHSA-4xrf-jv44-h6hh",
+      "namespace": "github:language:javascript",
+      "severity": "Medium",
+      "package": "ip-address",
+      "version": "10.2.0",
+      "type": "npm",
+      "fixState": "fixed",
+      "fixVersions": [
+        "10.2.2"
+      ],
+      "url": "https://github.com/advisories/GHSA-4xrf-jv44-h6hh",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-85091",
+      "namespace": "alpine:distro:alpine:3.24",
+      "severity": "High",
+      "package": "zlib",
+      "version": "1.3.2-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.3.2-r1"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-85091",
+      "disposition": "pending"
+    },
+    {
+      "id": "GHSA-6j4f-fj2g-mc7p",
+      "namespace": "github:language:javascript",
+      "severity": "High",
+      "package": "brace-expansion",
+      "version": "5.0.7",
+      "type": "npm",
+      "fixState": "fixed",
+      "fixVersions": [
+        "5.0.10"
+      ],
+      "url": "https://github.com/advisories/GHSA-6j4f-fj2g-mc7p",
+      "disposition": "pending"
+    },
+    {
+      "id": "GHSA-qhr7-859c-m2p7",
+      "namespace": "github:language:javascript",
+      "severity": "High",
+      "package": "brace-expansion",
+      "version": "5.0.7",
+      "type": "npm",
+      "fixState": "fixed",
+      "fixVersions": [
+        "5.0.11"
+      ],
+      "url": "https://github.com/advisories/GHSA-qhr7-859c-m2p7",
+      "disposition": "pending"
+    },
+    {
+      "id": "GHSA-22jq-vg5j-6vgg",
+      "namespace": "github:language:javascript",
+      "severity": "Medium",
+      "package": "ip-address",
+      "version": "10.2.0",
+      "type": "npm",
+      "fixState": "fixed",
+      "fixVersions": [
+        "10.2.1"
+      ],
+      "url": "https://github.com/advisories/GHSA-22jq-vg5j-6vgg",
+      "disposition": "pending"
+    },
+    {
+      "id": "GHSA-2vr4-cq9g-pvrc",
+      "namespace": "github:language:javascript",
+      "severity": "Medium",
+      "package": "ip-address",
+      "version": "10.2.0",
+      "type": "npm",
+      "fixState": "fixed",
+      "fixVersions": [
+        "10.5.1"
+      ],
+      "url": "https://github.com/advisories/GHSA-2vr4-cq9g-pvrc",
+      "disposition": "pending"
+    },
+    {
+      "id": "GHSA-3wwx-pv8p-q78v",
+      "namespace": "github:language:javascript",
+      "severity": "Medium",
+      "package": "undici",
+      "version": "6.27.0",
+      "type": "npm",
+      "fixState": "fixed",
+      "fixVersions": [
+        "6.28.1"
+      ],
+      "url": "https://github.com/advisories/GHSA-3wwx-pv8p-q78v",
+      "disposition": "pending"
+    },
+    {
+      "id": "GHSA-rpw4-54j3-4h4q",
+      "namespace": "github:language:javascript",
+      "severity": "Medium",
+      "package": "ip-address",
+      "version": "10.2.0",
+      "type": "npm",
+      "fixState": "fixed",
+      "fixVersions": [
+        "10.5.1"
+      ],
+      "url": "https://github.com/advisories/GHSA-rpw4-54j3-4h4q",
+      "disposition": "pending"
+    },
+    {
+      "id": "GHSA-rj75-hqrm-r3gf",
+      "namespace": "github:language:javascript",
+      "severity": "Medium",
+      "package": "postcss-selector-parser",
+      "version": "7.1.4",
+      "type": "npm",
+      "fixState": "fixed",
+      "fixVersions": [
+        "7.1.6"
+      ],
+      "url": "https://github.com/advisories/GHSA-rj75-hqrm-r3gf",
+      "disposition": "pending"
+    },
+    {
+      "id": "GHSA-j6r3-76f7-8jcv",
+      "namespace": "github:language:javascript",
+      "severity": "Medium",
+      "package": "ip-address",
+      "version": "10.2.0",
+      "type": "npm",
+      "fixState": "fixed",
+      "fixVersions": [
+        "10.7.1"
+      ],
+      "url": "https://github.com/advisories/GHSA-j6r3-76f7-8jcv",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-72897",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "libcrypto3",
+      "version": "3.5.8-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-72897",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-72897",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "libssl3",
+      "version": "3.5.8-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-72897",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-75806",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "libcrypto3",
+      "version": "3.5.8-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-75806",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-75806",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "libssl3",
+      "version": "3.5.8-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-75806",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-75804",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "libcrypto3",
+      "version": "3.5.8-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-75804",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-75804",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "libssl3",
+      "version": "3.5.8-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-75804",
+      "disposition": "pending"
+    },
+    {
+      "id": "GHSA-h3mg-xc3c-68pw",
+      "namespace": "github:language:javascript",
+      "severity": "Medium",
+      "package": "ip-address",
+      "version": "10.2.0",
+      "type": "npm",
+      "fixState": "fixed",
+      "fixVersions": [
+        "10.7.1"
+      ],
+      "url": "https://github.com/advisories/GHSA-h3mg-xc3c-68pw",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-42772",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "libcrypto3",
+      "version": "3.5.8-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-42772",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-42772",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "libssl3",
+      "version": "3.5.8-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-42772",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-60876",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "busybox",
+      "version": "1.37.0-r31",
+      "type": "apk",
+      "fixState": "",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-60876",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-60876",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "busybox-binsh",
+      "version": "1.37.0-r31",
+      "type": "apk",
+      "fixState": "",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-60876",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-60876",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "ssl_client",
+      "version": "1.37.0-r31",
+      "type": "apk",
+      "fixState": "",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-60876",
+      "disposition": "pending"
+    },
+    {
+      "id": "GHSA-q2hr-2g5m-vwhr",
+      "namespace": "github:language:javascript",
+      "severity": "Medium",
+      "package": "brace-expansion",
+      "version": "5.0.7",
+      "type": "npm",
+      "fixState": "fixed",
+      "fixVersions": [
+        "5.0.12"
+      ],
+      "url": "https://github.com/advisories/GHSA-q2hr-2g5m-vwhr",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-35189",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "libcrypto3",
+      "version": "3.5.8-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-35189",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-35189",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "libssl3",
+      "version": "3.5.8-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-35189",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-35191",
+      "namespace": "nvd:cpe",
+      "severity": "Low",
+      "package": "libcrypto3",
+      "version": "3.5.8-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-35191",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-35191",
+      "namespace": "nvd:cpe",
+      "severity": "Low",
+      "package": "libssl3",
+      "version": "3.5.8-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-35191",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-75805",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "libcrypto3",
+      "version": "3.5.8-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-75805",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-75805",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "libssl3",
+      "version": "3.5.8-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-75805",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-54875",
+      "namespace": "nvd:cpe",
+      "severity": "Low",
+      "package": "libcrypto3",
+      "version": "3.5.8-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-54875",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-54875",
+      "namespace": "nvd:cpe",
+      "severity": "Low",
+      "package": "libssl3",
+      "version": "3.5.8-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-54875",
+      "disposition": "pending"
+    },
+    {
+      "id": "GHSA-v3r7-h72x-cjcm",
+      "namespace": "github:language:javascript",
+      "severity": "Medium",
+      "package": "undici",
+      "version": "6.27.0",
+      "type": "npm",
+      "fixState": "fixed",
+      "fixVersions": [
+        "6.28.0"
+      ],
+      "url": "https://github.com/advisories/GHSA-v3r7-h72x-cjcm",
+      "disposition": "pending"
+    },
+    {
+      "id": "GHSA-m8rv-5g2x-5cg5",
+      "namespace": "github:language:javascript",
+      "severity": "Medium",
+      "package": "undici",
+      "version": "6.27.0",
+      "type": "npm",
+      "fixState": "fixed",
+      "fixVersions": [
+        "6.28.0"
+      ],
+      "url": "https://github.com/advisories/GHSA-m8rv-5g2x-5cg5",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-54872",
+      "namespace": "nvd:cpe",
+      "severity": "Low",
+      "package": "libcrypto3",
+      "version": "3.5.8-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-54872",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-54872",
+      "namespace": "nvd:cpe",
+      "severity": "Low",
+      "package": "libssl3",
+      "version": "3.5.8-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-54872",
+      "disposition": "pending"
+    },
+    {
+      "id": "GHSA-8xcm-r25x-g524",
+      "namespace": "github:language:javascript",
+      "severity": "Medium",
+      "package": "undici",
+      "version": "6.27.0",
+      "type": "npm",
+      "fixState": "fixed",
+      "fixVersions": [
+        "6.28.0"
+      ],
+      "url": "https://github.com/advisories/GHSA-8xcm-r25x-g524",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-77696",
+      "namespace": "nvd:cpe",
+      "severity": "Low",
+      "package": "libcrypto3",
+      "version": "3.5.8-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-77696",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-77696",
+      "namespace": "nvd:cpe",
+      "severity": "Low",
+      "package": "libssl3",
+      "version": "3.5.8-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-77696",
+      "disposition": "pending"
+    },
+    {
+      "id": "GHSA-r53p-7pc4-xj5r",
+      "namespace": "github:language:javascript",
+      "severity": "Low",
+      "package": "undici",
+      "version": "6.27.0",
+      "type": "npm",
+      "fixState": "fixed",
+      "fixVersions": [
+        "6.28.1"
+      ],
+      "url": "https://github.com/advisories/GHSA-r53p-7pc4-xj5r",
+      "disposition": "pending"
+    }
+  ]
+}

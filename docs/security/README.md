@@ -44,3 +44,36 @@ Backend binary CPE matches for upstream curl/OpenSSL overlap Ubuntu versioned/ba
 Download the official [Grype release](https://github.com/anchore/grype/releases/tag/v0.120.1), verify the published checksum and keep the executable under ignored `.local/tools/`. Run `grype docker:<actual-image-or-id> --output json --file <private-report.json>`. Keep raw reports private: image configuration may include sensitive values. Run `node scripts/summarize-image-scan.mjs <private-report.json> <review-inventory.json>` to project only finding/package metadata and source digests. Preserve scan logs, final image inspect IDs, tool/database versions and immutable release manifests. Runtime/build scans and npm/Maven audits answer different questions.
 
 Before release, review all pending high/critical matches and actual applicability, patch compatible vendor packages, rebuild/re-scan and verify the matching API pair. This register is evidence of work and remaining risk, not a clean security certificate.
+
+## Backend patch and build-base scan checkpoint
+
+The subsequent backend build completed with overridable `MAVEN_OPTS=-Xmx1024m -XX:ActiveProcessorCount=2`, retaining existing Maven/Spotless goals and build-cache identifier. This bounds build resources; it does not prove the cause of prior Docker Desktop failures. Jammy updates changed libpng16-16 to 1.6.37-3ubuntu0.7 and libfreetype6 to 2.11.1+dfsg-1ubuntu0.4. Java 21 and runtime UID 10001:10001 remain.
+
+Candidate image `sha256:549937278a937fc9d58eaa2d5ec7a80d75e9a8714cba4c97c6a8b4100275b8b5` returned **290 matches, 15 critical / 61 high**, versus 298 / 15 / 62 before. No high/critical matches remain with artifact type `deb`; upstream binary CPE and the two Spring findings remain. Startup with retained database/Redis/uploads passed readiness, six actual read-only frontend/backend pair checks passed and the 116-operation contract check passed. No migration reset or business command was executed. The scan is not clean.
+
+Previously missing build-base scans now completed with the same Grype/database versions:
+
+| Build base | Matches | Critical / high | State |
+| --- | --- | --- | --- |
+| Pinned Node 24 Alpine | 51 | 0 / 17 | Node 24.21.0/npm 11.19.0; npm-internal and OS findings need individual remediation |
+| Maven 3.9.14 / Temurin 21 | 921 | 11 / 44 | Builder JDK, Maven archive dependencies and Ubuntu packages need vendor/backport review |
+
+The current Node tag resolves to the same pinned digest; pulling it alone does not patch findings. Build bases are discarded from runtime but remain supply-chain exposure. Application npm lockfile audit does not cover npm's bundled dependencies. These are raw matches, not unique exploitable defects. Sanitized inventories are stored alongside this register. Build-base scanning is complete; remediation is not.
+
+### Reviewed critical Ubuntu CPE entries
+
+The candidate installs curl/libcurl **7.81.0-1ubuntu1.29** and OpenSSL/libssl **3.0.2-0ubuntu1.30**. Each row below has specific vendor evidence for the installed Jammy package. Raw scanner findings/counts remain preserved; no suppression or override is introduced.
+
+| Identifier | Jammy vendor status | Disposition for candidate |
+| --- | --- | --- |
+| [CVE-2022-32207](https://ubuntu.com/security/CVE-2022-32207) | curl fixed 7.81.0-1ubuntu1.3 | CORRECTED by installed vendor backport |
+| [CVE-2023-23914](https://ubuntu.com/security/CVE-2023-23914) | curl fixed 7.81.0-1ubuntu1.8 | CORRECTED by installed vendor backport |
+| [CVE-2026-8924](https://ubuntu.com/security/CVE-2026-8924) | curl fixed 7.81.0-1ubuntu1.25 | CORRECTED by installed vendor backport |
+| [CVE-2026-8927](https://ubuntu.com/security/CVE-2026-8927) | curl fixed 7.81.0-1ubuntu1.25 | CORRECTED by installed vendor backport |
+| [CVE-2026-18924](https://ubuntu.com/security/CVE-2026-18924) | curl fixed 7.81.0-1ubuntu1.29 | CORRECTED by installed vendor backport |
+| [CVE-2026-19931](https://ubuntu.com/security/CVE-2026-19931) | curl not affected | NOT APPLICABLE with vendor package evidence |
+| [CVE-2026-34182](https://ubuntu.com/security/CVE-2026-34182) | OpenSSL fixed 3.0.2-0ubuntu1.25 | CORRECTED by installed vendor backport |
+| [CVE-2026-31789](https://ubuntu.com/security/CVE-2026-31789) | OpenSSL fixed 3.0.2-0ubuntu1.23 | CORRECTED by installed vendor backport |
+| [CVE-2026-75803](https://ubuntu.com/security/CVE-2026-75803) | OpenSSL fixed 3.0.2-0ubuntu1.29 | CORRECTED by installed vendor backport |
+
+Remaining critical CPE entries CVE-2025-15467, CVE-2024-5535, CVE-2022-32221 and CVE-2026-11856 remain pending; exact vendor-page requests failed/timed out. No conclusion is extrapolated from other identifiers. Other high/severity findings also need individual review. Spring retains the conditional-feature mitigation and framework maintenance decision described above.
