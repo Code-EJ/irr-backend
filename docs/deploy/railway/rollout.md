@@ -4,7 +4,7 @@ Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
 ## Preparation
 
-Use the existing feat/identity-account-management branches. Preserve unrelated edits. Review both PRs; do not merge automatically. Record source commits, image build result, tests and required infrastructure actions before release. GitHub main remains the deployment source; pushing a feature branch is not a release.
+Review the current chore/release-readiness branches and explicit deployment authorization before any merge or remote action. Preserve unrelated edits. Review both PRs; do not merge automatically. Record source commits, image build result, tests and required infrastructure actions before release. GitHub main remains the deployment source; pushing a feature branch is not a release.
 
 Backend gates: ./mvnw clean verify with Java 21 and Docker; dependency audit; documentation verification; Docker build; real PostgreSQL V1 upgrade and empty-schema tests. Frontend gates: npm ci, npm run lint, npm run typecheck, npm test, npm run build, npm run api:check, local contract tests and browser smoke. Both images must build from Git without local keys, .env files or uploaded artifacts.
 
@@ -12,7 +12,7 @@ Backend gates: ./mvnw clean verify with Java 21 and Docker; dependency audit; do
 
 1. Finalize and review the backend branch and PR.
 2. Merge backend to monitored main; Railway builds the existing Dockerfile and starts Spring Boot.
-3. Flyway automatically applies V2 and V3 after V1; Hibernate validates the result. Watch for lock waits and startup failures. No migration file copying, SQL patching or shell access is needed.
+3. Flyway automatically applies V2, V3 and V4 after V1; Hibernate validates the result. Watch for lock waits and startup failures. No migration file copying, SQL patching or shell access is needed.
 4. Verify GET /actuator/health, /actuator/health/liveness and /actuator/health/readiness: HTTP 200 and status UP. Verify Swagger/OpenAPI when enabled.
 5. Smoke the currently published frontend with an ordinary existing account: login, GET /api/v1/users/me, organization selection and a supported business workflow. Existing generation-zero v1 tokens remain accepted until credentials change.
 6. Finalize and review the frontend branch and PR. Build with the public HTTPS backend /api/v1 URL.

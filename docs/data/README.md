@@ -34,3 +34,5 @@ Start with bounded PostgreSQL queries/indexes and application aggregates. Measur
 ## Operational source readiness — 2026-10-05
 
 Routes V4 and its API/frontend now produce the plan, execution, coverage, team and optional collection provenance described above. These are implemented source facts, not implemented analytics. Municipality is attached through Route and immutable execution context; an organization may operate in multiple municipalities without deriving territory from its type or postal text. [Verification](../routes-verification.md) records exact-history and authorization checks. Formulas, period policy, targets, publication and export semantics remain PRODUCT DEFINITION REQUIRED.
+
+Client installation preparation: [no-write foundation validation and import gates](initial-load.md).

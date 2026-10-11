@@ -1,5 +1,7 @@
 # Backend architecture
 
+See [the current system diagrams](system-diagrams.md) for runtime, module, transactional request and proposed Railway topology, and [release readiness](../release-readiness.md) for remaining gates.
+
 - Documentation maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
 IRR is a transactional modular monolith. New modules use feature-owned API/application contracts. Established catalog, identity, attachment and processing adapters remain in controllers/services with shared JPA entities and ports. This is an intentional hybrid, not a claim of framework-free Clean Architecture. [ADR-0014](../adrs/0014-final-preproduction-contract-and-baseline.md) records the verified implementation and limits.
@@ -29,7 +31,8 @@ The API and local Mailpit UI use loopback-only published ports. The API runs non
 | intake | Collection orchestration and logistics | Validated raw inputs; no saleable stock credit |
 | inventory | Ledger, lots, receipts, reversals and queries | Sole stock writer; immutable history |
 | sales | Draft/post/reverse use cases | Optimistic drafts, fiscal evidence, transactional lots |
-| reporting | Existing commercial summaries/CSV and approved operational totals | Existing snapshot services; one-statement exact operational aggregates |
+| reporting | Commercial summaries and approved operations-1/analytics-1 | Scoped live aggregates, backend formulas, exact decimals and explicit completeness |
+| routes | Plans, execution snapshots, lifecycle and section coverage | Scoped history; additive V4; completed execution linkage |
 | controllers / dto | Established HTTP adapters and safe value contracts | No persistence entities or secrets serialized |
 | services | Existing identity, materials, fleet, donation, processing and attachment use cases | Transactions and domain validation |
 | domain/models / domain/ports | Shared JPA mappings and application/infrastructure ports | Persistence annotations retained deliberately |
@@ -52,7 +55,7 @@ Organization locks serialize writes within one organization. Conditional updates
 
 Upload bytes cannot join PostgreSQL's transaction. Rollback compensation handles ordinary failures; a durable cleanup queue handles committed deletion; an hourly exclusive advisory-lock scan queues old unreferenced UUID files after crashes. Uploads hold a shared lock until metadata commit. Readers never see filesystem paths or account credentials. Files referenced by business records cannot be deleted.
 
-Reports use live data, inclusive UTC ranges and current POSTED status. Stock is a current snapshot. Historical closing balances and external fiscal validation are not claimed. See [operations](../operations.md) for recovery and [schema](../entities_documentation.md) for constraints.
+Reports use live data. The approved operations-1/analytics-1 contracts interpret inclusive calendar dates in America/Sao_Paulo and query from local-day start to the exclusive start of the day after the final date. Existing commercial summary bounds remain documented separately. Revenue uses current POSTED status and sale date; stock is a current snapshot. Historical closing balances and external fiscal validation are not claimed. See [operations](../operations.md) for recovery and [schema](../entities_documentation.md) for constraints.
 
 ## Extension rules
 
@@ -73,4 +76,4 @@ The feature-owned identity/recovery package contains public request/confirmation
 
 ## Routes operational module
 
-[Routes architecture](routes.md) documents the implemented transaction boundary, normalized planning/execution model, geography, lifecycle, collection linkage and V4 rollout. [Analytics decision](../adrs/0020-analytics-reporting-and-data-architecture.md) plans the next milestone without implementing reporting now.
+[Routes architecture](routes.md) documents the implemented transaction boundary, normalized planning/execution model, geography, lifecycle, collection linkage and V4 rollout. [Analytics architecture](analytics.md) documents the implemented owner-approved MVP; ADR-0020 remains the strategic reporting boundary and ADR-0022 defines approved formulas. Additional exports/comparisons require product approval.

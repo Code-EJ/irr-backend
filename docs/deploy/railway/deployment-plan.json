@@ -1,0 +1,16 @@
+{
+  "maintainer": "Enzo Ribas (https://github.com/oEnzoRibas)",
+  "status": "review-only-not-executable-iac",
+  "deploymentAuthorized": false,
+  "services": {
+    "backend": {"build": "Dockerfile", "runtimePort": 9191, "healthPath": "/actuator/health/readiness", "runtimeUid": 10001, "replicas": 1, "publicHttps": true, "persistentMount": "/data/uploads", "volumePermissionsVerified": false},
+    "frontend": {"repository": "irr-frontend", "build": "Dockerfile", "runtimePort": 8080, "healthPath": "/health", "runtimeUid": 101, "publicHttps": true, "publicBuildVariable": "VITE_API_BASE_URL"},
+    "postgres": {"major": 16, "privateOnly": true, "persistent": true, "finalImageDigest": null},
+    "redis": {"majorMinor": "8.2", "privateOnly": true, "authenticationRequired": true, "finalImageDigest": null}
+  },
+  "migrationVersions": [1, 2, 3, 4],
+  "mailProvider": "brevo",
+  "secretsIncluded": false,
+  "ownerDecisions": ["region", "domains", "budget", "RPO", "RTO", "backup-retention", "maintenance-window"],
+  "releaseManifest": {"backendSourceSha": null, "frontendSourceSha": null, "backendImageDigest": null, "frontendImageDigest": null, "openApiSha256": null, "scanDatabaseBuilt": null, "operatorAcceptance": false}
+}

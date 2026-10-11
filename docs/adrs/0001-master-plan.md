@@ -302,3 +302,7 @@ The owner now prioritizes completion and validation of all applicable local requ
 ## Owner-approved MVP Analytics — 2026-10-10
 
 The owner approved matched planned/actual comparisons, unique declared-section coverage, weighted linked-collection productivity and live posted-sale revenue. [0022-approved-mvp-analytics.md](0022-approved-mvp-analytics.md) records exact cohorts, integrity and verification. Implement locally before any deployment; remaining metric families retain their explicit product dependencies.
+
+## Pre-release consolidation and preparation — 2026-10-10
+
+Backend ADR-0025 records the owner's latest authorization: continue local security/browser/data closure and prepare Railway artifacts, without external resource creation, real secrets or deployment. It supersedes the earlier restriction on preparation only. Existing architecture, `/api/v1`, preserved V1–V4, approved Analytics formulas and synthetic benchmark evidence remain. Follow the current release-readiness register and Master Plan progress; do not equate local compilation or one accepted workflow with complete client delivery.

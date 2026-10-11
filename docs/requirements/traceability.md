@@ -20,7 +20,7 @@ Status vocabulary: IMPLEMENTED, IN_PROGRESS, PLANNED_CURRENT_MILESTONE, PLANNED_
 | R08 — S3 | First administrator created once via BOOTSTRAP_ADMIN_*; no SQL or redeploy reset | IMPLEMENTED | Existing initializer adapted to final configuration names; NOW |
 | R09 — S1 FF-3 pp.2–4; S2 §2 p.2 | Scoped collections/donations, team/vehicle links, attachments and material intake | IMPLEMENTED | Existing backend intake/fleet/document modules and integrated frontend; not a claim that every historical field is implemented |
 | R10 — S1 FF-5 pp.5–6; S2 §5 p.3 | Tenant material hierarchy with protected deletion/references | IMPLEMENTED | Existing catalog; current global authorization applies; historical physical-delete language does not override invariants |
-| R11 — S1 FF-6/7/8 pp.6–9; S2 §§5–7 p.3 | Transactional processing, ledger and commercial records | IN_PROGRESS | Backend workflows exist; frontend processing/stock/sales remain gated; further module evolution after approved priority sequence |
+| R11 — S1 FF-6/7/8 pp.6–9; S2 §§5–7 p.3 | Transactional processing, ledger and commercial records | IMPLEMENTED / LOCAL FLOW ACCEPTED | Backend ledger/sales and frontend processing/stock/sales are integrated; owner accepted the local processing/reversal journey. Broader client acceptance remains separate |
 | R12 — S1 FF-4 p.5; S2 §3 p.2; S3 | Internal routes, execution/history, coverage, tenant ownership and municipality context | IMPLEMENTED | Additive V4, scoped plans/executions/coverage/history and linked collection UI/API; locally verified, remote homologation pending |
 | R13 — S1 FF-4.b p.5; S2 integrations p.2; S3 | Provider-neutral tracking/GPS boundary | PLANNED_POST_DEPLOY | After initial Routes; no provider selection or integration now |
 | R14 — S1 FF-9 p.9; S2 §8 p.3; S3 | Native monthly reports and filters, backend aggregates, frontend presentation | IN_PROGRESS | First approved operations-1 report locally verified; remaining reporting families require definitions; no mandatory BI |
@@ -46,6 +46,12 @@ Do not create issues, required milestones or functional implementations from the
 
 R01/R05/R06/R07/R08 are implemented and locally verified, including real PostgreSQL/Redis/Mailpit integration. R02 is realized by the explicit Organization → User → Membership onboarding with safe partial retries. IMPLEMENTED does not assert external email delivery or deployed homologation. See [verification and release gates](../identity-verification.md). R11 and later module priorities remain unchanged.
 
-## Owner-authorized Routes phase
+## Historical owner-authorized Routes phase — 2026-10-05
 
 Identity is IMPLEMENTED / READY FOR HOMOLOGATION. Email provider configuration is OPERATIONAL CONFIGURATION_PENDING / EXTERNAL CONFIGURATION REQUIRED; it no longer blocks Routes development. Routes is IMPLEMENTED / READY FOR HOMOLOGATION under the verified architecture decision; see [the actual delivery evidence](../routes-verification.md). Analytics/reports/filters/indicators/dashboards are PLANNED_AFTER_ROUTES. Operational multi-municipality separation is IMPLEMENTED; consolidated analytics comparison remains PLANNED_AFTER_ROUTES. See [the data dictionary](../data/README.md); every unapproved metric formula is PRODUCT DEFINITION REQUIRED. GPS remains PLANNED_POST_DEPLOY.
+
+## Current pre-release traceability — 2026-10-10
+
+Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas). The Routes checkpoint above is historical. R11 processing/stock/sales is integrated and the local workflow was explicitly accepted by the owner. R14/R16 operations-1 and owner-approved analytics-1 are implemented and locally verified; unapproved exports, cross-organization comparisons and other formulas remain product decisions. R15 operational separation is implemented, while consolidated comparison remains proposed. No declaration below supersedes source-document requirements silently.
+
+The release-readiness register maps identity, intake/catalog/fleet, processing/sales, Routes and reports to their actual backend/frontend test suites and dated evidence, and separates implementation from browser/operator/client acceptance. Backend docs/release-readiness.md is the coordinated security/data/deployment closure reference; frontend docs/release-readiness.md records the frontend counterpart. GPS/maps and optional BI remain deferred. Planning Railway artifacts is now authorized; provisioning, secrets and publication are not.
