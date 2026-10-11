@@ -54,6 +54,10 @@ test('CLI rejects malformed private input without echoing its contents', () => {
     assert.equal(result.status,1);
     assert.ok(result.stderr.includes('No writes performed'));
     assert.ok(!(result.stdout+result.stderr).includes('private-client-value'));
-  } finally { fs.rmSync(directory,{recursive:true,force:true}); }
+  } finally {
+    const resolved=path.resolve(directory), temporaryRoot=path.resolve(os.tmpdir());
+    if (!resolved.startsWith(temporaryRoot+path.sep) || !path.basename(resolved).startsWith('irr-data-validation-')) throw new Error('Refusing cleanup outside the validation temporary directory.');
+    fs.rmSync(resolved,{recursive:true,force:true});
+  }
 });
 
