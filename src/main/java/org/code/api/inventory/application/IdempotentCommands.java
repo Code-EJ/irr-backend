@@ -1,8 +1,5 @@
 package org.code.api.inventory.application;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -17,6 +14,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.DateTimeFeature;
 
 /**
  * Commits business effects and their replay response together, scoped by organization. A changed
@@ -89,7 +89,7 @@ public class IdempotentCommands {
           throw new ResponseStatusException(
               HttpStatus.CONFLICT, "Idempotency key was already used for a different command");
         return json.readerFor(type)
-            .without(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+            .without(DateTimeFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
             .readValue((String) saved.get("response"));
       }
       T result = action.get();
@@ -105,7 +105,7 @@ public class IdempotentCommands {
           json.writeValueAsString(result),
           actor.getCurrentUserId());
       return result;
-    } catch (JsonProcessingException | NoSuchAlgorithmException error) {
+    } catch (JacksonException | NoSuchAlgorithmException error) {
       throw new IllegalStateException("Cannot serialize the command receipt", error);
     }
   }

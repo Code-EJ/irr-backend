@@ -1,7 +1,5 @@
 package org.code.api.organizations.application;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.UUID;
@@ -13,6 +11,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Administrator-controlled organization metadata and deactivation with transactional audit details.
@@ -89,7 +89,7 @@ public class OrganizationLifecycle {
           actor.getCurrentUserId(),
           action,
           json.writeValueAsString(details));
-    } catch (JsonProcessingException error) {
+    } catch (JacksonException error) {
       throw new IllegalStateException("Cannot serialize organization audit details", error);
     }
   }

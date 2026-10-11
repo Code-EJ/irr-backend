@@ -1,8 +1,5 @@
 package org.code.api.infrastructure.documentation;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
@@ -11,17 +8,20 @@ import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springdoc.core.customizers.OperationCustomizer;
 import org.springdoc.core.utils.SpringDocUtils;
-import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
+import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.prepost.PreAuthorize;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.module.SimpleModule;
 
 /**
  * Configures Swagger/OpenAPI as the official executable HTTP contract reference. It documents
@@ -189,7 +189,7 @@ public class OpenApiConfiguration {
 
   /** Serializes decimal business values as strings to prevent JavaScript precision loss. */
   @Bean
-  public Jackson2ObjectMapperBuilderCustomizer decimalWireFormat() {
+  public JsonMapperBuilderCustomizer decimalWireFormat() {
     SpringDocUtils.getConfig()
         .replaceWithSchema(
             BigDecimal.class,
@@ -200,15 +200,16 @@ public class OpenApiConfiguration {
                     "Exact decimal string; use decimal arithmetic and preserve the documented"
                         + " unit"));
     return builder ->
-        builder.serializerByType(
-            BigDecimal.class,
-            new JsonSerializer<BigDecimal>() {
-              @Override
-              public void serialize(
-                  BigDecimal value, JsonGenerator generator, SerializerProvider provider)
-                  throws IOException {
-                generator.writeString(value.toPlainString());
-              }
-            });
+        builder.addModule(
+            new SimpleModule()
+                .addSerializer(
+                    BigDecimal.class,
+                    new ValueSerializer<BigDecimal>() {
+                      @Override
+                      public void serialize(
+                          BigDecimal value, JsonGenerator generator, SerializationContext context) {
+                        generator.writeString(value.toPlainString());
+                      }
+                    }));
   }
 }

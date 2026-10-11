@@ -2,7 +2,6 @@ package org.code.api.identity.recovery;
 
 import static org.assertj.core.api.Assertions.*;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpServer;
 import java.net.InetSocketAddress;
 import java.net.http.HttpClient;
@@ -20,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Verifies the local HTTP adapter against a real socket stub without external email traffic.

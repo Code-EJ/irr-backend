@@ -13,6 +13,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+/**
+ * Verifies BCrypt hashing and authentication rejection boundaries.
+ *
+ * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
+ */
 public class EncryptionPortTests {
   private final EncryptionPort encryptionPort;
 
@@ -74,15 +79,17 @@ public class EncryptionPortTests {
         "Compare should return false for non-matching password");
   }
 
+  /** Empty credentials are never valid application passwords or authentication inputs. */
   @Test
-  @DisplayName("Expect to handle empty string encryption")
-  public void testEncryptEmptyString() {
+  @DisplayName("Reject empty passwords during authentication")
+  public void testRejectEmptyPasswordAuthentication() {
     String emptyPassword = "";
     String encrypted = encryptionPort.encrypt(emptyPassword);
 
     assertNotNull(encrypted, "Encrypted empty string should not be null");
-    assertTrue(
-        encryptionPort.compare(encrypted, emptyPassword), "Compare should work with empty string");
+    assertFalse(
+        encryptionPort.compare(encrypted, emptyPassword),
+        "Empty credentials must not authenticate");
   }
 
   @Test
