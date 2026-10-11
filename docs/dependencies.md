@@ -2,7 +2,7 @@
 
 - Documentation maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
-Audit date: 2026-09-27T17:50:35.214Z. The resolved Maven graph contains 156 distinct coordinates across production and test scopes. OSV returned 0 matching advisories. This is a point-in-time coordinate scan, not a reachability proof, container OS scan or security guarantee.
+Current review: 2026-10-10. The resolved Maven graph contains 156 distinct coordinates across production and test scopes. OSV now reports two advisories against Spring MVC 6.2.19. The earlier zero-match scans below are historical observations. See the [current evidence](data/dependency-review-2026-10-10.json); this is a point-in-time coordinate scan, not a reachability proof, container OS scan or security guarantee.
 
 ## Decisions
 
@@ -10,7 +10,7 @@ Use Java 21 and Spring Boot 3.5.16 for the existing Spring 6 / Jackson 2 compati
 
 | Explicit override | Version | Reason |
 | --- | --- | --- |
-| Jackson BOM | 2.21.5 | Resolve advisories found against 2.21.4; align the whole family |
+| Jackson BOM | 2.21.7 | Current intentional POM family pin; preserve the aligned family |
 | Netty family | 4.1.137.Final | Resolve advisories against 4.1.135.Final used by Redis transport |
 | Embedded Tomcat | 10.1.60 | Published patched 10.1 line |
 | PostgreSQL JDBC | 42.7.12 | Resolve the matched driver advisory |
@@ -51,7 +51,7 @@ node scripts/audit-dependencies.mjs
 ./mvnw clean verify
 ~~~
 
-On Windows use .\mvnw.cmd. The audit script queries the public [OSV API](https://google.github.io/osv.dev/api/), records coordinate/advisory evidence under .local/audit and exits nonzero on findings or API failures. It sends package coordinates only. Review advisories and upgrade safely; never suppress a scanner failure as an empty result. CI publishes this package-only report, never environment or backup files.
+On Windows use .\mvnw.cmd and quote each Maven property argument: `'-DoutputType=json' '-DoutputFile=.local/audit/dependency-tree.json'`. This avoids PowerShell splitting the dotted path into a lifecycle argument. The audit script queries the public [OSV API](https://google.github.io/osv.dev/api/), records coordinate/advisory evidence under .local/audit and exits nonzero on findings or API failures. It sends package coordinates only. Review advisories and upgrade safely; never suppress a scanner failure as an empty result. CI publishes this package-only report, never environment or backup files.
 
 Official references: [Spring Boot 3.5 documentation](https://docs.spring.io/spring-boot/3.5/reference/index.html), [Java/system requirements](https://docs.spring.io/spring-boot/3.5/system-requirements.html), [Maven Central](https://repo.maven.apache.org/maven2/), [springdoc](https://springdoc.org/). Historical findings and rejected major-upgrade combinations remain in ADR-0003; current execution is ADR-0013.
 
@@ -70,4 +70,18 @@ Maintainer: Enzo Ribas (https://github.com/oEnzoRibas). Recovery uses existing J
 
 ## Synthetic benchmark tooling
 
+The entries before this section retain their original audit dates; they do not override the current review below.
+
 Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas). The report benchmark uses Node 24 built-ins, the existing Docker CLI and immutable locally available backend/PostgreSQL 16/Redis 8.2 images. It adds no npm or Maven dependency and no runtime reporting cache. Versions/image IDs actually measured are recorded in [the benchmark evidence](reporting-benchmarks.md); preparation does not pull images. This inventory entry does not replace the pending full dependency and container security audit.
+
+## Local delivery review — 2026-10-10
+
+Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas). The current resolved graph was regenerated from the existing POM. OSV returned `GHSA-j9f9-w8pj-32f8` and `GHSA-pc63-qcmh-9cmg` against `spring-webmvc:6.2.19`; the audit exits nonzero and neither finding is suppressed. OSV/GitHub labels both critical, whereas the vendor labels the SSE issue low and the XSLT issue medium. Retain this severity discrepancy explicitly instead of substituting one source for the other.
+
+The vendor describes prerequisites: [SSE stream corruption](https://spring.io/security/cve-2026-47890/) requires streaming view fragments; [XSLT path handling](https://spring.io/security/cve-2026-47884/) requires XsltView and wildcard implicit view rendering. Source inspection found no `SseEmitter`, `ServerSentEvent`, `FragmentsRendering`, `XsltView`, `ViewResolver`, `ModelAndView`, `text/event-stream`, XSL stylesheets or plain `@Controller` declarations in application source/resources. Controllers use REST response handling. This supports a conditional-feature disposition, not proof that the dependency is patched or every attack path is unreachable. Reassess if view/SSE support, view resolvers or routing conventions change.
+
+The vendor lists Framework 6.2.20 as enterprise-only and Framework 7.0.9 as the OSS fix. No support entitlement is assumed, and a Framework 7/Boot 4 migration is not silently introduced into ADR-0003's current compatibility baseline. Before release, explicitly resolve the framework maintenance/support decision and these recorded findings. The existing Java/Spotless/Docker configuration and application contract remain unchanged.
+
+Docker Scout 1.19.0 was present, but its scan of `local://irr-identity-backend` failed because Docker account authentication is required. There is no completed image OS scan and no zero-CVE claim. Use the intended release image IDs with an authenticated approved scanner, retain failures, and review all application and base-image findings before release. Package-only results do not cover Maven plugin implementations, JRE/OS packages or infrastructure images.
+
+The selected local container configuration was inspected after restoring Docker Desktop and starting the existing database/Redis/backend containers. Backend/frontend are non-root, use read-only roots, drop all capabilities and set `no-new-privileges`; published application/Mailpit ports bind to loopback, and database/Redis ports are not published. Database/Redis/Mailpit retain their existing writable-root/image-entrypoint behavior; blank configured users do not prove the actual daemon UID. The selected verification backend/database/Redis have restart policy `no`, so restarting Docker Desktop required explicit `docker compose -f .local/identity/compose.json -p irr-identity-verification start --wait --wait-timeout 120`. No container was recreated, image pulled, secret changed or volume reset by this recovery. These are local configuration observations, not production hardening certification. The [current evidence](data/dependency-review-2026-10-10.json) records image IDs and non-secret configuration only.
