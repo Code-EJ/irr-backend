@@ -270,6 +270,7 @@ Complete maintained main/test Java index. Regenerate with node scripts/verify-do
 - [src/test/java/org/code/api/infrastructure/InventoryBalanceSchemaIT.java](../src/test/java/org/code/api/infrastructure/InventoryBalanceSchemaIT.java)
 - [src/test/java/org/code/api/infrastructure/InventoryMigrationIT.java](../src/test/java/org/code/api/infrastructure/InventoryMigrationIT.java)
 - [src/test/java/org/code/api/infrastructure/MaterialCatalogIT.java](../src/test/java/org/code/api/infrastructure/MaterialCatalogIT.java)
+- [src/test/java/org/code/api/infrastructure/MvcSecuritySurfaceIT.java](../src/test/java/org/code/api/infrastructure/MvcSecuritySurfaceIT.java)
 - [src/test/java/org/code/api/infrastructure/OperationalReportIT.java](../src/test/java/org/code/api/infrastructure/OperationalReportIT.java)
 - [src/test/java/org/code/api/infrastructure/OrganizationMembershipIT.java](../src/test/java/org/code/api/infrastructure/OrganizationMembershipIT.java)
 - [src/test/java/org/code/api/infrastructure/PasswordRecoveryIT.java](../src/test/java/org/code/api/infrastructure/PasswordRecoveryIT.java)
