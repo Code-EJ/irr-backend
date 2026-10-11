@@ -1,0 +1,3709 @@
+{
+  "maintainer": "Enzo Ribas (https://github.com/oEnzoRibas)",
+  "scanner": "grype",
+  "scannerVersion": "0.120.1",
+  "databaseBuilt": "2026-10-10T06:30:01Z",
+  "rawReportSha256": "35104cd0dcb0bacdd9d4ae8e1efd6575899bddb63f126f7700df7cc72a49a202",
+  "source": {
+    "imageId": "sha256:64ac155188fda755629569afd2ffd70b4232b7539dbfef99c04f195ac34018b3",
+    "manifestDigest": "sha256:7541abcf63aa37c86ad6f77903f1f1644973175338bdf22cc251bc503f1e40a7"
+  },
+  "distro": {
+    "name": "alpine",
+    "version": "3.23.3",
+    "idLike": []
+  },
+  "counts": {
+    "High": 121,
+    "Critical": 29,
+    "Medium": 91,
+    "Low": 13,
+    "Unknown": 6
+  },
+  "matchCount": 260,
+  "interpretation": "Matches are not unique exploitable defects. Pending findings require package/vendor/configuration review; no suppression or clean-release assertion.",
+  "matchedPackages": [
+    {
+      "name": "nginx",
+      "version": "1.28.2-r1",
+      "type": "apk"
+    },
+    {
+      "name": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk"
+    },
+    {
+      "name": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk"
+    },
+    {
+      "name": "tiff",
+      "version": "4.7.1-r0",
+      "type": "apk"
+    },
+    {
+      "name": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk"
+    },
+    {
+      "name": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk"
+    },
+    {
+      "name": "libpng",
+      "version": "1.6.54-r0",
+      "type": "apk"
+    },
+    {
+      "name": "libxml2",
+      "version": "2.13.9-r0",
+      "type": "apk"
+    },
+    {
+      "name": "nghttp2-libs",
+      "version": "1.68.0-r0",
+      "type": "apk"
+    },
+    {
+      "name": "c-ares",
+      "version": "1.34.6-r0",
+      "type": "apk"
+    },
+    {
+      "name": "libexpat",
+      "version": "2.7.4-r0",
+      "type": "apk"
+    },
+    {
+      "name": "pcre2",
+      "version": "10.47-r0",
+      "type": "apk"
+    },
+    {
+      "name": "xz-libs",
+      "version": "5.8.2-r0",
+      "type": "apk"
+    },
+    {
+      "name": "zlib",
+      "version": "1.3.1-r2",
+      "type": "apk"
+    },
+    {
+      "name": "libuuid",
+      "version": "2.41.2-r0",
+      "type": "apk"
+    },
+    {
+      "name": "busybox",
+      "version": "1.37.0-r30",
+      "type": "apk"
+    },
+    {
+      "name": "busybox-binsh",
+      "version": "1.37.0-r30",
+      "type": "apk"
+    },
+    {
+      "name": "ssl_client",
+      "version": "1.37.0-r30",
+      "type": "apk"
+    },
+    {
+      "name": "musl",
+      "version": "1.2.5-r21",
+      "type": "apk"
+    },
+    {
+      "name": "musl-utils",
+      "version": "1.2.5-r21",
+      "type": "apk"
+    },
+    {
+      "name": "libxpm",
+      "version": "3.5.17-r0",
+      "type": "apk"
+    },
+    {
+      "name": "freetype",
+      "version": "2.14.1-r0",
+      "type": "apk"
+    }
+  ],
+  "findings": [
+    {
+      "id": "CVE-2026-27654",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "nginx",
+      "version": "1.28.2-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.28.3-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-27654",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-42055",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "nginx",
+      "version": "1.28.2-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.28.3-r4"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-42055",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-49975",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "nginx",
+      "version": "1.28.2-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.28.3-r3"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-49975",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-45447",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.7-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-45447",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-45447",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.7-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-45447",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-42945",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "nginx",
+      "version": "1.28.2-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.28.3-r1"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-42945",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-9256",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "nginx",
+      "version": "1.28.2-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.28.3-r2"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-9256",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-63076",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.8-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-63076",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-63076",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.8-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-63076",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-18798",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.8-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-18798",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-18798",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.8-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-18798",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-63073",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Critical",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.8-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-63073",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-63073",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Critical",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.8-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-63073",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-6277",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "tiff",
+      "version": "4.7.1-r0",
+      "type": "apk",
+      "fixState": "",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-6277",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-8925",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Critical",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-8925",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-8925",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Critical",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-8925",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-34182",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Critical",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.7-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-34182",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-34182",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Critical",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.7-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-34182",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-42533",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Critical",
+      "package": "nginx",
+      "version": "1.28.2-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.28.3-r6"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-42533",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-33416",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libpng",
+      "version": "1.6.54-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.6.56-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-33416",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-34183",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.7-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-34183",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-34183",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.7-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-34183",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-31790",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.6-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-31790",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-31790",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.6-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-31790",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-34180",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.7-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-34180",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-34180",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.7-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-34180",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-14457",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.8-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-14457",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-14457",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.8-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-14457",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-3805",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.19.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-3805",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-3805",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.19.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-3805",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-6732",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libxml2",
+      "version": "2.13.9-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.13.9-r1"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-6732",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-27651",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "nginx",
+      "version": "1.28.2-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.28.3-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-27651",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-19931",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Critical",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-19931",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-19931",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Critical",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-19931",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-42946",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "nginx",
+      "version": "1.28.2-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.28.3-r1"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-42946",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-63072",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.8-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-63072",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-63072",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.8-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-63072",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-80231",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-80231",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-80231",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-80231",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-27135",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "nghttp2-libs",
+      "version": "1.68.0-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.68.1"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-27135",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-28388",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.6-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-28388",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-28388",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.6-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-28388",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-11856",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Critical",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-11856",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-11856",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Critical",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-11856",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-33630",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "c-ares",
+      "version": "1.34.6-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.34.8-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-33630",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-7383",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.7-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-7383",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-7383",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.7-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-7383",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-28389",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.6-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-28389",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-28390",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.6-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-28390",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-28389",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.6-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-28389",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-28390",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.6-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-28390",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-66046",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libexpat",
+      "version": "2.7.4-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.8.4-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-66046",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-8924",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Critical",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-8924",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-8924",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Critical",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-8924",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-42764",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.7-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-42764",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-63075",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.8-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-63075",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-42764",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.7-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-42764",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-63075",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.8-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-63075",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-42766",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.7-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-42766",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-42766",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.7-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-42766",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-10536",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Critical",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-10536",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-10536",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Critical",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-10536",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-25646",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libpng",
+      "version": "1.6.54-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.6.55-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-25646",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-9079",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Critical",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-9079",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-9079",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Critical",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-9079",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-14456",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.8-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-14456",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-14456",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.8-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-14456",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-27784",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "nginx",
+      "version": "1.28.2-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.28.3-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-27784",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-11352",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-11352",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-11352",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-11352",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-9076",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.7-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-9076",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-9076",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.7-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-9076",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-18924",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Critical",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-18924",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-18924",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Critical",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-18924",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-45445",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.7-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-45445",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-45445",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.7-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-45445",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-28387",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.6-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-28387",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-28387",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.6-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-28387",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-69184",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "c-ares",
+      "version": "1.34.6-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-69184",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-5773",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.20.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-5773",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-5773",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.20.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-5773",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-9546",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-9546",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-9546",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-9546",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-54874",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.8-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-54874",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-54874",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.8-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-54874",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-11586",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-11586",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-11586",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-11586",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-8927",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Critical",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-8927",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-8927",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Critical",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-8927",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-80229",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-80229",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-80229",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-80229",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-60005",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "nginx",
+      "version": "1.28.2-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.28.3-r6"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-60005",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-42934",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "nginx",
+      "version": "1.28.2-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.28.3-r1"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-42934",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-6253",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.20.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-6253",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-6253",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.20.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-6253",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-8926",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Critical",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-8926",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-8926",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Critical",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-8926",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-40701",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "nginx",
+      "version": "1.28.2-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.28.3-r1"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-40701",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-14819",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.18.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2025-14819",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-14819",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.18.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2025-14819",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-11564",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Critical",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-11564",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-11564",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Critical",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-11564",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-9080",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-9080",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-9080",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-9080",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-45186",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libexpat",
+      "version": "2.7.4-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.8.1-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-45186",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-80255",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-80255",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-80255",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-80255",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-13608",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-13608",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-13608",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-13608",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-14524",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.18.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2025-14524",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-14524",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.18.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2025-14524",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-54873",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-54873",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-54873",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-54873",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-56434",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "nginx",
+      "version": "1.28.2-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.28.3-r6"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-56434",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-93990",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libexpat",
+      "version": "2.7.4-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.8.5-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-93990",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-63074",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.8-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-63074",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-63074",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.8-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-63074",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-86145",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "pcre2",
+      "version": "10.47-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "10.48-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-86145",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-84782",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-84782",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-84782",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-84782",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-9545",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-9545",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-9545",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-9545",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-82208",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-82208",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-82208",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-82208",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-7168",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.20.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-7168",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-7168",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.20.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-7168",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-42767",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.7-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-42767",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-42767",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.7-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-42767",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-84784",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-84784",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-84784",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-84784",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-12064",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-12064",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-12064",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-12064",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-41080",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libexpat",
+      "version": "2.7.4-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.8.1-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-41080",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-8932",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-8932",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-8932",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-8932",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-34743",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "xz-libs",
+      "version": "5.8.2-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "5.8.3-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-34743",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-5545",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.20.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-5545",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-5545",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.20.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-5545",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-82209",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-82209",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-82209",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-82209",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-4775",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "tiff",
+      "version": "4.7.1-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "4.7.2-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-4775",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-76641",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libexpat",
+      "version": "2.7.4-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.8.4-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-76641",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-85091",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "zlib",
+      "version": "1.3.1-r2",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.3.2-r1"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-85091",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-2673",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.6-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-2673",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-2673",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.6-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-2673",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-80230",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-80230",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-80230",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-80230",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-33636",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libpng",
+      "version": "1.6.54-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.6.56-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-33636",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-3783",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.19.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-3783",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-3783",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.19.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-3783",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-69186",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "c-ares",
+      "version": "1.34.6-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-69186",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-3784",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.19.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-3784",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-3784",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.19.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-3784",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-42768",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Low",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.7-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-42768",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-42768",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Low",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.7-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-42768",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-6429",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.20.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-6429",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-6429",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.20.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-6429",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-32647",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "nginx",
+      "version": "1.28.2-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.28.3-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-32647",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-6276",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.20.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-6276",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-6276",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.20.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-6276",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-9547",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-9547",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-9547",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-9547",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-8286",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-8286",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-8286",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-8286",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-40460",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "nginx",
+      "version": "1.28.2-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.28.3-r1"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-40460",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-31789",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Critical",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.6-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-31789",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-31789",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Critical",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.6-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-31789",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-76956",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libexpat",
+      "version": "2.7.4-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.8.4-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-76956",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-8458",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-8458",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-8458",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-8458",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-48142",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "nginx",
+      "version": "1.28.2-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.28.3-r4"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-48142",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-75803",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Critical",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.8-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-75803",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-75803",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Critical",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.8-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-75803",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-89157",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "pcre2",
+      "version": "10.47-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "10.48-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-89157",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-72897",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-72897",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-72897",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-72897",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-75806",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-75806",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-75806",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-75806",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-4873",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.20.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-4873",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-4873",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.20.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-4873",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-6228",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "tiff",
+      "version": "4.7.1-r0",
+      "type": "apk",
+      "fixState": "",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-6228",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-40930",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libpng",
+      "version": "1.6.54-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.6.58-r1"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-40930",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-75804",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-75804",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-75804",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-75804",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-76642",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libuuid",
+      "version": "2.41.2-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.41.6-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-76642",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-42772",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-42772",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-42772",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-42772",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-42770",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Low",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.7-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-42770",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-42770",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Low",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.7-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-42770",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-60876",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "busybox",
+      "version": "1.37.0-r30",
+      "type": "apk",
+      "fixState": "",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-60876",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-60876",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "busybox-binsh",
+      "version": "1.37.0-r30",
+      "type": "apk",
+      "fixState": "",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-60876",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-60876",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "ssl_client",
+      "version": "1.37.0-r30",
+      "type": "apk",
+      "fixState": "",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-60876",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-7009",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.20.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-7009",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-7009",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.20.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-7009",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-103111",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "pcre2",
+      "version": "10.47-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "10.49-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-103111",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-89156",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "pcre2",
+      "version": "10.47-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "10.48-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-89156",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-89160",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "pcre2",
+      "version": "10.47-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "10.48-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-89160",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-1965",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.19.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-1965",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-1965",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.19.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-1965",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-28753",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "nginx",
+      "version": "1.28.2-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.28.3-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-28753",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-78408",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libuuid",
+      "version": "2.41.2-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.41.6-r1"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-78408",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-89158",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "pcre2",
+      "version": "10.47-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "10.48-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-89158",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-35189",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-35189",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-35189",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-35189",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-58055",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "nghttp2-libs",
+      "version": "1.68.0-r0",
+      "type": "apk",
+      "fixState": "",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-58055",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-34181",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.7-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-34181",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-34181",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.7-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-34181",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-40200",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "musl",
+      "version": "1.2.5-r21",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.2.5-r23"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-40200",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-40200",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "musl-utils",
+      "version": "1.2.5-r21",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.2.5-r23"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-40200",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-42769",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.7-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-42769",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-42769",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.7-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-42769",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-35191",
+      "namespace": "nvd:cpe",
+      "severity": "Low",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-35191",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-35191",
+      "namespace": "nvd:cpe",
+      "severity": "Low",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-35191",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-78410",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libuuid",
+      "version": "2.41.2-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.41.6-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-78410",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-45446",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.7-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-45446",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-45446",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.7-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-45446",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-75805",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-75805",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-75805",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-75805",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-14104",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libuuid",
+      "version": "2.41.2-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.41.4-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2025-14104",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-56406",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libexpat",
+      "version": "2.7.4-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.8.2-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-56406",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-56407",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libexpat",
+      "version": "2.7.4-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.8.2-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-56407",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-27171",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "zlib",
+      "version": "1.3.1-r2",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.3.2-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-27171",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-56403",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libexpat",
+      "version": "2.7.4-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.8.2-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-56403",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-50219",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libexpat",
+      "version": "2.7.4-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.8.2-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-50219",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-54875",
+      "namespace": "nvd:cpe",
+      "severity": "Low",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-54875",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-54875",
+      "namespace": "nvd:cpe",
+      "severity": "Low",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-54875",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-56412",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libexpat",
+      "version": "2.7.4-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.8.2-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-56412",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-89161",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "pcre2",
+      "version": "10.47-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "10.48-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-89161",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-32777",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libexpat",
+      "version": "2.7.4-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.7.5-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-32777",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-54872",
+      "namespace": "nvd:cpe",
+      "severity": "Low",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-54872",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-54872",
+      "namespace": "nvd:cpe",
+      "severity": "Low",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-54872",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-56131",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libexpat",
+      "version": "2.7.4-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.8.2-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-56131",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-32776",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libexpat",
+      "version": "2.7.4-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.7.5-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-32776",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-32778",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libexpat",
+      "version": "2.7.4-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.7.5-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-32778",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-76957",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "High",
+      "package": "libexpat",
+      "version": "2.7.4-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.8.4-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-76957",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-77696",
+      "namespace": "nvd:cpe",
+      "severity": "Low",
+      "package": "libcrypto3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-77696",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-77696",
+      "namespace": "nvd:cpe",
+      "severity": "Low",
+      "package": "libssl3",
+      "version": "3.5.5-r0",
+      "type": "apk",
+      "fixState": "unknown",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-77696",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-4367",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libxpm",
+      "version": "3.5.17-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.5.19-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-4367",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-28755",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "nginx",
+      "version": "1.28.2-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.28.3-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-28755",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-6042",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "musl",
+      "version": "1.2.5-r21",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.2.5-r22"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-6042",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-6042",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "musl-utils",
+      "version": "1.2.5-r21",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.2.5-r22"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-6042",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-56404",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libexpat",
+      "version": "2.7.4-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.8.2-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-56404",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-56410",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libexpat",
+      "version": "2.7.4-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.8.2-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-56410",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-56411",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libexpat",
+      "version": "2.7.4-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.8.2-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-56411",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-34757",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libpng",
+      "version": "1.6.54-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.6.57-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-34757",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-56405",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libexpat",
+      "version": "2.7.4-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.8.2-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-56405",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-56408",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libexpat",
+      "version": "2.7.4-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.8.2-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-56408",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-23865",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "freetype",
+      "version": "2.14.1-r0",
+      "type": "apk",
+      "fixState": "",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-23865",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-56409",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libexpat",
+      "version": "2.7.4-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.8.2-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-56409",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-14017",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.18.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2025-14017",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-14017",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.18.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2025-14017",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-56132",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libexpat",
+      "version": "2.7.4-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.8.2-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-56132",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-27456",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Medium",
+      "package": "libuuid",
+      "version": "2.41.2-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.41.4-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-27456",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-89162",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Low",
+      "package": "pcre2",
+      "version": "10.47-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "10.48-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-89162",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-80256",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Unknown",
+      "package": "curl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-80256",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-80256",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Unknown",
+      "package": "libcurl",
+      "version": "8.17.0-r1",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.22.0-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-80256",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-46675",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Unknown",
+      "package": "libpng",
+      "version": "1.6.54-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.6.59-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-46675",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-53612",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Unknown",
+      "package": "libuuid",
+      "version": "2.41.2-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.41.6-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-53612",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-53613",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Unknown",
+      "package": "libuuid",
+      "version": "2.41.2-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.41.6-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-53613",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-53614",
+      "namespace": "alpine:distro:alpine:3.23",
+      "severity": "Unknown",
+      "package": "libuuid",
+      "version": "2.41.2-r0",
+      "type": "apk",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.41.6-r0"
+      ],
+      "url": "https://security.alpinelinux.org/vuln/CVE-2026-53614",
+      "disposition": "pending"
+    }
+  ]
+}

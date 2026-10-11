@@ -1,0 +1,93 @@
+{
+  "maintainer": "Enzo Ribas (https://github.com/oEnzoRibas)",
+  "scanner": "grype",
+  "scannerVersion": "0.120.1",
+  "databaseBuilt": "2026-10-10T06:30:01Z",
+  "rawReportSha256": "be1b0e13140382ab62a526146a3cb69fa9176543764df3b63bd9865a4f1da38b",
+  "source": {
+    "imageId": "sha256:3d1c0e7c189c3bdea61339496fab179b9116bf69646b836df79122c79a6649f9",
+    "manifestDigest": "sha256:d635cbf788be16beedc9adec4426d9131a485d2f694c08677d15d1d74f80128b"
+  },
+  "distro": {
+    "name": "alpine",
+    "version": "3.23.6",
+    "idLike": []
+  },
+  "counts": {
+    "Medium": 4
+  },
+  "matchCount": 4,
+  "interpretation": "Matches are not unique exploitable defects. Pending findings require package/vendor/configuration review; no suppression or clean-release assertion.",
+  "matchedPackages": [
+    {
+      "name": "busybox",
+      "version": "1.37.0-r30",
+      "type": "apk"
+    },
+    {
+      "name": "busybox-binsh",
+      "version": "1.37.0-r30",
+      "type": "apk"
+    },
+    {
+      "name": "ssl_client",
+      "version": "1.37.0-r30",
+      "type": "apk"
+    },
+    {
+      "name": "nghttp2-libs",
+      "version": "1.69.0-r0",
+      "type": "apk"
+    }
+  ],
+  "findings": [
+    {
+      "id": "CVE-2025-60876",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "busybox",
+      "version": "1.37.0-r30",
+      "type": "apk",
+      "fixState": "",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-60876",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-60876",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "busybox-binsh",
+      "version": "1.37.0-r30",
+      "type": "apk",
+      "fixState": "",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-60876",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-60876",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "ssl_client",
+      "version": "1.37.0-r30",
+      "type": "apk",
+      "fixState": "",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-60876",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-58055",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "nghttp2-libs",
+      "version": "1.69.0-r0",
+      "type": "apk",
+      "fixState": "",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-58055",
+      "disposition": "pending"
+    }
+  ]
+}
