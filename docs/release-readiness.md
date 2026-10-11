@@ -1,5 +1,9 @@
 # Local release consolidation register
 
+## Supported open-source platform — 2026-10-11
+
+Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas). [ADR-0029](adrs/0029-open-source-spring-security-upgrade.md) records the owner's no-Enterprise decision and the bounded Boot 4.0.8 / Framework 7.0.9 migration. The resolved graph now has 185 coordinates and zero OSV matches; earlier Spring 6.2.19 findings below are historical and are superseded for this candidate only. This does not close container findings, public deployment, mail or operator acceptance gates. Java 21, the modular monolith, versioned API and V1–V4 migrations remain. Final verification evidence is recorded in ADR-0029.
+
 ## Current execution checkpoint — 2026-10-11
 
 [ADR-0028](adrs/0028-isolated-trial-homologation.md) now authorizes isolated synthetic Railway execution. [The provisioning record](deploy/railway/execution-2026-10-11.md) records a new project, four services, three volumes, limits, fresh private secrets and reserved domains. The previous project is preserved. No new workload has deployed; effective Virginia volume locality, final image security review, real public workflows, mail and merge CI remain open. References below to preparation-only authorization, missing cloud access or a blanket foreign-region prohibition are historical and superseded for this synthetic environment only.

@@ -1,5 +1,9 @@
 # Pre-release security review — 2026-10-10
 
+## Supported open-source platform — 2026-10-11
+
+Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas). [ADR-0029](../adrs/0029-open-source-spring-security-upgrade.md) records the owner's no-Enterprise decision and the bounded Boot 4.0.8 / Framework 7.0.9 migration. The resolved graph now has 185 coordinates and zero OSV matches; earlier Spring 6.2.19 findings below are historical and are superseded for this candidate only. This does not close container findings, public deployment, mail or operator acceptance gates. Java 21, the modular monolith, versioned API and V1–V4 migrations remain. Final verification evidence is recorded in ADR-0029.
+
 ## Stateful image remediation increment — 2026-10-11
 
 The PostgreSQL 16.13 baseline's 144 matches (8 critical, 78 high) is retained as historical evidence. A compatible PostgreSQL 16.15 candidate is defined in `deploy/postgres/Dockerfile`, pinned to the official upstream digest and applying Alpine package updates. Its [sanitized scan](postgres-patched-image-2026-10-11.json) has four medium matches and zero critical/high. The intermediate [unpatched 16.15 scan](postgres-16.15-image-2026-10-11.json) retains 31 matches, showing why a minor-version pull alone was insufficient. OpenSSL 3.5.9 and zlib 1.3.2-r1 replace the vulnerable package revisions.

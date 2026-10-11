@@ -2,44 +2,44 @@
 
 - Documentation maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
-Current review: 2026-10-10. The resolved Maven graph contains 156 distinct coordinates across production and test scopes. OSV now reports two advisories against Spring MVC 6.2.19. The earlier zero-match scans below are historical observations. See the [current evidence](data/dependency-review-2026-10-10.json); this is a point-in-time coordinate scan, not a reachability proof, container OS scan or security guarantee.
+Current review: 2026-10-11. The resolved Maven graph contains 185 distinct production/test coordinates. The fresh OSV scan reports zero matched advisories after the supported open-source platform upgrade in [ADR-0029](adrs/0029-open-source-spring-security-upgrade.md). Historical findings remain below and in the dated evidence; coordinate scanning is not container or reachability certification.
 
 ## Decisions
 
-Use Java 21 and Spring Boot 3.5.16 for the existing Spring 6 / Jackson 2 compatibility baseline. A separate Boot 4 migration must revisit framework behavior, security, Jackson integration and springdoc compatibility; it is not silently bundled into this domain overhaul. Version selection does not itself establish a support entitlement. Remove spring-boot-devtools from the application and delete the unused ReportPort/ReportService stub; reporting now has a real feature module.
+Use Java 21, Spring Boot 4.0.8, Framework 7.0.9, Spring Security 7.0.7 and springdoc 3.0.3. The owner has no Enterprise license and explicitly selected the free supported line. Preserve the pragmatic modular monolith and ADR-0014's business contract/schema. Application JSON uses Boot's Jackson 3 mapper with compatible defaults and explicit exact-decimal string serialization; Swagger retains its own transitive Jackson 2 dependencies. MVC, security, Flyway and test starters follow Boot 4's module boundaries.
 
 | Explicit override | Version | Reason |
 | --- | --- | --- |
-| Jackson BOM | 2.21.7 | Current intentional POM family pin; preserve the aligned family |
-| Netty family | 4.1.137.Final | Resolve advisories against 4.1.135.Final used by Redis transport |
-| Embedded Tomcat | 10.1.60 | Published patched 10.1 line |
-| PostgreSQL JDBC | 42.7.12 | Resolve the matched driver advisory |
-| Log4j2 family | 2.25.5 | Resolve the matched API-family advisory |
-| Commons Lang | 3.18.0 | Resolve transitive 3.17.0 advisory |
-| Commons Compress | 1.28.0 | Resolve Testcontainers archive-extraction dependency advisory |
+| Jackson 3 BOM | 3.1.7 | Compatible patch removes advisories in the inherited 3.1.5 family |
+| Jackson 2 BOM | 2.21.7 | Patch Swagger's transitive 2.21.5 family; no second application mapper |
+| Embedded Tomcat | 11.0.26 | Patched compatible Servlet 6.1 generation |
+| PostgreSQL JDBC | 42.7.12 | Retain reviewed driver patch |
+| Log4j2 family | 2.25.5 | Retain reviewed API-family patch |
+| Commons Lang | 3.18.0 | Retain reviewed transitive patch |
+| Commons Compress | 1.28.0 | Retain reviewed archive-extraction patch |
 
-The initial post-Boot-upgrade scan found 14 coordinate/advisory matches. Pinning compatible families reduced the fresh scan to zero matches across 156 coordinates. The full functional suite and Docker workflow were rerun with these pins. Remove an override only when the inherited BOM supplies an equally reviewed version; do not independently downgrade sibling artifacts. Redis uses Boot-managed Spring Data/Lettuce. Testcontainers 1.21.4 retains Docker Engine 29 compatibility. No dependency is added solely for architectural naming.
+Obsolete Tomcat 10 and Netty 4.1 pins are removed because they conflict with this platform. Netty now follows Boot's 4.2.17.Final family; Testcontainers follows its managed 2.0.5 line, verified against Docker Engine 29.2.1. Do not remove compatible security overrides before auditing the replacement graph. Spotless 3.10.3 and the owner's Docker Maven cache/goals remain.
 
 ## Direct resolved dependencies
 
 | Coordinate | Version | Scope |
 | --- | --- | --- |
-| org.springframework.boot:spring-boot-starter-data-redis | 3.5.16 | compile |
-| org.springframework.boot:spring-boot-starter-validation | 3.5.16 | compile |
-| org.springframework.boot:spring-boot-starter-actuator | 3.5.16 | compile |
-| org.springframework.boot:spring-boot-starter-data-jpa | 3.5.16 | compile |
-| org.springframework.boot:spring-boot-starter-security | 3.5.16 | compile |
-| org.springframework.boot:spring-boot-starter-oauth2-resource-server | 3.5.16 | compile |
-| org.springframework.security:spring-security-oauth2-jose | 6.5.11 | compile |
-| org.springframework.boot:spring-boot-starter-web | 3.5.16 | compile |
-| org.flywaydb:flyway-core | 11.7.2 | compile |
-| org.flywaydb:flyway-database-postgresql | 11.7.2 | compile |
+| org.springframework.boot:spring-boot-starter-data-redis | 4.0.8 | compile |
+| org.springframework.boot:spring-boot-starter-validation | 4.0.8 | compile |
+| org.springframework.boot:spring-boot-starter-actuator | 4.0.8 | compile |
+| org.springframework.boot:spring-boot-starter-data-jpa | 4.0.8 | compile |
+| org.springframework.boot:spring-boot-starter-security | 4.0.8 | compile |
+| org.springframework.boot:spring-boot-starter-security-oauth2-resource-server | 4.0.8 | compile |
+| org.springframework.security:spring-security-oauth2-jose | 7.0.7 | compile |
+| org.springframework.boot:spring-boot-starter-webmvc | 4.0.8 | compile |
+| org.springframework.boot:spring-boot-starter-flyway | 4.0.8 | compile |
+| org.flywaydb:flyway-database-postgresql | 11.14.1 | compile |
 | org.postgresql:postgresql | 42.7.12 | runtime |
 | org.projectlombok:lombok | 1.18.46 | compile |
-| org.springframework.boot:spring-boot-starter-test | 3.5.16 | test |
-| org.springframework.security:spring-security-test | 6.5.11 | test |
-| org.springdoc:springdoc-openapi-starter-webmvc-ui | 2.9.1 | compile |
-| org.testcontainers:postgresql | 1.21.4 | test |
+| org.springframework.boot:spring-boot-starter-webmvc-test | 4.0.8 | test |
+| org.springframework.boot:spring-boot-starter-security-test | 4.0.8 | test |
+| org.springdoc:springdoc-openapi-starter-webmvc-ui | 3.0.3 | compile |
+| org.testcontainers:testcontainers-postgresql | 2.0.5 | test |
 
 ## Repeat the scan
 
@@ -53,7 +53,7 @@ node scripts/audit-dependencies.mjs
 
 On Windows use .\mvnw.cmd and quote each Maven property argument: `'-DoutputType=json' '-DoutputFile=.local/audit/dependency-tree.json'`. This avoids PowerShell splitting the dotted path into a lifecycle argument. The audit script queries the public [OSV API](https://google.github.io/osv.dev/api/), records coordinate/advisory evidence under .local/audit and exits nonzero on findings or API failures. It sends package coordinates only. Review advisories and upgrade safely; never suppress a scanner failure as an empty result. CI publishes this package-only report, never environment or backup files.
 
-Official references: [Spring Boot 3.5 documentation](https://docs.spring.io/spring-boot/3.5/reference/index.html), [Java/system requirements](https://docs.spring.io/spring-boot/3.5/system-requirements.html), [Maven Central](https://repo.maven.apache.org/maven2/), [springdoc](https://springdoc.org/). Historical findings and rejected major-upgrade combinations remain in ADR-0003; current execution is ADR-0013.
+Official references: [Spring Boot 4.0 documentation](https://docs.spring.io/spring-boot/4.0/reference/index.html), [Java/system requirements](https://docs.spring.io/spring-boot/4.0/system-requirements.html), [Maven Central](https://repo.maven.apache.org/maven2/), [springdoc](https://springdoc.org/). Historical findings and rejected major-upgrade combinations remain in ADR-0003; current execution is ADR-0013.
 
 ## Build formatting policy
 
@@ -74,7 +74,7 @@ The entries before this section retain their original audit dates; they do not o
 
 Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas). The report benchmark uses Node 24 built-ins, the existing Docker CLI and immutable locally available backend/PostgreSQL 16/Redis 8.2 images. It adds no npm or Maven dependency and no runtime reporting cache. Versions/image IDs actually measured are recorded in [the benchmark evidence](reporting-benchmarks.md); preparation does not pull images. This inventory entry does not replace the pending full dependency and container security audit.
 
-## Local delivery review — 2026-10-10
+## Historical local delivery review — 2026-10-10
 
 Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas). The current resolved graph was regenerated from the existing POM. OSV returned `GHSA-j9f9-w8pj-32f8` and `GHSA-pc63-qcmh-9cmg` against `spring-webmvc:6.2.19`; the audit exits nonzero and neither finding is suppressed. OSV/GitHub labels both critical, whereas the vendor labels the SSE issue low and the XSLT issue medium. Retain this severity discrepancy explicitly instead of substituting one source for the other.
 

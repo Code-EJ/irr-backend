@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-11",
+  "maintainer": "Enzo Ribas (https://github.com/oEnzoRibas)",
+  "source": "02bc54de8494be6bbb14831dbe82e6e91d6c86c2",
+  "pomSha256": "472889f528d1d34d78d1181c2b23052d7dfad4d2ed32f3c3ca9e8953b1b963c5",
+  "scannedAt": "2026-10-11T11:59:31.270Z",
+  "coordinates": 185,
+  "platform": {
+    "java": 21,
+    "boot": "4.0.8",
+    "framework": "7.0.9",
+    "security": "7.0.7",
+    "springdoc": "3.0.3",
+    "jackson3": "3.1.7",
+    "jackson2": "2.21.7",
+    "tomcat": "11.0.26",
+    "testcontainers": "2.0.5"
+  },
+  "verification": {
+    "unitTests": 51,
+    "integrationTests": 101,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "openapiChangesExcludingServers": 0,
+    "supportedOperations": 116,
+    "readOnlyLocalPairChecks": 6,
+    "retainedDatabaseStartup": "healthy",
+    "schemaMigrationsChanged": false
+  },
+  "limitations": [
+    "Point-in-time OSV package matching is not reachability or container certification.",
+    "No public deployment, external mail delivery or operator acceptance implied.",
+    "Image findings retained separately; no advisories suppressed."
+  ]
+}
