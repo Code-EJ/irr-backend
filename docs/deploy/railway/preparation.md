@@ -1,12 +1,14 @@
 # Railway installation preparation
 
+Current authority: [ADR-0027](../../adrs/0027-provider-independent-deployment.md) explicitly permits Railway Virginia homologation with synthetic data only, superseding the earlier blanket foreign-region blocker below. Production moves to a planned Brazilian Hostinger VPS through [provider-independent deployment](../README.md). No remote install or real client data is authorized by this preparation record.
+
 Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
 Authority: [ADR-0025](../../adrs/0025-pre-release-security-and-deployment-preparation.md). Planning and local artifacts are authorized; creating resources, configuring real secrets, publishing and deploying are not. No remote action has occurred. Existing runbooks remain the detailed variable/rollback reference.
 
 ## Reviewable topology and configuration
 
-Create separate homologation/production environments only after approval. Backend Java 21 and frontend static Nginx use existing Dockerfiles; PostgreSQL 16 and Redis 8.2 remain separate private services. Public HTTPS exposes only frontend and `/api/v1` backend. Browser traffic needs a public API origin, never private DNS. Use exact CORS origin, ports 9191/8080 and their matching health targets. Redis/database connections use environment-local service references, not exposed TCP proxies. See [private networking](https://docs.railway.com/networking/private-networking).
+Create only the approved synthetic homologation target on Railway; production planning is separate on Hostinger Brazil. Backend Java 21 and frontend static Nginx use existing Dockerfiles; PostgreSQL 16 and Redis 8.2 remain separate private services. Public HTTPS exposes only frontend and `/api/v1` backend. Browser traffic needs a public API origin, never private DNS. Use exact CORS origin, ports 9191/8080 and their matching health targets. Redis/database connections use environment-local service references, not exposed TCP proxies. See [private networking](https://docs.railway.com/networking/private-networking).
 
 Mount backend attachments at `/data/uploads` and persist PostgreSQL data. Keep a single backend replica until the filesystem storage assumption changes through an explicit ADR. Test a fresh and retained upload volume as UID 10001: successful creation/download/restart is a release gate. Railway mounts volumes at runtime, not during build/pre-deploy; image-layer ownership does not prove mounted-volume permissions. [ADR-0026](../../adrs/0026-homologation-storage-bootstrap.md) implements an explicit root directory initializer that immediately drops privileges before application startup. Local container verification is distinct from real Railway validation. See [volume behavior](https://docs.railway.com/volumes). Attached volumes can cause deployment downtime; do not promise zero downtime.
 

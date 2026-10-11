@@ -74,7 +74,7 @@ sequenceDiagram
 
 Global administrator authority differs from organization MANAGER/MEMBER associations. Scope is checked server-side; browser guards are usability controls. Referenced records must belong to the same organization. Reports preserve missing values and compute ratios in the backend. Filesystem bytes cannot join the database transaction; compensation and durable cleanup are documented separately in the architecture guide.
 
-## Proposed Railway topology — not deployed
+## Proposed Railway homologation topology — synthetic data only, not deployed
 
 ```mermaid
 flowchart LR
@@ -96,3 +96,24 @@ flowchart LR
 ```
 
 This is a review target, not evidence of cloud resources. Use one backend replica while uploads use one filesystem volume. Verify UID 10001 write/read permissions on the mounted volume and account for deployment downtime. Approve domains, region/budget, secret management, real email, monitoring, backup retention/RPO/RTO and client data before installation. Frontend build-time API origin must be public; private Railway DNS is only for server-to-server connections. [Preparation details](../deploy/railway/preparation.md) record platform limitations and approval gates.
+
+## Portable production topology — Hostinger Brazil planning target
+
+```mermaid
+flowchart LR
+    Browser["Operator browser"] -->|"HTTPS 443"| TLS["Caddy ingress: certificates and reverse proxy"]
+    subgraph VPS["Brazilian Linux VPS: Docker Compose"]
+        TLS -->|"Frontend hostname"| FE["Static Nginx: UID 101, port 8080"]
+        TLS -->|"API hostname; preserve /api/v1"| BE["Java: UID 10001, port 9191"]
+        BE --> PG[("Private PostgreSQL 16")]
+        BE --> RD[("Private authenticated Redis 8.2")]
+        BE --> Uploads[("Persistent uploads")]
+        PG --> DBVolume[("Persistent database")]
+        TLS --> Certs[("Persistent certificate state")]
+    end
+    BE -->|"HTTPS"| Brevo["Approved Brevo sender"]
+    DBVolume -.->|"Coordinated recovery boundary"| Backup["Encrypted off-machine backup"]
+    Uploads -.-> Backup
+```
+
+Only ingress publishes 80/443; SSH is restricted to operators. PostgreSQL/Redis have a private internal Docker network and no host ports. No Docker socket, development profile, Mailpit or application build is exposed on the host. Single-host/volume deployment has no HA guarantee. [ADR-0027](../adrs/0027-provider-independent-deployment.md), [portable installation](../deploy/portable-vps.md) and [Hostinger budget plan](../deploy/hostinger/README.md) define the operational boundary. Railway Virginia is synthetic homologation only. This is a candidate topology, not a purchased or accepted environment.

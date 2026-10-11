@@ -2,7 +2,7 @@
 
 Current architecture: [Mermaid runtime, module, transaction and Railway diagrams](docs/architecture/system-diagrams.md). Delivery status: [technical, deployment and client release gates](docs/release-readiness.md).
 
-Preparing a new economical homologation environment: [Railway installation steps](docs/deploy/railway/homologation-installation.md), including the opt-in upload-volume initializer that drops privileges before Java startup. Local verification does not imply remote deployment.
+Current hosting plan: [provider-independent deployment](docs/deploy/README.md), [Railway synthetic homologation](docs/deploy/railway/homologation-installation.md) and [Hostinger Brazil production planning](docs/deploy/hostinger/README.md). Portable Docker Compose and HTTPS ingress are in `deploy/`. Local verification does not imply remote deployment.
 
 Approved MVP Analytics is implemented at GET /api/v1/reports/analytics: matched planned/actual comparisons, declared-section coverage, weighted kg/h and kg/km, and reversal-aware posted-sale revenue. See [definitions and execution evidence](docs/architecture/analytics.md), [ADR-0022](docs/adrs/0022-approved-mvp-analytics.md) and [remaining local Master Plan gates](docs/MASTER_PLAN_PROGRESS.md). Missing inputs remain explicit; filtered revenue is unavailable where execution provenance is absent. This local milestone does not certify deployment readiness.
 
@@ -223,11 +223,11 @@ For the retained identity worktree, select its running stack explicitly: node sc
 
 Posted sorting/pressing/sales use explicit reversal commands, not destructive CRUD. Each posting command needs an Idempotency-Key; retries retain that same key and payload. Quantities and money are JSON strings. Swagger is the official field-level reference. [ADR-0014](docs/adrs/0014-final-preproduction-contract-and-baseline.md) records the final consolidation and supersedes the transitional portions of ADR-0013; frontend integration and a compatible release pair remain separate gates.
 
-## Identity delivery and Railway
+## Identity delivery and hosting
 
 Own profile editing and password change, global administrator account CRUD/reset, and organization memberships use only /api/v1. See [ADR-0016](docs/adrs/0016-account-and-credential-lifecycle.md). Password changes revoke all previous sessions. The current schema preserves V1 and adds V2 credential fields, V3 recovery authorization and V4 Routes history; no database reset is required.
 
-For Git-driven deployment, first-administrator provisioning, variables and rollout/rollback gates, use the [Railway runbook](docs/deploy/railway/README.md). Swagger remains the official executable API specification.
+For reviewed image deployment, first-administrator provisioning, variables and rollout/rollback gates, start with [provider-independent deployment](docs/deploy/README.md). Railway is the synthetic homologation adapter; Hostinger Brazil is the planned production target. Swagger remains the official executable API specification.
 
 
 ## Global identity and email recovery (ADR-0017 / ADR-0018)

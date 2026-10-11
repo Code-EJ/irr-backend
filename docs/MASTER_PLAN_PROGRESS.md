@@ -1,5 +1,11 @@
 # Local Master Plan execution progress
 
+## Provider-independent hosting increment — 2026-10-10
+
+[ADR-0027](adrs/0027-provider-independent-deployment.md) records the final owner clarification: Railway US East homologation with synthetic data only; future production on Hostinger in Brazil after budget/procurement approval. This supersedes the preceding blanket foreign-region/provider blocker for homologation only. The BRL 130 ceiling remains; provider-specific costs and concurrent environments require a reviewed allocation.
+
+Portable `deploy/compose.yaml`, Caddyfile and secret-free environment example retain existing application images, migrations, API and technology stack. A maintained configuration check passes private-network/port/development-profile/image boundaries without starting services. Caddy 2.11.7 configuration validates; its dated image scan retains 49 raw findings requiring review before promotion. No public certificates, host reboot, real VPS limits or cloud installation are claimed verified. [Deployment entry point](deploy/README.md) and [Hostinger plan](deploy/hostinger/README.md) define current steps; older hosting notes remain historical.
+
 ## Fresh homologation preparation increment — 2026-10-10
 
 The owner selected a new Railway homologation environment, provider domains, economical operation and the region closest to Belo Horizonte. [ADR-0026](adrs/0026-homologation-storage-bootstrap.md) implements a bounded volume initializer. The owner subsequently required Brazil/Sao Paulo and BRL 130/month; no foreign deployment is authorized and provider compatibility remains unresolved. Backend `89e9945` preserves default UID/GID 10001, allows explicit root-owned directory preparation only at `/data/uploads`, drops capabilities/privileges before Java, rejects unsafe paths and never recursively changes files. Seven isolated container scenarios pass; the actual local backend remains Java UID/GID 10001 and healthy. Six read-only pair checks and 116 contract operations pass; V1–V4 and domain code are unchanged. No database/upload volume was reset.

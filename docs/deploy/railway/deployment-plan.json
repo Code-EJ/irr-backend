@@ -50,7 +50,6 @@
   "mailProvider": "brevo",
   "secretsIncluded": false,
   "ownerDecisions": [
-    "Brazil-capable-provider",
     "cloud-account-access",
     "initial-data-scope",
     "Brevo-sender",
@@ -72,15 +71,18 @@
     "name": "homologation",
     "projectExists": false,
     "domains": "Railway-generated",
-    "region": null,
+    "region": "us-east4-eqdc4a",
     "spendingAlertUsd": null,
     "spendingHardLimitUsd": null,
-    "requiredCountry": "BR",
+    "requiredCountry": "US",
     "preferredCity": "Sao Paulo",
     "totalMonthlyBudget": {
       "currency": "BRL",
       "amount": 130
     },
-    "regionBlocker": "Railway Brazil compute unavailable in current public documentation; owner provider decision pending. No foreign fallback authorized."
-  }
+    "regionBlocker": null,
+    "dataPolicy": "synthetic-only; no client records or production backups",
+    "productionCountry": "BR"
+  },
+  "architectureAuthority": "ADR-0027"
 }

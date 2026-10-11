@@ -1,5 +1,7 @@
 # Local release consolidation register
 
+Current hosting authority is [ADR-0027](adrs/0027-provider-independent-deployment.md): Railway Virginia is explicitly permitted only for synthetic homologation; production requires a Brazilian Hostinger VPS and later budget/procurement approval. The earlier region blocker below is superseded for homologation. [Portable deployment](deploy/README.md) includes verified Compose boundaries and validated Caddy syntax, not remote acceptance. Caddy's 49 raw image findings require review before promotion; no added infrastructure finding is waived.
+
 ## Latest homologation preparation increment
 
 [ADR-0026](adrs/0026-homologation-storage-bootstrap.md) and [the fresh installation checklist](deploy/railway/homologation-installation.md) incorporate the owner's choice of a new homologation environment, Railway domains and economical deployment. The owner subsequently required Brazil/Sao Paulo and BRL 130/month; Railway currently lists no Brazilian compute region, so no foreign region is authorized. Backend `89e9945` implements bounded directory ownership initialization followed by privilege drop; seven isolated container scenarios, actual local Java UID/GID 10001, health, six read-only pair checks and 116 operations pass. Real Railway volume permissions remain unverified. No API, migration or domain formula changed.

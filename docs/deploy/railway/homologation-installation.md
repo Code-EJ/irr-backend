@@ -2,13 +2,13 @@
 
 Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
-Authority: [ADR-0026](../../adrs/0026-homologation-storage-bootstrap.md). Owner decisions: new environment, homologation first, Railway domains, economical operation, nearest available region. This is a concrete installation checklist; steps below have not been executed remotely. Refer to [release gates](../../release-readiness.md) before creating billable resources.
+Authority: [ADR-0027](../../adrs/0027-provider-independent-deployment.md), retaining ADR-0026 storage initialization. Owner clarification permits Railway Virginia only for synthetic homologation. Production is planned separately on Hostinger in Brazil. This is a concrete installation checklist; steps below have not been executed remotely. Refer to [release gates](../../release-readiness.md) before creating billable resources.
 
 ## 1. Account, costs and region
 
-**Provider/region blocker:** the owner now requires Brazil/São Paulo execution and a total BRL 130/month ceiling. No foreign deployment is authorized. The current [compute region list](https://docs.railway.com/deployments/regions) has no Brazil option; [Railway staff confirms São Paulo is CDN only](https://station.railway.com/feedback/request-for-brazil-hosting-region-availa-64766196). This Railway-specific checklist is conditional on a later provider/region decision; do not execute it as if a Brazil compute region existed. The local Docker implementation is reusable on an approved Brazilian host.
+Use US East Virginia (`us-east4-eqdc4a`) for all homologation services, provider domains and **synthetic data only**, as explicitly approved by the owner. Brazil/São Paulo remains mandatory for production. The current [compute region list](https://docs.railway.com/deployments/regions) has no Brazil option; [Railway staff confirms São Paulo is CDN only](https://station.railway.com/feedback/request-for-brazil-hosting-region-availa-64766196). No real client data, passwords, attachments or production backup may enter this foreign homologation environment.
 
-If Railway becomes compatible with that requirement, use an owner-controlled workspace, project `irr` and environment `homologation` after access and spending approval. Otherwise prepare a separate provider-specific operational runbook following owner approval, without changing the application architecture.
+Use an owner-controlled workspace, project `irr` and environment `homologation` after access and reviewed spending approval. Keep volumes, keys and secrets independent from local development and future production. A successful test environment does not authorize production procurement or publication.
 
 Evaluate any provider against the total BRL 130/month ceiling, including persistent storage, backups, payment fees and currency variation. A subscription credit is not an all-inclusive four-service hosting price. No USD conversion or foreign spending limit has been approved. For any later compatible Railway plan, [a hard limit suspends workloads](https://docs.railway.com/pricing/cost-control); communicate the availability tradeoff. Do not enable Railway Agent consumption unnecessarily. Review actual usage after 24 hours and one week rather than promise a fixed monthly bill.
 
