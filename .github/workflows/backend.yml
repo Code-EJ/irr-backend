@@ -154,9 +154,13 @@ jobs:
         run: |
           docker build -t irr-postgres-patched:ci deploy/postgres
           docker build -t irr-redis-patched:ci deploy/redis
+          docker build -f deploy/redis/Dockerfile.railway -t irr-redis-railway:ci deploy/redis
 
       - name: Verify stateful authentication and restart persistence
         run: node scripts/verify-stateful-images.mjs irr-postgres-patched:ci irr-redis-patched:ci
+
+      - name: Verify secret-safe Redis trial startup
+        run: node scripts/verify-redis-railway.mjs irr-redis-railway:ci
       
       - name: Inspect image
         run: docker image inspect irr-backend:ci
