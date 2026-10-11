@@ -11,6 +11,7 @@ Never copy resolved secrets into source, issues, logs or this runbook. Reference
 | RSA_PUBLIC_KEY / RSA_PRIVATE_KEY | Matching inline PEM strings, with real line breaks, or mounted file: resource locations | Backend runtime; private key secret |
 | CORS_ALLOWED_ORIGINS | https://your-frontend-public-domain | Backend runtime; comma-separated exact origins |
 | STORAGE_DIRECTORY | /data/uploads with persistent volume at that path | Backend runtime |
+| RAILWAY_RUN_UID / IRR_INIT_STORAGE_PERMISSIONS | 0 / true only for reviewed root-owned volume initialization; Java still runs as 10001 | Railway backend bootstrap; see ADR-0026 |
 | API_DOCS_ENABLED | true for official pre-production Swagger; review exposure per environment | Backend runtime |
 | SERVER_PORT | 9191 (existing default and health-check target) | Backend runtime |
 | VITE_API_BASE_URL | https://your-backend-public-domain/api/v1 | Frontend build-time, public |

@@ -1,0 +1,4478 @@
+{
+  "maintainer": "Enzo Ribas (https://github.com/oEnzoRibas)",
+  "scanner": "grype",
+  "scannerVersion": "0.120.1",
+  "databaseBuilt": "2026-10-10T06:30:01Z",
+  "rawReportSha256": "a4313fa27618b1fa0b08dae1d7dcc39a2de4e3bcf05d0685b0ca6d912ee01bf7",
+  "source": {
+    "imageId": "sha256:54d71eedd701227275b7e8f485de39c4d89ead030f3b1bdeb6e83f47639b4d2a",
+    "manifestDigest": "sha256:7d2fb58992a63e8f6a734c8890745db12f28a43b5d08dbeecb27c35cb315e127"
+  },
+  "distro": {
+    "name": "ubuntu",
+    "version": "22.04",
+    "idLike": [
+      "debian"
+    ]
+  },
+  "counts": {
+    "High": 61,
+    "Critical": 15,
+    "Medium": 155,
+    "Low": 50,
+    "Negligible": 9
+  },
+  "matchCount": 290,
+  "interpretation": "Matches are not unique exploitable defects. Pending findings require package/vendor/configuration review; no suppression or clean-release assertion.",
+  "matchedPackages": [
+    {
+      "name": "openssl",
+      "version": "3.0.2",
+      "type": "binary"
+    },
+    {
+      "name": "curl",
+      "version": "7.81.0",
+      "type": "binary"
+    },
+    {
+      "name": "gzip",
+      "version": "1.10",
+      "type": "binary"
+    },
+    {
+      "name": "perl-base",
+      "version": "5.34.0-3ubuntu1.9",
+      "type": "deb"
+    },
+    {
+      "name": "util-linux",
+      "version": "2.37.2",
+      "type": "binary"
+    },
+    {
+      "name": "libexpat1",
+      "version": "2.4.7-1ubuntu0.9",
+      "type": "deb"
+    },
+    {
+      "name": "spring-webmvc",
+      "version": "6.2.19",
+      "type": "java-archive"
+    },
+    {
+      "name": "wget",
+      "version": "1.21.2-2ubuntu1.5",
+      "type": "deb"
+    },
+    {
+      "name": "libzstd1",
+      "version": "1.4.8+dfsg-3build1",
+      "type": "deb"
+    },
+    {
+      "name": "libpcre2-8-0",
+      "version": "10.39-3ubuntu0.1",
+      "type": "deb"
+    },
+    {
+      "name": "libncurses6",
+      "version": "6.3-2ubuntu0.3",
+      "type": "deb"
+    },
+    {
+      "name": "libncursesw6",
+      "version": "6.3-2ubuntu0.3",
+      "type": "deb"
+    },
+    {
+      "name": "libtinfo6",
+      "version": "6.3-2ubuntu0.3",
+      "type": "deb"
+    },
+    {
+      "name": "ncurses-base",
+      "version": "6.3-2ubuntu0.3",
+      "type": "deb"
+    },
+    {
+      "name": "ncurses-bin",
+      "version": "6.3-2ubuntu0.3",
+      "type": "deb"
+    },
+    {
+      "name": "gcc-12-base",
+      "version": "12.3.0-1ubuntu1~22.04.3",
+      "type": "deb"
+    },
+    {
+      "name": "libgcc-s1",
+      "version": "12.3.0-1ubuntu1~22.04.3",
+      "type": "deb"
+    },
+    {
+      "name": "libstdc++6",
+      "version": "12.3.0-1ubuntu1~22.04.3",
+      "type": "deb"
+    },
+    {
+      "name": "zlib1g",
+      "version": "1:1.2.11.dfsg-2ubuntu9.2",
+      "type": "deb"
+    },
+    {
+      "name": "libc-bin",
+      "version": "2.35-0ubuntu3.15",
+      "type": "deb"
+    },
+    {
+      "name": "libc6",
+      "version": "2.35-0ubuntu3.15",
+      "type": "deb"
+    },
+    {
+      "name": "locales",
+      "version": "2.35-0ubuntu3.15",
+      "type": "deb"
+    },
+    {
+      "name": "libpcre3",
+      "version": "2:8.39-13ubuntu0.22.04.1",
+      "type": "deb"
+    },
+    {
+      "name": "libpam-modules",
+      "version": "1.4.0-11ubuntu2.8",
+      "type": "deb"
+    },
+    {
+      "name": "libpam-modules-bin",
+      "version": "1.4.0-11ubuntu2.8",
+      "type": "deb"
+    },
+    {
+      "name": "libpam-runtime",
+      "version": "1.4.0-11ubuntu2.8",
+      "type": "deb"
+    },
+    {
+      "name": "libpam0g",
+      "version": "1.4.0-11ubuntu2.8",
+      "type": "deb"
+    },
+    {
+      "name": "coreutils",
+      "version": "8.32-4.1ubuntu1.4",
+      "type": "deb"
+    },
+    {
+      "name": "login",
+      "version": "1:4.8.1-2ubuntu2.2",
+      "type": "deb"
+    },
+    {
+      "name": "passwd",
+      "version": "1:4.8.1-2ubuntu2.2",
+      "type": "deb"
+    },
+    {
+      "name": "libsasl2-2",
+      "version": "2.1.27+dfsg2-3ubuntu1.2",
+      "type": "deb"
+    },
+    {
+      "name": "libsasl2-modules-db",
+      "version": "2.1.27+dfsg2-3ubuntu1.2",
+      "type": "deb"
+    },
+    {
+      "name": "bsdutils",
+      "version": "1:2.37.2-4ubuntu3.6",
+      "type": "deb"
+    },
+    {
+      "name": "libblkid1",
+      "version": "2.37.2-4ubuntu3.6",
+      "type": "deb"
+    },
+    {
+      "name": "libmount1",
+      "version": "2.37.2-4ubuntu3.6",
+      "type": "deb"
+    },
+    {
+      "name": "libsmartcols1",
+      "version": "2.37.2-4ubuntu3.6",
+      "type": "deb"
+    },
+    {
+      "name": "libuuid1",
+      "version": "2.37.2-4ubuntu3.6",
+      "type": "deb"
+    },
+    {
+      "name": "mount",
+      "version": "2.37.2-4ubuntu3.6",
+      "type": "deb"
+    },
+    {
+      "name": "util-linux",
+      "version": "2.37.2-4ubuntu3.6",
+      "type": "deb"
+    },
+    {
+      "name": "libgssapi-krb5-2",
+      "version": "1.19.2-2ubuntu0.10",
+      "type": "deb"
+    },
+    {
+      "name": "libk5crypto3",
+      "version": "1.19.2-2ubuntu0.10",
+      "type": "deb"
+    },
+    {
+      "name": "libkrb5-3",
+      "version": "1.19.2-2ubuntu0.10",
+      "type": "deb"
+    },
+    {
+      "name": "libkrb5support0",
+      "version": "1.19.2-2ubuntu0.10",
+      "type": "deb"
+    },
+    {
+      "name": "dirmngr",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb"
+    },
+    {
+      "name": "gnupg",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb"
+    },
+    {
+      "name": "gnupg-l10n",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb"
+    },
+    {
+      "name": "gnupg-utils",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb"
+    },
+    {
+      "name": "gpg",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb"
+    },
+    {
+      "name": "gpg-agent",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb"
+    },
+    {
+      "name": "gpg-wks-client",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb"
+    },
+    {
+      "name": "gpg-wks-server",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb"
+    },
+    {
+      "name": "gpgconf",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb"
+    },
+    {
+      "name": "gpgsm",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb"
+    },
+    {
+      "name": "gpgv",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb"
+    },
+    {
+      "name": "libacl1",
+      "version": "2.3.1-1",
+      "type": "deb"
+    },
+    {
+      "name": "dash",
+      "version": "0.5.11+git20210903+057cd650a4ed-3build1",
+      "type": "deb"
+    },
+    {
+      "name": "tar",
+      "version": "1.34+dfsg-1ubuntu0.1.22.04.6",
+      "type": "deb"
+    },
+    {
+      "name": "libsystemd0",
+      "version": "249.11-0ubuntu3.22",
+      "type": "deb"
+    },
+    {
+      "name": "libudev1",
+      "version": "249.11-0ubuntu3.22",
+      "type": "deb"
+    }
+  ],
+  "findings": [
+    {
+      "id": "CVE-2022-2068",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2zf",
+        "1.1.1p",
+        "3.0.4"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-2068",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-3786",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.7"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-3786",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-1292",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2ze",
+        "1.1.1o",
+        "3.0.3"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-1292",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-3602",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.7"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-3602",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2024-6119",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.15",
+        "3.1.7",
+        "3.2.3",
+        "3.3.2"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-6119",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-15467",
+      "namespace": "nvd:cpe",
+      "severity": "Critical",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.19",
+        "3.3.6",
+        "3.4.4",
+        "3.5.5",
+        "3.6.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-15467",
+      "disposition": "corrected-vendor-backport",
+      "review": {
+        "date": "2026-10-10",
+        "release": "Ubuntu 22.04 Jammy",
+        "installedPackageVersion": "3.0.2-0ubuntu1.30",
+        "vendorFixedVersion": "3.0.2-0ubuntu1.21",
+        "url": "https://ubuntu.com/security/notices/USN-7980-1"
+      }
+    },
+    {
+      "id": "CVE-2023-0286",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2zg",
+        "1.1.1t",
+        "3.0.8"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-0286",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-2650",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2zh",
+        "1.1.1u",
+        "3.0.9",
+        "3.1.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-2650",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2024-2398",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.7.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-2398",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2024-2511",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.1.1y",
+        "3.0.14",
+        "3.1.6",
+        "3.2.2"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-2511",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-32206",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "7.84.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-32206",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-4450",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.1.1t",
+        "3.0.8"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-4450",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-32205",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "7.84.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-32205",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-43551",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "7.87.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-43551",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2024-7264",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.9.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-7264",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-4304",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2zg",
+        "1.1.1t",
+        "3.0.8"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-4304",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-32207",
+      "namespace": "nvd:cpe",
+      "severity": "Critical",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "7.84.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-32207",
+      "disposition": "corrected-vendor-backport",
+      "review": {
+        "date": "2026-10-10",
+        "release": "Ubuntu 22.04 Jammy",
+        "installedPackageVersion": "7.81.0-1ubuntu1.29",
+        "vendorFixedVersion": "7.81.0-1ubuntu1.3",
+        "url": "https://ubuntu.com/security/CVE-2022-32207",
+        "carriedFrom": "backend-patched-image-2026-10-10.json",
+        "basis": "Identical finding/package identity; installed Jammy package versions rechecked in the running candidate."
+      }
+    },
+    {
+      "id": "CVE-2024-5535",
+      "namespace": "nvd:cpe",
+      "severity": "Critical",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2zk",
+        "1.1.1za",
+        "3.0.15",
+        "3.1.7",
+        "3.2.3",
+        "3.3.2"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-5535",
+      "disposition": "corrected-vendor-backport",
+      "review": {
+        "date": "2026-10-10",
+        "release": "Ubuntu 22.04 Jammy",
+        "installedPackageVersion": "3.0.2-0ubuntu1.30",
+        "vendorFixedVersion": "3.0.2-0ubuntu1.17",
+        "url": "https://ubuntu.com/security/notices/USN-6937-1"
+      }
+    },
+    {
+      "id": "CVE-2022-32221",
+      "namespace": "nvd:cpe",
+      "severity": "Critical",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "7.86.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-32221",
+      "disposition": "corrected-vendor-backport",
+      "review": {
+        "date": "2026-10-10",
+        "release": "Ubuntu 22.04 Jammy",
+        "installedPackageVersion": "7.81.0-1ubuntu1.29",
+        "vendorFixedVersion": "7.81.0-1ubuntu1.6",
+        "url": "https://ubuntu.com/security/notices/USN-5702-1"
+      }
+    },
+    {
+      "id": "CVE-2022-1271",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "gzip",
+      "version": "1.10",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.12"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-1271",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-32208",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "7.84.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-32208",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-0215",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2zg",
+        "1.1.1t",
+        "3.0.8"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-0215",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-3446",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2zi",
+        "1.1.1v",
+        "3.0.10",
+        "3.1.2"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-3446",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-45447",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2zq",
+        "1.1.1zh",
+        "3.0.21",
+        "3.4.6",
+        "3.5.7",
+        "3.6.3",
+        "4.0.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-45447",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-3358",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.6"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-3358",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-0464",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2zh",
+        "1.1.1u",
+        "3.0.9",
+        "3.1.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-0464",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2024-9143",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2zl",
+        "1.1.1zb",
+        "3.0.16",
+        "3.1.8",
+        "3.2.4",
+        "3.3.3"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-9143",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-5363",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.12",
+        "3.1.4"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-5363",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-2097",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.1.1q",
+        "3.0.5"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-2097",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-5678",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2zj",
+        "1.1.1x",
+        "3.0.13",
+        "3.1.5"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-5678",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-42915",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "7.86.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-42915",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-27775",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "7.83.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-27775",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2024-4741",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.1.1y",
+        "3.0.14",
+        "3.1.6",
+        "3.2.2",
+        "3.3.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-4741",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-27782",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "7.83.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-27782",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-27776",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "7.83.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-27776",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-27781",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "7.83.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-27781",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-28319",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.1.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-28319",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-27534",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.0.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-27534",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-1473",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.3"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-1473",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-27533",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.0.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-27533",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2024-0727",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2zj",
+        "1.1.1x",
+        "3.0.13",
+        "3.1.5"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-0727",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-27780",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "7.83.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-27780",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-22576",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "7.83.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-22576",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-3817",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.10",
+        "3.1.2"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-3817",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-28320",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.1.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-28320",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-0216",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.8"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-0216",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-0217",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.8"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-0217",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-0401",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.8"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-0401",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-42916",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "7.86.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-42916",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-43552",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "7.87.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-43552",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-6129",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.13",
+        "3.1.5",
+        "3.2.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-6129",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-6237",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.13",
+        "3.1.5",
+        "3.2.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-6237",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-63076",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.22",
+        "3.4.7",
+        "3.5.8",
+        "3.6.4",
+        "4.0.2"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-63076",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-9230",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2zm",
+        "1.1.1zd",
+        "3.0.18",
+        "3.2.6",
+        "3.3.5",
+        "3.4.3",
+        "3.5.4"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-9230",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2024-9681",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.11.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-9681",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-9086",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.16.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-9086",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-28321",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.1.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-28321",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-23916",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "7.88.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-23916",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-46218",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.5.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-46218",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-34182",
+      "namespace": "nvd:cpe",
+      "severity": "Critical",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.21",
+        "3.4.6",
+        "3.5.7",
+        "3.6.3",
+        "4.0.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-34182",
+      "disposition": "corrected-vendor-backport",
+      "review": {
+        "date": "2026-10-10",
+        "release": "Ubuntu 22.04 Jammy",
+        "installedPackageVersion": "3.0.2-0ubuntu1.30",
+        "vendorFixedVersion": "3.0.2-0ubuntu1.25",
+        "url": "https://ubuntu.com/security/CVE-2026-34182",
+        "carriedFrom": "backend-patched-image-2026-10-10.json",
+        "basis": "Identical finding/package identity; installed Jammy package versions rechecked in the running candidate."
+      }
+    },
+    {
+      "id": "CVE-2022-3996",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.8"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-3996",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-0725",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.12.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-0725",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-27774",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "7.83.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-27774",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-31486",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "perl-base",
+      "version": "5.34.0-3ubuntu1.9",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2023-31486",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-0466",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2zh",
+        "1.1.1u",
+        "3.0.9",
+        "3.1.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-0466",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-28322",
+      "namespace": "nvd:cpe",
+      "severity": "Low",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.1.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-28322",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-0465",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2zh",
+        "1.1.1u",
+        "3.0.9",
+        "3.1.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-0465",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-35252",
+      "namespace": "nvd:cpe",
+      "severity": "Low",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "7.85.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-35252",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-23914",
+      "namespace": "nvd:cpe",
+      "severity": "Critical",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "7.88.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-23914",
+      "disposition": "corrected-vendor-backport",
+      "review": {
+        "date": "2026-10-10",
+        "release": "Ubuntu 22.04 Jammy",
+        "installedPackageVersion": "7.81.0-1ubuntu1.29",
+        "vendorFixedVersion": "7.81.0-1ubuntu1.8",
+        "url": "https://ubuntu.com/security/CVE-2023-23914",
+        "carriedFrom": "backend-patched-image-2026-10-10.json",
+        "basis": "Identical finding/package identity; installed Jammy package versions rechecked in the running candidate."
+      }
+    },
+    {
+      "id": "CVE-2026-31790",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.20",
+        "3.3.7",
+        "3.4.5",
+        "3.5.6",
+        "3.6.2"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-31790",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-34180",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2zq",
+        "1.1.1zh",
+        "3.0.21",
+        "3.4.6",
+        "3.5.7",
+        "3.6.3",
+        "4.0.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-34180",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-69421",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2zn",
+        "1.1.1ze",
+        "3.0.19",
+        "3.3.6",
+        "3.4.4",
+        "3.5.5",
+        "3.6.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-69421",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2024-28085",
+      "namespace": "nvd:cpe",
+      "severity": "Low",
+      "package": "util-linux",
+      "version": "2.37.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.39.4",
+        "2.40.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-28085",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-19931",
+      "namespace": "nvd:cpe",
+      "severity": "Critical",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.14.2",
+        "8.16.1",
+        "8.20.1",
+        "8.22.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-19931",
+      "disposition": "not-applicable-vendor-evidence",
+      "review": {
+        "date": "2026-10-10",
+        "release": "Ubuntu 22.04 Jammy",
+        "installedPackageVersion": "7.81.0-1ubuntu1.29",
+        "vendorFixedVersion": null,
+        "url": "https://ubuntu.com/security/CVE-2026-19931",
+        "carriedFrom": "backend-patched-image-2026-10-10.json",
+        "basis": "Identical finding/package identity; installed Jammy package versions rechecked in the running candidate."
+      }
+    },
+    {
+      "id": "CVE-2026-63072",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.1.1zi",
+        "3.0.22",
+        "3.4.7",
+        "3.5.8",
+        "3.6.4",
+        "4.0.2"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-63072",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-4203",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.8"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-4203",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-69420",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.1.1ze",
+        "3.0.19",
+        "3.3.6",
+        "3.4.4",
+        "3.5.5",
+        "3.6.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-69420",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-80231",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.14.2",
+        "8.16.1",
+        "8.20.1",
+        "8.22.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-80231",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-28388",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2zp",
+        "1.1.1zg",
+        "3.0.20",
+        "3.3.7",
+        "3.4.5",
+        "3.5.6",
+        "3.6.2"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-28388",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-59375",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libexpat1",
+      "version": "2.4.7-1ubuntu0.9",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2025-59375",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-11856",
+      "namespace": "nvd:cpe",
+      "severity": "Critical",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.21.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-11856",
+      "disposition": "corrected-vendor-backport",
+      "review": {
+        "date": "2026-10-10",
+        "release": "Ubuntu 22.04 Jammy",
+        "installedPackageVersion": "7.81.0-1ubuntu1.29",
+        "vendorFixedVersion": "7.81.0-1ubuntu1.26",
+        "url": "https://ubuntu.com/security/notices/USN-8651-1"
+      }
+    },
+    {
+      "id": "CVE-2023-4807",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.1.1w",
+        "3.0.11",
+        "3.1.3"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-4807",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-7383",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2zq",
+        "1.1.1zh",
+        "3.0.21",
+        "3.4.6",
+        "3.5.7",
+        "3.6.3",
+        "4.0.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-7383",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-1343",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.3"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-1343",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-28389",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2zp",
+        "1.1.1zg",
+        "3.0.20",
+        "3.3.7",
+        "3.4.5",
+        "3.5.6",
+        "3.6.2"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-28389",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-28390",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2zp",
+        "1.1.1zg",
+        "3.0.20",
+        "3.3.7",
+        "3.4.5",
+        "3.5.6",
+        "3.6.2"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-28390",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-8924",
+      "namespace": "nvd:cpe",
+      "severity": "Critical",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.21.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-8924",
+      "disposition": "corrected-vendor-backport",
+      "review": {
+        "date": "2026-10-10",
+        "release": "Ubuntu 22.04 Jammy",
+        "installedPackageVersion": "7.81.0-1ubuntu1.29",
+        "vendorFixedVersion": "7.81.0-1ubuntu1.25",
+        "url": "https://ubuntu.com/security/CVE-2026-8924",
+        "carriedFrom": "backend-patched-image-2026-10-10.json",
+        "basis": "Identical finding/package identity; installed Jammy package versions rechecked in the running candidate."
+      }
+    },
+    {
+      "id": "CVE-2024-4603",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.14",
+        "3.1.6",
+        "3.2.2",
+        "3.3.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-4603",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-42766",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2zq",
+        "1.1.1zh",
+        "3.0.21",
+        "3.4.6",
+        "3.5.7",
+        "3.6.3",
+        "4.0.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-42766",
+      "disposition": "pending"
+    },
+    {
+      "id": "GHSA-pc63-qcmh-9cmg",
+      "namespace": "github:language:java",
+      "severity": "Critical",
+      "package": "spring-webmvc",
+      "version": "6.2.19",
+      "type": "java-archive",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://github.com/advisories/GHSA-pc63-qcmh-9cmg",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2021-31879",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "wget",
+      "version": "1.21.2-2ubuntu1.5",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2021-31879",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-1434",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.3"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-1434",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-9076",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2zq",
+        "1.1.1zh",
+        "3.0.21",
+        "3.4.6",
+        "3.5.7",
+        "3.6.3",
+        "4.0.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-9076",
+      "disposition": "pending"
+    },
+    {
+      "id": "GHSA-j9f9-w8pj-32f8",
+      "namespace": "github:language:java",
+      "severity": "Critical",
+      "package": "spring-webmvc",
+      "version": "6.2.19",
+      "type": "java-archive",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://github.com/advisories/GHSA-j9f9-w8pj-32f8",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-18924",
+      "namespace": "nvd:cpe",
+      "severity": "Critical",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.14.2",
+        "8.16.1",
+        "8.20.1",
+        "8.22.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-18924",
+      "disposition": "corrected-vendor-backport",
+      "review": {
+        "date": "2026-10-10",
+        "release": "Ubuntu 22.04 Jammy",
+        "installedPackageVersion": "7.81.0-1ubuntu1.29",
+        "vendorFixedVersion": "7.81.0-1ubuntu1.29",
+        "url": "https://ubuntu.com/security/CVE-2026-18924",
+        "carriedFrom": "backend-patched-image-2026-10-10.json",
+        "basis": "Identical finding/package identity; installed Jammy package versions rechecked in the running candidate."
+      }
+    },
+    {
+      "id": "CVE-2026-45445",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.21",
+        "3.4.6",
+        "3.5.7",
+        "3.6.3",
+        "4.0.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-45445",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-28387",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.1.1zg",
+        "3.0.20",
+        "3.3.7",
+        "3.4.5",
+        "3.5.6",
+        "3.6.2"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-28387",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-1255",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.9",
+        "3.1.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-1255",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-23915",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "7.88.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-23915",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-5773",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.20.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-5773",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-4899",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "libzstd1",
+      "version": "1.4.8+dfsg-3build1",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2022-4899",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-54874",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2zr",
+        "1.1.1zi",
+        "3.0.22",
+        "3.4.7",
+        "3.5.8",
+        "3.6.4",
+        "4.0.2"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-54874",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-69419",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.1.1ze",
+        "3.0.19",
+        "3.3.6",
+        "3.4.4",
+        "3.5.5",
+        "3.6.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-69419",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-8927",
+      "namespace": "nvd:cpe",
+      "severity": "Critical",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.21.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-8927",
+      "disposition": "corrected-vendor-backport",
+      "review": {
+        "date": "2026-10-10",
+        "release": "Ubuntu 22.04 Jammy",
+        "installedPackageVersion": "7.81.0-1ubuntu1.29",
+        "vendorFixedVersion": "7.81.0-1ubuntu1.25",
+        "url": "https://ubuntu.com/security/CVE-2026-8927",
+        "carriedFrom": "backend-patched-image-2026-10-10.json",
+        "basis": "Identical finding/package identity; installed Jammy package versions rechecked in the running candidate."
+      }
+    },
+    {
+      "id": "CVE-2024-11053",
+      "namespace": "nvd:cpe",
+      "severity": "Low",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.11.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-11053",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2024-8096",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.10.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-8096",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-41992",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "gzip",
+      "version": "1.10",
+      "type": "binary",
+      "fixState": "",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-41992",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-6253",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.20.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-6253",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-14524",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.18.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-14524",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-41409",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "libpcre2-8-0",
+      "version": "10.39-3ubuntu0.1",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2022-41409",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2021-3996",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "util-linux",
+      "version": "2.37.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.37.3"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-3996",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2021-3995",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "util-linux",
+      "version": "2.37.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.37.3"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-3995",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2024-10524",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "wget",
+      "version": "1.21.2-2ubuntu1.5",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2024-10524",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-63074",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.22",
+        "3.4.7",
+        "3.5.8",
+        "3.6.4",
+        "4.0.2"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-63074",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-2975",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.10",
+        "3.1.2"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-2975",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-82560",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "perl-base",
+      "version": "5.34.0-3ubuntu1.9",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-82560",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-84782",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2zs",
+        "1.1.1zj",
+        "3.0.23",
+        "3.4.8",
+        "3.5.9",
+        "3.6.5",
+        "4.0.3"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-84782",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-48959",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "perl-base",
+      "version": "5.34.0-3ubuntu1.9",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-48959",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-7168",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.20.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-7168",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-42767",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.21",
+        "3.4.6",
+        "3.5.7",
+        "3.6.3",
+        "4.0.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-42767",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-12064",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.21.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-12064",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-8932",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.21.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-8932",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-22796",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2zn",
+        "1.1.1ze",
+        "3.0.19",
+        "3.3.6",
+        "3.4.4",
+        "3.5.5",
+        "3.6.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-22796",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-3184",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "util-linux",
+      "version": "2.37.2",
+      "type": "binary",
+      "fixState": "",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-3184",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-5545",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.20.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-5545",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-82209",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.14.2",
+        "8.16.1",
+        "8.20.1",
+        "8.20.1",
+        "8.22.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-82209",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-50495",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "libncurses6",
+      "version": "6.3-2ubuntu0.3",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2023-50495",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-50495",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "libncursesw6",
+      "version": "6.3-2ubuntu0.3",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2023-50495",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-50495",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "libtinfo6",
+      "version": "6.3-2ubuntu0.3",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2023-50495",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-50495",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "ncurses-base",
+      "version": "6.3-2ubuntu0.3",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2023-50495",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-50495",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "ncurses-bin",
+      "version": "6.3-2ubuntu0.3",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2023-50495",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-15079",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.18.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-15079",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2024-13176",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2zl",
+        "1.1.1zb",
+        "3.0.16",
+        "3.1.8",
+        "3.2.4",
+        "3.3.3",
+        "3.4.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-13176",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-80230",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.14.2",
+        "8.16.1",
+        "8.20.1",
+        "8.22.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-80230",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-77214",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libexpat1",
+      "version": "2.4.7-1ubuntu0.9",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-77214",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-27943",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "gcc-12-base",
+      "version": "12.3.0-1ubuntu1~22.04.3",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2022-27943",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-27943",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "libgcc-s1",
+      "version": "12.3.0-1ubuntu1~22.04.3",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2022-27943",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-27943",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "libstdc++6",
+      "version": "12.3.0-1ubuntu1~22.04.3",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2022-27943",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-3783",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.19.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-3783",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-3784",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.19.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-3784",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-6429",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.20.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-6429",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-6276",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.20.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-6276",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-48962",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "perl-base",
+      "version": "5.34.0-3ubuntu1.9",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-48962",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-9547",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.21.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-9547",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-8286",
+      "namespace": "nvd:cpe",
+      "severity": "High",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.21.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-8286",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-45186",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libexpat1",
+      "version": "2.4.7-1ubuntu0.9",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-45186",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-42497",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "perl-base",
+      "version": "5.34.0-3ubuntu1.9",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-42497",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-9538",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "perl-base",
+      "version": "5.34.0-3ubuntu1.9",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-9538",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-0167",
+      "namespace": "nvd:cpe",
+      "severity": "Low",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.12.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-0167",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-8458",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.21.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-8458",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-75803",
+      "namespace": "nvd:cpe",
+      "severity": "Critical",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.22",
+        "3.4.7",
+        "3.5.8",
+        "3.6.4",
+        "4.0.2"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-75803",
+      "disposition": "corrected-vendor-backport",
+      "review": {
+        "date": "2026-10-10",
+        "release": "Ubuntu 22.04 Jammy",
+        "installedPackageVersion": "3.0.2-0ubuntu1.30",
+        "vendorFixedVersion": "3.0.2-0ubuntu1.29",
+        "url": "https://ubuntu.com/security/CVE-2026-75803",
+        "carriedFrom": "backend-patched-image-2026-10-10.json",
+        "basis": "Identical finding/package identity; installed Jammy package versions rechecked in the running candidate."
+      }
+    },
+    {
+      "id": "CVE-2026-31789",
+      "namespace": "nvd:cpe",
+      "severity": "Critical",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.20",
+        "3.3.7",
+        "3.4.5",
+        "3.5.6",
+        "3.6.2"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-31789",
+      "disposition": "corrected-vendor-backport",
+      "review": {
+        "date": "2026-10-10",
+        "release": "Ubuntu 22.04 Jammy",
+        "installedPackageVersion": "3.0.2-0ubuntu1.30",
+        "vendorFixedVersion": "3.0.2-0ubuntu1.23",
+        "url": "https://ubuntu.com/security/CVE-2026-31789",
+        "carriedFrom": "backend-patched-image-2026-10-10.json",
+        "basis": "Identical finding/package identity; installed Jammy package versions rechecked in the running candidate."
+      }
+    },
+    {
+      "id": "CVE-2026-48961",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "perl-base",
+      "version": "5.34.0-3ubuntu1.9",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-48961",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-93990",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libexpat1",
+      "version": "2.4.7-1ubuntu0.9",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-93990",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-75806",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.1.1zj",
+        "3.0.23",
+        "3.4.8",
+        "3.5.9",
+        "3.6.5",
+        "4.0.3"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-75806",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-41080",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libexpat1",
+      "version": "2.4.7-1ubuntu0.9",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-41080",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-10966",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.16.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-10966",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-0563",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "util-linux",
+      "version": "2.37.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.37.4"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-0563",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-86145",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libpcre2-8-0",
+      "version": "10.39-3ubuntu0.1",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-86145",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-4873",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.20.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-4873",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-95619",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "gcc-12-base",
+      "version": "12.3.0-1ubuntu1~22.04.3",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-95619",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-95619",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libgcc-s1",
+      "version": "12.3.0-1ubuntu1~22.04.3",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-95619",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-95619",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libstdc++6",
+      "version": "12.3.0-1ubuntu1~22.04.3",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-95619",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-85091",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "zlib1g",
+      "version": "1:1.2.11.dfsg-2ubuntu9.2",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-85091",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-102633",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libexpat1",
+      "version": "2.4.7-1ubuntu0.9",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-102633",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-8674",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libc-bin",
+      "version": "2.35-0ubuntu3.15",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-8674",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-8674",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libc6",
+      "version": "2.35-0ubuntu3.15",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-8674",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-8674",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "locales",
+      "version": "2.35-0ubuntu3.15",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-8674",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-42770",
+      "namespace": "nvd:cpe",
+      "severity": "Low",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.21",
+        "3.4.6",
+        "3.5.7",
+        "3.6.3",
+        "4.0.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-42770",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2017-11164",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Negligible",
+      "package": "libpcre3",
+      "version": "2:8.39-13ubuntu0.22.04.1",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2017-11164",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-1965",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.19.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-1965",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-89156",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libpcre2-8-0",
+      "version": "10.39-3ubuntu0.1",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-89156",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-15224",
+      "namespace": "nvd:cpe",
+      "severity": "Low",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.18.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-15224",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-97399",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libc-bin",
+      "version": "2.35-0ubuntu3.15",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-97399",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-97399",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libc6",
+      "version": "2.35-0ubuntu3.15",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-97399",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-97399",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "locales",
+      "version": "2.35-0ubuntu3.15",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-97399",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-89157",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libpcre2-8-0",
+      "version": "10.39-3ubuntu0.1",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-89157",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-35189",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2zs",
+        "1.1.1zj",
+        "3.0.23",
+        "3.4.8",
+        "3.5.9",
+        "3.6.5",
+        "4.0.3"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-35189",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-89160",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libpcre2-8-0",
+      "version": "10.39-3ubuntu0.1",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-89160",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-89092",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libc-bin",
+      "version": "2.35-0ubuntu3.15",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-89092",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-89092",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libc6",
+      "version": "2.35-0ubuntu3.15",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-89092",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-89092",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "locales",
+      "version": "2.35-0ubuntu3.15",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-89092",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2024-10041",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libpam-modules",
+      "version": "1.4.0-11ubuntu2.8",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2024-10041",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2024-10041",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libpam-modules-bin",
+      "version": "1.4.0-11ubuntu2.8",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2024-10041",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2024-10041",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libpam-runtime",
+      "version": "1.4.0-11ubuntu2.8",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2024-10041",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2024-10041",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libpam0g",
+      "version": "1.4.0-11ubuntu2.8",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2024-10041",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2016-2781",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "coreutils",
+      "version": "8.32-4.1ubuntu1.4",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2016-2781",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2024-56433",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "login",
+      "version": "1:4.8.1-2ubuntu2.2",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2024-56433",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2024-56433",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "passwd",
+      "version": "1:4.8.1-2ubuntu2.2",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2024-56433",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-29383",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "login",
+      "version": "1:4.8.1-2ubuntu2.2",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2023-29383",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-29383",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "passwd",
+      "version": "1:4.8.1-2ubuntu2.2",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2023-29383",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-102010",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "gcc-12-base",
+      "version": "12.3.0-1ubuntu1~22.04.3",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-102010",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-102010",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libgcc-s1",
+      "version": "12.3.0-1ubuntu1~22.04.3",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-102010",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-102010",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libstdc++6",
+      "version": "12.3.0-1ubuntu1~22.04.3",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-102010",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-7017",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "perl-base",
+      "version": "5.34.0-3ubuntu1.9",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-7017",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-89158",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libpcre2-8-0",
+      "version": "10.39-3ubuntu0.1",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-89158",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-107161",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libsasl2-2",
+      "version": "2.1.27+dfsg2-3ubuntu1.2",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-107161",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-107161",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libsasl2-modules-db",
+      "version": "2.1.27+dfsg2-3ubuntu1.2",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-107161",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-45446",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.21",
+        "3.4.6",
+        "3.5.7",
+        "3.6.3",
+        "4.0.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-45446",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-75805",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "3.0.23",
+        "3.4.8",
+        "3.5.9",
+        "3.6.5",
+        "4.0.3"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-75805",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-16599",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "wget",
+      "version": "1.21.2-2ubuntu1.5",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-16599",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2016-20013",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Negligible",
+      "package": "libc-bin",
+      "version": "2.35-0ubuntu3.15",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2016-20013",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2016-20013",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Negligible",
+      "package": "libc6",
+      "version": "2.35-0ubuntu3.15",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2016-20013",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2016-20013",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Negligible",
+      "package": "locales",
+      "version": "2.35-0ubuntu3.15",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2016-20013",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-76642",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "bsdutils",
+      "version": "1:2.37.2-4ubuntu3.6",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-76642",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-76642",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libblkid1",
+      "version": "2.37.2-4ubuntu3.6",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-76642",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-76642",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libmount1",
+      "version": "2.37.2-4ubuntu3.6",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-76642",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-76642",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libsmartcols1",
+      "version": "2.37.2-4ubuntu3.6",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-76642",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-76642",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libuuid1",
+      "version": "2.37.2-4ubuntu3.6",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-76642",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-76642",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "mount",
+      "version": "2.37.2-4ubuntu3.6",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-76642",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-76642",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "util-linux",
+      "version": "2.37.2-4ubuntu3.6",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-76642",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-103111",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libpcre2-8-0",
+      "version": "10.39-3ubuntu0.1",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-103111",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2018-5709",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Negligible",
+      "package": "libgssapi-krb5-2",
+      "version": "1.19.2-2ubuntu0.10",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2018-5709",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2018-5709",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Negligible",
+      "package": "libk5crypto3",
+      "version": "1.19.2-2ubuntu0.10",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2018-5709",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2018-5709",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Negligible",
+      "package": "libkrb5-3",
+      "version": "1.19.2-2ubuntu0.10",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2018-5709",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2018-5709",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Negligible",
+      "package": "libkrb5support0",
+      "version": "1.19.2-2ubuntu0.10",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2018-5709",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-66382",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libexpat1",
+      "version": "2.4.7-1ubuntu0.9",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2025-66382",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-78408",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "bsdutils",
+      "version": "1:2.37.2-4ubuntu3.6",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-78408",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-78408",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libblkid1",
+      "version": "2.37.2-4ubuntu3.6",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-78408",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-78408",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libmount1",
+      "version": "2.37.2-4ubuntu3.6",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-78408",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-78408",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libsmartcols1",
+      "version": "2.37.2-4ubuntu3.6",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-78408",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-78408",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libuuid1",
+      "version": "2.37.2-4ubuntu3.6",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-78408",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-78408",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "mount",
+      "version": "2.37.2-4ubuntu3.6",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-78408",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-78408",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "util-linux",
+      "version": "2.37.2-4ubuntu3.6",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-78408",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-13595",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "util-linux",
+      "version": "2.37.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.42.2"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-13595",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-22795",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.1.1ze",
+        "3.0.19",
+        "3.3.6",
+        "3.4.4",
+        "3.5.5",
+        "3.6.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-22795",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-54872",
+      "namespace": "nvd:cpe",
+      "severity": "Low",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2zs",
+        "1.1.1zj",
+        "3.0.23",
+        "3.4.8",
+        "3.5.9",
+        "3.6.5",
+        "4.0.3"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-54872",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-3219",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "dirmngr",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2022-3219",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-3219",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "gnupg",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2022-3219",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-3219",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "gnupg-l10n",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2022-3219",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-3219",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "gnupg-utils",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2022-3219",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-3219",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "gpg",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2022-3219",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-3219",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "gpg-agent",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2022-3219",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-3219",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "gpg-wks-client",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2022-3219",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-3219",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "gpg-wks-server",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2022-3219",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-3219",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "gpgconf",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2022-3219",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-3219",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "gpgsm",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2022-3219",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2022-3219",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "gpgv",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2022-3219",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-68160",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.0.2zn",
+        "1.1.1ze",
+        "3.0.19",
+        "3.3.6",
+        "3.4.4",
+        "3.5.5",
+        "3.6.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-68160",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-77696",
+      "namespace": "nvd:cpe",
+      "severity": "Low",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.1.1zj",
+        "3.0.23",
+        "3.4.8",
+        "3.5.9",
+        "3.6.5",
+        "4.0.3"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-77696",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-89162",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libpcre2-8-0",
+      "version": "10.39-3ubuntu0.1",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-89162",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-78410",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "bsdutils",
+      "version": "1:2.37.2-4ubuntu3.6",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-78410",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-78410",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libblkid1",
+      "version": "2.37.2-4ubuntu3.6",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-78410",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-78410",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libmount1",
+      "version": "2.37.2-4ubuntu3.6",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-78410",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-78410",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libsmartcols1",
+      "version": "2.37.2-4ubuntu3.6",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-78410",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-78410",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libuuid1",
+      "version": "2.37.2-4ubuntu3.6",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-78410",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-78410",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "mount",
+      "version": "2.37.2-4ubuntu3.6",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-78410",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-78410",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "util-linux",
+      "version": "2.37.2-4ubuntu3.6",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-78410",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-78409",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "bsdutils",
+      "version": "1:2.37.2-4ubuntu3.6",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-78409",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-78409",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libblkid1",
+      "version": "2.37.2-4ubuntu3.6",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-78409",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-78409",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libmount1",
+      "version": "2.37.2-4ubuntu3.6",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-78409",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-78409",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libsmartcols1",
+      "version": "2.37.2-4ubuntu3.6",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-78409",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-78409",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libuuid1",
+      "version": "2.37.2-4ubuntu3.6",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-78409",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-78409",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "mount",
+      "version": "2.37.2-4ubuntu3.6",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-78409",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-78409",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "util-linux",
+      "version": "2.37.2-4ubuntu3.6",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-78409",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-54369",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libacl1",
+      "version": "2.3.1-1",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-54369",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-102474",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "dash",
+      "version": "0.5.11+git20210903+057cd650a4ed-3build1",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-102474",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-18374",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libc-bin",
+      "version": "2.35-0ubuntu3.15",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-18374",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-18374",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libc6",
+      "version": "2.35-0ubuntu3.15",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-18374",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-18374",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "locales",
+      "version": "2.35-0ubuntu3.15",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-18374",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-18508",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "tar",
+      "version": "1.34+dfsg-1ubuntu0.1.22.04.6",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-18508",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-102473",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "dash",
+      "version": "0.5.11+git20210903+057cd650a4ed-3build1",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-102473",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-95818",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libc-bin",
+      "version": "2.35-0ubuntu3.15",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-95818",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-95818",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libc6",
+      "version": "2.35-0ubuntu3.15",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-95818",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-95818",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "locales",
+      "version": "2.35-0ubuntu3.15",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-95818",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-14017",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "curl",
+      "version": "7.81.0",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "8.18.0"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-14017",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-15649",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "perl-base",
+      "version": "5.34.0-3ubuntu1.9",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2025-15649",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-89161",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libpcre2-8-0",
+      "version": "10.39-3ubuntu0.1",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-89161",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-86805",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libc-bin",
+      "version": "2.35-0ubuntu3.15",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-86805",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-86805",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libc6",
+      "version": "2.35-0ubuntu3.15",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-86805",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-86805",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "locales",
+      "version": "2.35-0ubuntu3.15",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-86805",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-41991",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "gzip",
+      "version": "1.10",
+      "type": "binary",
+      "fixState": "",
+      "fixVersions": [],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-41991",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2025-69418",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "openssl",
+      "version": "3.0.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "1.1.1ze",
+        "3.0.19",
+        "3.3.6",
+        "3.4.4",
+        "3.5.5",
+        "3.6.1"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-69418",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-27456",
+      "namespace": "nvd:cpe",
+      "severity": "Medium",
+      "package": "util-linux",
+      "version": "2.37.2",
+      "type": "binary",
+      "fixState": "fixed",
+      "fixVersions": [
+        "2.41.4"
+      ],
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-27456",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-54370",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "libacl1",
+      "version": "2.3.1-1",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-54370",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-40228",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "libsystemd0",
+      "version": "249.11-0ubuntu3.22",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-40228",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-40228",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "libudev1",
+      "version": "249.11-0ubuntu3.22",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-40228",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-18477",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Medium",
+      "package": "tar",
+      "version": "1.34+dfsg-1ubuntu0.1.22.04.6",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-18477",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-105712",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "dirmngr",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-105712",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-105712",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "gnupg",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-105712",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-105712",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "gnupg-l10n",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-105712",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-105712",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "gnupg-utils",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-105712",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-105712",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "gpg",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-105712",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-105712",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "gpg-agent",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-105712",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-105712",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "gpg-wks-client",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-105712",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-105712",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "gpg-wks-server",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-105712",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-105712",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "gpgconf",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-105712",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-105712",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "gpgsm",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-105712",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2026-105712",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Low",
+      "package": "gpgv",
+      "version": "2.2.27-3ubuntu2.5",
+      "type": "deb",
+      "fixState": "not-fixed",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2026-105712",
+      "disposition": "pending"
+    },
+    {
+      "id": "CVE-2023-47039",
+      "namespace": "ubuntu:distro:ubuntu:22.04",
+      "severity": "Negligible",
+      "package": "perl-base",
+      "version": "5.34.0-3ubuntu1.9",
+      "type": "deb",
+      "fixState": "wont-fix",
+      "fixVersions": [],
+      "url": "https://ubuntu.com/security/CVE-2023-47039",
+      "disposition": "pending"
+    }
+  ]
+}

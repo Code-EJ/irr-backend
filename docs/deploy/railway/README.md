@@ -36,6 +36,7 @@ Deploy the identity-capable frontend before using this temporary account. After 
 ## Runbooks
 
 - [Variables and secrets](variables.md)
+- [Fresh economical homologation installation](homologation-installation.md)
 - [Rollout and rollback](rollout.md)
 - [Troubleshooting](troubleshooting.md)
 - [Deployment checklist](checklist.md)

@@ -9,7 +9,7 @@ Unchecked items are operator release gates, not claims of remote verification.
 - [ ] Feature branches reviewed; unrelated local changes preserved; no automatic merge.
 - [ ] Java 21 ./mvnw clean verify, real PostgreSQL/Testcontainers and documentation checks pass.
 - [ ] Backend advisory audit recorded and Docker image builds.
-- [ ] V1 checksum unchanged; additive V2/V3 upgrade and fresh V1 + V2 + V3 verified.
+- [ ] V1–V4 checksums unchanged; supported upgrades and fresh V1 + V2 + V3 + V4 verified.
 - [ ] npm ci, lint, typecheck, test, build, api:check and real-backend contract tests pass.
 - [ ] Frontend dependency findings reviewed; no unapproved forced major upgrade.
 - [ ] Both images build from tracked source; no secrets or local-only source dependencies.

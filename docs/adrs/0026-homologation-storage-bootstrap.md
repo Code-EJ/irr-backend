@@ -7,7 +7,7 @@
 
 ## Context and decision drivers
 
-The owner selected a new homologation environment, Railway-generated domains, economical operation and the region closest to Belo Horizonte. The current compute-region list makes Virginia (`us-east4-eqdc4a`) the closest available option; the Brazilian CDN location is not a compute region. All four services should share that region. A numeric spending ceiling remains undecided. No production environment is needed yet.
+The owner selected a new homologation environment, economical operation and initially Railway-generated domains. The owner subsequently required execution in Brazil, preferably São Paulo, and a total ceiling of BRL 130/month. This replaces the earlier nearest-region interpretation: no US region is authorized. Railway's published compute list has no Brazil region; its staff confirms that São Paulo is a CDN location, not compute. Cloud-provider selection is therefore blocked pending owner choice; do not provision abroad or invent a Brazilian Railway region. No production environment is needed yet.
 
 Railway mounts volumes at runtime with root ownership. The existing backend runs as UID/GID 10001 and image-layer ownership alone cannot initialize a fresh mounted upload directory. Preserve that runtime identity, the modular monolith, `/api/v1`, V1–V4 and the single-replica filesystem storage boundary.
 
@@ -26,7 +26,7 @@ Keep Docker's default user 10001. A root invocation must explicitly opt in with 
 
 For Railway only, review `RAILWAY_RUN_UID=0` together with the opt-in; this starts the bounded entrypoint as root, not the JVM. If required capabilities are unavailable, fail startup rather than retain root. Do not enable this mode in the ordinary local Compose configuration.
 
-Create only backend, static frontend, PostgreSQL 16 and authenticated Redis 8.2. Keep databases private, automatic deployments disabled, no Mailpit, no extra replicas or Kubernetes. Set spending alerts and an owner-approved hard limit before provisioning. The limit can stop all workloads; it is not a billing estimate or availability guarantee. Do not enable application sleeping without validating recovery and token/Redis behavior.
+Create only backend, static frontend, PostgreSQL 16 and authenticated Redis 8.2 once a Brazil-capable provider is approved. Keep databases private, automatic deployments disabled, no Mailpit, no extra replicas or Kubernetes. The BRL 130 ceiling includes hosting and required persistent storage/backup expenses; distinguish provider currency, subscription credit, exchange rate/payment fees and measured usage before committing costs. Set spending alerts and an owner-approved provider limit before provisioning. A usage limit can stop workloads; it is not a billing estimate or availability guarantee. Do not enable application sleeping without validating recovery and token/Redis behavior.
 
 ## Acceptance and verification
 
@@ -36,4 +36,4 @@ Retain automated container checks for default identity, refusal of implicit root
 
 This resolves a local implementation prerequisite without changing APIs or migrations. Cloud access, spending ceiling, real mail, initial-data scope, backup policy, residual security dispositions and operator acceptance remain explicit release gates. No remote resources are created by this ADR.
 
-Sources checked on 2026-10-10: [regions](https://docs.railway.com/deployments/regions), [volumes](https://docs.railway.com/volumes), [cost control](https://docs.railway.com/pricing/cost-control).
+Sources checked on 2026-10-10: [regions](https://docs.railway.com/deployments/regions), [Railway staff clarification on Brazil](https://station.railway.com/feedback/request-for-brazil-hosting-region-availa-64766196), [volumes](https://docs.railway.com/volumes), [cost control](https://docs.railway.com/pricing/cost-control).

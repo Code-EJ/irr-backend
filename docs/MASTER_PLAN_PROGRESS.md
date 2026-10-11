@@ -1,5 +1,11 @@
 # Local Master Plan execution progress
 
+## Fresh homologation preparation increment — 2026-10-10
+
+The owner selected a new Railway homologation environment, provider domains, economical operation and the region closest to Belo Horizonte. [ADR-0026](adrs/0026-homologation-storage-bootstrap.md) implements a bounded volume initializer. The owner subsequently required Brazil/Sao Paulo and BRL 130/month; no foreign deployment is authorized and provider compatibility remains unresolved. Backend `89e9945` preserves default UID/GID 10001, allows explicit root-owned directory preparation only at `/data/uploads`, drops capabilities/privileges before Java, rejects unsafe paths and never recursively changes files. Seven isolated container scenarios pass; the actual local backend remains Java UID/GID 10001 and healthy. Six read-only pair checks and 116 contract operations pass; V1–V4 and domain code are unchanged. No database/upload volume was reset.
+
+The candidate was rescanned: 290 raw matches are retained. All 13 critical Ubuntu binary CPE entries now have exact vendor disposition; Spring mitigation and high/infrastructure/build findings remain separate unresolved review. The [new local image record](deploy/railway/local-storage-candidate-2026-10-10.json) distinguishes Docker image-index and scanner config digests. The [installation checklist](deploy/railway/homologation-installation.md) incorporates the owner's environment choices without pretending cloud provisioning occurred. Budget is BRL 130/month. Brazil-capable provider choice, account access, initial data, real mail and backup policy remain owner inputs. Real cloud storage/HTTPS/mail and broader operator/accessibility acceptance remain gates.
+
 Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas). Updated 2026-10-10.
 
 ## Authority and completion rule

@@ -3,14 +3,84 @@
   "status": "review-only-not-executable-iac",
   "deploymentAuthorized": false,
   "services": {
-    "backend": {"build": "Dockerfile", "runtimePort": 9191, "healthPath": "/actuator/health/readiness", "runtimeUid": 10001, "replicas": 1, "publicHttps": true, "persistentMount": "/data/uploads", "volumePermissionsVerified": false},
-    "frontend": {"repository": "irr-frontend", "build": "Dockerfile", "runtimePort": 8080, "healthPath": "/health", "runtimeUid": 101, "publicHttps": true, "publicBuildVariable": "VITE_API_BASE_URL"},
-    "postgres": {"major": 16, "privateOnly": true, "persistent": true, "finalImageDigest": null},
-    "redis": {"majorMinor": "8.2", "privateOnly": true, "authenticationRequired": true, "finalImageDigest": null}
+    "backend": {
+      "build": "Dockerfile",
+      "runtimePort": 9191,
+      "healthPath": "/actuator/health/readiness",
+      "runtimeUid": 10001,
+      "replicas": 1,
+      "publicHttps": true,
+      "persistentMount": "/data/uploads",
+      "volumePermissionsVerified": "local-only; Railway verification pending",
+      "storageInitialization": {
+        "rootEntrypointOptIn": true,
+        "applicationUid": 10001,
+        "recursiveChanges": false,
+        "adr": "ADR-0026"
+      }
+    },
+    "frontend": {
+      "repository": "irr-frontend",
+      "build": "Dockerfile",
+      "runtimePort": 8080,
+      "healthPath": "/health",
+      "runtimeUid": 101,
+      "publicHttps": true,
+      "publicBuildVariable": "VITE_API_BASE_URL"
+    },
+    "postgres": {
+      "major": 16,
+      "privateOnly": true,
+      "persistent": true,
+      "finalImageDigest": null
+    },
+    "redis": {
+      "majorMinor": "8.2",
+      "privateOnly": true,
+      "authenticationRequired": true,
+      "finalImageDigest": null
+    }
   },
-  "migrationVersions": [1, 2, 3, 4],
+  "migrationVersions": [
+    1,
+    2,
+    3,
+    4
+  ],
   "mailProvider": "brevo",
   "secretsIncluded": false,
-  "ownerDecisions": ["region", "domains", "budget", "RPO", "RTO", "backup-retention", "maintenance-window"],
-  "releaseManifest": {"backendSourceSha": null, "frontendSourceSha": null, "backendImageDigest": null, "frontendImageDigest": null, "openApiSha256": null, "scanDatabaseBuilt": null, "operatorAcceptance": false}
+  "ownerDecisions": [
+    "Brazil-capable-provider",
+    "cloud-account-access",
+    "initial-data-scope",
+    "Brevo-sender",
+    "RPO",
+    "RTO",
+    "backup-retention",
+    "maintenance-window"
+  ],
+  "releaseManifest": {
+    "backendSourceSha": null,
+    "frontendSourceSha": null,
+    "backendImageDigest": null,
+    "frontendImageDigest": null,
+    "openApiSha256": null,
+    "scanDatabaseBuilt": null,
+    "operatorAcceptance": false
+  },
+  "environment": {
+    "name": "homologation",
+    "projectExists": false,
+    "domains": "Railway-generated",
+    "region": null,
+    "spendingAlertUsd": null,
+    "spendingHardLimitUsd": null,
+    "requiredCountry": "BR",
+    "preferredCity": "Sao Paulo",
+    "totalMonthlyBudget": {
+      "currency": "BRL",
+      "amount": 130
+    },
+    "regionBlocker": "Railway Brazil compute unavailable in current public documentation; owner provider decision pending. No foreign fallback authorized."
+  }
 }

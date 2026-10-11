@@ -79,3 +79,18 @@ The candidate installs curl/libcurl **7.81.0-1ubuntu1.29** and OpenSSL/libssl **
 Remaining critical CPE entries CVE-2025-15467, CVE-2024-5535, CVE-2022-32221 and CVE-2026-11856 remain pending; exact vendor-page requests failed/timed out. No conclusion is extrapolated from other identifiers. Other high/severity findings also need individual review. Spring retains the conditional-feature mitigation and framework maintenance decision described above.
 
 Reviewed dispositions in the dated backend-patched JSON are manual annotations supported by the vendor table above. Re-running summarize-image-scan.mjs regenerates pending states; write a new scan file rather than overwrite an annotated inventory. Preserve the original scanner hash/counts and the reviewed record when comparing later candidates.
+
+### Storage-bootstrap candidate review
+
+[The subsequent candidate scan](backend-storage-bootstrap-grype-2026-10-10.json) targets config image ID `54d71eedd701227275b7e8f485de39c4d89ead030f3b1bdeb6e83f47639b4d2a`, built from backend `89e9945`. Docker reports the running OCI image index as `a6f1b7d07f99d459b5c33afedf2e6bee18f40b7c2d863f62481d4ebff5ea3034`; these are different digest objects, not interchangeable identifiers. Grype 0.120.1 with the same dated database completed: 290 matches, including 15 critical and 61 high. The entrypoint change does not change package versions. All four installed curl/libcurl/OpenSSL/libssl versions were rechecked in the actual running container; nine existing exact finding/package vendor dispositions carry forward explicitly.
+
+The four previously inaccessible vendor pages now have exact Ubuntu security-notice evidence:
+
+| Identifier | Jammy fixed version | Installed candidate version | Disposition |
+| --- | --- | --- | --- |
+| [CVE-2025-15467 / USN-7980-1](https://ubuntu.com/security/notices/USN-7980-1) | OpenSSL 3.0.2-0ubuntu1.21 | 3.0.2-0ubuntu1.30 | CORRECTED vendor backport |
+| [CVE-2024-5535 / USN-6937-1](https://ubuntu.com/security/notices/USN-6937-1) | libssl3 3.0.2-0ubuntu1.17 | 3.0.2-0ubuntu1.30 | CORRECTED vendor backport |
+| [CVE-2022-32221 / USN-5702-1](https://ubuntu.com/security/notices/USN-5702-1) | curl/libcurl 7.81.0-1ubuntu1.6 | 7.81.0-1ubuntu1.29 | CORRECTED vendor backport |
+| [CVE-2026-11856 / USN-8651-1](https://ubuntu.com/security/notices/USN-8651-1) | curl/libcurl 7.81.0-1ubuntu1.26 | 7.81.0-1ubuntu1.29 | CORRECTED vendor backport |
+
+All 13 critical binary CPE entries now have individual backport/not-affected evidence in this candidate. The two critical-classified Spring findings retain their conditional-feature mitigation and pending framework support/release decision. Raw severity/counts are unchanged. The 61 high and other pending matches, infrastructure/build-image inventories and frontend build/runtime residual risks still require review. This is not a clean security certification. Earlier dated reports remain historical rather than overwritten.

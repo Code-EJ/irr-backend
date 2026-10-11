@@ -1,0 +1,64 @@
+{
+  "maintainer": "Enzo Ribas (https://github.com/oEnzoRibas)",
+  "status": "local-verified-candidate-not-approved-release",
+  "verifiedAt": "2026-10-11T00:59:39.475Z",
+  "backend": {
+    "declaredBuildSource": "89e994532c7ba4f6be54d03e63f51633efbf5589",
+    "imageId": "sha256:a6f1b7d07f99d459b5c33afedf2e6bee18f40b7c2d863f62481d4ebff5ea3034",
+    "scannerConfigImageId": "sha256:54d71eedd701227275b7e8f485de39c4d89ead030f3b1bdeb6e83f47639b4d2a",
+    "digestObjects": "Docker imageId is the running OCI index. Scanner config ID identifies another content object; neither is a pushed registry release attestation."
+  },
+  "frontend": {
+    "declaredBuildSource": "232d60bffe746f127dc863e8f30e548651c4d830",
+    "imageId": "sha256:a457213cc018d2ebe66bdfba55f219452f76342e5104b2c89af588a8fd33f610"
+  },
+  "provenance": "Declared source revisions match the reviewed build inputs. Docker images carry no independent signed source attestation. Documentation-only commits can follow these application/image references.",
+  "contract": {
+    "reference": "996e36f5f476aaf8ed65107059f518be7d13e7e5",
+    "pinnedFileSha256": "ec2376c4a1019b3ccb9d67508851a6ddd88583a396cee60ca3f14426a2b17679",
+    "normalizedServedSha256": "986625941f50291a152101f7ad54f6a46e51af7f4d01d8d579f1b6033f374cb6",
+    "operations": 116,
+    "apiFrozen": false
+  },
+  "migrations": [
+    {
+      "file": "src/main/resources/db/migrations/V1__initial_schema.sql",
+      "gitBlobSha256": "6ed39b78331dd4779396f85a20b01172ef0bc69f4444d5968b9704c50ec14c4a"
+    },
+    {
+      "file": "src/main/resources/db/migrations/V2__account_credential_lifecycle.sql",
+      "gitBlobSha256": "c6e3d6f5652d6a9a76d0e41db711ecfa6211a3c761f86191c246bc63b95f9faf"
+    },
+    {
+      "file": "src/main/resources/db/migrations/V3__password_recovery.sql",
+      "gitBlobSha256": "3ff450f8b2f5dcd2b3c0fe4e0474648912213aeb2107b21dd29ed4e8c6b6e765"
+    },
+    {
+      "file": "src/main/resources/db/migrations/V4__routes_and_execution_history.sql",
+      "gitBlobSha256": "2a90f88749df520ef92608a18b7e384902f134f3259028f8ed13ce373948a5da"
+    }
+  ],
+  "checks": [
+    "/actuator/health/liveness",
+    "/actuator/health/readiness",
+    "Pinned OpenAPI schemas, operations and security match (environment server URLs excluded)",
+    "Exact public frontend CORS preflight",
+    "Frontend health and direct SPA routes",
+    "Served assets use the configured API origin"
+  ],
+  "scan": {
+    "tool": "Grype",
+    "version": "0.120.1",
+    "databaseBuilt": "2026-10-10T06:30:01Z"
+  },
+  "operatorApproval": false,
+  "deploymentAuthorized": false,
+  "remainingGates": [
+    "Image dependency/vendor dispositions",
+    "Complete browser/accessibility/PDF/operator acceptance",
+    "Railway domains/secrets/volume/mail/backup approval and verification",
+    "Approved client data and import scope"
+  ],
+  "supersedesLocalImageRecord": "local-candidate-2026-10-10.json",
+  "storageChecks": "Seven isolated container scenarios passed; real Railway permission checks remain pending."
+}

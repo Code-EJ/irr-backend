@@ -1,5 +1,11 @@
 # Local release consolidation register
 
+## Latest homologation preparation increment
+
+[ADR-0026](adrs/0026-homologation-storage-bootstrap.md) and [the fresh installation checklist](deploy/railway/homologation-installation.md) incorporate the owner's choice of a new homologation environment, Railway domains and economical deployment. The owner subsequently required Brazil/Sao Paulo and BRL 130/month; Railway currently lists no Brazilian compute region, so no foreign region is authorized. Backend `89e9945` implements bounded directory ownership initialization followed by privilege drop; seven isolated container scenarios, actual local Java UID/GID 10001, health, six read-only pair checks and 116 operations pass. Real Railway volume permissions remain unverified. No API, migration or domain formula changed.
+
+[The new candidate scan](security/backend-storage-bootstrap-grype-2026-10-10.json) retains 290 raw findings; all 13 critical binary CPE entries now have individual vendor evidence. Two conditional Spring mitigations and other high/infrastructure/build findings remain release review, not waived risks. [Current image provenance](deploy/railway/local-storage-candidate-2026-10-10.json) supersedes only the running backend image in the historical checkpoint. Remaining owner inputs: Brazil-capable provider choice/cloud access, initial-data/admin scope, Brevo sender/inbox and backup policy. Operator/accessibility/PDF acceptance and actual public environment verification remain open. Deployment is not claimed complete.
+
 Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas). Updated 2026-10-10. Continues existing Master Plans; [ADR-0025](adrs/0025-pre-release-security-and-deployment-preparation.md) authorizes preparation, not deployment.
 
 ## Outcome gates
