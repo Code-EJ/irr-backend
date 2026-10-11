@@ -93,6 +93,7 @@ Copy-Item "$Stage/backend/deploy/redis/Dockerfile.railway" "$Stage/redis/Dockerf
 Copy-Item "$Stage/backend/deploy/redis/railway-start.sh" "$Stage/redis/railway-start.sh"
 node "$BackendRepo/scripts/prepare-railway-dockerfile.mjs" $Backend "$Stage/backend/Dockerfile"
 if ($LASTEXITCODE -ne 0) { throw 'Backend cache namespace preparation failed' }
+Write-Output ('Prepared release directory: ' + $Stage)
 ```
 
 Run the retained helper from the backend checkout: it permits output only under that checkout's ignored `.local`. It changes only the staged Dockerfile's literal Maven cache service ID. Do not replace the owner's Dockerfile or remove its Maven/Spotless changes. Inspect the staged files: each infrastructure directory needs only the files copied above. Do not upload `$Stage` itself or use `--no-gitignore`; upload each explicit subdirectory with `--path-as-root`.
@@ -102,6 +103,20 @@ If `git archive` says `not a valid object name`, stop before upload, replace the
 ## 5. Deploy or resume, in dependency order
 
 For a full resume, start with PostgreSQL, then Redis. For an ordinary application-only update with healthy dependencies, leave those services running and upload only the changed application(s).
+
+**Use the same PowerShell window as steps 1 and 4.** Variables such as Project, Environment and Stage exist only in that terminal session; reopening PowerShell clears them. If continuing in a new window, rerun the destination-ID block in step 1 and either rerun the complete preparation in step 4 or restore Stage to its exact printed directory. Before any upload, run:
+
+```powershell
+foreach ($value in @($Project,$Environment,$Database,$Redis,$Backend,$Frontend)) {
+  if ($value -notmatch '^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$') { throw 'Destination variables are missing; rerun step 1 in this window' }
+}
+if ([string]::IsNullOrWhiteSpace($Stage)) { throw 'Stage is missing; rerun step 4 in this window' }
+foreach ($file in @('database/Dockerfile','redis/Dockerfile','redis/railway-start.sh','backend/Dockerfile','frontend/Dockerfile')) {
+  if (-not (Test-Path -LiteralPath (Join-Path $Stage $file) -PathType Leaf)) { throw 'Release preparation is incomplete; rerun step 4' }
+}
+```
+
+The CLI error `a value is required for --project` means the Project variable was empty; it does not mean the project or its data must be recreated.
 
 ```powershell
 railway up "$Stage/database" --path-as-root --project $Project --environment $Environment --service $Database --detach
