@@ -1,6 +1,16 @@
 # Isolated homologation execution — 2026-10-11
 
-## Current live checkpoint
+## Current checkpoint: owner-requested pause
+
+The owner requested a temporary shutdown to preserve trial compute credit before scheduling the client session with Paulo. The official CLI `railway down --project <project-id> --environment <environment-id> --service <service-id> --yes` was executed sequentially for frontend, backend, Redis and PostgreSQL, using only the isolated project/environment/service identifiers below. A subsequent `railway deployment list` for each service confirmed its latest deployment is **REMOVED**. No volume, service definition, domain, variable or retained record was deleted. The existing `lovely-wonder` project was not stopped or modified.
+
+The public application is currently offline. Persistent storage can still consume credit: Railway bills used volume storage independently of active application compute, including filesystem metadata ([volume pricing](https://docs.railway.com/volumes/reference#pricing)). Other preserved projects may also consume the account's shared trial credit. This pause is not a zero-cost guarantee or a backup.
+
+Before the scheduled session, resume PostgreSQL and Redis first, wait for their readiness, then deploy the reviewed backend and frontend from clean versioned sources using [the installation procedure](homologation-installation.md). Preserve the existing volumes, private secrets, PORT, exact CORS and disabled bootstrap settings. Include the latest frontend institutional-footer commit in the next upload; it has not been published during this pause. Repeat the six public pair checks, operator login, organization selection and persisted PDF download before sending an availability confirmation. Redeployment and resuming compute require an owner-requested session; do not silently restart services while documenting or preparing PRs.
+
+The two coordinated PRs target `main` from `chore/release-readiness`: [backend #79](https://github.com/Code-EJ/irr-backend/pull/79) and [frontend #67](https://github.com/Code-EJ/irr-frontend/pull/67). They remain drafts with explicit acceptance/security/mail gates; neither has been merged. Credentials remain only in the ignored private handoff file. The client message is a draft for the owner to send, not an email sent by automation.
+
+## Verified runtime checkpoint before pause
 
 The separate synthetic environment is now running all four services. Backend deployment `ddfaec01-b072-44a2-8614-b064d48ff9a8` succeeded after PORT=9191 was aligned with SERVER_PORT and the public target. Backend source is `84fe4f1` with only its literal Maven cache namespace generated for service `70ac22d1-7f09-457e-a816-8631d84e6339`; the owner Dockerfile stays unchanged. The retained generator is `scripts/prepare-railway-dockerfile.mjs` in `b3077ef`. Source upload excludes ignored credentials and does not enable GitHub autodeploys. The earlier cloud failures and preparation-only statements below are historical.
 

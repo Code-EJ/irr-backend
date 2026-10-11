@@ -6,6 +6,8 @@ This is the owner-authorized Railway Virginia environment from ADR-0028. Client 
 
 ## Access
 
+**Currently paused by the owner to conserve trial compute credit.** Arrange a session with Paulo before reopening the environment. All four deployments were confirmed REMOVED; volumes and credentials were preserved. The owner must resume dependencies and applications and repeat the public checks described in the execution record before confirming availability. Do not treat the link below as currently online. Volume storage and other preserved projects may still consume shared credit.
+
 1. Open [the frontend login](https://frontend-homologation-ffac.up.railway.app/login).
 2. Retrieve the operator credential from the ignored backend file `.local/railway-homologation/.env-homologation`. It is private, generated for this environment and must never be committed, pasted into issues or included in public documentation.
 3. Sign in with `OPERATOR_EMAIL` / `OPERATOR_PASSWORD` and select **Homologação IRR — Dados Sintéticos**. The account has organization-scoped MANAGER membership and does not have global platform administrator permissions.
