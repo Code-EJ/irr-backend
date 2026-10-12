@@ -51,16 +51,21 @@ function start(name, image, dataVolume, destination, extraArgs) {
 try {
   mkdirSync(privateDirectory, {recursive: true, mode: 0o700});
   const pg = `${prefix}-postgres`, pgVolume = `${pg}-data`;
+  // Keep the temporary Unix-socket init server alive long enough to exercise startup ordering.
+  const initProbe = path.join(privateDirectory, 'startup-delay.sql');
+  writeFileSync(initProbe, 'SELECT pg_sleep(3);\n', {mode: 0o644});
   volume(pgVolume);
   start(pg, postgresImage, pgVolume, '/var/lib/postgresql/data', [
     '--env', 'POSTGRES_USER=irr_review', '--env', 'POSTGRES_DB=irr_review', '--env', 'POSTGRES_PASSWORD',
     '--env', 'POSTGRES_INITDB_ARGS=--auth-host=scram-sha-256',
+    '--mount', `type=bind,source=${initProbe},target=/docker-entrypoint-initdb.d/startup-delay.sql,readonly`,
   ]);
-  await ready(() => docker(['exec', pg, 'pg_isready', '-U', 'irr_review', '-d', 'irr_review']).includes('accepting connections'));
-  stage = 'PostgreSQL TCP authentication';
   const sql = (statement) => docker(['exec', '--env', 'PGPASSWORD', pg, 'psql', '-h', '127.0.0.1',
     '-U', 'irr_review', '-d', 'irr_review', '-v', 'ON_ERROR_STOP=1', '-At', '-c', statement],
     {env: {...process.env, PGPASSWORD: password}});
+  // The upstream init server accepts socket probes but deliberately does not listen on TCP.
+  await ready(() => sql('SELECT 1;') === '1');
+  stage = 'PostgreSQL TCP authentication';
   if (!sql('SHOW server_version;').startsWith('16.')) throw new Error('PostgreSQL 16 is required.');
   let incorrectPasswordRejected = false;
   try {
