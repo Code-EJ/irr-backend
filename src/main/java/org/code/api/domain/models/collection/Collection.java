@@ -30,6 +30,9 @@ import org.hibernate.annotations.SQLRestriction;
 @AllArgsConstructor
 @SuperBuilder
 public class Collection extends TimeStampedEntity {
+  @Column(name = "route_execution_id")
+  private UUID routeExecutionId;
+
   @Column(name = "route_description", length = 2000)
   private String routeDescription;
 

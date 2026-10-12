@@ -30,11 +30,11 @@ ADR-0014 uses new database_final_v1 and attachment_final_v1 logical volumes, pre
 
 ## Fresh database and future upgrades
 
-The active Flyway path contains only the final V1__initial_schema.sql established by ADR-0014. It creates the verified final schema, including all organization, ledger, logistics and recovery constraints. Use a fresh database. Never run Flyway repair or baseline-on-migrate to conceal a mismatch with the unreleased predecessor.
+ADR-0014 established V1__initial_schema.sql as the fresh baseline. The active Flyway path now contains V1 plus additive V2 credential lifecycle, V3 password recovery and V4 Routes. Fresh databases apply all four; existing databases retain their checksums and apply only missing versions. Never run Flyway repair or baseline-on-migrate to conceal a mismatch with the unreleased predecessor.
 
 Earlier SQL is recoverable from Git history at commit 3ca0cab. Duplicate SQL archives were removed from the maintained tree. The private pre-consolidation backup and old volumes preserve actual local data. Existing creator identities are insufficient evidence for organization mapping.
 
-Future shared changes use V2+ after the highest applied version. Add new DDL, test a populated-baseline upgrade, verify failures roll back, and document any necessary preflight/backfill. Unique/nonnegative inventory constraints are already part of the baseline.
+Future shared changes use versions after the highest applied version (currently V5+). Add new DDL, test a populated-baseline upgrade, verify failures roll back, and document any necessary preflight/backfill. Unique/nonnegative inventory constraints are already part of the baseline.
 
 ## Recovery and backup
 
@@ -68,15 +68,15 @@ Repeated failures require checking the attachment volume mount, storage availabi
 
 ## Organizations and Redis execution update
 
-The final V1 creates 29 application tables. Organization membership and access audit are part of that baseline, and no ownership is inferred from the creator. Administrative effects and audit records commit together. Test-only incremental V2 migrations remain outside the runtime image.
+The final V1 creates 29 application tables. Organization membership and access audit are part of that baseline, and no ownership is inferred from the creator. Administrative effects and audit records commit together. ADR-0016 adds the runtime V2 credential fields; V3 adds runtime password recovery authorization. Test-only incremental V5 examples remain outside the runtime image.
 
 Compose now starts PostgreSQL, authenticated Redis and the API. Redis uses the internal network, a separate persistent volume and no host port. Both data services must pass health checks before API startup; readiness includes both. Redis credentials are required in the ignored .env and should be rotated together on Redis/backend recreation. The [README Redis workflow](../README.md#redis-start-check-and-test) provides commands. Redis AOF is neither a PostgreSQL backup nor a stock/authorization authority.
 
 ## Current verified recovery procedure
 
-Use Node.js 22.6+ and run node scripts/backup-development.mjs from the checkout. It briefly stops the API, creates a custom-format pg_dump and attachment tarball, copies .env and RSA keys, and writes SHA-256 hashes plus the current Git commit and Flyway checksums. Its finally block restarts the API. Keep this directory private; filesystem permissions on Windows must be managed using the account ACL. If the command fails, inspect the partial snapshot and do not treat it as complete without manifest.json.
+Use Node.js 22.6+ and select the actual stack explicitly. The current worktree command is node scripts/backup-development.mjs --compose-file .local/identity/compose.json --project irr-identity-verification. For the standard root Compose stack, omit arguments; optional --env-file selects its interpolation environment. The script validates running service/configuration identity, stops the selected API, archives PostgreSQL, attachments, resolved private configuration and actual RSA keys, then restarts and waits for health. Format 2 records image IDs, table counts and individual attachment hashes. See [the current recovery runbook and evidence](recovery-verification.md). Keep the directory private; Windows account ACLs remain the operator's responsibility. A partial snapshot without a valid complete manifest is not accepted.
 
-Run node scripts/verify-recovery.mjs followed by the printed backup directory. The tool checks every manifest hash, creates a labeled PostgreSQL container with no network and no host ports, restores SQL with exit-on-error, compares migration checksums, extracts attachments and checks stock against both ledger and lots when those tables exist. It removes only its labeled disposable container and anonymous volume. The live stack and named volumes are untouched. This proves backup readability and database consistency; it does not automatically roll back the live application.
+Run node scripts/verify-recovery.mjs followed by the printed backup directory. The tool checks required hashes, creates a labeled PostgreSQL container from the archived local image with no network or host ports, restores SQL with exit-on-error, compares migration checksums and table counts, validates archive paths and file bytes, resolves attachment references and checks stock against ledger and lots. It removes only its labeled disposable container and anonymous volume. The 2026-10-10 V1-V4 rehearsal restored 39 tables, 20 attachment files/references and zero stock differences. This proves local recovery consistency; it does not automatically roll back the live application.
 
 Historical ADR-0013 verification on 2026-09-27: the pre-upgrade V1–V3 snapshot restored; the post-upgrade V1–V6 snapshot restored with 30 public tables (including Flyway history), two attachment fixture files and zero stock differences. Checksums are recorded in local manifests. Backup retention and off-machine encrypted storage remain the operator responsibility before any valuable deployment.
 
@@ -92,12 +92,33 @@ Check readiness for PostgreSQL and Redis, liveness for the process, and Docker h
 
 Attachment deletion queues persist in PostgreSQL. The existing worker retries failed physical deletion. The hourly orphan reconciler scans at most 500 eligible candidates per invocation after a 24-hour grace period, with a cursor and an exclusive database advisory lock that excludes upload transactions. Local directory sorting still traverses the directory; monitor volume growth and move to paged storage reconciliation if scale requires it. Do not manually delete referenced bytes.
 
-Reports are uncached UTC operational summaries; reversals change the current-status interpretation of older periods. Redis holds no recoverable business truth today. Readiness depends on Redis by explicit ADR-0010 policy; stop/start Redis only during a controlled local resilience test.
+Legacy operational summaries retain their UTC semantics. Native operations-1 and analytics-1 use explicitly documented America/Sao_Paulo periods and independent fact cohorts; see [reporting](architecture/reporting.md) and [Analytics](architecture/analytics.md). Reports remain uncached; reversals recalculate applicable historical contributions. Redis holds no recoverable business truth today. Readiness depends on Redis by ADR-0010 policy; stop/start Redis only during a controlled local resilience test.
 
 ## Final pre-production consolidation
 
-ADR-0014 supersedes the active V1–V6 chain and compatibility API. All application requests now use /api/v1, including session authentication, account administration and organizations. Documentation and actuator infrastructure retain their framework URLs. Current restore evidence must contain one successful baseline version, not the historical six-row sequence.
+ADR-0014 supersedes the active V1–V6 chain and compatibility API. All application requests now use /api/v1, including session authentication, account administration and organizations. Documentation and actuator infrastructure retain their framework URLs. The ADR-0014 restoration below verified the one-version predecessor baseline. Current restore evidence must include successful V1/V2/V3/V4 after Identity and Routes upgrades, not the historical six-row sequence.
 
-The independent schema fixture records 560 column/default/nullability, constraint, index, trigger and domain-function definitions from the verified predecessor. FinalBaselineSchemaIT compares the fresh schema exactly after removing schema qualification and whitespace. Test-only V2 examples prove future upgrades and transactional failure rollback. Production migration discipline begins with this final shared baseline.
+The independent schema fixture records 560 column/default/nullability, constraint, index, trigger and domain-function definitions from the verified predecessor. FinalBaselineSchemaIT compares the fresh schema exactly after removing schema qualification and whitespace. Test-only V5 examples prove future upgrades and transactional failure rollback. Production migration discipline begins with this final shared baseline.
 
 Final ADR-0014 rehearsal on 2026-09-27 restored V1 checksum 583196656, 30 public tables including Flyway history, one uploaded evidence file and zero stock differences. The script also verifies that every restored attachment metadata reference resolves to a canonical file in the archive. Earlier six-migration results above are historical only.
+
+## Identity operational baseline (ADR-0016)
+
+OPTION A — INCREMENTAL: preserve V1 and apply V2__account_credential_lifecycle.sql automatically. V2 adds credential_version and must_change_password for token revocation and restricted temporary credentials. A fresh database runs V1/V2, V3 recovery and V4 Routes migrations. After operational data must be retained, never rewrite applied migrations, erase history, use clean or reset PostgreSQL as normal maintenance. Future changes use new versions.
+
+Development bootstrap no longer resets existing credentials or profiles. Use authenticated password change; editing a local .env is not a password reset mechanism. Optional BOOTSTRAP_ADMIN_* provisioning is separate and disabled by default. See [Railway deployment](deploy/railway/README.md) for the first-account process and security-aware rollback. No remote database recreation is part of this delivery.
+
+
+## Current Identity & Access operations
+
+ADR-0017 supersedes earlier no-bypass administrator rules. Global administrators access any active organization through an explicit organization header; local accounts require current memberships. Actual membership discovery never fabricates a global association. Preserve the last active global administrator.
+
+ADR-0018 adds V3__password_recovery.sql without resetting V1/V2 or existing accounts. The Identity delivery baseline was V1 + V2 + V3; the current Routes baseline also includes V4; earlier one-version restoration counts above are dated predecessor evidence. Recovery is enabled explicitly, throttled through Redis and atomically consumed in PostgreSQL. Follow [email recovery operations](email-recovery.md) and the Railway mail checklist. Backend readiness does not test sender verification or inbox arrival. Test-only V5 examples demonstrate future upgrades; they are not runtime migrations.
+
+## Identity closure and external delivery
+
+Identity is IMPLEMENTED / READY FOR HOMOLOGATION. Email provider deployment is OPERATIONAL CONFIGURATION PENDING / EXTERNAL CONFIGURATION REQUIRED: approved Brevo account, sender/domain DNS verification, backend-only API key and public reset URL. Follow [the implemented email runbook](email-recovery.md) for exact variables, local no-internet tests, real-inbox smoke and troubleshooting. This operational configuration does not block owner-authorized Routes development. No external credentials or Railway changes were performed locally.
+
+## Current Routes rollout (ADR-0019)
+
+Current runtime is V1 + V2 + V3 + V4. V4 adds normalized territory/planning/execution history and optional collection linkage; no reset is required. Earlier V3 verification counts above are dated Identity evidence. Test-only future migration examples are now V5, outside the runtime image. [Routes operations](architecture/routes.md) describes deployment order, preserved storage, version conflicts, history and rollback constraints. No new service or Railway variable is required. External email configuration remains a parallel operational dependency, not a Routes development gate.

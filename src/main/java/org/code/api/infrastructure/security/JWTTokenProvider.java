@@ -51,6 +51,7 @@ public class JWTTokenProvider implements TokenPort {
               .claim("email", session.getEmail())
               .claim("id", session.getId().toString())
               .claim("userRole", session.getUserRole())
+              .claim("credentialVersion", session.getCredentialVersion())
               .build();
 
       String token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
@@ -73,11 +74,15 @@ public class JWTTokenProvider implements TokenPort {
           .id(UUID.fromString(jwt.getClaimAsString("id")))
           .email(jwt.getClaimAsString("email"))
           .userRole(UserRole.valueOf(jwt.getClaimAsString("userRole")))
+          .credentialVersion(
+              jwt.hasClaim("credentialVersion")
+                  ? ((Number) jwt.getClaim("credentialVersion")).longValue()
+                  : 0L)
           .issuedAt(jwt.getIssuedAt())
           .expiresAt(jwt.getExpiresAt())
           .build();
     } catch (JwtException jwtException) {
-      log.error("Invalid JWT token: {}", jwtException.getMessage());
+      log.debug("JWT validation rejected a token");
       throw new AuthError.InvalidToken(token, jwtException);
     } catch (Exception e) {
       throw e;

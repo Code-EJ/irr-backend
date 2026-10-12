@@ -1,5 +1,15 @@
 # IRR backend
 
+**Manual deployment starts here:** [operator guide](docs/deploy/operator-guide.md), with copyable Railway and Hostinger/other VPS procedures, expected results, updates, pause/resume, backups and recovery. It can be followed without an AI session. Use the dated execution records for historical evidence, not as command sequences.
+
+Current architecture: [Mermaid runtime, module, transaction and Railway diagrams](docs/architecture/system-diagrams.md). Delivery status: [technical, deployment and client release gates](docs/release-readiness.md).
+
+Current hosting plan: [provider-independent deployment](docs/deploy/README.md), [Railway synthetic homologation](docs/deploy/railway/homologation-installation.md) and [Hostinger Brazil production planning](docs/deploy/hostinger/README.md). Portable Docker Compose and HTTPS ingress are in `deploy/`. Local verification does not imply remote deployment.
+
+Approved MVP Analytics is implemented at GET /api/v1/reports/analytics: matched planned/actual comparisons, declared-section coverage, weighted kg/h and kg/km, and reversal-aware posted-sale revenue. See [definitions and execution evidence](docs/architecture/analytics.md), [ADR-0022](docs/adrs/0022-approved-mvp-analytics.md) and [remaining local Master Plan gates](docs/MASTER_PLAN_PROGRESS.md). Missing inputs remain explicit; filtered revenue is unavailable where execution provenance is absent. This local milestone does not certify deployment readiness.
+
+The first approved native operational report now uses GET /api/v1/reports/operations. See [module architecture](docs/architecture/reporting.md) and [verification evidence](docs/reporting-verification.md). Swagger remains the executable API reference. Engineering documentation and JavaDoc are English; frontend interface content is Brazilian Portuguese.
+
 - Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
 IRR manages waste intake, materials, processing, inventory and sales. This is a pre-production Java 21 / Spring Boot / PostgreSQL application. Docker Compose is the supported local runtime. Swagger UI and its generated OpenAPI document are the official HTTP API documentation. ADRs document architecture and staged implementation.
@@ -83,7 +93,7 @@ The API runs as UID 10001 with a read-only root filesystem. PostgreSQL, Redis AO
 3. Expand Partners and call POST /api/v1/users with the example below. Only an administrator may create CITY_HALL, ORGANIZATION or REPRESENTATIVE partners. Passwords require at least eight characters and fewer than 72 UTF-8 bytes. The response contains safe metadata and does not log you in as the new partner.
 4. To test partner access, authenticate separately using that partner's email/password and replace the Swagger authorization token. Missing/invalid authentication returns 401; insufficient roles return 403.
 5. Call GET /api/v1/organizations and select the development organization from .env. Supply its UUID as X-Organization-Id on business operations, for example GET /api/v1/vehicles. New partners need an explicit association through PUT /api/v1/organizations/{id}/members/{userId}. Page lists use page/size/sort and return content/totalElements.
-6. For attachments, upload a small PDF, PNG or JPEG with POST /api/v1/documents using the documento multipart field. Record the returned id. Active organization members can download it; its uploader or an organization manager can rename or delete unreferenced metadata. Platform administrator status does not bypass membership. Unsupported signatures/names return 400; foreign IDs return 404; referenced documents return 409. Deletion returns 202 after metadata removal and queues physical cleanup, normally processed within the next minute.
+6. For attachments, upload a small PDF, PNG or JPEG with POST /api/v1/documents using the documento multipart field. Record the returned id. Active organization members can download it; its uploader or an organization manager can rename or delete unreferenced metadata. Global administrators can access any active organization without membership. Unsupported signatures/names return 400; foreign IDs return 404; referenced documents return 409. Deletion returns 202 after metadata removal and queues physical cleanup, normally processed within the next minute.
 7. Log out using Authorize when finished. Swagger does not persist authorization across page reloads.
 
 Example partner body for local testing only:
@@ -97,11 +107,11 @@ Example partner body for local testing only:
 }
 ~~~
 
-Public self-registration and all unversioned application routes have been removed under ADR-0014. Create partners only through the administrator operation POST /api/v1/users. No redirect or retirement stub is supported.
+Public self-registration and all unversioned application routes have been removed under ADR-0014. Create accounts of all four supported roles only through the global administrator operation POST /api/v1/users. No redirect or retirement stub is supported.
 
 Swagger is generated from running controllers/DTOs and documents bearer authentication and current method role rules. Runtime authorization and business invariants are independently verified by integration tests. The [source API inventory](docs/api_documentation.md) is supporting audit material; it is not a second official specification.
 
-The development initializer updates the configured administrator password on restart if DEV_ADMIN_PASSWORD changes. It refuses to elevate an existing non-administrator with the same email. Set DEV_BOOTSTRAP_ENABLED=false to disable this initializer; it is never active outside the development profile. This initializer supplies local administrator access; partner creation uses the administrator-only endpoint.
+The development initializer creates an administrator once; it never overwrites an existing profile or changed password on restart. Changing DEV_ADMIN_PASSWORD does not reset that account. It refuses to elevate an existing non-administrator with the same email. Set DEV_BOOTSTRAP_ENABLED=false to disable this initializer; it is never active outside the development profile. This initializer supplies local administrator access; partner creation uses the administrator-only endpoint.
 
 ## 6. Run automated tests
 
@@ -179,10 +189,10 @@ The backend supports the documented pre-production workflow. ADR-0014 freezes th
 2. Under Organizations, POST /api/v1/organizations with name and organizationType, for example an association name and the descriptive value ASSOCIATION. Record the returned id.
 3. Under Partners, create an account if needed and record its id.
 4. PUT /api/v1/organizations/{id}/members/{userId} with {"role":"MEMBER"} or {"role":"MANAGER"}. Both are local membership roles; management of associations still requires a platform administrator.
-5. Authenticate as that member. GET /api/v1/organizations lists only active associations; GET /api/v1/organizations/{id} returns the selected organization. The creating administrator also needs explicit membership for these read routes.
+5. Authenticate as that member. GET /api/v1/organizations lists only active associations; GET /api/v1/organizations/{id} returns the selected organization. A global administrator can read every active organization without a membership; the member can read only its active associations.
 6. As administrator, DELETE the membership. The existing member token immediately loses access to organization reads. Missing/foreign/inactive scopes return 404.
 
-Catalog, intake, processing, sales and attachments require the explicit organization header and current membership. Creator identity is audit metadata, not ownership. Revocation takes effect immediately; no platform administrator bypass exists.
+Catalog, intake, processing, sales and attachments require the explicit organization header and global authority or current membership. Creator identity is audit metadata, not ownership. Local membership revocation takes effect immediately.
 
 ## Redis: start, check and test
 
@@ -211,6 +221,41 @@ node scripts/verify-recovery.mjs .local/recovery/<timestamp-printed-by-backup>
 
 The smoke script reads login and organization values from .env, creates retained development fixtures, tests intake, sorting, pressing, fiscal sale posting, reversals, reports, exact decimals and isolation. It saves sanitized evidence under .local/release. Existing exported environment variables take precedence over .env. Never run this fixture script against production.
 
-The backup script briefly stops API writes, snapshots PostgreSQL and attachments, includes .env and RSA keys, then restarts the API. Backups contain secrets: keep .local/recovery private and do not commit/upload it. Restore rehearsal verifies checksums in an isolated container and removes only that labeled disposable container. It does not overwrite the live database or its volumes. See [operations](docs/operations.md).
+For the retained identity worktree, select its running stack explicitly: node scripts/backup-development.mjs --compose-file .local/identity/compose.json --project irr-identity-verification. The argument-free command above selects the standard root Compose stack. Optional --env-file must belong to the chosen stack. The backup pauses API writes, snapshots PostgreSQL/attachments and archives resolved private configuration plus actual RSA keys, then restarts and waits for health. Keep .local/recovery private; it contains secrets. Restore verifies hashes, migration history, row counts, every attachment and stock reconciliation in an isolated disposable container. See [the recovery runbook and verified V1-V4 evidence](docs/recovery-verification.md). No live database or volume is replaced.
 
 Posted sorting/pressing/sales use explicit reversal commands, not destructive CRUD. Each posting command needs an Idempotency-Key; retries retain that same key and payload. Quantities and money are JSON strings. Swagger is the official field-level reference. [ADR-0014](docs/adrs/0014-final-preproduction-contract-and-baseline.md) records the final consolidation and supersedes the transitional portions of ADR-0013; frontend integration and a compatible release pair remain separate gates.
+
+## Identity delivery and hosting
+
+Own profile editing and password change, global administrator account CRUD/reset, and organization memberships use only /api/v1. See [ADR-0016](docs/adrs/0016-account-and-credential-lifecycle.md). Password changes revoke all previous sessions. The current schema preserves V1 and adds V2 credential fields, V3 recovery authorization and V4 Routes history; no database reset is required.
+
+For reviewed image deployment, first-administrator provisioning, variables and rollout/rollback gates, start with [provider-independent deployment](docs/deploy/README.md). Railway is the synthetic homologation adapter; Hostinger Brazil is the planned production target. Swagger remains the official executable API specification.
+
+
+## Global identity and email recovery (ADR-0017 / ADR-0018)
+
+ADMINISTRATOR is global platform authority (UI: Administrador Geral). It can create all four account roles, administer active organizations and business data without membership, and manage local MEMBER/MANAGER associations. MANAGER is organization administration, not global authority. Removing or demoting the last active global administrator returns 409, including concurrent attempts. No public registration exists.
+
+The current runtime schema is V1 + V2 + V3 + V4. V3 adds one password recovery table; existing users and business data are retained. No reset is required. See [password recovery operations](docs/email-recovery.md) for local Mailpit, Brevo setup, variables, quotas, security and a complete test procedure. The application defaults to disabled mail; local Compose enables Mailpit. Disabled recovery returns 503 uniformly and does not meet the homologation gate.
+
+The frontend adds organization administration and responsible-user onboarding as three separate resources (organization, user, membership), with retryable partial progress. All official application endpoints remain /api/v1. The unreleased /organizations/admin duplicate is removed; global discovery uses GET /api/v1/organizations. Swagger remains the executable API reference.
+
+## Route planning and execution
+
+The current milestone adds organization-scoped reusable plans, explicit municipality/neighborhood coverage and dated vehicle/team assignments. Use Swagger for `/api/v1/routes`, `/api/v1/route-executions`, `/api/v1/municipalities` and `/api/v1/neighborhoods`. V4 applies additively during normal startup; do not reset existing data. Follow the [Routes runbook](docs/architecture/routes.md) for authority, lifecycle, collection association, Docker/Railway rollout and tests. Analytics/filters/indicators/dashboards are the next milestone; GPS/maps remain planned.
+
+Final local acceptance and remaining release gates: [Routes verification record](docs/routes-verification.md).
+
+## Synthetic performance benchmarks
+
+Local synthetic report performance checks use an isolated migrated database. Follow the [benchmark runbook](docs/reporting-benchmarks.md) for reproducible generation, real HTTP validation, SQL plans and guarded cleanup. The [Analytics query planning correction](docs/analytics-query-planning.md) records the verified application fix and repeat measurements. These measurements do not certify production performance.
+
+## Java code quality
+
+Spotless is configured in Maven and bound to validate, so `./mvnw verify` enforces formatting. Run `./mvnw spotless:check` to inspect or `./mvnw spotless:apply` for deliberate formatting, using Java 21. Existing Google Java Format, imports and whitespace configuration is preserved. Maintainer: Enzo Ribas (https://github.com/oEnzoRibas).
+
+## Bounded container builds and final local candidate
+
+The Maven build stage defaults to `MAVEN_OPTS=-Xmx1024m -XX:ActiveProcessorCount=2`; override with `docker build --build-arg "MAVEN_OPTS=-Xmx1536m -XX:ActiveProcessorCount=2" -t irr-backend-candidate .` when the developer host has an appropriate budget. The existing Maven cache/goals and Spotless check remain. This build-only argument does not configure runtime JVM capacity. A successful package with skipped tests is not a replacement for the documented test gates.
+
+[The dated local candidate record](docs/deploy/railway/local-candidate-2026-10-10.json) captures tested image IDs, declared build sources and contract/migration hashes. [Final readiness](docs/release-readiness.md) records open browser/operator, security, client-data and Railway gates. No production installation is implied by the local candidate.

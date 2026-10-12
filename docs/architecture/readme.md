@@ -1,5 +1,7 @@
 # Backend architecture
 
+See [the current system diagrams](system-diagrams.md) for runtime, module, transactional request and proposed Railway topology, and [release readiness](../release-readiness.md) for remaining gates.
+
 - Documentation maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 
 IRR is a transactional modular monolith. New modules use feature-owned API/application contracts. Established catalog, identity, attachment and processing adapters remain in controllers/services with shared JPA entities and ports. This is an intentional hybrid, not a claim of framework-free Clean Architecture. [ADR-0014](../adrs/0014-final-preproduction-contract-and-baseline.md) records the verified implementation and limits.
@@ -18,18 +20,19 @@ flowchart LR
     Tests[Maven integration suites] --> Ephemeral[Disposable PostgreSQL and Redis]
 ~~~
 
-Only the API loopback port is published. The API runs non-root with a read-only root filesystem. PostgreSQL owns authorization associations, business truth, receipts, immutable stock movements and cleanup jobs. Redis participates in readiness but is not a correctness dependency for stock or membership decisions. Upload bytes use a separate volume. Kubernetes is deferred until deployment demand justifies it.
+The API and local Mailpit UI use loopback-only published ports. The API runs non-root with a read-only root filesystem. PostgreSQL owns authorization associations, business truth, receipts, immutable stock movements and cleanup jobs. Redis participates in readiness but is not a correctness dependency for stock or membership decisions. Upload bytes use a separate volume. Kubernetes is deferred until deployment demand justifies it.
 
 ## Repository responsibilities
 
 | Path under src/main/java/org/code/api | Responsibility | Boundary |
 | --- | --- | --- |
-| organizations | Organization metadata, memberships, audit and request scope | Explicit associations; no creator inference |
+| organizations | Organization metadata, memberships, audit and request scope | Global authority or explicit local associations; no creator inference |
 | parties | Buyers and team staff | Scoped reference CRUD and retained-history guards |
 | intake | Collection orchestration and logistics | Validated raw inputs; no saleable stock credit |
 | inventory | Ledger, lots, receipts, reversals and queries | Sole stock writer; immutable history |
 | sales | Draft/post/reverse use cases | Optimistic drafts, fiscal evidence, transactional lots |
-| reporting | Operational summaries and CSV | PostgreSQL repeatable-read snapshot |
+| reporting | Commercial summaries and approved operations-1/analytics-1 | Scoped live aggregates, backend formulas, exact decimals and explicit completeness |
+| routes | Plans, execution snapshots, lifecycle and section coverage | Scoped history; additive V4; completed execution linkage |
 | controllers / dto | Established HTTP adapters and safe value contracts | No persistence entities or secrets serialized |
 | services | Existing identity, materials, fleet, donation, processing and attachment use cases | Transactions and domain validation |
 | domain/models / domain/ports | Shared JPA mappings and application/infrastructure ports | Persistence annotations retained deliberately |
@@ -52,12 +55,25 @@ Organization locks serialize writes within one organization. Conditional updates
 
 Upload bytes cannot join PostgreSQL's transaction. Rollback compensation handles ordinary failures; a durable cleanup queue handles committed deletion; an hourly exclusive advisory-lock scan queues old unreferenced UUID files after crashes. Uploads hold a shared lock until metadata commit. Readers never see filesystem paths or account credentials. Files referenced by business records cannot be deleted.
 
-Reports use live data, inclusive UTC ranges and current POSTED status. Stock is a current snapshot. Historical closing balances and external fiscal validation are not claimed. See [operations](../operations.md) for recovery and [schema](../entities_documentation.md) for constraints.
+Reports use live data. The approved operations-1/analytics-1 contracts interpret inclusive calendar dates in America/Sao_Paulo and query from local-day start to the exclusive start of the day after the final date. Existing commercial summary bounds remain documented separately. Revenue uses current POSTED status and sale date; stock is a current snapshot. Historical closing balances and external fiscal validation are not claimed. See [operations](../operations.md) for recovery and [schema](../entities_documentation.md) for constraints.
 
 ## Extension rules
+
+[Operational reporting](reporting.md) documents operations-1, its independent fact grains, inclusive Brazilian dates, nullable measurement semantics and selected organization scope. Existing commercial summaries retain their distinct UTC/status rules.
 
 New features belong to a feature package with an explicit request/response contract and service transaction. Reuse OrganizationScope and StockLedger; never update balances directly or infer ownership from creator_id. Avoid moving every old class merely for package symmetry. Introduce an ADR when changing ownership, lifecycle, accounting or infrastructure semantics. JavaDoc, tests, Swagger, migrations and maintained documentation are English and credit the maintainer.
 
 ## Final contract and schema
 
 Every application controller uses /api/v1. Unversioned mappings and the signup retirement stub are removed; no compatibility adapter remains. The final fresh V1 reproduces the verified schema in new database/attachment volumes. Spotless is enforced by Maven and preserved in the Docker build. ADR-0003 remains the pragmatic modular-monolith direction; this consolidation adds no strict Clean Architecture layer or package-only rewrite.
+
+
+## Identity & Access completion
+
+[ADR-0017](../adrs/0017-global-administration-and-identity-release.md) makes ADMINISTRATOR global authority without inventing memberships. MANAGER remains organization-local administration. Global account lifecycle uses a PostgreSQL advisory transaction lock, then account row locks; competing removal/demotion cannot remove the last active administrator. Requests reload active identity and current role; the account guard rechecks authority after waiting.
+
+The feature-owned identity/recovery package contains public request/confirmation adapters, bounded asynchronous orchestration, shared Redis throttling and an EmailSenderPort with Brevo/Mailpit HTTP delivery. PostgreSQL owns token digests and atomic consumption alongside credentials. Redis owns abuse limits, not authorization. Existing Java HTTP/Jackson facilities suffice; no vendor SDK or architecture rewrite. See [ADR-0018](../adrs/0018-password-recovery-and-transactional-email.md) and [operations](../email-recovery.md). Future reporting mail may reuse delivery through a separate use case; no reporting/Routes/GPS implementation is added here.
+
+## Routes operational module
+
+[Routes architecture](routes.md) documents the implemented transaction boundary, normalized planning/execution model, geography, lifecycle, collection linkage and V4 rollout. [Analytics architecture](analytics.md) documents the implemented owner-approved MVP; ADR-0020 remains the strategic reporting boundary and ADR-0022 defines approved formulas. Additional exports/comparisons require product approval.

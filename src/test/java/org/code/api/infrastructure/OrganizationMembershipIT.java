@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,9 +16,10 @@ import org.code.api.infrastructure.development.DevelopmentOrganizationInitialize
 import org.code.api.organizations.application.OrganizationService;
 import org.code.api.organizations.domain.MembershipRole;
 import org.code.api.support.PostgresIntegrationTest;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,6 +28,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Verifies explicit membership, immediate revocation, audit transactions and concurrent grants.
@@ -43,12 +44,15 @@ class OrganizationMembershipIT extends PostgresIntegrationTest {
   @Autowired OrganizationService organizations;
   @Autowired PlatformTransactionManager transactions;
 
-  /** Verifies creation does not implicitly grant membership, even to the administrator creator. */
+  /** Verifies global access without membership while ordinary accounts remain scoped. */
   @Test
-  void organizationVisibilityRequiresExplicitMembership() throws Exception {
+  void globalVisibilityDoesNotFabricateMembership() throws Exception {
     UUID admin = user("ADMINISTRATOR"), member = user("REPRESENTATIVE");
     UUID org = create(admin);
     mvc.perform(get("/api/v1/organizations/{id}", org).header("Authorization", token(admin)))
+        .andExpect(status().isOk());
+    mvc.perform(
+            get("/api/v1/organizations/{id}/membership", org).header("Authorization", token(admin)))
         .andExpect(status().isNotFound());
     mvc.perform(get("/api/v1/organizations/{id}", org).header("Authorization", token(member)))
         .andExpect(status().isNotFound());
@@ -61,7 +65,7 @@ class OrganizationMembershipIT extends PostgresIntegrationTest {
         .andExpect(jsonPath("totalElements").value(1));
     mvc.perform(get("/api/v1/organizations").header("Authorization", token(admin)))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("totalElements").value(0));
+        .andExpect(jsonPath("totalElements", Matchers.greaterThanOrEqualTo(1)));
   }
 
   /** Verifies only platform administrators can create organizations or change associations. */

@@ -1,0 +1,2229 @@
+{
+  "description": "Local synthetic baseline, not production performance evidence.",
+  "summaries": [
+    {
+      "filename": "results.json",
+      "status": "passed",
+      "startedAt": "2026-10-10T17:05:34.502Z",
+      "completedAt": "2026-10-10T17:10:57.923Z",
+      "sourceCommit": "ebea9f2e67237362aa98399f8594db7711f47bd2",
+      "backendImageId": "sha256:a7df8a827cf2e0b7f430eb99be02e22b7d1f94f1980afcfb33070dfec2d72111",
+      "databaseImageId": "sha256:20edbde7749f822887a1a022ad526fde0a47d6b2be9a8364433605cf65099416",
+      "redisImageId": "sha256:b51665e66f00759be7c3152ad5ac3c66fb2f619c13ef62dea7cc1f9914524635",
+      "openapiSha256": "986625941f50291a152101f7ad54f6a46e51af7f4d01d8d579f1b6033f374cb6",
+      "environment": {
+        "node": "v24.12.0",
+        "os": "win32 10.0.19045",
+        "architecture": "x64",
+        "docker": "29.2.1",
+        "dockerCpus": 12,
+        "dockerMemoryBytes": 16745209856,
+        "backendCpus": 2,
+        "backendMemory": "1GiB",
+        "heap": "256-512MiB",
+        "databaseCpus": 2,
+        "databaseMemory": "1GiB",
+        "sharedBuffers": "128MB",
+        "workMem": "4MB",
+        "connectionPool": 10
+      },
+      "configuration": {
+        "volumes": [
+          1000,
+          10000,
+          50000
+        ],
+        "seed": 669850,
+        "samples": 20,
+        "warmup": 10,
+        "concurrencies": [
+          1,
+          4
+        ],
+        "reuse": false,
+        "planCacheMode": "auto",
+        "model": "closed-loop loopback HTTP, reused client, nearest-rank percentiles",
+        "period": "2026-06-01 through 2026-09-30 inclusive America/Sao_Paulo"
+      },
+      "migrationHistory": "1:583196656\n2:-1853521204\n3:-686690239\n4:-1708031960",
+      "runs": [
+        {
+          "executions": 1000,
+          "sqlSha256": "f7815dda4eb85bff9aa983733a865105bae03855dec1d2692e6903a8e1ac16fd",
+          "counts": {
+            "users": 1,
+            "organization": 2,
+            "organization_membership": 2,
+            "vehicle": 2,
+            "team_member": 6,
+            "material_category": 2,
+            "material_type": 2,
+            "material_subtype": 4,
+            "municipality": 4,
+            "neighborhood": 4,
+            "route": 10,
+            "route_area": 30,
+            "buyer": 2,
+            "donor": 2,
+            "attachment": 2,
+            "route_execution": 1000,
+            "route_execution_team": 2000,
+            "route_event": 2700,
+            "collection": 1343,
+            "collection_team": 2686,
+            "input_item": 2690,
+            "sale": 200,
+            "sale_item": 400,
+            "route_execution_area": 2901,
+            "stock_operation": 185,
+            "stock_movement": 366,
+            "donation": 4,
+            "sorting": 4,
+            "sorted_item": 4,
+            "stock_lot": 4,
+            "inventory_balance": 4
+          },
+          "seedMs": 5520.7747,
+          "measurements": [
+            {
+              "scenario": "hot-broad",
+              "endpoint": "operations",
+              "concurrency": 1,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 20.125299999999697,
+              "p95Ms": 28.08809999999994,
+              "p99Ms": 29.53359999999975,
+              "elapsedMs": 428.60100000000057,
+              "throughputRequestsPerSecond": 46.663446888831274,
+              "failures": []
+            },
+            {
+              "scenario": "hot-broad",
+              "endpoint": "operations",
+              "concurrency": 4,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 22.368599999999788,
+              "p95Ms": 66.30609999999979,
+              "p99Ms": 67.83830000000125,
+              "elapsedMs": 163.0663000000004,
+              "throughputRequestsPerSecond": 122.64949900745862,
+              "failures": []
+            },
+            {
+              "scenario": "hot-broad",
+              "endpoint": "analytics",
+              "concurrency": 1,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 25.864799999999377,
+              "p95Ms": 38.313099999999395,
+              "p99Ms": 57.81530000000021,
+              "elapsedMs": 560.6028000000006,
+              "throughputRequestsPerSecond": 35.67588317432588,
+              "failures": []
+            },
+            {
+              "scenario": "hot-broad",
+              "endpoint": "analytics",
+              "concurrency": 4,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 54.13559999999961,
+              "p95Ms": 82.15999999999985,
+              "p99Ms": 98.60690000000068,
+              "elapsedMs": 290.2450000000008,
+              "throughputRequestsPerSecond": 68.90730245137709,
+              "failures": []
+            },
+            {
+              "scenario": "hot-month",
+              "endpoint": "operations",
+              "concurrency": 1,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 15.111000000000786,
+              "p95Ms": 20.033800000001065,
+              "p99Ms": 24.27350000000115,
+              "elapsedMs": 321.0488999999998,
+              "throughputRequestsPerSecond": 62.2958060283029,
+              "failures": []
+            },
+            {
+              "scenario": "hot-month",
+              "endpoint": "operations",
+              "concurrency": 4,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 14.279899999999543,
+              "p95Ms": 58.55149999999958,
+              "p99Ms": 61.97479999999996,
+              "elapsedMs": 118.48010000000068,
+              "throughputRequestsPerSecond": 168.80471910472633,
+              "failures": []
+            },
+            {
+              "scenario": "hot-month",
+              "endpoint": "analytics",
+              "concurrency": 1,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 17.502300000000105,
+              "p95Ms": 22.751899999999296,
+              "p99Ms": 24.848500000000058,
+              "elapsedMs": 366.60230000000047,
+              "throughputRequestsPerSecond": 54.55503143324517,
+              "failures": []
+            },
+            {
+              "scenario": "hot-month",
+              "endpoint": "analytics",
+              "concurrency": 4,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 19.684799999999086,
+              "p95Ms": 63.17779999999948,
+              "p99Ms": 65.65880000000107,
+              "elapsedMs": 163.63910000000033,
+              "throughputRequestsPerSecond": 122.22017842923825,
+              "failures": []
+            },
+            {
+              "scenario": "hot-route",
+              "endpoint": "operations",
+              "concurrency": 1,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 15.316600000000108,
+              "p95Ms": 21.229999999999563,
+              "p99Ms": 29.781700000001365,
+              "elapsedMs": 337.01770000000033,
+              "throughputRequestsPerSecond": 59.34406412482187,
+              "failures": []
+            },
+            {
+              "scenario": "hot-route",
+              "endpoint": "operations",
+              "concurrency": 4,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 15.734699999999066,
+              "p95Ms": 27.704400000000533,
+              "p99Ms": 29.60490000000027,
+              "elapsedMs": 89.64890000000014,
+              "throughputRequestsPerSecond": 223.09253097360892,
+              "failures": []
+            },
+            {
+              "scenario": "hot-route",
+              "endpoint": "analytics",
+              "concurrency": 1,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 12.247799999999188,
+              "p95Ms": 14.852899999999863,
+              "p99Ms": 16.32419999999911,
+              "elapsedMs": 253.19920000000093,
+              "throughputRequestsPerSecond": 78.98919111908697,
+              "failures": []
+            },
+            {
+              "scenario": "hot-route",
+              "endpoint": "analytics",
+              "concurrency": 4,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 13.077499999999418,
+              "p95Ms": 13.933600000000297,
+              "p99Ms": 14.430600000001505,
+              "elapsedMs": 66.14930000000095,
+              "throughputRequestsPerSecond": 302.3463589183818,
+              "failures": []
+            },
+            {
+              "scenario": "cold-broad",
+              "endpoint": "operations",
+              "concurrency": 1,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 9.008600000001024,
+              "p95Ms": 10.877699999997276,
+              "p99Ms": 22.205599999997503,
+              "elapsedMs": 200.2322000000022,
+              "throughputRequestsPerSecond": 99.88403463578676,
+              "failures": []
+            },
+            {
+              "scenario": "cold-broad",
+              "endpoint": "operations",
+              "concurrency": 4,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 10.657800000000861,
+              "p95Ms": 11.459800000000541,
+              "p99Ms": 11.588200000001962,
+              "elapsedMs": 53.32159999999931,
+              "throughputRequestsPerSecond": 375.08251815399876,
+              "failures": []
+            },
+            {
+              "scenario": "cold-broad",
+              "endpoint": "analytics",
+              "concurrency": 1,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 14.848799999999756,
+              "p95Ms": 16.861799999998766,
+              "p99Ms": 17.117200000000594,
+              "elapsedMs": 300.2458999999981,
+              "throughputRequestsPerSecond": 66.6120669757693,
+              "failures": []
+            },
+            {
+              "scenario": "cold-broad",
+              "endpoint": "analytics",
+              "concurrency": 4,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 16.567399999999907,
+              "p95Ms": 35.21719999999914,
+              "p99Ms": 36.617199999996956,
+              "elapsedMs": 107.4275000000016,
+              "throughputRequestsPerSecond": 186.1720695352652,
+              "failures": []
+            }
+          ],
+          "sql": [
+            {
+              "scenario": "hot-broad",
+              "endpoint": "operations",
+              "observations": [
+                {
+                  "executionMs": 1.732,
+                  "planningMs": 6.452,
+                  "sharedHits": 135,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 1.044,
+                  "planningMs": 3.516,
+                  "sharedHits": 135,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 4.287,
+                  "planningMs": 5.278,
+                  "sharedHits": 135,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                }
+              ]
+            },
+            {
+              "scenario": "hot-broad",
+              "endpoint": "analytics",
+              "observations": [
+                {
+                  "executionMs": 8.76,
+                  "planningMs": 5.419,
+                  "sharedHits": 293,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 8.715,
+                  "planningMs": 5.127,
+                  "sharedHits": 293,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 7.059,
+                  "planningMs": 5.647,
+                  "sharedHits": 293,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                }
+              ]
+            },
+            {
+              "scenario": "hot-month",
+              "endpoint": "operations",
+              "observations": [
+                {
+                  "executionMs": 1.773,
+                  "planningMs": 4.64,
+                  "sharedHits": 135,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 1.035,
+                  "planningMs": 4.675,
+                  "sharedHits": 135,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 0.829,
+                  "planningMs": 5.169,
+                  "sharedHits": 135,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                }
+              ]
+            },
+            {
+              "scenario": "hot-month",
+              "endpoint": "analytics",
+              "observations": [
+                {
+                  "executionMs": 4.491,
+                  "planningMs": 5.252,
+                  "sharedHits": 293,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 4.71,
+                  "planningMs": 6.486,
+                  "sharedHits": 293,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 4.305,
+                  "planningMs": 6.356,
+                  "sharedHits": 293,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                }
+              ]
+            },
+            {
+              "scenario": "hot-route",
+              "endpoint": "operations",
+              "observations": [
+                {
+                  "executionMs": 1.694,
+                  "planningMs": 5.957,
+                  "sharedHits": 166,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 1.331,
+                  "planningMs": 5.564,
+                  "sharedHits": 166,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 1.593,
+                  "planningMs": 5.52,
+                  "sharedHits": 166,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                }
+              ]
+            },
+            {
+              "scenario": "hot-route",
+              "endpoint": "analytics",
+              "observations": [
+                {
+                  "executionMs": 4.428,
+                  "planningMs": 7.656,
+                  "sharedHits": 216,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 2.888,
+                  "planningMs": 4.179,
+                  "sharedHits": 216,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 2.808,
+                  "planningMs": 11.76,
+                  "sharedHits": 216,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                }
+              ]
+            },
+            {
+              "scenario": "cold-broad",
+              "endpoint": "operations",
+              "observations": [
+                {
+                  "executionMs": 0.736,
+                  "planningMs": 3.978,
+                  "sharedHits": 138,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 0.694,
+                  "planningMs": 3.369,
+                  "sharedHits": 138,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 0.734,
+                  "planningMs": 4.026,
+                  "sharedHits": 138,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                }
+              ]
+            },
+            {
+              "scenario": "cold-broad",
+              "endpoint": "analytics",
+              "observations": [
+                {
+                  "executionMs": 2.605,
+                  "planningMs": 4.835,
+                  "sharedHits": 296,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 6.031,
+                  "planningMs": 5.856,
+                  "sharedHits": 296,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 3.259,
+                  "planningMs": 5.846,
+                  "sharedHits": 296,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "executions": 10000,
+          "sqlSha256": "0705608f816787c03bd3275f4262a296e2e6b5bcc5b9b08a12576c5bf233b1c5",
+          "counts": {
+            "users": 1,
+            "organization": 2,
+            "organization_membership": 2,
+            "vehicle": 2,
+            "team_member": 6,
+            "material_category": 2,
+            "material_type": 2,
+            "material_subtype": 4,
+            "municipality": 4,
+            "neighborhood": 4,
+            "route": 10,
+            "route_area": 30,
+            "buyer": 2,
+            "donor": 2,
+            "attachment": 2,
+            "route_execution": 10000,
+            "route_execution_team": 20000,
+            "route_event": 27000,
+            "collection": 13488,
+            "collection_team": 26976,
+            "input_item": 26980,
+            "sale": 2000,
+            "sale_item": 4000,
+            "route_execution_area": 29025,
+            "stock_operation": 1821,
+            "stock_movement": 3638,
+            "donation": 4,
+            "sorting": 4,
+            "sorted_item": 4,
+            "stock_lot": 4,
+            "inventory_balance": 4
+          },
+          "seedMs": 44833.850999999995,
+          "measurements": [
+            {
+              "scenario": "hot-broad",
+              "endpoint": "operations",
+              "concurrency": 1,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 16.041799999999057,
+              "p95Ms": 17.445699999996577,
+              "p99Ms": 18.448100000001432,
+              "elapsedMs": 322.94800000000396,
+              "throughputRequestsPerSecond": 61.92947471419472,
+              "failures": []
+            },
+            {
+              "scenario": "hot-broad",
+              "endpoint": "operations",
+              "concurrency": 4,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 18.980299999995623,
+              "p95Ms": 24.959100000000035,
+              "p99Ms": 25.64680000000226,
+              "elapsedMs": 100.6826000000001,
+              "throughputRequestsPerSecond": 198.64405567595574,
+              "failures": []
+            },
+            {
+              "scenario": "hot-broad",
+              "endpoint": "analytics",
+              "concurrency": 1,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 95.25860000000102,
+              "p95Ms": 107.09100000000035,
+              "p99Ms": 117.17160000000149,
+              "elapsedMs": 1923.9045000000042,
+              "throughputRequestsPerSecond": 10.39552638917366,
+              "failures": []
+            },
+            {
+              "scenario": "hot-broad",
+              "endpoint": "analytics",
+              "concurrency": 4,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 200.1631999999954,
+              "p95Ms": 203.61600000000908,
+              "p99Ms": 206.4661999999953,
+              "elapsedMs": 1003.3766999999934,
+              "throughputRequestsPerSecond": 19.932693274619723,
+              "failures": []
+            },
+            {
+              "scenario": "hot-month",
+              "endpoint": "operations",
+              "concurrency": 1,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 16.335100000011153,
+              "p95Ms": 18.076700000005076,
+              "p99Ms": 20.010899999993853,
+              "elapsedMs": 331.043399999995,
+              "throughputRequestsPerSecond": 60.41503923654814,
+              "failures": []
+            },
+            {
+              "scenario": "hot-month",
+              "endpoint": "operations",
+              "concurrency": 4,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 18.18080000000191,
+              "p95Ms": 19.920900000011898,
+              "p99Ms": 20.327699999994365,
+              "elapsedMs": 92.64669999999751,
+              "throughputRequestsPerSecond": 215.87385195587686,
+              "failures": []
+            },
+            {
+              "scenario": "hot-month",
+              "endpoint": "analytics",
+              "concurrency": 1,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 37.869200000001,
+              "p95Ms": 58.6084000000119,
+              "p99Ms": 62.95349999998871,
+              "elapsedMs": 850.5320999999967,
+              "throughputRequestsPerSecond": 23.51469156778454,
+              "failures": []
+            },
+            {
+              "scenario": "hot-month",
+              "endpoint": "analytics",
+              "concurrency": 4,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 84.67799999999988,
+              "p95Ms": 106.99120000000403,
+              "p99Ms": 109.48240000000806,
+              "elapsedMs": 413.80160000000615,
+              "throughputRequestsPerSecond": 48.332340909265945,
+              "failures": []
+            },
+            {
+              "scenario": "hot-route",
+              "endpoint": "operations",
+              "concurrency": 1,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 15.910999999992782,
+              "p95Ms": 19.273700000005192,
+              "p99Ms": 20.66830000000482,
+              "elapsedMs": 330.24280000000726,
+              "throughputRequestsPerSecond": 60.561502022147224,
+              "failures": []
+            },
+            {
+              "scenario": "hot-route",
+              "endpoint": "operations",
+              "concurrency": 4,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 19.40779999998631,
+              "p95Ms": 85.08920000000217,
+              "p99Ms": 85.25200000000768,
+              "elapsedMs": 230.70870000000286,
+              "throughputRequestsPerSecond": 86.68940529767517,
+              "failures": []
+            },
+            {
+              "scenario": "hot-route",
+              "endpoint": "analytics",
+              "concurrency": 1,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 28.06489999999758,
+              "p95Ms": 42.924399999988964,
+              "p99Ms": 43.99889999999141,
+              "elapsedMs": 616.1515000000072,
+              "throughputRequestsPerSecond": 32.45954931538715,
+              "failures": []
+            },
+            {
+              "scenario": "hot-route",
+              "endpoint": "analytics",
+              "concurrency": 4,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 39.209499999997206,
+              "p95Ms": 72.27799999999115,
+              "p99Ms": 73.43520000000717,
+              "elapsedMs": 248.40099999999802,
+              "throughputRequestsPerSecond": 80.51497377224794,
+              "failures": []
+            },
+            {
+              "scenario": "cold-broad",
+              "endpoint": "operations",
+              "concurrency": 1,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 19.958700000002864,
+              "p95Ms": 26.838900000002468,
+              "p99Ms": 27.753899999996065,
+              "elapsedMs": 415.5081999999966,
+              "throughputRequestsPerSecond": 48.13382744311704,
+              "failures": []
+            },
+            {
+              "scenario": "cold-broad",
+              "endpoint": "operations",
+              "concurrency": 4,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 23.788999999989755,
+              "p95Ms": 40.46700000000419,
+              "p99Ms": 41.210900000005495,
+              "elapsedMs": 133.86930000000575,
+              "throughputRequestsPerSecond": 149.3994515546069,
+              "failures": []
+            },
+            {
+              "scenario": "cold-broad",
+              "endpoint": "analytics",
+              "concurrency": 1,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 36.83179999999993,
+              "p95Ms": 50.51279999999679,
+              "p99Ms": 53.25089999999909,
+              "elapsedMs": 774.3015000000014,
+              "throughputRequestsPerSecond": 25.82973170011935,
+              "failures": []
+            },
+            {
+              "scenario": "cold-broad",
+              "endpoint": "analytics",
+              "concurrency": 4,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 71.88869999999588,
+              "p95Ms": 87.95640000001004,
+              "p99Ms": 89.53250000000116,
+              "elapsedMs": 337.5847000000067,
+              "throughputRequestsPerSecond": 59.24439111132585,
+              "failures": []
+            }
+          ],
+          "sql": [
+            {
+              "scenario": "hot-broad",
+              "endpoint": "operations",
+              "observations": [
+                {
+                  "executionMs": 11.304,
+                  "planningMs": 6.078,
+                  "sharedHits": 1345,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 10.187,
+                  "planningMs": 4.752,
+                  "sharedHits": 1345,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 12.104,
+                  "planningMs": 4.045,
+                  "sharedHits": 1345,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                }
+              ]
+            },
+            {
+              "scenario": "hot-broad",
+              "endpoint": "analytics",
+              "observations": [
+                {
+                  "executionMs": 107.175,
+                  "planningMs": 7.995,
+                  "sharedHits": 2890,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 83.329,
+                  "planningMs": 9.681,
+                  "sharedHits": 2890,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 70.641,
+                  "planningMs": 5.277,
+                  "sharedHits": 2890,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                }
+              ]
+            },
+            {
+              "scenario": "hot-month",
+              "endpoint": "operations",
+              "observations": [
+                {
+                  "executionMs": 8.166,
+                  "planningMs": 3.657,
+                  "sharedHits": 1345,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 13.536,
+                  "planningMs": 5.708,
+                  "sharedHits": 1345,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 8.649,
+                  "planningMs": 4.496,
+                  "sharedHits": 1345,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                }
+              ]
+            },
+            {
+              "scenario": "hot-month",
+              "endpoint": "analytics",
+              "observations": [
+                {
+                  "executionMs": 41.868,
+                  "planningMs": 5.724,
+                  "sharedHits": 2890,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 56.376,
+                  "planningMs": 7.021,
+                  "sharedHits": 2890,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 36.064,
+                  "planningMs": 4.803,
+                  "sharedHits": 2890,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                }
+              ]
+            },
+            {
+              "scenario": "hot-route",
+              "endpoint": "operations",
+              "observations": [
+                {
+                  "executionMs": 21.43,
+                  "planningMs": 5.852,
+                  "sharedHits": 1644,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 10.679,
+                  "planningMs": 5.803,
+                  "sharedHits": 1644,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 10.334,
+                  "planningMs": 4.696,
+                  "sharedHits": 1644,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                }
+              ]
+            },
+            {
+              "scenario": "hot-route",
+              "endpoint": "analytics",
+              "observations": [
+                {
+                  "executionMs": 26.776,
+                  "planningMs": 4.18,
+                  "sharedHits": 2116,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 29.27,
+                  "planningMs": 4.161,
+                  "sharedHits": 2116,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 30.06,
+                  "planningMs": 4.168,
+                  "sharedHits": 2116,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                }
+              ]
+            },
+            {
+              "scenario": "cold-broad",
+              "endpoint": "operations",
+              "observations": [
+                {
+                  "executionMs": 6.148,
+                  "planningMs": 5.287,
+                  "sharedHits": 1358,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 4.951,
+                  "planningMs": 4.279,
+                  "sharedHits": 1358,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 6.607,
+                  "planningMs": 4.701,
+                  "sharedHits": 1358,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                }
+              ]
+            },
+            {
+              "scenario": "cold-broad",
+              "endpoint": "analytics",
+              "observations": [
+                {
+                  "executionMs": 25.139,
+                  "planningMs": 4.624,
+                  "sharedHits": 2889,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 22.828,
+                  "planningMs": 5.704,
+                  "sharedHits": 2889,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 25.628,
+                  "planningMs": 4.93,
+                  "sharedHits": 2889,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "executions": 50000,
+          "sqlSha256": "e16c193aff6d5df65636e8b938bb099ef4ecb4783a461f9cc8720eed303c6f31",
+          "counts": {
+            "users": 1,
+            "organization": 2,
+            "organization_membership": 2,
+            "vehicle": 2,
+            "team_member": 6,
+            "material_category": 2,
+            "material_type": 2,
+            "material_subtype": 4,
+            "municipality": 4,
+            "neighborhood": 4,
+            "route": 10,
+            "route_area": 30,
+            "buyer": 2,
+            "donor": 2,
+            "attachment": 2,
+            "route_execution": 50000,
+            "route_execution_team": 100000,
+            "route_event": 135000,
+            "collection": 66968,
+            "collection_team": 133936,
+            "input_item": 133940,
+            "sale": 10000,
+            "sale_item": 20000,
+            "route_execution_area": 145128,
+            "stock_operation": 9094,
+            "stock_movement": 18184,
+            "donation": 4,
+            "sorting": 4,
+            "sorted_item": 4,
+            "stock_lot": 4,
+            "inventory_balance": 4
+          },
+          "seedMs": 197146.3056,
+          "measurements": [
+            {
+              "scenario": "hot-broad",
+              "endpoint": "operations",
+              "concurrency": 1,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 43.851499999989755,
+              "p95Ms": 57.6756999999634,
+              "p99Ms": 70.34940000000643,
+              "elapsedMs": 916.4640999999829,
+              "throughputRequestsPerSecond": 21.823004305351812,
+              "failures": []
+            },
+            {
+              "scenario": "hot-broad",
+              "endpoint": "operations",
+              "concurrency": 4,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 87.45530000003055,
+              "p95Ms": 97.2390000000014,
+              "p99Ms": 97.83830000000307,
+              "elapsedMs": 369.1457999999984,
+              "throughputRequestsPerSecond": 54.179134640025936,
+              "failures": []
+            },
+            {
+              "scenario": "hot-broad",
+              "endpoint": "analytics",
+              "concurrency": 1,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 397.61939999996684,
+              "p95Ms": 471.2326999999932,
+              "p99Ms": 511.43880000000354,
+              "elapsedMs": 7987.905599999998,
+              "throughputRequestsPerSecond": 2.503785222499375,
+              "failures": []
+            },
+            {
+              "scenario": "hot-broad",
+              "endpoint": "analytics",
+              "concurrency": 4,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 881.6375999999582,
+              "p95Ms": 989.3652000000002,
+              "p99Ms": 997.2935000000289,
+              "elapsedMs": 4497.70610000001,
+              "throughputRequestsPerSecond": 4.446711180172478,
+              "failures": []
+            },
+            {
+              "scenario": "hot-month",
+              "endpoint": "operations",
+              "concurrency": 1,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 33.777299999957904,
+              "p95Ms": 39.30019999999786,
+              "p99Ms": 40.4375,
+              "elapsedMs": 691.1969999999856,
+              "throughputRequestsPerSecond": 28.93531077247213,
+              "failures": []
+            },
+            {
+              "scenario": "hot-month",
+              "endpoint": "operations",
+              "concurrency": 4,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 80.60009999998147,
+              "p95Ms": 101.58699999999953,
+              "p99Ms": 143.18519999994896,
+              "elapsedMs": 366.24340000003576,
+              "throughputRequestsPerSecond": 54.60849260354739,
+              "failures": []
+            },
+            {
+              "scenario": "hot-month",
+              "endpoint": "analytics",
+              "concurrency": 1,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 121.23910000000615,
+              "p95Ms": 192.12390000000596,
+              "p99Ms": 199.99539999995613,
+              "elapsedMs": 2694.6721000000252,
+              "throughputRequestsPerSecond": 7.422053317730128,
+              "failures": []
+            },
+            {
+              "scenario": "hot-month",
+              "endpoint": "analytics",
+              "concurrency": 4,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 269.09519999998156,
+              "p95Ms": 293.9737000000314,
+              "p99Ms": 296.16320000000997,
+              "elapsedMs": 1288.8252000000211,
+              "throughputRequestsPerSecond": 15.518008182955821,
+              "failures": []
+            },
+            {
+              "scenario": "hot-route",
+              "endpoint": "operations",
+              "concurrency": 1,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 30.058099999965634,
+              "p95Ms": 36.89059999998426,
+              "p99Ms": 37.19760000001406,
+              "elapsedMs": 616.6091000000015,
+              "throughputRequestsPerSecond": 32.43546032648553,
+              "failures": []
+            },
+            {
+              "scenario": "hot-route",
+              "endpoint": "operations",
+              "concurrency": 4,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 35.21649999998044,
+              "p95Ms": 75.93230000004405,
+              "p99Ms": 90.68609999999171,
+              "elapsedMs": 266.6698000000324,
+              "throughputRequestsPerSecond": 74.99911876034545,
+              "failures": []
+            },
+            {
+              "scenario": "hot-route",
+              "endpoint": "analytics",
+              "concurrency": 1,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 106.39870000001974,
+              "p95Ms": 179.17360000003828,
+              "p99Ms": 215.19069999997737,
+              "elapsedMs": 2395.3386000000173,
+              "throughputRequestsPerSecond": 8.349550247301094,
+              "failures": []
+            },
+            {
+              "scenario": "hot-route",
+              "endpoint": "analytics",
+              "concurrency": 4,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 226.34560000000056,
+              "p95Ms": 283.4496999999974,
+              "p99Ms": 290.8717000000179,
+              "elapsedMs": 1216.498099999968,
+              "throughputRequestsPerSecond": 16.44063398043986,
+              "failures": []
+            },
+            {
+              "scenario": "cold-broad",
+              "endpoint": "operations",
+              "concurrency": 1,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 20.194200000027195,
+              "p95Ms": 26.444100000022445,
+              "p99Ms": 29.12719999998808,
+              "elapsedMs": 433.1603999999934,
+              "throughputRequestsPerSecond": 46.172272442264585,
+              "failures": []
+            },
+            {
+              "scenario": "cold-broad",
+              "endpoint": "operations",
+              "concurrency": 4,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 24.32679999998072,
+              "p95Ms": 43.49729999998817,
+              "p99Ms": 43.65110000001732,
+              "elapsedMs": 140.62039999995613,
+              "throughputRequestsPerSecond": 142.2268746213653,
+              "failures": []
+            },
+            {
+              "scenario": "cold-broad",
+              "endpoint": "analytics",
+              "concurrency": 1,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 114.03759999998147,
+              "p95Ms": 157.398199999996,
+              "p99Ms": 175.3652000000002,
+              "elapsedMs": 2474.462300000014,
+              "throughputRequestsPerSecond": 8.082564038255862,
+              "failures": []
+            },
+            {
+              "scenario": "cold-broad",
+              "endpoint": "analytics",
+              "concurrency": 4,
+              "requests": 20,
+              "successes": 20,
+              "errors": 0,
+              "p50Ms": 322.78979999996955,
+              "p95Ms": 381.9101999999839,
+              "p99Ms": 392.1264000000083,
+              "elapsedMs": 1624.4277000000002,
+              "throughputRequestsPerSecond": 12.312028414684136,
+              "failures": []
+            }
+          ],
+          "sql": [
+            {
+              "scenario": "hot-broad",
+              "endpoint": "operations",
+              "observations": [
+                {
+                  "executionMs": 44.62,
+                  "planningMs": 3.366,
+                  "sharedHits": 6449,
+                  "sharedReads": 212,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 44.043,
+                  "planningMs": 2.845,
+                  "sharedHits": 6481,
+                  "sharedReads": 180,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 44.068,
+                  "planningMs": 3.187,
+                  "sharedHits": 6513,
+                  "sharedReads": 148,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                }
+              ]
+            },
+            {
+              "scenario": "hot-broad",
+              "endpoint": "analytics",
+              "observations": [
+                {
+                  "executionMs": 355.905,
+                  "planningMs": 4.236,
+                  "sharedHits": 11864,
+                  "sharedReads": 2427,
+                  "tempReads": 1758,
+                  "tempWrites": 2274
+                },
+                {
+                  "executionMs": 339.569,
+                  "planningMs": 4.042,
+                  "sharedHits": 11896,
+                  "sharedReads": 2395,
+                  "tempReads": 1758,
+                  "tempWrites": 2274
+                },
+                {
+                  "executionMs": 344.917,
+                  "planningMs": 4.195,
+                  "sharedHits": 11928,
+                  "sharedReads": 2363,
+                  "tempReads": 1758,
+                  "tempWrites": 2274
+                }
+              ]
+            },
+            {
+              "scenario": "hot-month",
+              "endpoint": "operations",
+              "observations": [
+                {
+                  "executionMs": 43.885,
+                  "planningMs": 4.711,
+                  "sharedHits": 6661,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 30.902,
+                  "planningMs": 2.86,
+                  "sharedHits": 6661,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 30.924,
+                  "planningMs": 2.853,
+                  "sharedHits": 6661,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                }
+              ]
+            },
+            {
+              "scenario": "hot-month",
+              "endpoint": "analytics",
+              "observations": [
+                {
+                  "executionMs": 166.205,
+                  "planningMs": 4.786,
+                  "sharedHits": 14291,
+                  "sharedReads": 0,
+                  "tempReads": 392,
+                  "tempWrites": 392
+                },
+                {
+                  "executionMs": 167.047,
+                  "planningMs": 4.525,
+                  "sharedHits": 14291,
+                  "sharedReads": 0,
+                  "tempReads": 392,
+                  "tempWrites": 392
+                },
+                {
+                  "executionMs": 218.623,
+                  "planningMs": 5.221,
+                  "sharedHits": 14291,
+                  "sharedReads": 0,
+                  "tempReads": 392,
+                  "tempWrites": 392
+                }
+              ]
+            },
+            {
+              "scenario": "hot-route",
+              "endpoint": "operations",
+              "observations": [
+                {
+                  "executionMs": 31.49,
+                  "planningMs": 3.303,
+                  "sharedHits": 3310,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 31.877,
+                  "planningMs": 3.923,
+                  "sharedHits": 3310,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 29.652,
+                  "planningMs": 3.943,
+                  "sharedHits": 3310,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                }
+              ]
+            },
+            {
+              "scenario": "hot-route",
+              "endpoint": "analytics",
+              "observations": [
+                {
+                  "executionMs": 144.358,
+                  "planningMs": 4.699,
+                  "sharedHits": 10407,
+                  "sharedReads": 0,
+                  "tempReads": 390,
+                  "tempWrites": 390
+                },
+                {
+                  "executionMs": 128.503,
+                  "planningMs": 4.372,
+                  "sharedHits": 10407,
+                  "sharedReads": 0,
+                  "tempReads": 390,
+                  "tempWrites": 390
+                },
+                {
+                  "executionMs": 167.898,
+                  "planningMs": 4.325,
+                  "sharedHits": 10407,
+                  "sharedReads": 0,
+                  "tempReads": 390,
+                  "tempWrites": 390
+                }
+              ]
+            },
+            {
+              "scenario": "cold-broad",
+              "endpoint": "operations",
+              "observations": [
+                {
+                  "executionMs": 25.436,
+                  "planningMs": 4.34,
+                  "sharedHits": 4903,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 18.858,
+                  "planningMs": 2.965,
+                  "sharedHits": 4903,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 19.693,
+                  "planningMs": 2.997,
+                  "sharedHits": 4903,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                }
+              ]
+            },
+            {
+              "scenario": "cold-broad",
+              "endpoint": "analytics",
+              "observations": [
+                {
+                  "executionMs": 95.05,
+                  "planningMs": 3.568,
+                  "sharedHits": 12513,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 100.959,
+                  "planningMs": 4.125,
+                  "sharedHits": 12513,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                },
+                {
+                  "executionMs": 92.03,
+                  "planningMs": 3.558,
+                  "sharedHits": 12513,
+                  "sharedReads": 0,
+                  "tempReads": 0,
+                  "tempWrites": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "preparedPlans": [
+    {
+      "filename": "plan-modes-50000.json",
+      "scenario": "hot-broad",
+      "mode": "force_custom_plan",
+      "parameterBinding": "distinct positional occurrence, matching named JDBC expansion",
+      "executed": true,
+      "executionMs": 376.871,
+      "joins": [
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 1,
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 370.966
+        },
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 1,
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 357.534
+        },
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 1,
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 351.915
+        }
+      ],
+      "aggregates": [
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 154.131
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Hashed",
+          "actualRows": 27884,
+          "loops": 1,
+          "totalMs": 133.023
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 197.775
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Hashed",
+          "actualRows": 80052,
+          "loops": 1,
+          "totalMs": 126.247
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 5.608
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 13.423
+        }
+      ]
+    },
+    {
+      "filename": "plan-modes-50000.json",
+      "scenario": "hot-broad",
+      "mode": "force_generic_plan",
+      "parameterBinding": "distinct positional occurrence, matching named JDBC expansion",
+      "executed": true,
+      "executionMs": 449.016,
+      "joins": [
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 1,
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 446.656
+        },
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 1,
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 435.624
+        },
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 1,
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 432.073
+        },
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 1,
+          "actualRows": 47200,
+          "loops": 1,
+          "totalMs": 123.917
+        },
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 2,
+          "actualRows": 80971,
+          "loops": 1,
+          "totalMs": 137.484
+        }
+      ],
+      "aggregates": [
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 213.864
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Sorted",
+          "actualRows": 27884,
+          "loops": 1,
+          "totalMs": 190.918
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 218.201
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Sorted",
+          "actualRows": 80052,
+          "loops": 1,
+          "totalMs": 210.677
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 3.536
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 11.022
+        }
+      ]
+    },
+    {
+      "filename": "plan-modes-50000.json",
+      "scenario": "hot-month",
+      "mode": "force_custom_plan",
+      "parameterBinding": "distinct positional occurrence, matching named JDBC expansion",
+      "executed": true,
+      "executionMs": 172.532,
+      "joins": [
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 1,
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 169.362
+        },
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 1,
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 159.994
+        },
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 1,
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 158.189
+        }
+      ],
+      "aggregates": [
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 72.546
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Hashed",
+          "actualRows": 6537,
+          "loops": 1,
+          "totalMs": 68.069
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 85.637
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Hashed",
+          "actualRows": 18822,
+          "loops": 1,
+          "totalMs": 76.662
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 1.798
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 9.361
+        }
+      ]
+    },
+    {
+      "filename": "plan-modes-50000.json",
+      "scenario": "hot-month",
+      "mode": "force_generic_plan",
+      "parameterBinding": "distinct positional occurrence, matching named JDBC expansion",
+      "executed": true,
+      "executionMs": 139.102,
+      "joins": [
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 1,
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 138.015
+        },
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 1,
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 124.67
+        },
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 1,
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 122.37
+        },
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 1,
+          "actualRows": 11042,
+          "loops": 1,
+          "totalMs": 47.254
+        },
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 2,
+          "actualRows": 19048,
+          "loops": 1,
+          "totalMs": 40.407
+        }
+      ],
+      "aggregates": [
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 64.323
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Sorted",
+          "actualRows": 6537,
+          "loops": 1,
+          "totalMs": 59.511
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 58.037
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Sorted",
+          "actualRows": 18822,
+          "loops": 1,
+          "totalMs": 55.891
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 2.279
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 13.328
+        }
+      ]
+    },
+    {
+      "filename": "plan-modes-50000.json",
+      "scenario": "hot-route",
+      "mode": "force_custom_plan",
+      "parameterBinding": "distinct positional occurrence, matching named JDBC expansion",
+      "executed": true,
+      "executionMs": 151.205,
+      "joins": [
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 1,
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 147.618
+        },
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 1,
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 137.063
+        },
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 1,
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 137.055
+        }
+      ],
+      "aggregates": [
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 48.73
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Hashed",
+          "actualRows": 5472,
+          "loops": 1,
+          "totalMs": 44.804
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 88.318
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Hashed",
+          "actualRows": 15651,
+          "loops": 1,
+          "totalMs": 78.76
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 0.003
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 10.549
+        }
+      ]
+    },
+    {
+      "filename": "plan-modes-50000.json",
+      "scenario": "hot-route",
+      "mode": "force_generic_plan",
+      "parameterBinding": "distinct positional occurrence, matching named JDBC expansion",
+      "executed": true,
+      "executionMs": 110.3,
+      "joins": [
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 1,
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 109.355
+        },
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 1,
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 97.984
+        },
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 1,
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 97.971
+        },
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 1,
+          "actualRows": 9172,
+          "loops": 1,
+          "totalMs": 42.911
+        },
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 2,
+          "actualRows": 15832,
+          "loops": 1,
+          "totalMs": 29.678
+        }
+      ],
+      "aggregates": [
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 56.888
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Sorted",
+          "actualRows": 5472,
+          "loops": 1,
+          "totalMs": 52.893
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 41.075
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Sorted",
+          "actualRows": 15651,
+          "loops": 1,
+          "totalMs": 39.677
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 0.004
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 11.363
+        }
+      ]
+    },
+    {
+      "filename": "plan-modes-50000.json",
+      "scenario": "cold-broad",
+      "mode": "force_custom_plan",
+      "parameterBinding": "distinct positional occurrence, matching named JDBC expansion",
+      "executed": true,
+      "executionMs": 101.545,
+      "joins": [
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 1,
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 98.844
+        },
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 1,
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 94.072
+        },
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 1,
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 92.991
+        }
+      ],
+      "aggregates": [
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 46.19
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Hashed",
+          "actualRows": 7116,
+          "loops": 1,
+          "totalMs": 41.002
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 46.794
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Hashed",
+          "actualRows": 20382,
+          "loops": 1,
+          "totalMs": 36.964
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 1.067
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 4.761
+        }
+      ]
+    },
+    {
+      "filename": "plan-modes-50000.json",
+      "scenario": "cold-broad",
+      "mode": "force_generic_plan",
+      "parameterBinding": "distinct positional occurrence, matching named JDBC expansion",
+      "executed": true,
+      "executionMs": 130.196,
+      "joins": [
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 1,
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 129.083
+        },
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 1,
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 124.593
+        },
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 1,
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 123.396
+        },
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 1,
+          "actualRows": 12007,
+          "loops": 1,
+          "totalMs": 50.387
+        },
+        {
+          "type": "Nested Loop",
+          "estimatedRows": 2,
+          "actualRows": 20617,
+          "loops": 1,
+          "totalMs": 38.937
+        }
+      ],
+      "aggregates": [
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 69.559
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Sorted",
+          "actualRows": 7116,
+          "loops": 1,
+          "totalMs": 64.347
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 53.83
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Sorted",
+          "actualRows": 20382,
+          "loops": 1,
+          "totalMs": 51.865
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 1.186
+        },
+        {
+          "type": "Aggregate",
+          "strategy": "Plain",
+          "actualRows": 1,
+          "loops": 1,
+          "totalMs": 4.481
+        }
+      ]
+    }
+  ]
+}

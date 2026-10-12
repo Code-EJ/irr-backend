@@ -34,6 +34,11 @@ services:
     security_opt: ["no-new-privileges:true"]
     mem_limit: 384m
     restart: unless-stopped
+  mailpit:
+    image: ghcr.io/axllent/mailpit:v1.31.3@sha256:b43029fc8cfaa4ee9368b07c75c02771cb43723b8c208364ea500786261914d4
+    ports:
+      - "127.0.0.1:${MAILPIT_PORT:-8025}:8025"
+    restart: unless-stopped
   backend:
     build: .
     environment:
@@ -50,6 +55,13 @@ services:
       STORAGE_DIRECTORY: /data/uploads
       API_DOCS_ENABLED: ${API_DOCS_ENABLED:-true}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173}
+      MAIL_PROVIDER: ${MAIL_PROVIDER:-mailpit}
+      MAIL_API_KEY: ${MAIL_API_KEY:-}
+      MAIL_FROM: ${MAIL_FROM:-development@irr.local}
+      MAIL_FROM_NAME: ${MAIL_FROM_NAME:-IRR Development}
+      MAILPIT_URL: ${MAILPIT_URL:-http://mailpit:8025}
+      PASSWORD_RESET_BASE_URL: ${PASSWORD_RESET_BASE_URL:-http://localhost:5173/reset-password}
+      PASSWORD_RESET_TTL_MINUTES: ${PASSWORD_RESET_TTL_MINUTES:-30}
       SPRING_PROFILES_ACTIVE: development
       DEV_BOOTSTRAP_ENABLED: ${DEV_BOOTSTRAP_ENABLED:-true}
       DEV_ORGANIZATION_ID: ${DEV_ORGANIZATION_ID:-11111111-1111-4111-8111-111111111111}

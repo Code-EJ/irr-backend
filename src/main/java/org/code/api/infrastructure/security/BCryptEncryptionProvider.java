@@ -1,5 +1,6 @@
 package org.code.api.infrastructure.security;
 
+import java.nio.charset.StandardCharsets;
 import lombok.AllArgsConstructor;
 import org.code.api.domain.exception.AuthError;
 import org.code.api.domain.ports.EncryptionPort;
@@ -19,7 +20,7 @@ public class BCryptEncryptionProvider implements EncryptionPort {
 
   @Override
   public String encrypt(String str) {
-    final byte[] passwordBytes = str.getBytes();
+    final byte[] passwordBytes = str.getBytes(StandardCharsets.UTF_8);
 
     if (passwordBytes.length >= 72) {
       throw new AuthError.PasswordTooLong(passwordBytes.length);

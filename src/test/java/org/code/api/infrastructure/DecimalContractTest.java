@@ -8,7 +8,7 @@ import java.util.UUID;
 import org.code.api.dto.collection.request.InputItemRequestDTO;
 import org.code.api.infrastructure.documentation.OpenApiConfiguration;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Protects the exact decimal wire boundary and rejects persistence-time quantity rounding.
@@ -19,7 +19,7 @@ class DecimalContractTest {
   /** Scientific Java values must remain plain decimal strings in JSON. */
   @Test
   void serializesPlainStringsWithoutLosingScale() throws Exception {
-    var builder = new Jackson2ObjectMapperBuilder();
+    var builder = JsonMapper.builder();
     new OpenApiConfiguration().decimalWireFormat().customize(builder);
     var mapper = builder.build();
     assertThat(mapper.writeValueAsString(new BigDecimal("1E+10"))).isEqualTo("\"10000000000\"");

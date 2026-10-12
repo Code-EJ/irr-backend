@@ -1,5 +1,8 @@
 # ADR-0008: Administrator provisioning and creator-scoped attachment lifecycle
 
+> **PARTIALLY SUPERSEDED BY ADR-0017 / ADR-0018 (2026-10-04).** Global administrator creation and cross-organization authority, final BOOTSTRAP_ADMIN_* names and public email recovery now follow those backend decisions. Historical contrary statements below are retained as decision history, not current policy. Unrelated decisions remain applicable.
+
+
 > Final pre-production contract: [ADR-0014](0014-final-preproduction-contract-and-baseline.md) supersedes transitional HTTP aliases and the unreleased migration chain. Earlier evidence remains historical; the supported application API is /api/v1 and the final runtime schema starts at one fresh V1.
 
 

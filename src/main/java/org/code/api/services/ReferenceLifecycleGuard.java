@@ -25,6 +25,9 @@ public class ReferenceLifecycleGuard {
   /** Rejects vehicle deactivation while any collection retains its identity. */
   public void vehicle(UUID id) {
     reject("SELECT EXISTS(SELECT 1 FROM collection WHERE vehicle_id=? AND organization_id=?)", id);
+    reject(
+        "SELECT EXISTS(SELECT 1 FROM route_execution WHERE vehicle_id=? AND organization_id=?)",
+        id);
   }
 
   /** Rejects donor deactivation while any donation retains its identity. */

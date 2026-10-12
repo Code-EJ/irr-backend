@@ -1,5 +1,6 @@
 package org.code.api.infrastructure.repositories;
 
+import jakarta.persistence.LockModeType;
 import java.util.Optional;
 import java.util.UUID;
 import org.code.api.domain.models.user.User;
@@ -13,6 +14,11 @@ import org.springframework.data.repository.query.Param;
  * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
 public interface UserRepository extends JpaRepository<User, UUID> {
+  /** Serializes profile, administrative and credential changes on the same active identity. */
+  @org.springframework.data.jpa.repository.Lock(LockModeType.PESSIMISTIC_WRITE)
+  @Query("SELECT u FROM User u WHERE u.id = :id")
+  Optional<User> lockById(@Param("id") UUID id);
+
   @Query("SELECT u FROM User u WHERE u.email = :email")
   Optional<User> findByEmail(@Param("email") String email);
 

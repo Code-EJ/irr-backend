@@ -1,5 +1,7 @@
 # ADR-0014: Final pre-production API contract and database baseline
 
+> Identity follow-up (2026-10-03): [ADR-0016](0016-account-and-credential-lifecycle.md) deliberately selects incremental V2 for credential state. This ADR's one-time fresh consolidation remains historical; V1 is preserved. The owner permits considering disposable pre-production resets, but this delivery requires none. Once data retention is required, new schema changes always use new Flyway versions.
+
 - Documentation maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas).
 - Status: Accepted, implemented and locally verified on 2026-09-27.
 - Scope: Final backend consolidation before frontend integration.

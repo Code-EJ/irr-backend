@@ -28,4 +28,5 @@ public record CollectionResponseDTO(
     String routeDescription,
     OffsetDateTime departureAt,
     OffsetDateTime arrivalAt,
-    BigDecimal distanceKm) {}
+    BigDecimal distanceKm,
+    UUID routeExecutionId) {}

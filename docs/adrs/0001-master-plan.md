@@ -1,5 +1,44 @@
 # ADR-0001: IRR architecture overhaul and delivery master plan
 
+## Supported open-source platform — 2026-10-11
+
+Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas). [ADR-0029](0029-open-source-spring-security-upgrade.md) records the owner's no-Enterprise decision and the bounded Boot 4.0.8 / Framework 7.0.9 migration. The resolved graph now has 185 coordinates and zero OSV matches; earlier Spring 6.2.19 findings below are historical and are superseded for this candidate only. This does not close container findings, public deployment, mail or operator acceptance gates. Java 21, the modular monolith, versioned API and V1–V4 migrations remain. Final verification evidence is recorded in ADR-0029.
+
+## Isolated homologation execution — 2026-10-11
+
+[ADR-0028](0028-isolated-trial-homologation.md) authorizes a separate synthetic Railway environment while preserving the old project. [The execution record](../deploy/railway/execution-2026-10-11.md) records actual provisioning, local verification and unresolved effective region, security, mail, public acceptance and merge gates. Continue the existing delivery sequence; provisioning is not a completed release and does not replace the architecture.
+
+## Current executive milestone order — 2026-10-10
+
+Local recovery gate update: the selected-stack V1-V4 backup restored in an isolated PostgreSQL container with 39 matching table counts, 20 matching attachment hashes/references and zero inventory reconciliation differences. The live API restarted healthy. Actual browser PDF upload/download and downloaded-byte rendering passed; in-app local-file viewer acceptance remains separately blocked by browser policy. Backend docs/recovery-verification.md and frontend docs/document-verification.md record the evidence. This completes L2, while broader local workload/browser checks remain in the progress register.
+
+The owner-approved analytics-1 block is implemented and locally verified: matched planned/actual comparisons, unique declared-section coverage, weighted linked-collection productivity and live posted-sale revenue. Backend ADR-0022 and frontend ADR-0021 define the formulas; source references are backend 996e36f / frontend 9e25e91. Validation includes 51 backend unit tests, 95 integration tests, 127 frontend tests, 26 real API tests and actual browser empty/populated/filtered journeys. Operator acceptance of this new screen and the remaining local completion gates are separate. See [the execution register](../MASTER_PLAN_PROGRESS.md).
+
+The owner's Routes phase decision explicitly supersedes the prior requirement to finish external homologation before developing Routes. Identity policy and security remain unchanged. External deployment remains an operator gate, not a blocker for the next functional development milestone.
+
+| Order | Milestone | Status / gate |
+| --- | --- | --- |
+| COMPLETED | Identity & Access | IMPLEMENTED / READY FOR HOMOLOGATION: current backend/frontend, profile, credential revocation, recovery, global/local administration and bootstrap; no functional reopening |
+| PARALLEL OPERATIONS | Email provider configuration / first deployment | OPERATIONAL CONFIGURATION PENDING: external sender/domain/key and public deployment; EXTERNAL CONFIGURATION REQUIRED; no automatic merge, secrets update or database reset |
+| COMPLETED DEVELOPMENT | Routes | IMPLEMENTED / READY FOR HOMOLOGATION: explicit territory, organization-owned reusable planning, dated execution, preserved collection history and verified frontend integration |
+| COMPLETED DEVELOPMENT | First native operational report | IMPLEMENTED / LOCALLY VERIFIED: backend ADR-0021 / frontend ADR-0018; exact execution and collection facts, Brazilian periods and organization filters; see reporting verification |
+| COMPLETED DEVELOPMENT | Approved MVP Analytics | IMPLEMENTED / LOCALLY VERIFIED: backend ADR-0022 / frontend ADR-0021; matched comparisons, unique section-count coverage, weighted productivity and live posted-sale revenue; operator acceptance pending |
+| PRODUCT DEFINITION | Remaining analytics, exports, indicators and dashboards | PRODUCT DEFINITION REQUIRED for unapproved metric families; approved analytics-1 is implemented in the milestone above |
+| INCREMENTAL EVOLUTION | GPS / route telemetry / mapping | PLANNED_POST_DEPLOY: extension at execution/geometry boundaries; no provider, hardware or advanced map now |
+| FUTURE | Optional BI and advanced analytics | DEFERRED until demonstrated need and separate product authorization |
+
+ADMINISTRATOR remains global, MANAGER remains local, and MEMBER keeps permitted organization operations. No new Identity architecture, role enum or credential policy is introduced. V1–V3 stay immutable; Routes uses additive V4. No data reset. Exclusively /api/v1 is retained; the first approved release manifest freezes that contract, not an ADR or local compilation.
+
+The new Routes and Analytics decisions interpret the historical client requirements without treating all historical extras as current implementation authority. Organization classification and account CITY_HALL are not territorial identities. Municipality/Neighborhood are added only for the demonstrated Routes requirement; no external dataset is imported. Stable IDs, exact kg/km, actor/timestamp history and immutable execution context support implemented analytics-1. Remaining metric families, alerts, exports and GPS retain their separate pending definitions and dependencies.
+
+Historical sequencing and test counts below remain dated evidence. Current statuses follow [requirements traceability](../requirements/traceability.md) and the Routes execution record added with verified implementation.
+
+## Identity delivery update — 2026-10-03
+
+The owner requests complete account self-service and administration before operational rollout. [ADR-0016](0016-account-and-credential-lifecycle.md) closes the password lifecycle gap in ADR-0008 and extends M1/M5 without changing ADR-0003's architecture. Implementation adds self profile/password updates, administrative reset, credential generation/restriction state and administrative membership discovery. Frontend consumes additive `/api/v1` operations and retires obsolete identity code. Existing partner role and organization boundaries remain enforced.
+
+Database strategy: **OPTION A — INCREMENTAL**. V1 is unchanged; V2 adds durable state required by token revocation and mandatory password change. Pre-production disposability was considered; a reset offers no benefit for this small additive change and would require infrastructure recreation. The operational baseline is V1 + V2. Subsequent changes after data retention is required use new Flyway versions. Test evidence and remaining delivery gates are recorded in ADR-0016 and the [Railway rollout](../deploy/railway/rollout.md). Implementation is in progress until the complete backend/frontend verification passes. No remote rollout or database reset is performed by this work.
+
 > Final pre-production contract: [ADR-0014](0014-final-preproduction-contract-and-baseline.md) supersedes transitional HTTP aliases and the unreleased migration chain. Earlier evidence remains historical; the supported application API is /api/v1 and the final runtime schema starts at one fresh V1.
 
 
@@ -251,3 +290,27 @@ Backend acceptance evidence: 40 unit tests plus 59 real PostgreSQL/Redis integra
 ## Final pre-production consolidation — ADR-0014
 
 The backend contract is now exclusively /api/v1, with 89 operations and no transitional aliases or signup stub. The final fresh V1 preserves all 560 captured schema definitions. Spotless and 102 tests pass; Docker smoke and isolated restoration pass. Old development volumes are retained. Backend M1–M4 and local M6 recovery gates are complete for the documented scope. Frontend integration and a compatible release pair are next; prior V1–V6 and alias statements above are historical.
+
+## Routes operational implementation checkpoint (2026-10-04)
+
+CURRENT DEVELOPMENT MILESTONE: Routes. Scoped planning, normalized territory, dated execution snapshots/lifecycle/coverage and completed collection linkage are implemented. Local PostgreSQL, frontend/API and browser workflow gates pass. Routes is IMPLEMENTED / READY FOR HOMOLOGATION; public deployment/operator acceptance remains separate. Identity remains IMPLEMENTED / READY FOR HOMOLOGATION. External email configuration is a parallel operational dependency. NEXT: native Analytics, Reports, Filters, Indicators and Dashboards after approved metric/period definitions. PLANNED: GPS/telemetry/maps. No analytics or external tracking code is authorized by this checkpoint.
+
+## Routes delivery closure — 2026-10-05
+
+Identity remains functionally complete. Routes is IMPLEMENTED / READY FOR HOMOLOGATION after additive V4, scoped API, frontend integration, real PostgreSQL/API tests and browser plan/execution/collection verification. See [delivery evidence and remaining gates](../routes-verification.md). The next functional milestone is native Analytics, Reports, Filters, Indicators and Dashboards; approve metric/period definitions before implementation. GPS remains PLANNED_POST_DEPLOY. External email configuration is a parallel operational dependency, not a Routes development blocker.
+
+## Approved operational reporting slice — 2026-10-09
+
+The owner approved completed execution count, reported km/completeness, actual duration and active collected kg, using America/Sao_Paulo and independent execution-completion/collection-realization periods. The reporting execution ADR records the exact semantics. Implementation is IN_PROGRESS; remaining indicators stay PRODUCT DEFINITION REQUIRED. Routes remains implemented, external homologation pending.
+
+## Local completion execution — 2026-10-09
+
+The owner now prioritizes completion and validation of all applicable local requirements before any Railway configuration/deployment. [The central execution register](../MASTER_PLAN_PROGRESS.md) records the source-based audit, dependency-ordered tasks and actual evidence. This changes release sequencing only; existing domain decisions and pending product definitions remain explicit.
+
+## Owner-approved MVP Analytics — 2026-10-10
+
+The owner approved matched planned/actual comparisons, unique declared-section coverage, weighted linked-collection productivity and live posted-sale revenue. [0022-approved-mvp-analytics.md](0022-approved-mvp-analytics.md) records exact cohorts, integrity and verification. Implement locally before any deployment; remaining metric families retain their explicit product dependencies.
+
+## Pre-release consolidation and preparation — 2026-10-10
+
+Backend ADR-0025 records the owner's latest authorization: continue local security/browser/data closure and prepare Railway artifacts, without external resource creation, real secrets or deployment. It supersedes the earlier restriction on preparation only. Existing architecture, `/api/v1`, preserved V1–V4, approved Analytics formulas and synthetic benchmark evidence remain. Follow the current release-readiness register and Master Plan progress; do not equate local compilation or one accepted workflow with complete client delivery.

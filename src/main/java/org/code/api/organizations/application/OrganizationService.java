@@ -2,6 +2,7 @@ package org.code.api.organizations.application;
 
 import java.util.List;
 import java.util.UUID;
+import org.code.api.domain.enums.UserRole;
 import org.code.api.domain.ports.AuthenticatedUserProvider;
 import org.code.api.organizations.domain.*;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,8 +30,37 @@ public class OrganizationService {
     this.actor = actor;
   }
 
+  /** Uses the authenticated server role; account classifications never grant local authority. */
+  public boolean globalAdministrator() {
+    return actor.getCurrentUserRoles().contains(UserRole.ADMINISTRATOR);
+  }
+
+  /** Checks effective access without fabricating or persisting an administrator membership. */
+  @Transactional(readOnly = true)
+  public UUID requireAccess(UUID id) {
+    if (globalAdministrator())
+      return store.active(id).orElseThrow(OrganizationAccessDenied::new).id();
+    return requireMembership(id).organizationId();
+  }
+
+  /** Global administrators can manage any active organization; local managers remain scoped. */
+  @Transactional(readOnly = true)
+  public boolean canManage(UUID id) {
+    requireAccess(id);
+    return globalAdministrator() || requireMembership(id).role() == MembershipRole.MANAGER;
+  }
+
+  /** Returns one association, including revoked state, without exposing other user attributes. */
+  @Transactional
+  @PreAuthorize("hasRole('ADMINISTRATOR')")
+  public Membership administrativeMembership(UUID organization, UUID user) {
+    store.lock(organization);
+    if (!store.activeUser(user)) throw new OrganizationAccessDenied();
+    return store.membership(organization, user).orElseThrow(OrganizationAccessDenied::new);
+  }
+
   /**
-   * Lists current memberships without an implicit administrator bypass.
+   * Lists active organizations through global authority or explicit membership.
    *
    * @param page zero-based page
    * @param size page size, from one to one hundred
@@ -42,18 +72,25 @@ public class OrganizationService {
       throw new IllegalArgumentException(
           "Page must be nonnegative and size must be between 1 and 100");
     UUID id = actor.getCurrentUserId();
+    if (globalAdministrator())
+      return new OrganizationPage(
+          store.administrativeList(size, (long) page * size),
+          page,
+          size,
+          store.administrativeCount());
     return new OrganizationPage(
         store.list(id, size, (long) page * size), page, size, store.count(id));
   }
 
   /**
-   * Reads one organization only when an active association grants access.
+   * Reads an active organization through global authority or explicit membership.
    *
    * @param id requested organization
    * @return visible organization
    */
   @Transactional(readOnly = true)
   public Organization get(UUID id) {
+    if (globalAdministrator()) return store.active(id).orElseThrow(OrganizationAccessDenied::new);
     return store
         .accessible(id, actor.getCurrentUserId())
         .orElseThrow(OrganizationAccessDenied::new);

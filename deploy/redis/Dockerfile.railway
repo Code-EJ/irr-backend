@@ -1,0 +1,6 @@
+# Maintainer: Enzo Ribas (https://github.com/oEnzoRibas).
+# Retain the upstream entrypoint and add secret-safe trial configuration.
+FROM redis:8.2.10-alpine@sha256:b51665e66f00759be7c3152ad5ac3c66fb2f619c13ef62dea7cc1f9914524635
+RUN apk upgrade --no-cache
+COPY --chmod=0555 railway-start.sh /usr/local/bin/irr-redis-start.sh
+CMD ["sh", "/usr/local/bin/irr-redis-start.sh"]

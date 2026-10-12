@@ -16,4 +16,9 @@ public record LoginRequestDTO(
         String email,
     @NotBlank(message = "Password is required")
         @Size(max = 72, message = "Password must be at most 72 characters")
-        String password) {}
+        String password) {
+  @Override
+  public String toString() {
+    return "LoginRequestDTO[REDACTED]";
+  }
+}

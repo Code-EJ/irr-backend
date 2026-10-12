@@ -1,6 +1,5 @@
 package org.code.api.filter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Resolves each bearer token to the active database identity and current role once per request.
@@ -53,7 +53,12 @@ public class BearerFilter extends OncePerRequestFilter {
     String path = request.getServletPath();
     if (path.isEmpty()) path = request.getRequestURI();
     return "OPTIONS".equals(request.getMethod())
-        || ("POST".equals(request.getMethod()) && path.equals("/api/v1/session/authenticate"))
+        || ("POST".equals(request.getMethod())
+            && List.of(
+                    "/api/v1/session/authenticate",
+                    "/api/v1/session/password-recovery/request",
+                    "/api/v1/session/password-recovery/confirm")
+                .contains(path))
         || ("GET".equals(request.getMethod())
             && (path.equals("/actuator/health")
                 || path.equals("/actuator/health/liveness")
@@ -89,6 +94,23 @@ public class BearerFilter extends OncePerRequestFilter {
       }
     } catch (AuthError | IllegalArgumentException exception) {
       reject(response);
+      return;
+    }
+    String path = request.getServletPath();
+    if (path.isEmpty()) path = request.getRequestURI();
+    if (session.isMustChangePassword()
+        && !("GET".equals(request.getMethod()) && path.equals("/api/v1/users/me"))
+        && !("PUT".equals(request.getMethod()) && path.equals("/api/v1/users/me/password"))) {
+      SecurityContextHolder.clearContext();
+      response.setStatus(403);
+      response.setContentType("application/json");
+      json.writeValue(
+          response.getOutputStream(),
+          Map.of(
+              "error",
+              "password_change_required",
+              "message",
+              "Change your password before continuing"));
       return;
     }
     var identity =

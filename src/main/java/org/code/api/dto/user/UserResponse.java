@@ -12,4 +12,10 @@ import org.code.api.domain.enums.UserRole;
  * @param userRole assigned role
  * @author Enzo Ribas <a href="https://github.com/oEnzoRibas">@oEnzoRibas</a>
  */
-public record UserResponse(UUID id, String fullName, String email, UserRole userRole) {}
+public record UserResponse(
+    UUID id, String fullName, String email, UserRole userRole, boolean mustChangePassword) {
+  /** Maintains source compatibility for existing metadata-only response construction. */
+  public UserResponse(UUID id, String fullName, String email, UserRole userRole) {
+    this(id, fullName, email, userRole, false);
+  }
+}

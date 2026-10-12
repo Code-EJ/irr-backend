@@ -1,27 +1,28 @@
 package org.code.api.infrastructure.documentation;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springdoc.core.customizers.OperationCustomizer;
 import org.springdoc.core.utils.SpringDocUtils;
-import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
+import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.prepost.PreAuthorize;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.module.SimpleModule;
 
 /**
  * Configures Swagger/OpenAPI as the official executable HTTP contract reference. It documents
@@ -45,7 +46,7 @@ public class OpenApiConfiguration {
                 .version("0.0.1-SNAPSHOT")
                 .description(
                     "Pre-production waste management API. This specification documents the current"
-                        + " contract; business operations require explicit organization membership."
+                        + " contract; business operations require global authority or explicit organization membership."
                         + " Decimal quantities and money are JSON strings. Posted operations are"
                         + " corrected through audited reversals.")
                 .contact(new Contact().name("Enzo Ribas").url("https://github.com/oEnzoRibas")))
@@ -77,8 +78,9 @@ public class OpenApiConfiguration {
             Map.entry("ProcessingReversalController", "Processing reversals"),
             Map.entry("ReportController", "Reports"),
             Map.entry("OrganizationController", "Organizations"),
-            Map.entry("UserController", "Partners"),
+            Map.entry("UserController", "Accounts"),
             Map.entry("SessionController", "Sessions"),
+            Map.entry("PasswordRecoveryController", "Password recovery"),
             Map.entry("VehicleController", "Vehicles"),
             Map.entry("MaterialCategoryController", "Material categories"),
             Map.entry("MaterialTypeController", "Material types"),
@@ -87,7 +89,10 @@ public class OpenApiConfiguration {
             Map.entry("DonationController", "Donations"),
             Map.entry("SortingController", "Sorting"),
             Map.entry("PressingController", "Pressing"),
-            Map.entry("DocumentController", "Attachments"));
+            Map.entry("DocumentController", "Attachments"),
+            Map.entry("GeographyController", "Territory"),
+            Map.entry("RouteController", "Routes"),
+            Map.entry("RouteExecutionController", "Route executions"));
     Map<String, String> actions =
         Map.ofEntries(
             Map.entry("register", "Register a user"),
@@ -97,6 +102,16 @@ public class OpenApiConfiguration {
             Map.entry("getById", "Get by ID"),
             Map.entry("update", "Update"),
             Map.entry("deactivate", "Deactivate"),
+            Map.entry("get", "Get by ID"),
+            Map.entry("events", "List history"),
+            Map.entry("start", "Start execution"),
+            Map.entry("complete", "Complete execution"),
+            Map.entry("cancel", "Cancel execution"),
+            Map.entry("coverage", "Record declared coverage"),
+            Map.entry("municipalities", "List municipalities"),
+            Map.entry("neighborhoods", "List neighborhoods"),
+            Map.entry("municipality", "Resolve or register municipality"),
+            Map.entry("neighborhood", "Resolve or register neighborhood"),
             Map.entry("bulkCreate", "Create a batch"),
             Map.entry("bulkUpdate", "Update a batch"),
             Map.entry("uploadDocumento", "Upload an attachment"),
@@ -106,7 +121,11 @@ public class OpenApiConfiguration {
       String resource = resources.getOrDefault(handler.getBeanType().getSimpleName(), "Operations");
       String method = handler.getMethod().getName();
       operation.setTags(List.of(resource));
-      if (!List.of("SessionController", "UserController", "OrganizationController")
+      if (!List.of(
+              "SessionController",
+              "PasswordRecoveryController",
+              "UserController",
+              "OrganizationController")
           .contains(handler.getBeanType().getSimpleName())) {
         operation.addParametersItem(
             new Parameter()
@@ -114,8 +133,7 @@ public class OpenApiConfiguration {
                 .in("header")
                 .required(true)
                 .description(
-                    "Explicit active organization membership; platform administrator status is not"
-                        + " a bypass")
+                    "Active organization selection; global authority or an active membership is required")
                 .schema(new StringSchema().format("uuid")));
       }
       String controller = handler.getBeanType().getSimpleName();
@@ -140,7 +158,7 @@ public class OpenApiConfiguration {
         operation.setDescription(
             rule == null
                 ? "Authenticated access is checked by the application service. Business records"
-                    + " require current organization membership; platform administration uses the"
+                    + " require global authority or current organization membership; platform administration uses the"
                     + " administrator role."
                 : "Declared method authorization: "
                     + rule.value()
@@ -158,7 +176,11 @@ public class OpenApiConfiguration {
   public OpenApiCustomizer sessionSecurityDocumentation() {
     return api -> {
       if (api.getPaths() == null) return;
-      for (String path : List.of("/api/v1/session/authenticate")) {
+      for (String path :
+          List.of(
+              "/api/v1/session/authenticate",
+              "/api/v1/session/password-recovery/request",
+              "/api/v1/session/password-recovery/confirm")) {
         var item = api.getPaths().get(path);
         if (item != null)
           item.readOperations().forEach(operation -> operation.setSecurity(List.of()));
@@ -166,9 +188,29 @@ public class OpenApiConfiguration {
     };
   }
 
+  /**
+   * Preserves the OpenAPI 3.1 exclusive numeric zero bound enforced by {@code @Positive}. Swagger
+   * annotations cannot distinguish their default zero exclusive bound from an explicit one.
+   *
+   * @return the existing planned-duration constraint in its original executable schema form
+   */
+  @Bean
+  public OpenApiCustomizer plannedDurationDocumentation() {
+    return api -> {
+      var route = api.getComponents().getSchemas().get("RouteRequest");
+      if (route != null) {
+        Schema<?> duration = (Schema<?>) route.getProperties().get("plannedDurationMinutes");
+        if (duration != null) {
+          duration.setMinimum(null);
+          duration.setExclusiveMinimumValue(BigDecimal.ZERO);
+        }
+      }
+    };
+  }
+
   /** Serializes decimal business values as strings to prevent JavaScript precision loss. */
   @Bean
-  public Jackson2ObjectMapperBuilderCustomizer decimalWireFormat() {
+  public JsonMapperBuilderCustomizer decimalWireFormat() {
     SpringDocUtils.getConfig()
         .replaceWithSchema(
             BigDecimal.class,
@@ -179,15 +221,16 @@ public class OpenApiConfiguration {
                     "Exact decimal string; use decimal arithmetic and preserve the documented"
                         + " unit"));
     return builder ->
-        builder.serializerByType(
-            BigDecimal.class,
-            new JsonSerializer<BigDecimal>() {
-              @Override
-              public void serialize(
-                  BigDecimal value, JsonGenerator generator, SerializerProvider provider)
-                  throws IOException {
-                generator.writeString(value.toPlainString());
-              }
-            });
+        builder.addModule(
+            new SimpleModule()
+                .addSerializer(
+                    BigDecimal.class,
+                    new ValueSerializer<BigDecimal>() {
+                      @Override
+                      public void serialize(
+                          BigDecimal value, JsonGenerator generator, SerializationContext context) {
+                        generator.writeString(value.toPlainString());
+                      }
+                    }));
   }
 }

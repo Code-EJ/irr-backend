@@ -37,13 +37,22 @@ public class OrganizationController {
    */
   @GetMapping
   @Operation(
-      summary = "List my organizations",
+      summary = "List accessible organizations",
       description =
-          "Returns only organizations with an active membership for the current active user."
-              + " Platform administrators have no automatic membership bypass.")
+          "Global administrators see all active organizations. Other accounts require active membership.")
   public OrganizationService.OrganizationPage list(
       @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
     return organizations.list(page, size);
+  }
+
+  /** Reads an association for explicit grant/revoke administration; missing association is 404. */
+  @GetMapping("/{id}/members/{userId}")
+  @Operation(
+      summary = "Inspect user membership",
+      description =
+          "ADMINISTRATOR only. Includes previously revoked membership state; missing organization, account or association returns 404.")
+  public Membership administrativeMembership(@PathVariable UUID id, @PathVariable UUID userId) {
+    return organizations.administrativeMembership(id, userId);
   }
 
   /**
@@ -51,7 +60,7 @@ public class OrganizationController {
    */
   @GetMapping("/{id}")
   @Operation(
-      summary = "Get my organization",
+      summary = "Get an accessible organization",
       description = "Missing, inactive and foreign organizations all return 404.")
   public Organization get(@PathVariable UUID id) {
     return organizations.get(id);
@@ -104,7 +113,7 @@ public class OrganizationController {
       description =
           "ADMINISTRATOR only. Retains the membership row and writes an audit event. Further"
               + " organization reads fail immediately. Business APIs require the organization"
-              + " header and current membership.")
+              + " header and global authority or current membership.")
   public ResponseEntity<Void> revoke(@PathVariable UUID id, @PathVariable UUID userId) {
     organizations.revoke(id, userId);
     return ResponseEntity.noContent().build();

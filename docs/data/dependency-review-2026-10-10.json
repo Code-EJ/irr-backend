@@ -1,0 +1,146 @@
+{
+  "date": "2026-10-10",
+  "maintainer": "Enzo Ribas (https://github.com/oEnzoRibas)",
+  "source": "a77f63e",
+  "pomSha256": "7a2adefc4e15f2646fe1862a4e1a983dcfc81eb655e0d10c11b815235a050a6e",
+  "scannedAt": "2026-10-10T19:05:24.515Z",
+  "coordinates": 156,
+  "findings": [
+    {
+      "name": "org.springframework:spring-webmvc",
+      "version": "6.2.19",
+      "scope": "compile",
+      "id": "GHSA-j9f9-w8pj-32f8",
+      "scannerSeverity": "CRITICAL"
+    },
+    {
+      "name": "org.springframework:spring-webmvc",
+      "version": "6.2.19",
+      "scope": "compile",
+      "id": "GHSA-pc63-qcmh-9cmg",
+      "scannerSeverity": "CRITICAL"
+    }
+  ],
+  "disposition": {
+    "status": "conditional feature prerequisites not found in current application source; findings retained",
+    "featuresSearched": [
+      "SseEmitter",
+      "ServerSentEvent",
+      "FragmentsRendering",
+      "XsltView",
+      "ViewResolver",
+      "ModelAndView",
+      "text/event-stream",
+      "@Controller (excluding @RestController)"
+    ],
+    "frameworkUpgrade": "not-applied; 6.2.20 enterprise-only according to vendor; Framework 7 is a separate compatibility decision",
+    "vendorReferences": [
+      "https://spring.io/security/cve-2026-47890/",
+      "https://spring.io/security/cve-2026-47884/"
+    ],
+    "severityDiscrepancy": "OSV/GitHub reports critical; vendor reports low/medium. Both are recorded; no scanner suppression."
+  },
+  "imageScan": {
+    "status": "not-completed",
+    "reason": "Docker Scout requires Docker account authentication"
+  },
+  "limitations": [
+    "Source inspection does not prove complete exploit unreachability",
+    "No Maven plugin implementation or container OS clean claim"
+  ],
+  "containerConfiguration": [
+    {
+      "name": "irr-identity-verification-backend-1",
+      "imageId": "sha256:a7df8a827cf2e0b7f430eb99be02e22b7d1f94f1980afcfb33070dfec2d72111",
+      "imageReference": "irr-identity-backend",
+      "user": "10001:10001",
+      "healthy": "healthy",
+      "readOnlyRoot": true,
+      "capDrop": [
+        "ALL"
+      ],
+      "securityOptions": [
+        "no-new-privileges:true"
+      ],
+      "ports": {
+        "9191/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "9292"
+          }
+        ]
+      },
+      "restart": "no"
+    },
+    {
+      "name": "irr-frontend-development-frontend-1",
+      "imageId": "sha256:7b5069bd5bd45112adb276b57de5b27e8873f6dee33bcca0319ed2a4fc5b8a13",
+      "imageReference": "irr-frontend-development-frontend",
+      "user": "101",
+      "healthy": "healthy",
+      "readOnlyRoot": true,
+      "capDrop": [
+        "ALL"
+      ],
+      "securityOptions": [
+        "no-new-privileges:true"
+      ],
+      "ports": {
+        "8080/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "5173"
+          }
+        ]
+      },
+      "restart": "unless-stopped"
+    },
+    {
+      "name": "irr-identity-verification-database-1",
+      "imageId": "sha256:20edbde7749f822887a1a022ad526fde0a47d6b2be9a8364433605cf65099416",
+      "imageReference": "postgres:16-alpine",
+      "user": "",
+      "healthy": "healthy",
+      "readOnlyRoot": false,
+      "capDrop": null,
+      "securityOptions": null,
+      "ports": {
+        "5432/tcp": null
+      },
+      "restart": "no"
+    },
+    {
+      "name": "irr-identity-verification-redis-1",
+      "imageId": "sha256:b51665e66f00759be7c3152ad5ac3c66fb2f619c13ef62dea7cc1f9914524635",
+      "imageReference": "redis:8.2-alpine",
+      "user": "",
+      "healthy": "healthy",
+      "readOnlyRoot": false,
+      "capDrop": null,
+      "securityOptions": null,
+      "ports": {
+        "6379/tcp": null
+      },
+      "restart": "no"
+    },
+    {
+      "name": "irr-identity-verification-mailpit-1",
+      "imageId": "sha256:b43029fc8cfaa4ee9368b07c75c02771cb43723b8c208364ea500786261914d4",
+      "imageReference": "ghcr.io/axllent/mailpit:v1.31.3@sha256:b43029fc8cfaa4ee9368b07c75c02771cb43723b8c208364ea500786261914d4",
+      "user": "",
+      "healthy": "healthy",
+      "readOnlyRoot": false,
+      "capDrop": null,
+      "securityOptions": null,
+      "ports": {
+        "8025/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8025"
+          }
+        ]
+      },
+      "restart": "unless-stopped"
+    }
+  ]
+}

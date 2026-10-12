@@ -34,11 +34,11 @@ public final class SaleContract {
       UUID mtrAttachmentId,
       UUID cdfAttachmentId,
       @NotEmpty @Size(max = 200) List<@NotNull @Valid Line> items,
-      @PositiveOrZero Long version) {}
+      @PositiveOrZero @Schema(minimum = "0") Long version) {}
 
   /** Optimistic version required for a state transition. */
   @Schema(name = "SaleTransitionRequest")
-  public record Transition(@NotNull @PositiveOrZero Long version) {}
+  public record Transition(@NotNull @PositiveOrZero @Schema(minimum = "0") Long version) {}
 
   /** Includes the target in command hashing to prevent cross-sale receipt reuse. */
   public record Command(UUID id, Long version) {}

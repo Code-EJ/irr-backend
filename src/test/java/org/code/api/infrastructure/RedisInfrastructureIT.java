@@ -8,8 +8,8 @@ import java.util.UUID;
 import org.code.api.support.PostgresIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.data.redis.RedisHealthIndicator;
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
+import org.springframework.boot.data.redis.autoconfigure.DataRedisProperties;
+import org.springframework.boot.data.redis.health.DataRedisHealthIndicator;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
@@ -22,7 +22,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  */
 class RedisInfrastructureIT extends PostgresIntegrationTest {
   @Autowired StringRedisTemplate redis;
-  @Autowired RedisProperties properties;
+  @Autowired DataRedisProperties properties;
 
   /** Verifies temporary state is isolated by key and expires at its configured TTL. */
   @Test
@@ -34,7 +34,10 @@ class RedisInfrastructureIT extends PostgresIntegrationTest {
       assertThat(redis.getExpire(key)).isBetween(0L, 2L);
       await().atMost(Duration.ofSeconds(5)).until(() -> !Boolean.TRUE.equals(redis.hasKey(key)));
       assertThat(
-              new RedisHealthIndicator(redis.getConnectionFactory()).health().getStatus().getCode())
+              new DataRedisHealthIndicator(redis.getConnectionFactory())
+                  .health()
+                  .getStatus()
+                  .getCode())
           .isEqualTo("UP");
     } finally {
       redis.delete(key);

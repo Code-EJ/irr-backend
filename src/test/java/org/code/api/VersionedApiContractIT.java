@@ -6,15 +6,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import org.code.api.support.PostgresIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Prevents transitional application routes from reentering the supported frontend contract.
@@ -50,8 +50,8 @@ class VersionedApiContractIT extends PostgresIntegrationTest {
                 .getContentAsString());
     specification
         .get("paths")
-        .fields()
-        .forEachRemaining(
+        .properties()
+        .forEach(
             entry -> {
               assertThat(entry.getKey()).startsWith("/api/v1/");
               entry
@@ -59,6 +59,35 @@ class VersionedApiContractIT extends PostgresIntegrationTest {
                   .forEach(
                       operation -> assertThat(operation.path("deprecated").asBoolean()).isFalse());
             });
+  }
+
+  /** Swagger retains numeric limits enforced by validation after platform upgrades. */
+  @Test
+  void generatedSchemasRetainRuntimeNumericBounds() throws Exception {
+    var specification =
+        json.readTree(
+            http.perform(get("/v3/api-docs"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString());
+    var schemas = specification.path("components").path("schemas");
+    for (String name :
+        List.of(
+            "SaleDraftRequest",
+            "RouteRequest",
+            "SaleTransitionRequest",
+            "RouteExecutionVersionCommand",
+            "RouteExecutionCompletionCommand",
+            "RouteExecutionCancellationCommand",
+            "RouteExecutionCoverageCommand")) {
+      var version = schemas.path(name).path("properties").path("version");
+      assertThat(version.has("minimum")).as(name).isTrue();
+      assertThat(version.path("minimum").asLong()).as(name).isZero();
+    }
+    var duration = schemas.path("RouteRequest").path("properties").path("plannedDurationMinutes");
+    assertThat(duration.has("exclusiveMinimum")).isTrue();
+    assertThat(duration.path("exclusiveMinimum").asLong()).isZero();
   }
 
   /** Authenticated callers receive no alias or redirect; anonymous callers remain protected. */

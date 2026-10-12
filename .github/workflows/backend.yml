@@ -76,6 +76,16 @@ jobs:
         with:
           node-version: '24'
       
+      - name: Verify recovery manifest guards
+        # Uses disposable local files; the selected-stack restore is a separate local gate.
+        run: node --test scripts/tests/recovery.test.mjs
+
+      - name: Verify initial data privacy and manifest guards
+        run: node --test scripts/tests/initial-data.test.mjs
+
+      - name: Verify deterministic benchmark generator and oracle
+        run: node --test scripts/benchmarks/benchmark.test.mjs
+
       - name: Resolve Maven dependency tree
         run: |
           mkdir -p .local/audit
@@ -128,6 +138,29 @@ jobs:
       
       - name: Build production image
         run: docker build -t irr-backend:ci .
+
+      - name: Set up Node.js for deployment checks
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Verify root-owned storage initialization and privilege drop
+        run: node scripts/verify-container-storage.mjs irr-backend:ci
+
+      - name: Verify portable deployment boundaries without starting services
+        run: node scripts/verify-hosted-compose.mjs
+
+      - name: Build patched stateful service candidates
+        run: |
+          docker build -t irr-postgres-patched:ci deploy/postgres
+          docker build -t irr-redis-patched:ci deploy/redis
+          docker build -f deploy/redis/Dockerfile.railway -t irr-redis-railway:ci deploy/redis
+
+      - name: Verify stateful authentication and restart persistence
+        run: node scripts/verify-stateful-images.mjs irr-postgres-patched:ci irr-redis-patched:ci
+
+      - name: Verify secret-safe Redis trial startup
+        run: node scripts/verify-redis-railway.mjs irr-redis-railway:ci
       
       - name: Inspect image
         run: docker image inspect irr-backend:ci

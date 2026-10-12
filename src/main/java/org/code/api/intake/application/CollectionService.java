@@ -15,6 +15,8 @@ import org.code.api.dto.collection.request.CollectionCreateRequestDTO;
 import org.code.api.dto.collection.response.CollectionResponseDTO;
 import org.code.api.dto.collection.response.InputItemResponseDTO;
 import org.code.api.infrastructure.repositories.*;
+import org.code.api.routes.api.RouteExecutionContract.ExecutionStatus;
+import org.code.api.routes.infrastructure.RouteStore;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -44,6 +46,7 @@ public class CollectionService {
   private final OrganizationScope scope;
   private final AuthenticatedUserProvider actor;
   private final JdbcTemplate jdbc;
+  private final RouteStore routes;
 
   /** Lists scoped active collections. */
   @Transactional(readOnly = true)
@@ -148,6 +151,38 @@ public class CollectionService {
           HttpStatus.BAD_REQUEST,
           "The driver is already assigned separately from the collection team");
     record.setTeamMembers(ids.stream().map(id -> member(id, org)).collect(Collectors.toSet()));
+    applyExecution(record, request, org, ids);
+  }
+
+  private void applyExecution(
+      Collection record, CollectionCreateRequestDTO request, UUID org, Set<UUID> teamIds) {
+    if (record.getRouteExecutionId() != null
+        && !record.getRouteExecutionId().equals(request.routeExecutionId()))
+      throw new ResponseStatusException(
+          HttpStatus.CONFLICT, "Collection execution reference cannot be removed or changed");
+    if (request.routeExecutionId() == null) return;
+    var execution = routes.execution(org, request.routeExecutionId());
+    if (execution.status() != ExecutionStatus.COMPLETED)
+      throw new ResponseStatusException(
+          HttpStatus.CONFLICT, "A collection can reference only a completed route execution");
+    var assigned =
+        execution.team().stream().map(member -> member.teamMemberId()).collect(Collectors.toSet());
+    if (!request.vehicleId().equals(execution.vehicleId())
+        || !request.driverId().equals(execution.driverId())
+        || !teamIds.equals(assigned))
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "Collection fleet and team must match the selected execution");
+    if (request.departureAt() != null && !request.departureAt().isEqual(execution.startedAt())
+        || request.arrivalAt() != null && !request.arrivalAt().isEqual(execution.finishedAt())
+        || request.distanceKm() != null
+            && (execution.distanceKm() == null
+                || request.distanceKm().compareTo(execution.distanceKm()) != 0))
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "Collection logistics must match the selected execution");
+    record.setRouteExecutionId(execution.id());
+    record.setDepartureAt(execution.startedAt());
+    record.setArrivalAt(execution.finishedAt());
+    record.setDistanceKm(execution.distanceKm());
   }
 
   private void replaceInputs(Collection record, CollectionCreateRequestDTO request, UUID org) {
@@ -220,6 +255,7 @@ public class CollectionService {
         r.getRouteDescription(),
         r.getDepartureAt(),
         r.getArrivalAt(),
-        r.getDistanceKm());
+        r.getDistanceKm(),
+        r.getRouteExecutionId());
   }
 }

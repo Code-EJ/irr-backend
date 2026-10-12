@@ -42,4 +42,5 @@ build/
 
 # Local credentials, keys and uploaded files
 .local/
+/deploy/*.env
 *.pem

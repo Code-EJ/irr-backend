@@ -1,0 +1,41 @@
+{
+  "maintainer": "Enzo Ribas (https://github.com/oEnzoRibas)",
+  "status": "candidate-not-deployed",
+  "architectureAuthority": "ADR-0027",
+  "artifacts": [
+    "deploy/compose.yaml",
+    "deploy/Caddyfile",
+    "deploy/hosted.env.example"
+  ],
+  "applicationContract": "/api/v1",
+  "production": {
+    "providerPlan": "Hostinger KVM 2 proposal",
+    "country": "BR",
+    "preferredCity": "Sao Paulo",
+    "purchased": false,
+    "monthlyBudgetBRL": 130
+  },
+  "homologation": {
+    "name": "homologation",
+    "projectExists": false,
+    "domains": "Railway-generated",
+    "region": "us-east4-eqdc4a",
+    "spendingAlertUsd": null,
+    "spendingHardLimitUsd": null,
+    "requiredCountry": "US",
+    "preferredCity": "Sao Paulo",
+    "totalMonthlyBudget": {
+      "currency": "BRL",
+      "amount": 130
+    },
+    "regionBlocker": null,
+    "dataPolicy": "synthetic-only; no client records or production backups",
+    "productionCountry": "BR"
+  },
+  "releaseGates": [
+    "review immutable image findings",
+    "real public pair acceptance",
+    "mail and backup policy",
+    "client data and procurement approval"
+  ]
+}

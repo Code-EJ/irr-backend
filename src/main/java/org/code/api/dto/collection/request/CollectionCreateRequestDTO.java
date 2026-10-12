@@ -33,7 +33,8 @@ public record CollectionCreateRequestDTO(
     OffsetDateTime arrivalAt,
     @jakarta.validation.constraints.PositiveOrZero
         @jakarta.validation.constraints.Digits(integer = 9, fraction = 3)
-        BigDecimal distanceKm) {
+        BigDecimal distanceKm,
+    UUID routeExecutionId) {
   /** Requires a complete chronological schedule when either timestamp is supplied. */
   @jakarta.validation.constraints.AssertTrue(
       message = "Departure and arrival must be supplied together in chronological order")

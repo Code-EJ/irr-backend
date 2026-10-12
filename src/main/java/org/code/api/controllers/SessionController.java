@@ -35,7 +35,8 @@ public class SessionController {
    */
   @PostMapping("/authenticate")
   public ResponseEntity<LoginResponseDTO> authenticate(@Valid @RequestBody LoginRequestDTO data) {
+    String token = auth.authenticate(data.email(), data.password());
     return ResponseEntity.ok(
-        new LoginResponseDTO(auth.authenticate(data.email(), data.password())));
+        new LoginResponseDTO(token, auth.getSessionDetails(token).isMustChangePassword()));
   }
 }
