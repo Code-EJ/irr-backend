@@ -1,5 +1,4 @@
-# IRR backend
-
+# IRR backend [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Code-EJ/irr-backend)
 **Manual deployment starts here:** [operator guide](docs/deploy/operator-guide.md), with copyable Railway and Hostinger/other VPS procedures, expected results, updates, pause/resume, backups and recovery. It can be followed without an AI session. Use the dated execution records for historical evidence, not as command sequences.
 
 Current architecture: [Mermaid runtime, module, transaction and Railway diagrams](docs/architecture/system-diagrams.md). Delivery status: [technical, deployment and client release gates](docs/release-readiness.md).
