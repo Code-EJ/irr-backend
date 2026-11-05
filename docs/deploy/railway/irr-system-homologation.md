@@ -36,6 +36,10 @@ The `irr-system` database was restored from the validated source dump before bac
 
 The dump includes attachment metadata only. Copy the original files separately to `/data/uploads` by their stored names and verify downloads. A missing file must remain an explicit migration exception; do not replace it with an unrelated file. Keep original backups privately until the destination is verified. Preserve the original workspace and its volumes during migration.
 
+### Migration verification — 2026-11-05
+
+The owner explicitly authorized importing the retained records and original attachments into this Institute homologation environment, including the real attachment. This is specific to this migration and does not change the production hosting decision. The restored PostgreSQL 16 database has 39 public tables, V1–V4 and two attachment records. Both files were recovered and matched their original SHA-256 through authenticated downloads. All four services were online and the six public pair checks passed. The existing administrator credentials worked; the previously saved operator password returned HTTP 401 and was not reset. Recovery email remains disabled. No credentials, database dumps or attachment contents are stored in Git.
+
 ## 4. Stop safely
 
 From the [dashboard](https://railway.com/project/59bc315f-4921-462a-9d0e-c460b187fe99?environmentId=2158f474-a314-4763-bde6-e042af274a33), open each service's **Deployments**, remove the active deployment, and verify no deployment remains active. Order: frontend, backend, Redis, database. Preserve the services and volumes. For CLI commands see [pause and resume](operator-guide.md#7-pause-update-rollback-and-backups) and use the new IDs above. Storage may still consume credit.
