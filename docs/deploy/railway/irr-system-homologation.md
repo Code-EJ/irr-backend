@@ -4,6 +4,10 @@ Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas). Updated 2
 
 Use this guide for `irr-system` → `homologation` in the Instituto de Referência em Resíduos IRR workspace. The previous `irr-homologation` project is a separate recovery source. Do not deploy to its IDs or to the new project's unused `production` environment.
 
+## Branch and release flow
+
+Both repositories use `staging` for the homologation baseline and reserve `main` for promotion to production. Start each change on a short-lived branch from `staging` and open a PR back to `staging`. After checks pass, deploy the reviewed frontend/backend SHAs to Railway `homologation` and validate the pair. When approved for production, promote the reviewed changes through PRs from `staging` to `main` and tag the matched release. Git pushes alone do not deploy the manually uploaded Railway services. Use environment settings for infrastructure differences; a separate permanent `homologation` branch would duplicate `staging`.
+
 ## 1. Authenticate and verify the target
 
 ```powershell
