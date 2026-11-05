@@ -1,5 +1,7 @@
 # Railway: manual installation, resume and updates
 
+**Current IRR destination:** [Operate `irr-system` in the Institute workspace](irr-system-homologation.md). Follow that guide first for the new account, IDs and URLs. The `irr-homologation` IDs below refer to the previous workspace and are retained for historical recovery only. Do not paste the old destination block when deploying to `irr-system`.
+
 Maintainer: [Enzo Ribas (@oEnzoRibas)](https://github.com/oEnzoRibas). CLI syntax checked with 5.64.2 on 2026-10-11.
 
 Read [the operator prerequisites](../operator-guide.md) first. Commands below run in **PowerShell on your workstation**. Dashboard steps use an owner-controlled account. Source is uploaded manually through the official CLI; a Git push alone does not update these services. See [official CLI instructions](https://docs.railway.com/cli).
